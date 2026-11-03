@@ -1,0 +1,1530 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>الدوال الدائرية – كتاب حي</title>
+<meta name="theme-color" content="#4f1a10">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="الرياضيات الحيّة">
+<style>
+:root{
+  --noise:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .42 0 0 0 0 .33 0 0 0 0 .2 .16 0 0 0 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --tb:60px; --pw:420px; --ph:570px; --fs:14px; --tilt:20deg; --cv:12px;
+  --desk1:#8d5f3d; --desk2:#5f3b22;
+  --paper:#f8f1e2; --paper2:#efe5cf; --card:#fffaf0; --ink:#2b2520; --graphite:#3a3631;
+  --muted:#7d705f; --rule:#d8c9ab; --grid:rgba(90,130,170,.20); --margin-line:#e3a49a;
+  --c-center:#c2410c; --c-radius:#1d4ed8; --c-std:#15803d; --c-gen:#7e22ce; --c-point:#be185d; --c-cut:#0f766e;
+  --ok:#15803d; --bad:#b91c1c; --kraft:#e6cf9f; --kraft2:#cdb27a; --cover1:#7b2d1e; --cover2:#4f1a10;
+  --stack1:#e8dcc2; --stack2:#cfc0a0;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --desk1:#2c1f16; --desk2:#140d09;
+    --paper:#2a251f; --paper2:#221e19; --card:#332d26; --ink:#efe6d6; --graphite:#ddd3c2;
+    --muted:#a99a86; --rule:#4a4135; --grid:rgba(140,170,210,.16); --margin-line:#7a3f38;
+    --c-center:#fb923c; --c-radius:#7aa7ff; --c-std:#4ade80; --c-gen:#c99bff; --c-point:#f472b6; --c-cut:#2dd4bf;
+    --ok:#4ade80; --bad:#f87171; --kraft:#6b5634; --kraft2:#54432a; --cover1:#4a1c13; --cover2:#2a0f09;
+    --stack1:#3a332b; --stack2:#2b261f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --desk1:#2c1f16; --desk2:#140d09;
+  --paper:#2a251f; --paper2:#221e19; --card:#332d26; --ink:#efe6d6; --graphite:#ddd3c2;
+  --muted:#a99a86; --rule:#4a4135; --grid:rgba(140,170,210,.16); --margin-line:#7a3f38;
+  --c-center:#fb923c; --c-radius:#7aa7ff; --c-std:#4ade80; --c-gen:#c99bff; --c-point:#f472b6; --c-cut:#2dd4bf;
+  --ok:#4ade80; --bad:#f87171; --kraft:#6b5634; --kraft2:#54432a; --cover1:#4a1c13; --cover2:#2a0f09;
+  --stack1:#3a332b; --stack2:#2b261f;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+html{overflow-x:hidden}
+body{
+  font-family:"Segoe UI","Noto Sans Arabic","Noto Naskh Arabic","Geeza Pro","Arial",Tahoma,sans-serif;
+  color:var(--ink); overflow-x:hidden;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 38%, rgba(255,214,160,.22), transparent 70%),
+    repeating-linear-gradient(91deg, rgba(0,0,0,.05) 0 2px, transparent 2px 11px),
+    repeating-linear-gradient(89deg, rgba(255,255,255,.035) 0 1px, transparent 1px 29px),
+    linear-gradient(180deg,var(--desk1),var(--desk2));
+  background-attachment:fixed;
+  -webkit-tap-highlight-color:transparent;
+}
+button{font-family:inherit}
+bdi.n,bdi.m{unicode-bidi:isolate;direction:ltr}
+.m{font-family:"Cambria Math",Cambria,"Times New Roman","Noto Serif",serif;white-space:nowrap;font-size:1.04em}
+.m sup,.n sup{font-size:.68em;line-height:0}
+.cc{color:var(--c-center);font-weight:700}
+.cr{color:var(--c-radius);font-weight:700}
+.cs{color:var(--c-std);font-weight:700}
+.cg{color:var(--c-gen);font-weight:700}
+.cp{color:var(--c-point);font-weight:700}
+.ct{color:var(--c-cut);font-weight:700}
+
+/* ---------- scene & book ---------- */
+#scene{position:relative;min-height:calc(100dvh - var(--tb));display:grid;place-items:center;
+  padding:10px 0 calc(var(--tb) + 12px);overflow-x:hidden;overflow-x:clip;perspective:2200px;perspective-origin:50% 20%;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+#book{position:relative;width:calc(var(--pw)*2);height:var(--ph);transform-style:preserve-3d;transform:rotateX(var(--tilt));transition:transform .7s ease}
+#book.single{width:var(--pw);--rise:-28deg}
+#teach{--rise:-14deg}
+#teach .cover{position:absolute;inset:calc(var(--cv)*-1);transform:translateZ(-9px);border-radius:7px;
+  background:linear-gradient(135deg,var(--cover1),var(--cover2));box-shadow:0 0 0 2px rgba(0,0,0,.25) inset}
+.bshadow{position:absolute;inset:calc(var(--cv)*-1);transform:translateZ(-12px) translateY(14px);background:rgba(0,0,0,.55);filter:blur(22px);border-radius:20px}
+.slot{position:absolute;top:0;width:var(--pw);height:var(--ph);transform-style:preserve-3d}
+.slot.R{right:0}.slot.L{left:0}
+.slot.R{box-shadow:1px 1px 0 var(--stack1),2px 2px 0 var(--stack2),3px 3px 0 var(--stack1),4px 4px 0 var(--stack2),5px 5px 0 var(--stack1),6px 6px 0 rgba(0,0,0,.25)}
+.slot.L{box-shadow:-1px 1px 0 var(--stack1),-2px 2px 0 var(--stack2),-3px 3px 0 var(--stack1),-4px 4px 0 var(--stack2),-5px 5px 0 var(--stack1),-6px 6px 0 rgba(0,0,0,.25)}
+#book.single .slot.R{display:none}
+#book.single .slot.L{box-shadow:-1px 1px 0 var(--stack1),-2px 2px 0 var(--stack2),-3px 3px 0 var(--stack1),-4px 4px 0 var(--stack2),-5px 5px 0 rgba(0,0,0,.25), 3px 0 0 var(--cover2)}
+.spine{position:absolute;top:0;bottom:0;left:calc(50% - 10px);width:20px;transform:translateZ(.5px);pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(0,0,0,.16) 45%,rgba(0,0,0,.22) 50%,rgba(0,0,0,.16) 55%,transparent)}
+#book.single .spine{display:none}
+
+/* ---------- page ---------- */
+.page{position:relative;width:var(--pw);height:var(--ph);font-size:var(--fs);line-height:1.6;
+  background-color:var(--paper);background-image:var(--noise);padding:1.5em 1.55em 1.1em;display:flex;flex-direction:column;transform-style:preserve-3d}
+
+.page.sR{background-image:linear-gradient(90deg,rgba(0,0,0,.17),rgba(0,0,0,.05) 4%,transparent 9%),var(--noise)}
+.page.sL{background-image:linear-gradient(270deg,rgba(0,0,0,.17),rgba(0,0,0,.05) 4%,transparent 9%),var(--noise)}
+.page.text{overflow-y:auto;overflow-x:hidden;transform-style:flat;scrollbar-width:thin}
+.run{display:flex;justify-content:space-between;gap:1em;font-size:.7em;color:var(--muted);border-bottom:1px solid var(--rule);padding-bottom:.3em;margin-bottom:.55em;flex:none}
+.pno{margin-top:auto;padding-top:.35em;text-align:center;font-size:.72em;color:var(--muted);flex:none}
+h1,h2,h3{margin:0;line-height:1.3}
+h2{font-size:1.38em;margin:.05em 0 .45em;display:flex;align-items:center;gap:.45em}
+h2 .num{display:inline-grid;place-items:center;width:1.55em;height:1.55em;border-radius:50%;background:var(--ink);color:var(--paper);font-size:.72em;flex:none}
+p{margin:.3em 0}
+.tb{display:grid;grid-template-columns:minmax(0,1fr) 27%;gap:.9em;align-items:start}
+.single .tb, #store .single-like .tb{grid-template-columns:minmax(0,1fr)}
+.mg{border-inline-start:1.5px solid var(--margin-line);padding-inline-start:.65em;font-size:.8em;color:var(--muted);line-height:1.55}
+.mg .mt{display:block;color:var(--c-point);font-weight:700;margin-bottom:.15em}
+.mg p{margin:.2em 0 .55em}
+.m.blk{display:block;text-align:right;white-space:normal;margin:.1em 0}
+#book.single .mg{border-inline-start:0;border-top:1.5px dashed var(--margin-line);padding:.45em 0 0}
+.law{font-size:1.06em;text-align:center;padding:.4em .5em;margin:.45em 0;border:1.5px solid var(--rule);border-radius:.55em;background:var(--card);overflow-x:auto;scrollbar-width:none}
+.law.std{border-color:var(--c-std)} .law.gen{border-color:var(--c-gen)}
+.law small{display:block;font-size:.7em;color:var(--muted);font-family:inherit}
+.hook{font-size:1.02em;padding:.5em .7em;margin:.1em 0 .5em;border-radius:.5em;background:var(--paper2);border-inline-start:4px solid var(--c-cut)}
+.cases{margin:.3em 0;padding:0;list-style:none;font-size:.9em}
+.cases li{display:flex;gap:.4em;align-items:baseline;padding:.15em 0;border-bottom:1px dotted var(--rule)}
+.cases li b{flex:none}
+.tbl{width:100%;border-collapse:collapse;font-size:.86em;margin:.35em 0}
+.tbl td,.tbl th{border:1px solid var(--rule);padding:.25em .4em;text-align:start;vertical-align:middle}
+.tbl th{background:var(--paper2);font-weight:700}
+
+/* predict flap */
+.predict{margin-top:.55em;border:1.5px dashed var(--muted);border-radius:.6em;padding:.45em .6em .55em;background:var(--paper2)}
+.pq{font-size:.92em}
+.pq b.tag{display:inline-block;background:var(--c-point);color:#fff;padding:0 .45em;border-radius:.3em;margin-inline-end:.3em;font-size:.85em}
+.popts{display:flex;flex-wrap:wrap;gap:.35em;margin:.4em 0 .35em}
+.flapbox{position:relative;margin-top:.2em}
+.ans{padding:.45em .6em;font-size:.86em;line-height:1.6;background:var(--card);border-radius:.4em;border:1px solid var(--rule);min-height:3.4em}
+.flap{position:absolute;inset:0;transform-origin:50% 0;transition:transform .7s cubic-bezier(.3,1.25,.5,1);cursor:grab;touch-action:none;z-index:2}
+.flap .f{position:absolute;inset:0;border-radius:.4em;transition:opacity .4s}
+.flapbox.open .flap .f{opacity:.0}
+.flapbox.open .flap{background:var(--kraft2);border-radius:.4em}
+.flap .f{display:grid;place-items:center;font-weight:700;font-size:.9em;color:#5a4320;
+  background:repeating-linear-gradient(135deg,transparent 0 9px,rgba(0,0,0,.035) 9px 10px),linear-gradient(180deg,var(--kraft),var(--kraft2));
+  box-shadow:0 2px 3px rgba(0,0,0,.25);border:1px solid rgba(0,0,0,.12)}
+:root[data-theme="dark"] .flap .f{color:#f1dfb8}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .flap .f{color:#f1dfb8}}
+.flap .f::after{content:"";position:absolute;top:-1px;left:50%;width:2.6em;height:.5em;transform:translateX(-50%);background:rgba(0,0,0,.12);border-radius:0 0 .4em .4em}
+.flapbox.open .flap{transform:perspective(700px) rotateX(102deg)}
+.flap{transform:none}
+
+/* chips */
+.chip{font:inherit;font-size:.8em;line-height:1.2;padding:.32em .75em;min-height:2.15em;border-radius:999px;border:1px solid var(--rule);background:var(--card);color:var(--ink);cursor:pointer;transition:background .2s}
+.chip:hover{background:var(--paper2)}
+.chip:active{filter:brightness(.92)}
+.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip.right{background:color-mix(in srgb,var(--ok) 22%,var(--card));border-color:var(--ok)}
+.chip.wrong{background:color-mix(in srgb,var(--bad) 20%,var(--card));border-color:var(--bad)}
+.chip:disabled{opacity:.55;cursor:default}
+.chip:focus-visible,.tbtn:focus-visible,.flap:focus-visible{outline:2px solid var(--c-radius);outline-offset:2px}
+
+/* ---------- lab page ---------- */
+.lt{font-size:1.08em;display:flex;align-items:center;gap:.4em;flex:none}
+.lt .lab-ic{font-size:.7em;background:var(--c-cut);color:#fff;border-radius:.3em;padding:.05em .45em;font-weight:700}
+.stage{position:relative;flex:1 1 auto;min-height:7em;margin:.25em 0 .2em;perspective:calc(var(--fs) * 55);perspective-origin:50% 0}
+.page.lab{transform-style:flat}
+.pop{position:absolute;inset:0;transform-style:preserve-3d}
+.crease{position:absolute;left:5%;right:5%;bottom:calc(7% - 1px);height:2px;background:linear-gradient(90deg,transparent,rgba(0,0,0,.22) 15%,rgba(0,0,0,.22) 85%,transparent)}
+.stage::after{content:"";position:absolute;left:4%;right:4%;bottom:1.5%;height:5.5%;border-radius:50%;pointer-events:none;opacity:0;transition:opacity .4s;
+  background:radial-gradient(ellipse 50% 70% at 50% 0,rgba(40,25,10,.35),transparent 75%)}
+.risen .stage::after{opacity:1;transition:opacity 1s .15s}
+.risen .card{box-shadow:0 0 0 1px rgba(0,0,0,.10),0 -6px 18px rgba(40,25,10,.18)}
+.card{position:absolute;left:7%;right:7%;top:5%;bottom:7%;transform-origin:50% 100%;transform:rotateX(0deg);
+  transition:transform .28s ease-in;transform-style:preserve-3d;border-radius:3px;
+  background:var(--card);box-shadow:0 0 0 1px rgba(0,0,0,.10)}
+.card::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:3px;
+  background:linear-gradient(0deg,rgba(0,0,0,.13),transparent 22%),linear-gradient(180deg,rgba(255,255,255,.18),transparent 30%)}
+.card .edge{position:absolute;left:0;right:0;top:0;height:4px;background:var(--stack2);transform-origin:50% 0;transform:rotateX(90deg)}
+.card canvas{position:absolute;inset:0;width:100%;height:100%;display:block;border-radius:3px}
+.risen .card{transform:rotateX(var(--rise,-32deg));transition:transform 1.1s cubic-bezier(.25,1.45,.45,1)}
+.risen .side{flex:none;display:flex;flex-direction:column;gap:.25em}
+.ro{font-size:.84em;line-height:1.55;background:var(--paper2);border-radius:.45em;padding:.3em .55em;border:1px solid var(--rule)}
+.ro .row{display:flex;flex-wrap:wrap;gap:.1em .5em;align-items:baseline}
+.ro .eq{font-size:1.12em}
+.ro .k{color:var(--muted)}
+.ctl{display:flex;flex-direction:column;gap:.15em}
+.sl{display:grid;grid-template-columns:5.6em minmax(0,1fr) 3.3em;align-items:center;gap:.45em;font-size:.84em}
+.sl .nm{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sl output{text-align:center;font-family:"Cambria Math",Cambria,"Times New Roman",serif;font-weight:700;background:var(--card);border:1px solid var(--rule);border-radius:.35em;padding:.05em .2em}
+.btns{display:flex;flex-wrap:wrap;gap:.3em;align-items:center}
+.btns .lbl{font-size:.76em;color:var(--muted)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:max(1.9em,26px);background:transparent;direction:ltr;margin:0;cursor:pointer;touch-action:none}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--graphite),var(--muted));opacity:.85}
+input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--graphite),var(--muted))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:max(1.35em,20px);height:max(1.35em,20px);border-radius:50%;margin-top:calc((4px - max(1.35em,20px))/2);
+  background:var(--cc,var(--ink));border:2.5px solid var(--card);box-shadow:0 1px 4px rgba(0,0,0,.4)}
+input[type=range]::-moz-range-thumb{width:max(1.35em,20px);height:max(1.35em,20px);border-radius:50%;background:var(--cc,var(--ink));border:2.5px solid var(--card);box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.dict{width:100%;border-collapse:collapse;font-size:.85em}
+.dict td{border-bottom:1px dotted var(--rule);padding:.28em .3em}
+.dict td:first-child{white-space:nowrap}
+.dot{display:inline-block;width:.7em;height:.7em;border-radius:50%;margin-inline-end:.35em;vertical-align:middle}
+.gq{font-size:.9em;font-weight:600;min-height:1.6em;flex:none;margin-top:.15em}
+.gfb{min-height:2.4em}
+.hide{display:none!important}
+
+/* title page */
+.tp{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.25em;flex:1}
+.ribbon{background:var(--c-cut);color:#fff;padding:.15em 1.2em;border-radius:999px;font-weight:700;font-size:.9em;margin-top:.4em}
+.tp h1{font-size:2.1em;margin-top:.15em}
+.tp .en{font-family:Georgia,"Times New Roman",serif;font-style:italic;color:var(--muted);direction:ltr}
+.tp .lead{font-size:.92em;max-width:22em}
+.toc{list-style:none;margin:.4em 0 0;padding:0;width:100%;text-align:start}
+.toc button{all:unset;box-sizing:border-box;display:flex;width:100%;gap:.6em;align-items:baseline;padding:.2em .2em;border-bottom:1px dotted var(--rule);cursor:pointer;font-size:.86em}
+.toc button:hover{background:var(--paper2)}
+.toc button:focus-visible{outline:2px solid var(--c-radius)}
+.toc .i{display:inline-grid;place-items:center;width:1.6em;height:1.6em;border-radius:50%;background:var(--ink);color:var(--paper);font-size:.78em;flex:none}
+.toc em{margin-inline-start:auto;font-style:normal;color:var(--muted);font-size:.85em;white-space:nowrap}
+.howto{display:grid;gap:.25em;margin-top:.6em;font-size:.78em;color:var(--muted);text-align:start;width:100%}
+.howto div::before{content:"✎ ";color:var(--c-point)}
+
+/* game list */
+.rounds{list-style:none;margin:.35em 0;padding:0;font-size:.86em}
+.rounds li{display:flex;gap:.5em;align-items:center;padding:.22em 0;border-bottom:1px dotted var(--rule)}
+.rounds .st{width:1.4em;text-align:center;font-weight:700;flex:none}
+.rounds li.cur{font-weight:700}
+.stars{font-size:1.7em;letter-spacing:.1em;text-align:center;color:#d4a017}
+
+/* ---------- flipper ---------- */
+.flip{position:absolute;inset:0;transform-style:preserve-3d;pointer-events:none;transform:translateZ(2px);--sh:0}
+.seg{position:absolute;top:0;height:100%;transform-style:preserve-3d}
+.face{position:absolute;inset:0;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform-style:flat}
+.face.back{transform:rotateY(180deg)}
+.face .page{position:absolute;top:0;transform-style:flat}
+.face .page *{transform-style:flat!important}
+.face::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(0,0,0,0) 60%);opacity:var(--sh)}
+.face.back::after{background:linear-gradient(270deg,rgba(0,0,0,.3),rgba(255,255,255,.08) 70%)}
+.blank{background-color:var(--paper)}
+
+#store{position:fixed;left:-300vw;top:0;visibility:hidden;pointer-events:none}
+
+/* ---------- toolbar ---------- */
+#tb{position:fixed;left:0;right:0;bottom:0;height:var(--tb);padding:0 .5rem env(safe-area-inset-bottom);display:flex;align-items:center;justify-content:center;gap:.45rem;z-index:50;
+  background:rgba(25,15,8,.62);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#f7eedd;border-top:1px solid rgba(255,255,255,.08)}
+.tbtn{text-decoration:none;height:42px;min-width:42px;border-radius:21px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:inherit;
+  display:inline-flex;align-items:center;justify-content:center;gap:.35rem;padding:0 .75rem;font:600 14px/1 inherit;cursor:pointer}
+.tbtn:hover{background:rgba(255,255,255,.16)}
+.tbtn:disabled{opacity:.35;cursor:default}
+.tbtn svg{width:20px;height:20px;flex:none}
+.tbtn.on{background:#f3c56b;color:#2b1b0c;border-color:#f3c56b}
+.dots{display:flex;align-items:center}
+.dots button{width:22px;height:34px;border:0;background:none;padding:0;cursor:pointer;display:grid;place-items:center}
+.dots button::before{content:"";width:9px;height:9px;border-radius:5px;background:rgba(255,255,255,.35);transition:all .25s}
+.dots button.on::before{width:20px;background:#f3c56b}
+.sep{width:1px;height:26px;background:rgba(255,255,255,.18)}
+@media (max-width:560px){ .tbtn .lbl{display:none} .tbtn{padding:0 .55rem} #tb{gap:.25rem} }
+.cnt{display:none;font:600 14px/1 inherit;min-width:4.2em;text-align:center}
+@media (max-width:820px){ .dots{display:none} .cnt{display:inline-block} }
+.exl{list-style:none;margin:.2em 0;padding:0;display:flex;flex-direction:column;gap:.4em}
+.exl li{display:flex;gap:.55em;align-items:flex-start;font-size:.92em;line-height:1.55}
+.exl li>div{flex:1;min-width:0}
+.exn{display:inline-grid;place-items:center;width:1.7em;height:1.7em;border-radius:50%;background:var(--c-point);color:#fff;font-size:.8em;flex:none;margin-top:.15em}
+.parts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.05em .8em;margin:.15em 0}
+.parts.one{grid-template-columns:1fr}
+.exq{font-size:.82em;line-height:1.6;background:var(--card);border:1px solid var(--rule);border-inline-start:3px solid var(--c-point);padding:.3em .55em;border-radius:.35em}
+.exq b{color:var(--c-point);margin-inline-end:.35em}
+.exhint{font-size:.8em;color:var(--muted)}
+.pl{display:inline-grid;place-items:center;min-width:1.35em;height:1.35em;border-radius:.3em;background:var(--paper2);border:1px solid var(--rule);font-size:.78em;margin-inline-end:.35em;font-family:Georgia,serif}
+.flapbox.mini{margin-top:.3em}
+.flapbox.mini .ans{min-height:2.3em;font-size:.84em;padding:.3em .55em}
+.flapbox.mini .flap .f{font-size:.82em}
+.sl2{display:grid;grid-template-columns:1fr 1fr;gap:.6em}
+.sl2 .sl{grid-template-columns:1.6em minmax(0,1fr) 2.8em}
+.psel{display:contents}
+.tbl.sgn td,.tbl.sgn th{text-align:center}
+.tbl.sgn tr.on td{background:color-mix(in srgb,var(--c-center) 22%,transparent);font-weight:700}
+.tbl.mini{font-size:.78em;margin:.2em 0 0}
+.tbl.mini td,.tbl.mini th{padding:.12em .3em}
+.parts.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.parts.eqs{grid-template-columns:repeat(2,minmax(0,1fr));gap:.35em .8em;font-size:.95em}
+.exl.tight{gap:.3em}
+.exl.tight li{font-size:.88em}
+.tset{color:var(--muted);font-size:.85em;margin-inline-end:.3em}
+.lab-flap{margin:0}
+.lab-flap .ans{min-height:4.6em;font-size:1em;padding:.3em .55em}
+.lab-flap .flap .f{font-size:.95em}
+.toc.compact button{padding:.1em .2em;font-size:.8em}
+.law.sm{font-size:.9em}
+.ro .m.blk{text-align:right}
+.lab-flap.open .flap{opacity:0;pointer-events:none}
+.lab-flap .flap{transition:transform .7s cubic-bezier(.3,1.25,.5,1),opacity .4s .25s}
+
+
+/* ---------- teacher mode ---------- */
+#teach{position:fixed;inset:0;z-index:80;display:none;place-items:center;perspective:2400px;perspective-origin:50% 15%;
+  background:radial-gradient(ellipse at 50% 40%,rgba(255,214,160,.18),transparent 70%),linear-gradient(180deg,var(--desk1),var(--desk2))}
+#teach.on{display:grid}
+#teach .board{transform:rotateX(9deg);transform-style:preserve-3d;position:relative}
+#teach .board::before{content:"";position:absolute;inset:-14px;background:linear-gradient(135deg,var(--cover1),var(--cover2));transform:translateZ(-6px);border-radius:8px}
+#teach .tx{position:fixed;top:12px;left:12px;z-index:3}
+#teach .tnav{position:fixed;top:12px;right:12px;display:flex;gap:.4rem;z-index:3}
+#teach .tbtn{background:rgba(25,15,8,.6);color:#f7eedd}
+.page.lab.wide{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1.6fr);grid-template-rows:auto auto auto minmax(0,1fr) auto;
+  grid-template-areas:"run run" "lt lt" "gq gq" "side stage" "pno pno";column-gap:1.2em}
+.wide .run{grid-area:run}.wide .lt{grid-area:lt}.wide .gq{grid-area:gq}.wide .stage{grid-area:stage;margin:0}.wide .side{grid-area:side;align-self:center}.wide .pno{grid-area:pno}
+.wide .sl{grid-template-columns:6.4em minmax(0,1fr) 3.3em}
+
+@media (prefers-reduced-motion: reduce){
+  .risen .card,.card,.flap,#book{transition-duration:.01s!important}
+}
+</style>
+</head>
+<body>
+<div id="scene">
+  <div id="book">
+    <div class="bshadow"></div>
+    <div class="cover"></div>
+    <div class="slot L"></div>
+    <div class="slot R"></div>
+    <div class="spine"></div>
+  </div>
+</div>
+<div id="store"></div>
+
+<div id="teach" role="dialog" aria-label="وضع المعلم">
+  <button class="tbtn tx" id="tExit" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="lbl">خروج</span></button>
+  <div class="tnav">
+    <button class="tbtn" id="tPrev" type="button" aria-label="المختبر السابق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+    <button class="tbtn" id="tNext" type="button" aria-label="المختبر التالي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+  </div>
+  <div class="board" id="tBoard"></div>
+</div>
+
+<nav id="tb" aria-label="التنقل">
+  <a class="tbtn" id="bHome" href="index.html" aria-label="المكتبة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 012-2h12v18H6a2 2 0 01-2-1.5zM4 19.5A2 2 0 016 18h12"/></svg><span class="lbl">المكتبة</span></a>
+  <span class="sep"></span>
+  <button class="tbtn" id="bPrev" type="button" aria-label="الصفحة السابقة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg><span class="lbl">السابق</span></button>
+  <div class="dots" id="dots"></div><span class="cnt" id="cnt"></span>
+  <button class="tbtn" id="bNext" type="button" aria-label="الصفحة التالية"><span class="lbl">التالي</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+  <span class="sep"></span>
+  <button class="tbtn" id="bTeach" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20h8M7 12l3-3 2 2 4-4"/></svg><span class="lbl">وضع المعلم</span></button>
+  <button class="tbtn" id="bMute" type="button" aria-pressed="false" aria-label="كتم الصوت"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="w" d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12"/><path class="x" d="M16 9l6 6M22 9l-6 6" style="display:none"/></svg></button>
+  <button class="tbtn" id="bTheme" type="button" aria-label="الوضع الداكن"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/></svg></button>
+</nav>
+
+<script>
+"use strict";
+/* ================= helpers ================= */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const MI='−';
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function fmt(x){ if(!isFinite(x)) return '?'; let v=Math.round(x*100)/100; if(Math.abs(v)<1e-9) v=0; return (v<0?MI:'')+String(Math.abs(v)); }
+const N=s=>`<bdi dir="ltr" class="n">${s}</bdi>`;
+const M=(s,c='')=>`<bdi dir="ltr" class="m ${c}">${s.replace(/\^(\d|[a-z])/g,'<sup>$1</sup>')}</bdi>`;
+const P2=(x,y)=>`(${fmt(x)}, ${fmt(y)})`;
+function sq(v,val){ return Math.abs(val)<1e-9?`${v}<sup>2</sup>`:`(${v} ${val>0?'−':'+'} <span class="cc">${fmt(Math.abs(val))}</span>)<sup>2</sup>`; }
+function stdEq(h,k,r2){ return `<bdi dir="ltr" class="m">${sq('x',h)} + ${sq('y',k)} = <span class="cr">${fmt(r2)}</span></bdi>`; }
+function genEq(A,B,C,a=1){
+  const t=(c,v)=>{ if(Math.abs(c)<1e-9) return ''; const ac=Math.abs(c); return ` ${c<0?'−':'+'} <span class="cg">${(ac===1&&v)?'':fmt(ac)}</span>${v}`; };
+  const q=a!==1?a:'';
+  return `<bdi dir="ltr" class="m">${q}x<sup>2</sup> + ${q}y<sup>2</sup>${t(A,'x')}${t(B,'y')}${t(C,'')} = 0</bdi>`;
+}
+function rad(r2){
+  if(r2<=1e-9) return null;
+  const s=Math.sqrt(r2);
+  if(Math.abs(s*100-Math.round(s*100))<1e-6) return fmt(s);
+  if(Math.abs(r2-Math.round(r2))<1e-9){ const n=Math.round(r2); let a=1; for(let i=Math.floor(Math.sqrt(n));i>1;i--) if(n%(i*i)===0){a=i;break;} const b=n/(a*a); return `${a>1?a:''}√${b} ≈ ${s.toFixed(2)}`; }
+  return `√${fmt(r2)} ≈ ${s.toFixed(2)}`;
+}
+const slider=(k,name,min,max,step,val,cc)=>`<label class="sl" style="--cc:var(${cc})"><span class="nm">${name}</span><input type="range" data-k="${k}" min="${min}" max="${max}" step="${step}" value="${val}" aria-label="${k}"><output data-o="${k}"><bdi dir="ltr">${fmt(val)}</bdi></output></label>`;
+function predict(q,opts,ans,answer){
+  return `<div class="predict" data-ans="${ans}">
+  <div class="pq"><b class="tag">توقّع</b>${q}</div>
+  <div class="popts">${opts.map((o,i)=>`<button type="button" class="chip" data-i="${i}">${o}</button>`).join('')}</div>
+  <div class="flapbox"><div class="ans">${answer}</div>
+    <div class="flap" role="button" tabindex="0" aria-label="ارفع اللسان لكشف الإجابة"><div class="f">ارفع اللسان لتكشف الإجابة ⤒</div></div></div>
+</div>`;
+}
+const MINI=a=>`<div class="flapbox mini"><div class="ans">${a}</div><div class="flap" role="button" tabindex="0" aria-label="ارفع اللسان لكشف الحل"><div class="f">الحل ⤒</div></div></div>`;
+const stage=`<div class="stage"><div class="pop"><div class="crease"></div><div class="card"><div class="edge"></div><canvas dir="ltr"></canvas></div></div></div>`;
+const RUN=(a,b)=>`<header class="run"><span>${a}</span><span>${b}</span></header>`;
+const FOOT=n=>`<footer class="pno">${N(n)}</footer>`;
+
+/* ================= content ================= */
+const CH='الفصل الرابع · الدوال الدائرية';
+const PT=(arr,cls='')=>`<div class="parts ${cls}">${arr.map(([l,h])=>`<span><b class="pl">${l}</b>${h}</span>`).join('')}</div>`;
+const EXHINT='<p class="exhint">حلّ في دفترك، ثم اضغط رقم التمرين في المختبر المقابل وارفع اللسان لترى الحل.</p>';
+const chkPage=(set,title)=>`<section class="page lab" data-lab="chk4" data-set="${set}">
+ ${RUN('مختبر','تحقّق من حلّك')}
+ <h3 class="lt"><span class="lab-ic">تحقّق</span>${title}</h3>
+ ${stage}
+ <div class="side"><div class="exq hide"></div>
+  <div class="flapbox lab-flap"><div class="ans ro"></div><div class="flap" role="button" tabindex="0" aria-label="ارفع اللسان لكشف الحل"><div class="f">ارفع اللسان لترى الحل ⤒</div></div></div>
+  <div class="ctl"><div class="btns xsel"></div></div></div>
+ ${FOOT(0)}
+</section>`;
+const PAGES=[
+/* ---- 0 : title + dictionary ---- */
+[`<section class="page text">
+ ${RUN('رياضيات · الصف الخامس العلمي','منهج العراق')}
+ <div class="tp">
+  <div class="ribbon">الفصل الرابع</div>
+  <h1>الدوال الدائرية</h1>
+  <div class="en">Circular Functions</div>
+  <ol class="toc compact"></ol>
+ </div>
+ ${FOOT(0)}
+</section>`,
+`<section class="page lab" data-lab="intro">
+ ${RUN('قاموس الفصل','ص '+N('54'))}
+ <h3 class="lt"><span class="lab-ic">مجسّم</span>ألوان ثابتة لكل مفهوم</h3>
+ ${stage}
+ <div class="side">
+  <table class="dict">
+   <tr><td><span class="dot" style="background:var(--c-center)"></span>الزاوية ${M('θ')}</td><td><span class="dot" style="background:var(--c-radius)"></span>${M('<span class="cr">cos θ</span> = x')}</td><td><span class="dot" style="background:var(--c-std)"></span>${M('<span class="cs">sin θ</span> = y')}</td></tr>
+   <tr><td>الزاوية المنتسبة</td><td colspan="2">${M('(n × 90° ± θ)')}</td></tr>
+   <tr><td>قانون الجيب تمام</td><td colspan="2">${M('A′^2 = B′^2 + C′^2 − 2B′C′ cos A')}</td></tr>
+   <tr><td>قانون الجيب</td><td colspan="2">${M('A′/sin A = B′/sin B = C′/sin C')}</td></tr>
+   <tr><td>المحور السيني / الصادي</td><td colspan="2">${M('x-axis , XX′ &nbsp; y-axis , YY′')}</td></tr>
+  </table>
+ </div>
+ ${FOOT(0)}
+</section>`],
+
+/* ---- 1 : winding mapping ---- */
+[`<section class="page text">
+ ${RUN(CH,'[4−2] · ص '+N('56–58'))}
+ <h2><span class="num"></span>التطبيق اللاف</h2>
+ <div class="hook">لُفّ خيطاً طوله ${M('π')} حول دائرة نصف قطرها ${N('1')} بدءاً من ${M('(1, 0)')}. أين تقع نهايته؟</div>
+ <div class="tb"><div>
+  <p>ان التطبيق الذي يقرن اي عدد حقيقي بنقطة من دائرة الوحدة (${M('Unit Circle')}) (أو بزاوية موجهة بالوضع القياسي) يسمى <b>التطبيق اللاف</b>.</p>
+  <p>اذا كانت ${M('<span class="cc">θ</span>')} عدداً حقيقياً، وكانت ${M('N = (x, y)')} النقطة الواقعة على دائرة الوحدة الموافقة للعدد ${M('θ')} فان العدد ${M('x')} هو ${M('<span class="cr">cos θ</span>')}، اما العدد ${M('y')} فهو ${M('<span class="cs">sin θ</span>')}.</p>
+  <div class="law">${M('∀ θ ∈ R : <span class="cs">sin θ = y</span> , <span class="cr">cos θ = x</span>')}<br>${M('−1 ≤ cos θ ≤ 1 , −1 ≤ sin θ ≤ 1')}<small>تعريف · ص ${N('58')}</small></div>
+ </div>
+ <aside class="mg"><span class="mt">الأشكال ${N('4−1')} إلى ${N('4−4')}</span><p>${M('A = (1, 0)','blk')}${M('D = (0, 1)','blk')}${M('L = (−1, 0)','blk')}${M('M = (0, −1)','blk')}</p></aside></div>
+ ${predict(`ما النقطة المثلثية للعدد ${M('π')} ؟`,[N('(1, 0)'),N('(−1, 0)'),N('(0, −1)')],1,
+   `${M('(−1, 0)')}: خيط طوله ${M('π')} يلفّ نصف الدائرة فيقف على الجزء السالب من محور السينات، أي ${M('cos π = −1 , sin π = 0')} (الشكل ${N('4−3')}).`)}
+ ${FOOT(0)}
+</section>`,
+`<section class="page lab" data-lab="wind">
+ ${RUN('مختبر','اللفّ حول دائرة الوحدة')}
+ <h3 class="lt"><span class="lab-ic">مختبر</span>لفّ العدد ${M('θ')} حول دائرة الوحدة</h3>
+ ${stage}
+ <div class="side"><div class="exq hide"></div><div class="ro"></div>
+  <div class="ctl">
+   ${slider('t','<span class="cc">θ</span> (العدد)',-48,48,1,4,'--c-center')}
+   <div class="btns"><span class="lbl">الأشكال:</span><button type="button" class="chip" data-t="0">A</button><button type="button" class="chip" data-t="6">D</button><button type="button" class="chip" data-t="12">L</button><button type="button" class="chip" data-t="18">M</button><button type="button" class="chip" data-t="-6">${M('−π/2')}</button><button type="button" class="chip" data-t="30">${M('5π/2')}</button></div>
+  </div></div>
+ ${FOOT(0)}
+</section>`],
+
+/* ---- 2 : principal measure ---- */
+[`<section class="page text">
+ ${RUN(CH,'القياس الرئيس · ص '+N('58–59'))}
+ <h2><span class="num"></span>القياس الرئيس للزاوية</h2>
+ <div class="tb"><div>
+  <p>ان اي زاوية موجهة بالوضع القياسي تقترن بمجموعة غير منتهية من الاعداد يدعى كل منها قياساً لهذه الزاوية. وقد جرت العادة على اعتبار القياس الدائري الذي يحقق العلاقة ${M('0 ≤ θ < 2π')} أو القياس الستيني الذي يحقق العلاقة ${M('0 ≤ θ < 360°')} وهو <b>القياس الرئيس</b> للزاوية.</p>
+  <p>وواضح أن هذا القياس وحيد، وأن بقية القياسات تنتج باضافة ${M('(2kπ)')} حيث ${M('k')} عدد صحيح، الى القياس الرئيس ${M('θ')}:</p>
+  <div class="law">${M('Angle = <span class="cg">2kπ</span> + <span class="cc">θ</span>')}</div>
+ </div>
+ <aside class="mg"><span class="mt">مثال 1 · ص ${N('58')}</span><p>${M('8.75π = 8π + 0.75π','blk')}${M('0.75π = 3π/4','blk')}القياس الرئيس ${M('3π/4')}</p></aside></div>
+ ${predict(`ما القياس الرئيس للزاوية ${M('−7π/2')} ؟`,[M('π/2'),M('3π/2'),M('−π/2')],0,
+   `${M('−7π/2 = −4π + π/2')} فالقياس الرئيس ${M('π/2')}، ومنه ${M('sin(−7π/2) = sin π/2 = 1')} (مثال 2، ص ${N('59')}). القياس السالب ${M('−π/2')} ليس رئيساً لأنه لا يحقق ${M('0 ≤ θ < 2π')}.`)}
+ ${FOOT(0)}
+</section>`,
+`<section class="page lab" data-lab="princ">
+ ${RUN('مختبر','القياس الرئيس')}
+ <h3 class="lt"><span class="lab-ic">مختبر</span>اطرح الدورات الكاملة ${M('2π')}</h3>
+ ${stage}
+ <div class="side"><div class="exq hide"></div><div class="ro"></div>
+  <div class="ctl">
+   ${slider('a','<span class="cg">الزاوية</span>',-264,264,1,105,'--c-gen')}
+   <div class="btns"><span class="lbl">أمثلة:</span><button type="button" class="chip" data-a="105" data-q="p1a">مثال 1 a</button><button type="button" class="chip" data-a="raw66" data-q="p1b">مثال 1 b</button><button type="button" class="chip" data-a="-42" data-q="p2">مثال 2</button></div>
+  </div></div>
+ ${FOOT(0)}
+</section>`],
+
+/* ---- 3 : tangent and signs ---- */
+[`<section class="page text">
+ ${RUN(CH,'[4−3] · ص '+N('60–62'))}
+ <h2><span class="num"></span>دالة الظل وإشارات الدوال</h2>
+ <div class="tb"><div>
+  <p>مستقيم يمسّ دائرة الوحدة عند ${M('A(1, 0)')}: نقطة تقاطع الضلع النهائي للزاوية ${M('θ')} معه تمثل ${M('<span class="cp">tan θ</span>')}.</p>
+  <div class="law">${M('tan : { θ : θ ∈ R , cos θ ≠ 0 } → R')}<br>${M('<span class="cp">tan θ = sin θ / cos θ</span>')}<small>تعريف · ص ${N('60')}</small></div>
+  <table class="tbl sgn mini"><tr><th>الربع</th><th>${M('sin')}</th><th>${M('cos')}</th><th>${M('tan')}</th></tr>
+   <tr><td>${N('1')}</td><td>+</td><td>+</td><td>+</td></tr><tr><td>${N('2')}</td><td>+</td><td>−</td><td>−</td></tr><tr><td>${N('3')}</td><td>−</td><td>−</td><td>+</td></tr><tr><td>${N('4')}</td><td>−</td><td>+</td><td>−</td></tr></table>
+  <div class="law">${M('cos^2 θ + sin^2 θ = 1')}<small>من مبرهنة فيثاغورس في المثلث ${M('OMB')} · ص ${N('62')}</small></div>
+ </div>
+ <aside class="mg"><span class="mt">ملاحظة · ص ${N('62')}</span><p>نكتب عادة ${M('sin^2 θ')} بدلاً من ${M('[sin θ]^2')}، وكذلك ${M('cos^2 θ')}.</p></aside></div>
+ ${predict(`في أي ربع يكون ${M('sin θ > 0')} و ${M('tan θ < 0')} ؟`,['الأول','الثاني','الرابع'],1,
+   `الثاني: النقطة المثلثية ${M('(−x, y)')}، فالجيب موجب والجيب تمام سالب، فيكون ${M('tan θ = sin θ / cos θ')} سالباً.`)}
+ ${FOOT(0)}
+</section>`,
+`<section class="page lab" data-lab="tanc">
+ ${RUN('مختبر','الظل على المستقيم المماس')}
+ <h3 class="lt"><span class="lab-ic">مختبر</span>أدر الضلع النهائي وراقب الإشارات</h3>
+ ${stage}
+ <div class="side"><div class="exq hide"></div><div class="ro"></div>
+  <div class="ctl">
+   ${slider('d','<span class="cc">θ</span> بالدرجات',0,355,5,30,'--c-center')}
+   <div class="btns"><span class="lbl">الأرباع:</span><button type="button" class="chip" data-d="45">1</button><button type="button" class="chip" data-d="135">2</button><button type="button" class="chip" data-d="225">3</button><button type="button" class="chip" data-d="315">4</button><span class="lbl">أمثلة:</span><button type="button" class="chip" data-d="300" data-q="t3">مثال 3</button></div>
+  </div></div>
+ ${FOOT(0)}
+</section>`],
+
+/* ---- 4 : other functions and identities ---- */
+[`<section class="page text">
+ ${RUN(CH,'[4−4] [4−5] · ص '+N('65–69'))}
+ <h2><span class="num"></span>دوال دائرية أخرى والعلاقات بينها</h2>
+ <div class="tb"><div>
+  <table class="tbl">
+   <tr><th>الدالة</th><th>تعريفها</th><th>بشرط</th></tr>
+   <tr><td>ظل التمام ${M('cot')}</td><td>${M('<span class="cg">cot θ = cos θ / sin θ</span>')}</td><td>${M('sin θ ≠ 0')}</td></tr>
+   <tr><td>القاطع ${M('sec')}</td><td>${M('<span class="cg">sec θ = 1 / cos θ</span>')}</td><td>${M('cos θ ≠ 0')}</td></tr>
+   <tr><td>القاطع التمام ${M('csc')}</td><td>${M('<span class="cg">csc θ = 1 / sin θ</span>')}</td><td>${M('sin θ ≠ 0')}</td></tr>
+  </table>
+  <p><b>مبرهنة [${N('4−5−1')}]</b> (المتطابقة الفيثاغورية):</p>
+  <div class="law">${M('sin^2 x + cos^2 x = 1 , ∀ x ∈ R')}<br>${M('tan^2 x + 1 = sec^2 x , ∀ x , x ≠ (2n+1)π/2')}<br>${M('1 + cot^2 x = csc^2 x , ∀ x , x ≠ nπ')}<small>حيث ${M('n')} اي عدد صحيح</small></div>
+ </div>
+ <aside class="mg"><span class="mt">كيف نحصل عليها؟</span><p>نقسم طرفي ${M('sin^2 x + cos^2 x = 1')} على ${M('cos^2 x')} فنحصل على الثانية، وعلى ${M('sin^2 x')} فنحصل على الثالثة.</p></aside></div>
+ ${predict(`اذا كان ${M('π/2 < x < π')} وكان ${M('sin x = 5/13')}، فما إشارة ${M('cos x')} ؟`,['موجبة','سالبة','صفر'],1,
+   `سالبة: ${M('x')} في الربع الثاني، فمن ${M('cos^2 x = 1 − 25/169 = 144/169')} نأخذ ${M('cos x = −12/13')} (مثال 5، ص ${N('66')}).`)}
+ ${FOOT(0)}
+</section>`,
+`<section class="page lab" data-lab="six">
+ ${RUN('مختبر','الدوال الست')}
+ <h3 class="lt"><span class="lab-ic">مختبر</span>من دالة واحدة إلى الدوال الست</h3>
+ ${stage}
+ <div class="side"><div class="exq hide"></div><div class="ro"></div>
+  <div class="ctl">
+   <div class="btns"><span class="lbl">المعلوم:</span><button type="button" class="chip" data-fn="sin">${M('sin x')}</button><button type="button" class="chip" data-fn="cos">${M('cos x')}</button><button type="button" class="chip" data-fn="tan">${M('tan x')}</button><span class="lbl">الربع:</span><span class="qsel"></span></div>
+   ${slider('p','<span class="cs">البسط</span>',-24,24,1,3,'--c-std')}${slider('q','<span class="cs">المقام</span>',1,25,1,5,'--c-std')}
+   <div class="btns"><span class="lbl">أمثلة:</span><button type="button" class="chip" data-pre="m4" data-q="s4">مثال 4</button><button type="button" class="chip" data-pre="m5" data-q="s5">مثال 5</button></div>
+  </div></div>
+ ${FOOT(0)}
+</section>`],
+
+/* ---- 5 : calculator, related angles, negative angles ---- */
+[`<section class="page text">
+ ${RUN(CH,'[4−6] [4−7] [4−8] · ص '+N('70–77'))}
+ <h2><span class="num"></span>الزوايا المنتسبة والزاوية السالبة</h2>
+ <div class="tb"><div>
+  <p><b>الحاسبة:</b> انتبه لنظام الزاوية ${M('DEG')} أو ${M('RAD')}، و ${M('csc = 1/sin')} بمفتاح ${M('1/x')}.</p>
+  <p><b>تعريف:</b> اذا كان ${M('θ')} قياس لزاوية حادة فأي زاوية قياسها على الصورة ${M('(n × 90° ± θ)')}، حيث ${M('n')} عدد صحيح (غير سالب) تسمى <b>زاوية منتسبة</b> للزاوية الحادة التي قياسها ${M('θ')}.</p>
+  <ul class="cases">
+   <li><b>${M('n')} فردي</b><span>تتغير: ${M('sin ↔ cos , tan ↔ cot , sec ↔ csc')}</span></li>
+   <li><b>${M('n')} زوجي</b><span>لا تتغير الدالة</span></li>
+   <li><b>دائماً</b><span>نراعي اشارة الدالة في ربع الزاوية</span></li>
+  </ul>
+  <div class="law">${M('cos(−θ) = cos θ , sin(−θ) = −sin θ')}<br>${M('tan(−θ) = −tan θ')}<small>[${N('4−8')}] · ص ${N('76–77')}</small></div>
+ </div>
+ <aside class="mg"><span class="mt">مثال 10 · ص ${N('72')}</span><p>${M('120° = 180° − 60°','blk')}${M('sin 120° = sin 60° = √3/2','blk')}${M('cos 120° = −cos 60°','blk')}</p></aside></div>
+ ${predict(`ما قيمة ${M('cos 120°')} ؟`,[M('1/2'),M('−1/2'),M('−√3/2')],1,
+   `${M('cos 120° = −cos 60° = −1/2')}، لأن ${M('120°')} في الربع الثاني حيث الجيب تمام سالب. <b>خطأ شائع</b>: نسيان الإشارة وكتابة ${M('1/2')} (مثال 10، ص ${N('72')}).`)}
+ ${FOOT(0)}
+</section>`,
+`<section class="page lab" data-lab="rel">
+ ${RUN('مختبر','الزاوية المنتسبة')}
+ <h3 class="lt"><span class="lab-ic">مختبر</span>من أي زاوية إلى زاوية حادة</h3>
+ ${stage}
+ <div class="side"><div class="exq hide"></div><div class="ro"></div>
+  <div class="ctl">
+   ${slider('d','<span class="cc">الزاوية</span>',-720,1800,1,120,'--c-center')}
+   <div class="btns"><span class="lbl">أمثلة:</span><button type="button" class="chip" data-d="51" data-q="r8">مثال 8</button><button type="button" class="chip" data-d="35.366666667" data-q="r9">مثال 9</button><button type="button" class="chip" data-d="120" data-q="r10">مثال 10</button><button type="button" class="chip" data-d="150" data-q="r11">مثال 11</button><button type="button" class="chip" data-d="-240" data-q="r12">مثال 12</button><button type="button" class="chip" data-d="780" data-q="r13">مثال 13</button></div>
+  </div></div>
+ ${FOOT(0)}
+</section>`],
+
+/* ---- 6 : sum and difference ---- */
+[`<section class="page text">
+ ${RUN(CH,'[4−9] · ص '+N('79–86'))}
+ <h2><span class="num"></span>مجموع وفرق قياسي زاويتين</h2>
+ <p>من حاصل الضرب الداخلي للمتجهين ${M('op , oq')} على دائرة الوحدة نصل الى:</p>
+ <div class="law sm">${M('cos(x<sub>1</sub> ± x<sub>2</sub>) = cos x<sub>1</sub> cos x<sub>2</sub> ∓ sin x<sub>1</sub> sin x<sub>2</sub>')}<br>${M('sin(x<sub>1</sub> ± x<sub>2</sub>) = sin x<sub>1</sub> cos x<sub>2</sub> ± cos x<sub>1</sub> sin x<sub>2</sub>')}<br>${M('tan(x<sub>1</sub> ± x<sub>2</sub>) = (tan x<sub>1</sub> ± tan x<sub>2</sub>)/(1 ∓ tan x<sub>1</sub> tan x<sub>2</sub>)')}</div>
+ <p><b>نتيجة (${N('1')})</b> لكل عدد حقيقي ${M('x')}:</p>
+ <div class="law sm">${M('sin 2x = 2 sin x cos x , tan 2x = 2 tan x/(1 − tan^2 x)')}<br>${M('cos 2x = cos^2 x − sin^2 x = 2cos^2 x − 1 = 1 − 2sin^2 x')}</div>
+ <p><b>نتيجة (${N('2')})</b> · ص ${N('84')}:</p>
+ <div class="law sm">${M('sin^2(x/2) = (1 − cos x)/2 , cos^2(x/2) = (1 + cos x)/2')}</div>
+ ${predict(`هل ${M('cos(30° + 60°) = cos 30° + cos 60°')} ؟`,['نعم','لا'],1,
+   `لا: ${M('cos 90° = 0')} بينما ${M('cos 30° + cos 60° = (√3 + 1)/2')}. الصحيح ${M('cos 30° cos 60° − sin 30° sin 60° = √3/4 − √3/4 = 0')} (تمارين ${N('4−4')}، س${N('6')} d).`)}
+ ${FOOT(0)}
+</section>`,
+`<section class="page lab" data-lab="sum">
+ ${RUN('مختبر','المجموع والفرق')}
+ <h3 class="lt"><span class="lab-ic">مختبر</span>تحقّق من المفكوك بالأعداد</h3>
+ ${stage}
+ <div class="side"><div class="exq hide"></div><div class="ro"></div>
+  <div class="ctl">
+   <div class="btns"><button type="button" class="chip" data-m="c+">${M('cos(+)')}</button><button type="button" class="chip" data-m="c-">${M('cos(−)')}</button><button type="button" class="chip" data-m="s+">${M('sin(+)')}</button><button type="button" class="chip" data-m="s-">${M('sin(−)')}</button><button type="button" class="chip" data-m="t+">${M('tan(+)')}</button><button type="button" class="chip" data-m="t-">${M('tan(−)')}</button><button type="button" class="chip" data-m="d">${M('2x')}</button><button type="button" class="chip" data-m="h">${M('x/2')}</button></div>
+   <div class="sl2">${slider('x1','<span class="cr">x₁</span>',0,360,5,45,'--c-radius')}${slider('x2','<span class="cs">x₂</span>',0,360,5,30,'--c-std')}</div>
+   <div class="btns"><span class="lbl">أمثلة:</span><button type="button" class="chip" data-pre="14" data-q="u14">14</button><button type="button" class="chip" data-pre="15" data-q="u15">15</button><button type="button" class="chip" data-pre="16" data-q="u16">16</button><button type="button" class="chip" data-pre="17" data-q="u17">17</button><button type="button" class="chip" data-pre="18" data-q="u18">18</button><button type="button" class="chip" data-pre="19" data-q="u19">19</button></div>
+  </div></div>
+ ${FOOT(0)}
+</section>`],
+
+/* ---- 7 : trigonometric equations ---- */
+[`<section class="page text">
+ ${RUN(CH,'[4−10] · ص '+N('88–92'))}
+ <h2><span class="num"></span>المعادلات المثلثية</h2>
+ <div class="tb"><div>
+  <p><b>تعريف:</b> المعادلة المثلثية هي جملة مفتوحة تحوي دالة مثلثية أو اكثر لزاوية معينة أو عدة زوايا، وابسط صورها ${M('sin x = B , cos x = k')} حيث ${M('B , k ∈ [−1, 1]')}.</p>
+  <div class="law">${M('sin x = sin θ ⇔ x = θ or x = 180° − θ')}</div>
+  <div class="law">${M('cos x = cos θ ⇔ x = θ or x = 360° − θ')}</div>
+  <div class="law">${M('tan x = tan θ ⇔ x = θ or x = 180° + θ')}</div>
+ </div>
+ <aside class="mg"><span class="mt">ثانياً · ص ${N('91')}</span><p>المعادلة ${M('a sin x + b cos x = c','blk')} نكتبها بصورة ${M('cos(α − x)')} كما في مثال 29، ويمكن حلّها اذا كان ${M('c^2 ≤ a^2 + b^2')}.</p></aside></div>
+ ${predict(`كم حلاً للمعادلة ${M('sin x = 1/2')} حيث ${M('0° ≤ x < 360°')} ؟`,[N('1'),N('2'),N('4')],1,
+   `حلان: ${M('x = 30°')} أو ${M('x = 180° − 30° = 150°')}، لأن الجيب موجب في الربعين الأول والثاني (مثال 22، ص ${N('89')}).`)}
+ ${FOOT(0)}
+</section>`,
+`<section class="page lab" data-lab="eq">
+ ${RUN('مختبر','حلّ المعادلة على الدائرة')}
+ <h3 class="lt"><span class="lab-ic">مختبر</span>أين يقطع المستقيم دائرة الوحدة؟</h3>
+ ${stage}
+ <div class="side"><div class="exq hide"></div><div class="ro"></div>
+  <div class="ctl">
+   <div class="btns"><span class="lbl">المعادلة:</span><button type="button" class="chip" data-fn="sin">${M('sin x = k')}</button><button type="button" class="chip" data-fn="cos">${M('cos x = k')}</button><button type="button" class="chip" data-fn="tan">${M('tan x = k')}</button></div>
+   ${slider('k','<span class="cp">k</span>',-1.2,1.2,0.05,0.5,'--c-point')}
+   <div class="btns"><span class="lbl">أمثلة:</span><button type="button" class="chip" data-pre="21" data-q="e21">21</button><button type="button" class="chip" data-pre="22" data-q="e22">22</button><button type="button" class="chip" data-pre="23" data-q="e23">23</button><button type="button" class="chip" data-pre="24" data-q="e24">24</button><button type="button" class="chip" data-pre="25" data-q="e25">25</button><button type="button" class="chip" data-pre="26" data-q="e26">26</button></div>
+  </div></div>
+ ${FOOT(0)}
+</section>`],
+
+/* ---- 8 : graphs ---- */
+[`<section class="page text">
+ ${RUN(CH,'[4−11] · ص '+N('93–101'))}
+ <h2><span class="num"></span>رسم منحنيات الدوال المثلثية</h2>
+ <div class="tb"><div>
+  <p>كثير من الظواهر الطبيعية تتكرر بشكل متماثل في فترات متساوية من الزمن، مثل أوجه القمر، ورسم الدوال المثلثية يتكرر في دورات لأنها <b>دوال دورية</b>.</p>
+  <p>والفترة التي كرر فيها المنحني نفسه تسمى <b>دورة الدالة</b>، ويسمى العدد (${N('1')} ÷ دورة الدالة) بالتردد، ويسمى العدد (اكبر قيمة − اقل قيمة) ÷ ${N('2')} سعة الدالة.</p>
+  <table class="tbl">
+   <tr><th>الدالة</th><th>الدورة</th><th>التردد</th><th>السعة</th></tr>
+   <tr><td>${M('sin x , cos x')}</td><td>${M('2π')}</td><td>${M('1/2π')}</td><td>${M('1')}</td></tr>
+   <tr><td>${M('tan x , cot x')}</td><td>${M('π')}</td><td>${M('1/π')}</td><td>ليس له سعة</td></tr>
+   <tr><td>${M('sec x , csc x')}</td><td>${M('2π')}</td><td>${M('1/2π')}</td><td>ليس له سعة</td></tr>
+  </table>
+ </div>
+ <aside class="mg"><span class="mt">مثال · ص ${N('95')}</span><p>${M('y = 4 sin x','blk')}الدورة ${M('2π')}، التردد ${M('1/2π')}، السعة ${M('(4 − (−4))/2 = 4')}</p></aside></div>
+ ${predict(`ما دورة الدالة ${M('y = sin 2x')} ؟`,[M('2π'),M('π'),M('4π')],1,
+   `${M('π')}: المنحني يكرر نفسه أسرع بمرتين، فالدورة ${M('2π/2 = π')} والتردد ${M('1/π')} والسعة ${M('1')} (نشاط ص ${N('96')}).`)}
+ ${FOOT(0)}
+</section>`,
+`<section class="page lab" data-lab="graph">
+ ${RUN('مختبر','منحنيات الدوال')}
+ <h3 class="lt"><span class="lab-ic">مختبر</span>ارسم ${M('y = a f(bx)')}</h3>
+ ${stage}
+ <div class="side"><div class="exq hide"></div><div class="ro"></div>
+  <div class="ctl">
+   <div class="btns"><button type="button" class="chip" data-fn="sin">${M('sin')}</button><button type="button" class="chip" data-fn="cos">${M('cos')}</button><button type="button" class="chip" data-fn="tan">${M('tan')}</button><button type="button" class="chip" data-fn="cot">${M('cot')}</button><button type="button" class="chip" data-fn="sec">${M('sec')}</button><button type="button" class="chip" data-fn="csc">${M('csc')}</button></div>
+   <div class="sl2">${slider('a','<span class="cp">a</span>',-4,4,0.5,1,'--c-point')}${slider('b','<span class="cg">b</span>',0.5,4,0.5,1,'--c-gen')}</div>
+   <div class="btns"><span class="lbl">أمثلة:</span><button type="button" class="chip" data-pre="4sin" data-q="g95">${M('4 sin x')}</button><button type="button" class="chip" data-pre="sin2">${M('sin 2x')}</button><button type="button" class="chip" data-pre="sin3">${M('sin 3x')}</button><button type="button" class="chip" data-pre="cosh">${M('cos x/2')}</button><button type="button" class="chip" data-pre="2cos4">${M('2 cos 4x')}</button></div>
+  </div></div>
+ ${FOOT(0)}
+</section>`],
+
+/* ---- E1 : exercises (4-1) (4-2) ---- */
+[`<section class="page text">
+ ${RUN(CH,'تمارين (4−1) (4−2) · ص '+N('59')+'، '+N('64'))}
+ <h2><span class="num"></span>تمارين (4−1) و (4−2)</h2>
+ ${EXHINT}
+ <ol class="exl">
+  <li><b class="exn">1</b><div><b class="tset">(4−1)</b> جد القياسات الرئيسة لكل من الزوايا التي قياساتها الآتية :${PT([['a',M('21π')],['b',M('−15π/2')]])}</div></li>
+  <li><b class="exn">2</b><div><b class="tset">(4−1)</b> جد الاعداد الحقيقية الآتية :${PT([['a',M('sin π/3')],['b',M('cos 19π/6')],['c',M('cos 24π')]],'three')}</div></li>
+  <li><b class="exn">1</b><div><b class="tset">(4−2)</b> اوجد ${M('tan x , cos x , sin x')} اذا علمت ان الضلع النهائي للزاوية ${M('(x)')} الموجهة في الوضع القياسي يقطع دائرة الوحدة في النقط المثلثية الآتية :${PT([['a',M('(1/√5 , −2/√5)')],['b',M('(−√3/3 , √6/3)')],['c',M('(1/2 , √3/2)')],['d',M('(−0.6 , −0.8)')]])}</div></li>
+  <li><b class="exn">2</b><div><b class="tset">(4−2)</b> جد ما يأتي :${PT([['a',M('sin(30π)')],['b',M('cos(−13π/6)')],['c',M('tan(4π/3)')],['d',M('cos(30π)')]])}</div></li>
+  <li><b class="exn">3</b><div><b class="tset">(4−2)</b> جد قيمة ما يأتي :${PT([['a',M('sin^2 3 + cos^2 3')],['b',M('cos^2 π/6 − sin^2 π/6')]])}</div></li>
+  <li><b class="exn">4</b><div><b class="tset">(4−2)</b> تحقق مما يأتي :${PT([['a',M('sin π/6 cos π/3 + cos π/6 sin π/3 = sin π/2')]],'one')}</div></li>
+ </ol>
+ ${FOOT(0)}
+</section>`, chkPage('A','تمارين (4−1) و (4−2)')],
+
+/* ---- E2 : exercises (4-3) ---- */
+[`<section class="page text">
+ ${RUN(CH,'تمارين (4−3) · ص '+N('68–69'))}
+ <h2><span class="num"></span>تمارين (4−3) والمتطابقات</h2>
+ ${EXHINT}
+ <ol class="exl">
+  <li><b class="exn">م6</b><div>اثبت صحة المتطابقة الآتية : ${M('sec^2 x + csc^2 x = sec^2 x csc^2 x , ∀ x , x ≠ nπ/2')}</div></li>
+  <li><b class="exn">م7</b><div>اثبت صحة المتطابقة الآتية : ${M('(3cos^2 x − sin^2 x + 1)/sin^2 x = 4 cot^2 x')}</div></li>
+  <li><b class="exn">1</b><div>اذا كان ${M('3π/2 < x < 2π')} وكان ${M('cos x = 2/3')} فجد قيمة كل من : ${M('csc x , sec x , cot x')}</div></li>
+  <li><b class="exn">2</b><div>اذا كان ${M('π < x < 3π/2')} وكان ${M('tan x = 7/3')} فجد قيمة كل من : ${M('csc x , sec x , cot x')}</div></li>
+  <li><b class="exn">3</b><div>اثبت صحة المتطابقات الآتية :${PT([['a',M('tan x = sin x sec x')],['b',M('sec^2 x = (sin^2 x + cos^2 x)/(1 − sin^2 x)')],['c',M('(1 − sin^2 x)(1 + tan^2 x) = 1')],['d',M('(1 − cos^2 x)/tan x = sin x cos x')],['e',M('(1 + sin x − sin^2 x)/cos x = cos x + tan x')]],'one')}</div></li>
+ </ol>
+ ${FOOT(0)}
+</section>`, chkPage('B','المتطابقات وتمارين (4−3)')],
+
+/* ---- E3 : exercises (4-4) ---- */
+[`<section class="page text">
+ ${RUN(CH,'تمارين (4−4) · ص '+N('78'))}
+ <h2><span class="num"></span>تمارين (4−4)</h2>
+ <ol class="exl tight">
+  <li><b class="exn">1</b><div>اذا كان ${M('sin θ = −8/17')} ، ${M('θ')} تقع في الربع الثالث فجد : ${M('cos θ , cos(3π/2 − θ) , sin(π/2 + θ)')}</div></li>
+  <li><b class="exn">2</b><div>اذا كان ${M('cos β = 0.8 , 270° < β < 360°')} فجد : ${M('sin β , cos(270° + β) , cos(270° − β)')}</div></li>
+  <li><b class="exn">3</b><div>اذا كان ${M('sin α = 24/25 , 90° < α < 180°')} فاحسب قيمة : ${M('sin(90° − α) − cos(180° − α) + cos 120°')}</div></li>
+  <li><b class="exn">4</b><div>اثبت انه ${M('cos(π/2 + θ) cos(π/2 − θ) − sin(π + θ) sin(π − θ) = 0')}</div></li>
+  <li><b class="exn">5</b><div>حدد الربع الذي تقع فيه الزاوية ${M('α')} اذا كان :${PT([['a',M('sin α > 0 , cos α > 0')],['b',M('sin α > 0 , cos α < 0')],['c',M('sin α < 0 , cos α < 0')],['d',M('sin α < 0 , cos α > 0')]])}</div></li>
+  <li><b class="exn">6</b><div>اي العبارات الآتية صحيحة وأيها خاطئة ؟${PT([['a',M('sin 270° = 2 sin 30°')],['b',M('sin 90° = 2 cos 60°')],['c',M('cos 150° = 1/2 tan 120°')],['d',M('cos(30° + 60°) = cos 30° + cos 60°')]],'one')}</div></li>
+  <li><b class="exn">7</b><div>اثبت ان :${PT([['a',M('sin(90° + α) + cot(270° − α) + cos(180° + α) = tan α')],['b',M('sin^2 135° = 1/2 (1 − cos 270°)')]],'one')}</div></li>
+ </ol>
+ ${FOOT(0)}
+</section>`, chkPage('C','تمارين (4−4)')],
+
+/* ---- E4 : exercises (4-5) ---- */
+[`<section class="page text">
+ ${RUN(CH,'تمارين (4−5) · ص '+N('87–88'))}
+ <h2><span class="num"></span>تمارين (4−5)</h2>
+ <ol class="exl tight">
+  <li><b class="exn">1</b><div>اذا كان ${M('tan x = 3/4')} وكانت ${M('0 < x < 90°')} فاحسب : ${M('tan 2x , cos 2x , sin 2x')}</div></li>
+  <li><b class="exn">2</b><div>اذا كان ${M('0 < α < π/2 , sec α = √5/2')} فاحسب : ${M('cot 2α , csc 2α')}</div></li>
+  <li><b class="exn">3</b><div>اذا كان ${M('90° < α < 180° , tan^2 α = 4/9')} فاحسب : ${M('sin(2α − 90°) , cos(180° − 2α)')}</div></li>
+  <li><b class="exn">4</b><div>اذا كان كل من ${M('α , β')} زاوية حادة موجبة بحيث ${M('α + β = 45°')} وكان ${M('tan α/tan β = 2/3')} فاحسب : ${M('tan 2α , tan 2β')}</div></li>
+  <li><b class="exn">5</b><div>اثبت أن : ${M('|cot α/2| = √((1 + cos α)/(1 − cos α))')} ثم احسب ${M('cot 15°')} بدون استخدام الحاسبات</div></li>
+  <li><b class="exn">6</b><div>اثبت صحة المتطابقات الآتية:${PT([['a',M('(sin θ + cos θ)^2 = 1 + sin 2θ')],['b',M('sec(x − y) = sec x sec y/(1 + tan x tan y)')],['c',M('(sin(−α) − sin(β − 90°))/(−cos(270° + α) + cos β) + (sin(α − 180°) + cos(−β))/(sin(180° + α) + sin(β + 90°))','blk')],['d',M('tan(270° − α) + sin(180° − α)/(1 − cos(180° − α)) = csc α')],['e',M('sin 20° cos 10° + cos 20° sin 10° = 1/2')],['f',M('cos 35° cos 25° − cos 55° cos 65° = 1/2')],['g',M('sin^2 x cos^2 x = (1 − cos 4x)/8')],['h',M('sin 4x = 8 cos^3 x sin x − 4 cos x sin x')]],'one')}</div></li>
+  <li><b class="exn">7</b><div>احسب ${M('sin 3x , cos 3x')} بدلالة ${M('sin x , cos x')}</div></li>
+ </ol>
+ ${FOOT(0)}
+</section>`, chkPage('D','تمارين (4−5)')],
+
+/* ---- E5 : exercises (4-6) ---- */
+[`<section class="page text">
+ ${RUN(CH,'تمارين (4−6) · ص '+N('90–92'))}
+ <h2><span class="num"></span>تمارين (4−6): حل المعادلات</h2>
+ <p class="exhint">في المختبر أيضاً الأمثلة ${N('27')} إلى ${N('30')}. نأخذ الحلول في الفترة ${M('0° ≤ x < 360°')} ما لم تُذكر فترة أخرى.</p>
+ <p>حل المعادلات الآتية :</p>
+ ${PT([['1',M('sin x = √3/2')],['2',M('cos x = √2/2')],['3',M('tan x = √3/3')],['4',M('sin 2x = sin(x + π/2)')],['5',M('cos 4x = cos(x + π)')],['6',M('tan 4x − cot x = 0')],['7',M('tan^2 x + 2tan x + 1 = 0')],['8',M('cos^2 x − cos x = 0')],['9',M('cos x = 2 sin^2(x/2)')],['10',M('tan 2x = 3 tan x')],['11',M('cos x = √2 sin^2 x')],['12',M('2 sin^2 x = cos 2x(4 sin 2x − 1)')],['13',M('cos^3 x = sin^3 x')],['14',M('sin x + cos x = 1')]],'eqs')}
+ ${FOOT(0)}
+</section>`, chkPage('E','المعادلات: تمارين (4−6)')],
+
+/* ---- E6 : exercises (4-8) part 1 ---- */
+[`<section class="page text">
+ ${RUN(CH,'تمارين (4−8) · ص '+N('102'))}
+ <h2><span class="num"></span>تمارين (4−8): الرسم والاختبار الموضوعي</h2>
+ <ol class="exl tight">
+  <li><b class="exn">1</b><div>ارسم بيان كل من الدوال الاتية. ومن الرسم استنتج كلا من دورة الدالة وترددها وسعتها:${PT([['1',M('y = sin 3x on [0, 4π/3]')],['2',M('y = −sin x on [0, 2π]')],['3',M('y = 3sin 2x on [0, 2π]')],['4',M('y = cos 2x on [−π, 2π]')],['5',M('y = −2cos x on [−2π, 2π]')],['6',M('y = 2 cos 3x on [0, 3π]')],['7',M('y = 2 tan x on [−π/2, 3π/2]')],['8',M('y = tan 2x on [0, π]')]])}</div></li>
+  <li><b class="exn">2−1</b><div>اختبار موضوعي — ضع اشارة ${M('+')} او ${M('−')} في المستطيلات التالية لتحصل على عبارة صحيحة :${PT([['a',M('cos(20° + 50°) = cos 20° cos 50° ☐ sin 20° sin 50°')],['b',M('tan(3A − 2B) = (tan 3A ☐ tan 2B)/(1 ☐ tan 3A tan 2B)')],['c',M('sin(80° ☐ 10°) = sin 80° cos 10° − cos 80° sin 10°')]],'one')}</div></li>
+  <li><b class="exn">2−2</b><div>اكمل ما يأتي لتحصل على عبارة صحيحة :${PT([['a',M('sin(40° + 180°) = sin 40° ☐ + ☐ sin 180°')],['b',M('2 sin π/3 cos π/3 = sin ☐')],['c',M('2 tan(x/3)/(1 − tan^2(x/3)) = ☐')],['d',M('cos^2 15° − sin^2 15° = cos ☐')]],'one')}</div></li>
+ </ol>
+ ${FOOT(0)}
+</section>`, chkPage('F','الرسم والاختبار الموضوعي')],
+
+/* ---- E7 : exercises (4-8) part 2 ---- */
+[`<section class="page text">
+ ${RUN(CH,'تمارين (4−8) · ص '+N('102–103'))}
+ <h2><span class="num"></span>تمارين (4−8): تتمة</h2>
+ <ol class="exl tight">
+  <li><b class="exn">2−3</b><div>عيّن العبارات الصحيحة والعبارات الخاطئة فيما يأتي:${PT([['a',M('sin 6x = 2 sin 3x')],['b',M('sin 15 cos 15° = sin 30°')],['c',M('cos 80° = cos^2 40° − sin^2 40°')],['d','مجموعة حل المعادلة '+M('2cos x + 3 = 0')+' هي '+M('∅')]])}</div></li>
+  <li><b class="exn">2−4</b><div>اختر من القائمة ${M('A')} ما يناسبها من القائمة ${M('B')}:${PT([['1',M('cos 4A cos A − sin 4A sin A =')],['a',M('sin 5A')],['2',M('sin A cos 4A − sin 4A cos A =')],['b',M('cos 5A')],['3',M('sin 4A cos A + cos 4A sin A =')],['c',M('sin 3A')],['','&nbsp;'],['d',M('sin(−3A)')]])}</div></li>
+  <li><b class="exn">5</b><div>اختبار مقالي :${PT([['1','اذا كان '+M('3π/2 < x < 2π')+' وكانت '+M('cos x = 2/3')+' فاوجد قيمة كل من : '+M('cot x , sec x , csc x')],['2','اذا كان '+M('3π/2 < x < 2π')+' وكانت '+M('cos x = 3/5')+' فاوجد قيمة كل من : '+M('cos 2x , sin 2x , tan 2x , sin(x/2) , cos(x/2)')],['3','بدون استخدام الحاسبة اوجد قيمة: '+M('a. sin π/8 cos π/8 &nbsp; b. cos^2 π/12 − sin^2 π/12')],['4','اثبت صحة كل من المتطابقات الاتية: '+M('a. cos^4 x − sin^4 x = cos 2x &nbsp; b. tan(x/2) = (1 − cos x)/sin x')]],'one')}</div></li>
+ </ol>
+ ${FOOT(0)}
+</section>`, chkPage('G','الاختبار الموضوعي والمقالي')],
+
+/* ---- challenge ---- */
+[`<section class="page text">
+ ${RUN(CH,'تحدٍّ')}
+ <h2><span class="num"></span>تحدّي الدوال الدائرية</h2>
+ <p>ثمانية أسئلة سريعة من الفصل كله. لكل إجابة صحيحة من المحاولة الأولى نقطة، وفي النهاية تحصل على النجوم.</p>
+ ${predict(`إحماء: ما قيمة ${M('sin(−240°)')} ؟`,[M('√3/2'),M('−√3/2'),M('1/2')],0,
+   `${M('sin(−240°) = −sin 240° = −sin(180° + 60°) = sin 60° = √3/2')} (مثال 12، ص ${N('77')})`)}
+ <ol class="rounds"></ol>
+ <div class="stars" aria-live="polite"></div>
+ ${FOOT(0)}
+</section>`,
+`<section class="page lab" data-lab="game">
+ ${RUN('مختبر','تحدٍّ')}
+ <h3 class="lt"><span class="lab-ic">لعبة</span><span class="gtitle">السؤال 1 من 8</span></h3>
+ <div class="gq"></div>
+ ${stage}
+ <div class="side">
+  <div class="ro gfb">اختر إجابة واحدة.</div>
+  <div class="ctl">
+   <div class="btns gopts"></div>
+   <div class="btns"><button type="button" class="chip gnext hide">التالي</button><button type="button" class="chip gagain hide">أعد التحدّي</button></div>
+  </div>
+ </div>
+ ${FOOT(0)}
+</section>`]
+];
+
+/* ================= pencil drawing ================= */
+const COL={};
+function readCols(){ const cs=getComputedStyle(document.documentElement); ['graphite','muted','grid','c-center','c-radius','c-std','c-gen','c-point','c-cut','paper','card','ok','bad','ink'].forEach(k=>COL[k]=cs.getPropertyValue('--'+k).trim()); }
+function hash(n){ const s=Math.sin(n*127.1+311.7)*43758.5453; return s-Math.floor(s); }
+function noise(x){ const i=Math.floor(x), f=x-i, u=f*f*(3-2*f); return (hash(i)*(1-u)+hash(i+1)*u)*2-1; }
+class Pen{
+  constructor(c){this.c=c;}
+  path(pts,o={}){
+    const c=this.c, passes=o.passes||2, J=o.j??0.8;
+    c.save(); c.lineCap='round'; c.lineJoin='round'; c.strokeStyle=o.color||COL.graphite; if(o.dash) c.setLineDash(o.dash);
+    for(let p=0;p<passes;p++){
+      c.globalAlpha=(o.a??0.9)*(p?0.45:1); c.lineWidth=(o.w||1.3)*(p?0.65:1); c.beginPath();
+      pts.forEach(([x,y],i)=>{ const ox=noise(x*.05+y*.021+p*37.1)*J, oy=noise(y*.05-x*.017+p*19.7)*J; i?c.lineTo(x+ox,y+oy):c.moveTo(x+ox,y+oy); });
+      c.stroke();
+    }
+    c.restore();
+  }
+  line(x1,y1,x2,y2,o={}){
+    const d=Math.hypot(x2-x1,y2-y1)||1, n=Math.max(2,Math.ceil(d/7)), ex=o.over??1.5, ux=(x2-x1)/d, uy=(y2-y1)/d, pts=[];
+    for(let i=0;i<=n;i++){const t=i/n; pts.push([x1-ux*ex+(x2-x1+2*ux*ex)*t, y1-uy*ex+(y2-y1+2*uy*ex)*t]);}
+    this.path(pts,o);
+  }
+  circle(cx,cy,R,o={}){
+    const n=Math.max(32,Math.ceil(R*.6)), a0=noise(cx*.1+cy*.07)*3, pts=[];
+    for(let i=0;i<=n*1.04;i++){const a=a0+i/n*Math.PI*2, rr=R+noise(i*.31+cx*.01)*.7; pts.push([cx+rr*Math.cos(a),cy+rr*Math.sin(a)]);}
+    this.path(pts,o);
+  }
+  hatch(clip,col,sp=6,alpha=.32){
+    const c=this.c; c.save(); c.beginPath(); clip(c); c.clip(); c.strokeStyle=col; c.globalAlpha=alpha; c.lineWidth=1; c.beginPath();
+    for(let s=-this.H;s<this.W+this.H;s+=sp){ c.moveTo(s,0); c.lineTo(s-this.H*.75,this.H); }
+    c.stroke(); c.restore();
+  }
+  dot(x,y,r,col){ const c=this.c; c.save(); c.fillStyle=col; c.beginPath(); c.arc(x,y,r,0,7); c.fill(); c.restore(); this.circle(x,y,r+.6,{color:COL.graphite,w:.8,a:.6,passes:1}); }
+  text(s,x,y,o={}){
+    const c=this.c; c.save(); c.font=`${o.it===false?'':'italic '}${o.wt||600} ${o.size||13}px "Cambria Math",Cambria,"Times New Roman",serif`;
+    if(o.ar) c.font=`${o.wt||700} ${o.size||13}px "Segoe UI","Noto Sans Arabic",Tahoma,sans-serif`;
+    c.direction=o.ar?'rtl':'ltr'; c.textAlign=o.al||'center'; c.textBaseline=o.bl||'middle';
+    if(o.halo!==false){ c.lineWidth=3.2; c.strokeStyle=COL.card; c.globalAlpha=.9; c.strokeText(s,x,y); c.globalAlpha=1; }
+    c.fillStyle=o.color||COL.graphite; c.fillText(s,x,y); c.restore();
+  }
+  arrowHead(x,y,ang,o={}){ const L=o.L||7; this.line(x,y,x-L*Math.cos(ang-.45),y-L*Math.sin(ang-.45),{...o,over:0}); this.line(x,y,x-L*Math.cos(ang+.45),y-L*Math.sin(ang+.45),{...o,over:0}); }
+}
+function coordPlane(pen,W,H,R){
+  const pad=6, s=Math.min(W-2*pad,H-2*pad)/(2*R), ox=W/2, oy=H/2, X=x=>ox+x*s, Y=y=>oy-y*s, c=pen.c;
+  const step=s<11?5:s<17?2:1;
+  c.save(); c.strokeStyle=COL.grid; c.lineWidth=1; c.beginPath();
+  const xm=Math.ceil(W/2/s), ym=Math.ceil(H/2/s);
+  for(let i=-xm;i<=xm;i++){ if(step>1&&i%step) continue; c.moveTo(X(i),0); c.lineTo(X(i),H); }
+  for(let j=-ym;j<=ym;j++){ if(step>1&&j%step) continue; c.moveTo(0,Y(j)); c.lineTo(W,Y(j)); }
+  c.stroke(); c.restore();
+  pen.line(5,oy,W-5,oy,{w:1.25,a:.85}); pen.line(ox,H-5,ox,5,{w:1.25,a:.85});
+  pen.arrowHead(W-5,oy,0,{w:1.2}); pen.arrowHead(ox,5,-Math.PI/2,{w:1.2});
+  const fs=Math.max(9,Math.min(13,s*.5+3));
+  pen.text('X',W-10,oy-fs*.95,{size:fs+2,wt:700}); pen.text('Y',ox+fs*.85,10,{size:fs+2,wt:700});
+  let ts=step; while(ts*s<fs*2.1) ts=ts===1?2:ts===2?5:ts*2;
+  for(let i=-xm;i<=xm;i++){ if(!i||i%ts) continue; const x=X(i); if(x<14||x>W-22) continue; pen.line(x,oy-2.5,x,oy+2.5,{w:1,passes:1,over:0}); pen.text(fmt(i),x,oy+fs*.9,{size:fs,it:false,wt:500,color:COL.muted}); }
+  for(let j=-ym;j<=ym;j++){ if(!j||j%ts) continue; const y=Y(j); if(y<20||y>H-10) continue; pen.line(ox-2.5,y,ox+2.5,y,{w:1,passes:1,over:0}); pen.text(fmt(j),ox-4,y,{size:fs,it:false,wt:500,color:COL.muted,al:'right'}); }
+  return {X,Y,s,fs};
+}
+
+
+/* ===== منطوق الأمثلة والتمارين كما ورد في الكتاب ===== */
+const EXQ={
+ p1a:['مثال 1 · ص 58',`اوجد القياس الرئيس لكل من الزوايا الآتية : ${M('a) 8.75π')}`],
+ p1b:['مثال 1 · ص 58',`اوجد القياس الرئيس لكل من الزوايا الآتية : ${M('b) 66')}`],
+ p2:['مثال 2 · ص 59',`احسب ${M('sin(−7π/2)')}`],
+ t3:['مثال 3 · ص 62',`جد ${M('tan 5π/3')}`],
+ s4:['مثال 4 · ص 63',`اذا كانت ${M('θ')} هو قياس الزاوية الموجهة بالوضع القياسي وكان ${M('sin θ = 3/5')} فاوجد قيمة ${M('cos θ , tan θ')} علماً ان ضلع الزاوية النهائي التي قياسها ${M('θ')} يقع في الربع الثاني .`],
+ s5:['مثال 5 · ص 66',`اذا كان : ${M('π/2 < x < π')} وكان ${M('sin x = 5/13')} فجد كلاً من : ${M('cos x , tan x , cot x , sec x , csc x')}`],
+ r8:['مثال 8 · ص 70',`جد ${M('csc 51°')} باستخدام الآت الحاسبة`],
+ r9:['مثال 9 · ص 70',`جد ${M('csc 35° 22′ , sec 35° 22′ , cot 35° 22′')} باستخدام الحاسبة`],
+ r10:['مثال 10 · ص 72',`جد ${M('cos 120° , sin 120°')} دون استخدام الآلة الحاسبة.`],
+ r11:['مثال 11 · ص 74',`جد قيم الدوال الدائرية للزوايا التي قياساتها: ${M('420° , 330° , 210° , 150° , 30°')}`],
+ r12:['مثال 12 · ص 77',`جد ${M('cos(−240°) , sin(−240°)')}`],
+ r13:['مثال 13 · ص 77',`جد ${M('tan(−300°) , cos 780° , sin(19π/2)')}`],
+ u14:['مثال 14 · ص 79',`احسب ${M('cos 15° , cos 75°')}`],
+ u15:['مثال 15 · ص 81',`احسب ${M('sin 15° , sin 75°')}`],
+ u16:['مثال 16 · ص 83',`احسب ${M('tan 15° , tan 75°')}`],
+ u17:['مثال 17 · ص 84',`اذا كان ${M('0 < α < 90° , sin α = 4/5')} فاحسب : ${M('tan 2α , cos 2α , sin 2α')}`],
+ u18:['مثال 18 · ص 85',`احسب ${M('cos π/8 , sin π/8')}`],
+ u19:['مثال 19 · ص 86',`بدون استخدام الحسابات احسب ${M('cos 105° , sin 105°')}`],
+ e21:['مثال 21 · ص 88',`اذا كان ${M('sin x = sin 45°')} فما قيم ${M('x')} ؟`],
+ e22:['مثال 22 · ص 89',`حل المعادلة : ${M('sin x = 1/2')}`],
+ e23:['مثال 23 · ص 89',`حل المعادلة ${M('cos x = cos 75°')}`],
+ e24:['مثال 24 · ص 89',`حل المعادلة ${M('cos x = −1/2')}`],
+ e25:['مثال 25 · ص 89',`حل المعادلة ${M('tan x = tan 53°')}`],
+ e26:['مثال 26 · ص 90',`حل المعادلة ${M('tan x = √3')}`],
+ g95:['مثال · ص 95',`ارسم بيان الدالة ${M('y = 4 sin x')} ومن الرسم جد: أ. الدورة ب. التردد ج. السعة`],
+ /* exercises */
+ 'xA1':['تمارين (4−1) · 1',`جد القياسات الرئيسة لكل من الزوايا التي قياساتها الآتية : ${M('a. 21π &nbsp; b. −15π/2')}`],
+ 'xA2':['تمارين (4−1) · 2',`جد الاعداد الحقيقية الآتية : ${M('a. sin π/3 &nbsp; b. cos 19π/6 &nbsp; c. cos 24π')}`],
+ 'xA3':['تمارين (4−2) · 1',`اوجد ${M('tan x , cos x , sin x')} اذا علمت ان الضلع النهائي للزاوية ${M('(x)')} الموجهة في الوضع القياسي يقطع دائرة الوحدة في النقط المثلثية الآتية`],
+ 'xA4':['تمارين (4−2) · 2',`جد ما يأتي : ${M('a. sin(30π) &nbsp; b. cos(−13π/6) &nbsp; c. tan(4π/3) &nbsp; d. cos(30π)')}`],
+ 'xA5':['تمارين (4−2) · 3',`جد قيمة ما يأتي : ${M('a. sin^2 3 + cos^2 3 &nbsp; b. cos^2 π/6 − sin^2 π/6')}`],
+ 'xA6':['تمارين (4−2) · 4',`تحقق مما يأتي : ${M('sin π/6 cos π/3 + cos π/6 sin π/3 = sin π/2')}`],
+ 'xBm6':['مثال 6 · ص 68',`اثبت صحة المتطابقة الآتية : ${M('sec^2 x + csc^2 x = sec^2 x csc^2 x')}`],
+ 'xBm7':['مثال 7 · ص 68',`اثبت صحة المتطابقة الآتية : ${M('(3cos^2 x − sin^2 x + 1)/sin^2 x = 4 cot^2 x')}`],
+ 'xB1':['تمارين (4−3) · 1',`اذا كان ${M('3π/2 < x < 2π')} وكان ${M('cos x = 2/3')} فجد قيمة كل من : ${M('csc x , sec x , cot x')}`],
+ 'xB2':['تمارين (4−3) · 2',`اذا كان ${M('π < x < 3π/2')} وكان ${M('tan x = 7/3')} فجد قيمة كل من : ${M('csc x , sec x , cot x')}`],
+ 'xB3a':['تمارين (4−3) · 3 a',`اثبت صحة المتطابقات الآتية : ${M('tan x = sin x sec x')}`],
+ 'xB3b':['تمارين (4−3) · 3 b',`اثبت صحة المتطابقات الآتية : ${M('sec^2 x = (sin^2 x + cos^2 x)/(1 − sin^2 x)')}`],
+ 'xB3c':['تمارين (4−3) · 3 c',`اثبت صحة المتطابقات الآتية : ${M('(1 − sin^2 x)(1 + tan^2 x) = 1')}`],
+ 'xB3d':['تمارين (4−3) · 3 d',`اثبت صحة المتطابقات الآتية : ${M('(1 − cos^2 x)/tan x = sin x cos x')}`],
+ 'xB3e':['تمارين (4−3) · 3 e',`اثبت صحة المتطابقات الآتية : ${M('(1 + sin x − sin^2 x)/cos x = cos x + tan x')}`],
+ 'xC1':['تمارين (4−4) · 1',`اذا كان ${M('sin θ = −8/17')} ، ${M('θ')} تقع في الربع الثالث فجد : ${M('cos θ , cos(3π/2 − θ) , sin(π/2 + θ)')}`],
+ 'xC2':['تمارين (4−4) · 2',`اذا كان ${M('cos β = 0.8 , 270° < β < 360°')} فجد : ${M('sin β , cos(270° + β) , cos(270° − β)')}`],
+ 'xC3':['تمارين (4−4) · 3',`اذا كان ${M('sin α = 24/25 , 90° < α < 180°')} فاحسب قيمة : ${M('sin(90° − α) − cos(180° − α) + cos 120°')}`],
+ 'xC4':['تمارين (4−4) · 4',`اثبت انه ${M('cos(π/2 + θ) cos(π/2 − θ) − sin(π + θ) sin(π − θ) = 0')}`],
+ 'xC5':['تمارين (4−4) · 5',`حدد الربع الذي تقع فيه الزاوية ${M('α')} اذا كان`],
+ 'xC6':['تمارين (4−4) · 6',`اي العبارات الآتية صحيحة وأيها خاطئة ؟`],
+ 'xC7':['تمارين (4−4) · 7',`اثبت ان : ${M('a. sin(90° + α) + cot(270° − α) + cos(180° + α) = tan α &nbsp; b. sin^2 135° = 1/2(1 − cos 270°)')}`],
+ 'xD1':['تمارين (4−5) · 1',`اذا كان ${M('tan x = 3/4')} وكانت ${M('0 < x < 90°')} فاحسب : ${M('tan 2x , cos 2x , sin 2x')}`],
+ 'xD2':['تمارين (4−5) · 2',`اذا كان ${M('0 < α < π/2 , sec α = √5/2')} فاحسب : ${M('cot 2α , csc 2α')}`],
+ 'xD3':['تمارين (4−5) · 3',`اذا كان ${M('90° < α < 180° , tan^2 α = 4/9')} فاحسب : ${M('sin(2α − 90°) , cos(180° − 2α)')}`],
+ 'xD4':['تمارين (4−5) · 4',`اذا كان كل من ${M('α , β')} زاوية حادة موجبة بحيث ${M('α + β = 45°')} وكان ${M('tan α/tan β = 2/3')} فاحسب : ${M('tan 2α , tan 2β')}`],
+ 'xD5':['تمارين (4−5) · 5',`اثبت أن : ${M('|cot α/2| = √((1 + cos α)/(1 − cos α))')} ثم احسب ${M('cot 15°')} بدون استخدام الحاسبات`],
+ 'xD6a':['تمارين (4−5) · 6 a',M('(sin θ + cos θ)^2 = 1 + sin 2θ')],
+ 'xD6b':['تمارين (4−5) · 6 b',M('sec(x − y) = sec x sec y/(1 + tan x tan y)')],
+ 'xD6c':['تمارين (4−5) · 6 c',M('(sin(−α) − sin(β − 90°))/(−cos(270° + α) + cos β) + (sin(α − 180°) + cos(−β))/(sin(180° + α) + sin(β + 90°))','blk')],
+ 'xD6d':['تمارين (4−5) · 6 d',M('tan(270° − α) + sin(180° − α)/(1 − cos(180° − α)) = csc α')],
+ 'xD6e':['تمارين (4−5) · 6 e',M('sin 20° cos 10° + cos 20° sin 10° = 1/2')],
+ 'xD6f':['تمارين (4−5) · 6 f',M('cos 35° cos 25° − cos 55° cos 65° = 1/2')],
+ 'xD6g':['تمارين (4−5) · 6 g',M('sin^2 x cos^2 x = (1 − cos 4x)/8')],
+ 'xD6h':['تمارين (4−5) · 6 h',M('sin 4x = 8 cos^3 x sin x − 4 cos x sin x')],
+ 'xD7':['تمارين (4−5) · 7',`احسب ${M('sin 3x , cos 3x')} بدلالة ${M('sin x , cos x')}`],
+ 'xEm27':['مثال 27 · ص 90',`حل المعادلة ${M('tan 4x + cot x = 0')} حيث أن ${M('0 < x < 90°')}`],
+ 'xEm28':['مثال 28 · ص 90',`حل المعادلة : ${M('2cos^2 x + 3cos x − 2 = 0')}`],
+ 'xEm29':['مثال 29 · ص 91',`حل المعادلة : ${M('√3 sin x + cos x = √3')}`],
+ 'xEm30':['مثال 30 · ص 92',`حل المعادلة الآتية : ${M('2 sin^2 x + √3 sin x cos x + 3 cos^2 x = 3')} حيث ان ${M('0° ≤ x < 90°')}`],
+ 'xF1':['تمارين (4−8) · 1',`ارسم بيان كل من الدوال الاتية. ومن الرسم استنتج كلا من دورة الدالة وترددها وسعتها`],
+ 'xF2':['تمارين (4−8) · 2−1',`ضع اشارة + او − في المستطيلات التالية لتحصل على عبارة صحيحة`],
+ 'xF3':['تمارين (4−8) · 2−2',`اكمل ما يأتي لتحصل على عبارة صحيحة`],
+ 'xG1':['تمارين (4−8) · 2−3',`عيّن العبارات الصحيحة والعبارات الخاطئة فيما يأتي`],
+ 'xG2':['تمارين (4−8) · 2−4',`اختر من القائمة A ما يناسبها من القائمة B`],
+ 'xG3':['تمارين (4−8) · 5−1',`اذا كان ${M('3π/2 < x < 2π')} وكانت ${M('cos x = 2/3')} فاوجد قيمة كل من : ${M('cot x , sec x , csc x')}`],
+ 'xG4':['تمارين (4−8) · 5−2',`اذا كان ${M('3π/2 < x < 2π')} وكانت ${M('cos x = 3/5')} فاوجد قيمة كل من : ${M('cos 2x , sin 2x , tan 2x , sin(x/2) , cos(x/2)')}`],
+ 'xG5':['تمارين (4−8) · 5−3',`بدون استخدام الحاسبة اوجد قيمة: ${M('a. sin π/8 cos π/8 &nbsp; b. cos^2 π/12 − sin^2 π/12')}`],
+ 'xG6':['تمارين (4−8) · 5−4',`اثبت صحة كل من المتطابقات الاتية: ${M('a. cos^4 x − sin^4 x = cos 2x &nbsp; b. tan(x/2) = (1 − cos x)/sin x')}`]
+};
+for(let i=1;i<=14;i++) EXQ['xE'+i]=['تمارين (4−6) · '+i,'حل المعادلات الآتية :'];
+
+/* ================= Lab base ================= */
+/* pre-stretch drawings vertically so that, after the pop-up card leans and the book tilts, circles still look round */
+function AK(page){ const inT=!!(page&&page.closest('#teach')); const r=inT?14:(single?28:32), t=inT?9:(single?7:18); return 1/(Math.cos(r*Math.PI/180)*Math.cos(t*Math.PI/180)); }
+const LABS=[];
+class Lab{
+  constructor(page){
+    this.page=page; this.cv=$('canvas',page); this.c=this.cv.getContext('2d'); this.pen=new Pen(this.c);
+    this.cur={}; this.tgt={}; this.W=0; this.H=0; this.d=1;
+    new ResizeObserver(()=>this.fit()).observe(this.cv);
+    $$('input[type=range]',page).forEach(inp=>inp.addEventListener('input',()=>{ this.hideEx(); this.onSlide(inp.dataset.k,parseFloat(inp.value)); }));
+    page.addEventListener('click',e=>{ const b=e.target.closest('[data-q]'); if(b) this.showEx(b.dataset.q); });
+    LABS.push(this);
+  }
+  fit(){ const w=this.cv.clientWidth,h=this.cv.clientHeight; if(!w||!h) return; const d=Math.min(3,(devicePixelRatio||1)*1.5), K=AK(this.page);
+    this.cv.width=Math.round(w*d); this.cv.height=Math.round(h*d); this.d=d; this.K=K; this.W=w; this.H=h/K; this.pen.W=w; this.pen.H=this.H; this.draw(); }
+  setVal(k,v,label){ const inp=$(`input[data-k="${k}"]`,this.page); if(inp) inp.value=v; const o=$(`output[data-o="${k}"]`,this.page); if(o) o.innerHTML=`<bdi dir="ltr">${label??fmt(v)}</bdi>`; }
+  set(o){ Object.assign(this.tgt,o); for(const k in o) if(this.cur[k]===undefined) this.cur[k]=o[k]; this.ui(); this.kick(); }
+  kick(){ if(!this.raf) this.raf=requestAnimationFrame(()=>this.tick()); }
+  tick(){ this.raf=0; let mv=false;
+    for(const k in this.tgt){ const a=this.cur[k], b=this.tgt[k]; if(RM){this.cur[k]=b;continue;} const n=a+(b-a)*.2; if(Math.abs(b-n)<1e-3) this.cur[k]=b; else {this.cur[k]=n; mv=true;} }
+    if(this.W) this.draw(); if(mv||this.anim) this.kick(); }
+  clear(){ const c=this.c; c.setTransform(this.d,0,0,this.d*this.K,0,0); c.clearRect(0,0,this.W,this.H); c.fillStyle=COL.card; c.fillRect(0,0,this.W,this.H); }
+  ro(html){ $('.ro',this.page).innerHTML=html; }
+  showEx(key){ const q=EXQ[key], el=$('.exq',this.page); if(!q||!el) return; el.innerHTML=`<b>${q[0]}</b>${q[1]}`; el.classList.remove('hide'); }
+  hideEx(){ const el=$('.exq',this.page); if(el) el.classList.add('hide'); }
+  onSlide(){} ui(){} draw(){}
+}
+
+/* ================= helpers (chapter 4) ================= */
+const D2R=Math.PI/180, R2D=180/Math.PI;
+const isInt=v=>Math.abs(v-Math.round(v))<1e-9;
+function gcd(a,b){ a=Math.abs(Math.round(a)); b=Math.abs(Math.round(b)); while(b){ [a,b]=[b,a%b]; } return a; }
+const row=h=>`<div class="row">${h}</div>`;
+const ok=h=>`<b style="color:var(--ok)">✓ ${h}</b>`, bad=h=>`<b style="color:var(--bad)">✗ ${h}</b>`;
+function dec(v,n=4){ if(!isFinite(v)) return 'غير معرّفة'; if(Math.abs(v)<5e-12) v=0; let s=v.toFixed(n); if(s.indexOf('.')>=0) s=s.replace(/0+$/,'').replace(/\.$/,''); if(s==='-0') s='0'; return s.replace('-','−'); }
+const norm360=d=>{ const r=((d%360)+360)%360; return Math.abs(r-360)<1e-9?0:r; };
+function quadOf(d){ d=Math.round(norm360(d)*1e7)/1e7; if(d%90===0) return 0; return Math.floor(d/90)+1; }
+const QN=['على أحد المحورين','الأول','الثاني','الثالث','الرابع'];
+function refA(d){ d=norm360(d); return d<=90?d:d<=180?180-d:d<=270?d-180:360-d; }
+const EXM={sin:{0:'0',30:'1/2',45:'1/√2',60:'√3/2',90:'1'},cos:{0:'1',30:'√3/2',45:'1/√2',60:'1/2',90:'0'},tan:{0:'0',30:'1/√3',45:'1',60:'√3',90:null},cot:{0:null,30:'√3',45:'1',60:'1/√3',90:'0'},sec:{0:'1',30:'2/√3',45:'√2',60:'2',90:null},csc:{0:null,30:'2',45:'√2',60:'2/√3',90:'1'}};
+const F6=['sin','cos','tan','cot','sec','csc'];
+function trigVal(f,d){ const r=d*D2R; let s=Math.sin(r), c=Math.cos(r); if(Math.abs(s)<1e-12) s=0; if(Math.abs(c)<1e-12) c=0;
+  switch(f){ case 'sin': return s; case 'cos': return c; case 'tan': return c===0?NaN:s/c; case 'cot': return s===0?NaN:c/s; case 'sec': return c===0?NaN:1/c; case 'csc': return s===0?NaN:1/s; } }
+function exactVal(f,d){ const ra=Math.round(refA(d)*1e6)/1e6; if(!(ra in EXM.sin)) return null; const m=EXM[f][ra], v=trigVal(f,d);
+  if(m===null||!isFinite(v)) return 'غير معرّفة'; if(m==='0') return '0'; return (v<0?'−':'')+m; }
+const valStr=(f,d,n=4)=>exactVal(f,d)??dec(trigVal(f,d),n);
+function piFrac(n,d){ if(n===0) return '0'; const g=gcd(n,d)||1; n/=g; d/=g; if(d<0){ n=-n; d=-d; } const a=Math.abs(n); return (n<0?'−':'')+(a===1?'':a)+'π'+(d===1?'':'/'+d); }
+const piU=a=>piFrac(Math.round(a),12);
+function dms(d){ if(isInt(d)) return fmtN(d)+'°'; const s=d<0?'−':'', a=Math.abs(d), g=Math.floor(a), m=Math.round((a-g)*60); return `${s}${g}° ${m}′`; }
+const fmtN=v=>dec(v,2);
+/* unit circle scene */
+function ucScene(lab,R=1.45){ const {pen,W,H}=lab, g=coordPlane(pen,W,H,R); pen.circle(g.X(0),g.Y(0),g.s,{w:1.5,color:COL['c-radius'],a:.55}); return g; }
+function spiral(pen,X,Y,from,to,o={}){ const n=Math.max(10,Math.ceil(Math.abs(to-from)/4)), pts=[], r0=o.r||1, gr=o.grow||0;
+  for(let i=0;i<=n;i++){ const t=from+(to-from)*i/n, r=r0+gr*Math.abs(t-from)/360; pts.push([X(r*Math.cos(t*D2R)),Y(r*Math.sin(t*D2R))]); }
+  pen.path(pts,{color:o.color||COL['c-center'],w:o.w||2,a:o.a??.95});
+  if(pts.length>2&&o.arrow!==false&&Math.abs(to-from)>4){ const [x1,y1]=pts[pts.length-2],[x2,y2]=pts[pts.length-1]; pen.arrowHead(x2,y2,Math.atan2(y2-y1,x2-x1),{color:o.color||COL['c-center'],w:1.6,L:8}); } }
+function ptOnUC(pen,X,Y,d,lab,col,o={}){ const x=Math.cos(d*D2R), y=Math.sin(d*D2R);
+  if(o.ray!==false) pen.line(X(0),Y(0),X(x),Y(y),{color:col,w:1.8});
+  if(o.proj){ pen.line(X(x),Y(0),X(x),Y(y),{color:COL['c-std'],w:2,dash:[4,3]}); pen.line(X(0),Y(0),X(x),Y(0),{color:COL['c-radius'],w:3,a:.8}); }
+  pen.dot(X(x),Y(y),4.5,col); if(lab) pen.text(lab,X(x*1.18)+(x>=0?16:-16),Y(y*1.18),{color:col,size:12,wt:700}); return [x,y]; }
+/* graph axes in radians with π ticks */
+function graphAxes(lab,x0,x1,y0,y1,o={}){ const {pen,W,H}=lab, pl=26, pr=12, pt=10, pb=22;
+  const X=x=>pl+(x-x0)/(x1-x0)*(W-pl-pr), Y=y=>pt+(y1-y)/(y1-y0)*(H-pt-pb), c=pen.c;
+  const stepPi=o.deg?null:((x1-x0)/Math.PI>5?1:0.5);
+  c.save(); c.strokeStyle=COL.grid; c.lineWidth=1; c.beginPath();
+  if(o.deg){ for(let g=Math.ceil(x0/30)*30;g<=x1;g+=30){ c.moveTo(X(g),pt); c.lineTo(X(g),H-pb); } }
+  else { for(let g=Math.ceil(x0/(Math.PI*stepPi))*stepPi;g*Math.PI<=x1+1e-9;g+=stepPi){ c.moveTo(X(g*Math.PI),pt); c.lineTo(X(g*Math.PI),H-pb); } }
+  const ys=(y1-y0)>8?2:1; for(let g=Math.ceil(y0/ys)*ys;g<=y1;g+=ys){ c.moveTo(pl,Y(g)); c.lineTo(W-pr,Y(g)); } c.stroke(); c.restore();
+  const yA=Math.min(Math.max(0,y0),y1), xA=Math.min(Math.max(0,x0),x1);
+  pen.line(pl-4,Y(yA),W-pr,Y(yA),{w:1.3}); pen.arrowHead(W-pr,Y(yA),0,{w:1.2}); pen.line(X(xA),H-pb+4,X(xA),pt,{w:1.3}); pen.arrowHead(X(xA),pt,-Math.PI/2,{w:1.2});
+  const fs=11;
+  if(o.deg){ for(let g=Math.ceil(x0/90)*90;g<=x1;g+=90){ if(!g) continue; pen.text(g+'°',X(g),Y(yA)+fs+2,{size:fs,it:false,wt:500,color:COL.muted}); } }
+  else { const st=(x1-x0)/Math.PI>6?1:0.5; for(let g=Math.ceil(x0/(Math.PI*st))*st;g*Math.PI<=x1+1e-9;g+=st){ if(Math.abs(g)<1e-9) continue; const n=Math.round(g*2); pen.text(piFrac(n,2),X(g*Math.PI),Y(yA)+fs+2,{size:fs,it:false,wt:500,color:COL.muted}); } }
+  for(let g=Math.ceil(y0/ys)*ys;g<=y1;g+=ys){ if(!g) continue; pen.text(fmtN(g),X(xA)-5,Y(g),{size:fs,it:false,wt:500,color:COL.muted,al:'right'}); }
+  return {X,Y}; }
+function plotFn(lab,G,f,x0,x1,y0,y1,o={}){ const {pen}=lab, N=900; let seg=[], prev=null;
+  const flush=()=>{ if(seg.length>1) pen.path(seg,{color:o.color||COL['c-point'],w:o.w||2.2,dash:o.dash,a:o.a??.95,passes:o.passes}); seg=[]; };
+  for(let i=0;i<=N;i++){ const x=x0+(x1-x0)*i/N, y=f(x); if(!isFinite(y)||y>y1+ (y1-y0)||y<y0-(y1-y0)){ flush(); prev=null; continue; }
+    if(prev!==null&&Math.abs(y-prev)>(y1-y0)*0.6){ flush(); } seg.push([G.X(x),G.Y(Math.max(y0-0.3,Math.min(y1+0.3,y)))]); prev=y; }
+  flush(); }
+function qMark(lab){ const {pen,W,H}=lab; pen.text('؟',W/2,H/2,{ar:true,size:Math.min(W,H)*.32,color:COL.muted,halo:false}); }
+
+/* ---- surd values a√b/(c√d) for the six functions ---- */
+function sqS(n){ let k=1,m=n; for(let i=Math.floor(Math.sqrt(n));i>1;i--){ if(n%(i*i)===0){ k=i; m=n/(i*i); break; } } return [k,m]; }
+function sv(s,a,b,c,d){ if(a===0) return {s:0,a:0,b:1,c:1,d:1}; let [k1,m1]=sqS(b),[k2,m2]=sqS(d); a*=k1; b=m1; c*=k2; d=m2; if(b===d){ b=1; d=1; } const g=gcd(a,c)||1; return {s,a:a/g,b,c:c/g,d}; }
+function svStr(v){ if(v.a===0) return '0'; const num=(v.a===1&&v.b>1?'':v.a)+(v.b>1?'√'+v.b:''), den=(v.c===1&&v.d===1)?'':((v.c>1?v.c:'')+(v.d>1?'√'+v.d:''));
+  const D=den&&/[√]/.test(den)&&den!=='√'+v.d&&v.c>1?'('+den+')':den; return (v.s<0?'−':'')+(num||'1')+(den?'/'+D:''); }
+const svNum=v=>v.s*v.a*Math.sqrt(v.b)/(v.c*Math.sqrt(v.d));
+const svInv=v=>v.a===0?null:sv(v.s,v.c,v.d,v.a,v.b);
+const QI=['','0 < x < π/2','π/2 < x < π','π < x < 3π/2','3π/2 < x < 2π'];
+const QS={1:{sin:1,cos:1},2:{sin:1,cos:-1},3:{sin:-1,cos:-1},4:{sin:-1,cos:1}};
+function solveSix(fn,p,q,quad){
+  const QQ=QS[quad]; if(!p) return {err:'اختر قيمة غير صفرية حتى تقع الزاوية داخل ربع.'};
+  let sinV,cosV,tanV; const rows=[];
+  if(fn==='sin'||fn==='cos'){ if(Math.abs(p)>=q) return {err:Math.abs(p)>q?`لا يمكن: ${M('−1 ≤ '+fn+' x ≤ 1')}`:'القيمة ±1 تعني زاوية على أحد المحورين، لا داخل ربع.'};
+    const other=fn==='sin'?'cos':'sin'; if(Math.sign(p)!==QQ[fn]) return {err:`${M(fn+' x')} ${p>0?'موجبة':'سالبة'} لا تكون في الربع ${QN[quad]}.`};
+    const r2=q*q-p*p, known=sv(Math.sign(p),Math.abs(p),1,q,1), oth=sv(QQ[other],1,r2,q,1);
+    rows.push(row(M(`sin^2 x + cos^2 x = 1 ⇒ ${other}^2 x = 1 − (${p}/${q})^2 = ${r2}/${q*q}`.replace(/\((-)(\d+)/,'(−$2'))));
+    rows.push(row(M(`${other} x = ±√${r2}/${q}`)+` ، و ${M('x')} في الربع ${QN[quad]} ${M('('+QI[quad]+')')} ⇐ `+M(`<span class="${other==='sin'?'cs':'cr'}">${other} x = ${svStr(oth)}</span>`)));
+    if(fn==='sin'){ sinV=known; cosV=oth; } else { cosV=known; sinV=oth; }
+    tanV=sv(sinV.s*cosV.s, sinV.a*cosV.c, sinV.b*cosV.d, sinV.c*cosV.a, sinV.d*cosV.b);
+  } else { if(Math.sign(p)!==QQ.sin*QQ.cos) return {err:`${M('tan x')} ${p>0?'موجبة':'سالبة'} لا تكون في الربع ${QN[quad]}.`};
+    const h2=p*p+q*q; tanV=sv(Math.sign(p),Math.abs(p),1,q,1); const secV=sv(QQ.cos,1,h2,q,1);
+    rows.push(row(M(`tan^2 x + 1 = sec^2 x ⇒ sec^2 x = (${Math.abs(p)}/${q})^2 + 1 = ${h2}/${q*q}`)));
+    rows.push(row(M(`sec x = ±√${h2}/${q}`)+` ، و ${M('x')} في الربع ${QN[quad]} ⇐ `+M(`<span class="cg">sec x = ${svStr(secV)}</span>`)));
+    cosV=svInv(secV); sinV=sv(QQ.sin, Math.abs(p)*cosV.a, cosV.b, q*cosV.c, cosV.d); }
+  const V={sin:sinV,cos:cosV,tan:tanV,cot:svInv(tanV),sec:svInv(cosV),csc:svInv(sinV)};
+  rows.push(row(F6.map(f=>M(`<span class="${f==='sin'?'cs':f==='cos'?'cr':f==='tan'?'cp':'cg'}">${f} x = ${svStr(V[f])}</span>`)).join(' ')));
+  const ang=Math.atan2(svNum(sinV),svNum(cosV))*R2D;
+  return {rows,V,ang:norm360(ang)}; }
+
+/* ---- intro: rotating point with cos/sin ---- */
+class IntroLab extends Lab{
+  constructor(p){ super(p); this.t0=performance.now(); }
+  start(){ if(RM) return; this.anim=true; this.kick(); }
+  stop(){ this.anim=false; }
+  draw(){ if(!this.W) return; this.clear(); const d=RM?40:(40+(performance.now()-this.t0)/45)%360;
+    const {X,Y}=ucScene(this,1.35), pen=this.pen;
+    spiral(pen,X,Y,0,d,{r:.28,color:COL['c-center'],w:1.6});
+    const [x,y]=ptOnUC(pen,X,Y,d,'',COL['c-point'],{proj:true});
+    pen.text('cos θ',X(x/2),Y(0)+(y>=0?14:-14),{color:COL['c-radius'],size:13,wt:700});
+    pen.text('sin θ',X(x)+(x>=0?26:-26),Y(y/2),{color:COL['c-std'],size:13,wt:700});
+    pen.text('θ',X(.42*Math.cos(d*D2R/2)),Y(.42*Math.sin(d*D2R/2)),{color:COL['c-center'],size:14,wt:700});
+    pen.text('(cos θ, sin θ)',X(x*1.15)+(x>=0?34:-34),Y(y*1.15)+(y>=0?-6:6),{color:COL['c-point'],size:12,wt:700}); }
+}
+
+/* ---- winding mapping ---- */
+class WindLab extends Lab{
+  constructor(p){ super(p); $$('[data-t]',p).forEach(b=>b.onclick=()=>{ const t=+b.dataset.t; this.setVal('t',t,piU(t)); this.set({t}); }); this.setVal('t',4,piU(4)); this.set({t:4}); }
+  onSlide(k,v){ this.setVal('t',v,piU(v)); this.set({t:v}); }
+  ui(){ const t=this.tgt.t, d=t*15, q=quadOf(d);
+    let s=row(M(`<span class="cc">θ = ${piU(t)}</span>`)+` <span class="k">(${M(fmtN(d)+'°')})</span> <span class="k">طول القوس الملفوف</span> ${M('|θ| = '+dec(Math.abs(t*Math.PI/12),3))}`);
+    s+=row(M(`N = (<span class="cr">cos θ</span> , <span class="cs">sin θ</span>) = (<span class="cr">${valStr('cos',d)}</span> , <span class="cs">${valStr('sin',d)}</span>)`));
+    s+=row(q?`النقطة في الربع ${QN[q]}`:`النقطة ${QN[0]}`)+row(`<span class="k">لاحظ:</span> ${M('−1 ≤ cos θ ≤ 1 , −1 ≤ sin θ ≤ 1')}`);
+    this.ro(s); }
+  draw(){ if(!this.W) return; this.clear(); const d=this.cur.t*15, turns=Math.abs(d)/360;
+    const {X,Y}=ucScene(this,1.3+Math.min(.5,turns*.08)), pen=this.pen;
+    pen.text('A',X(1)+9,Y(0)-9,{size:13,wt:700});
+    if(Math.abs(d)>.5) spiral(pen,X,Y,0,d,{r:1,grow:.08,color:COL['c-center'],w:2.4});
+    const T=this.tgt.t*15; ptOnUC(pen,X,Y,d,'N('+valStr('cos',T)+', '+valStr('sin',T)+')',COL['c-point'],{proj:true}); }
+}
+
+/* ---- principal measure ---- */
+class PrincLab extends Lab{
+  constructor(p){ super(p); this.raw=null;
+    $$('[data-a]',p).forEach(b=>b.onclick=()=>{ const v=b.dataset.a; if(v==='raw66'){ this.raw=66; this.setVal('a',252,'66'); this.set({x:66}); } else { this.raw=null; this.setVal('a',+v,piU(+v)); this.set({x:+v*Math.PI/12}); } this.ui(); });
+    this.setVal('a',105,piU(105)); this.set({x:105*Math.PI/12}); }
+  onSlide(k,v){ this.raw=null; this.setVal('a',v,piU(v)); this.set({x:v*Math.PI/12}); }
+  ui(){ let s='';
+    if(this.raw!==null){ s+=row(M('66 = 66 × (7/22)π = 21π')+' <span class="k">(بأخذ '+M('π ≈ 22/7')+')</span>');
+      s+=row(M('21π = 20π + π')+' ⇐ القياس الرئيس '+M('<span class="cc">θ ≈ π ≈ 3.14</span>'));
+      s+=row('<span class="k">بدون تقريب:</span> '+M('66 − 2(10)π ≈ '+dec(66-20*Math.PI,3))+' <span class="k">قريب جداً من</span> '+M('π')); return this.ro(s); }
+    const a=Math.round(this.tgt.x/(Math.PI/12)), k=Math.floor(a/24), p=a-24*k;
+    s+=row(M(`<span class="cg">${piU(a)}</span> = 2(${k})π + <span class="cc">${piU(p)}</span>`)+` <span class="k">حيث</span> ${M('k = '+k)}`);
+    s+=row('القياس الرئيس '+M(`<span class="cc">θ = ${piU(p)}</span>`)+` <span class="k">(${M(fmtN(p*15)+'°')})</span> <span class="k">ويحقق</span> ${M('0 ≤ θ < 2π')}`);
+    s+=row(M(`sin(${piU(a)}) = sin(${piU(p)}) = <span class="cs">${valStr('sin',p*15)}</span>`)+' ، '+M(`cos(${piU(a)}) = <span class="cr">${valStr('cos',p*15)}</span>`));
+    this.ro(s); }
+  draw(){ if(!this.W) return; this.clear(); const x=this.cur.x, d=x*R2D, turns=Math.abs(d)/360;
+    const {X,Y}=ucScene(this,1.25+Math.min(.9,turns*.06)+.15), pen=this.pen;
+    if(Math.abs(d)>.5) spiral(pen,X,Y,0,d,{r:1,grow:.06,color:COL['c-gen'],w:1.8,a:.85});
+    const p=norm360(d); spiral(pen,X,Y,0,p,{r:.32,color:COL['c-center'],w:2.6});
+    ptOnUC(pen,X,Y,d,'',COL['c-point'],{proj:false}); pen.text('θ',X(.48*Math.cos(p*D2R/2)),Y(.48*Math.sin(p*D2R/2)),{color:COL['c-center'],size:14,wt:700}); }
+}
+
+/* ---- tangent on the tangent line, signs ---- */
+class TancLab extends Lab{
+  constructor(p){ super(p); $$('[data-d]',p).forEach(b=>b.onclick=()=>{ const d=+b.dataset.d; this.setVal('d',d,d+'°'); this.set({d}); }); this.setVal('d',30,'30°'); this.set({d:30}); }
+  onSlide(k,v){ this.setVal('d',v,v+'°'); this.set({d:v}); }
+  ui(){ const d=this.tgt.d, q=quadOf(d), r=(n,a,b,c)=>`<tr class="${q===n?'on':''}"><td>${N(n)}</td><td>${a}</td><td>${b}</td><td>${c}</td></tr>`;
+    let s=row(M(`<span class="cs">sin ${d}° = ${valStr('sin',d)}</span> , <span class="cr">cos ${d}° = ${valStr('cos',d)}</span>`));
+    s+=row(M(`<span class="cp">tan ${d}° = sin/cos = ${valStr('tan',d)}</span>`)+(Math.abs(trigVal('cos',d))<1e-9?' <span class="k">لأن '+M('cos θ = 0')+'</span>':''));
+    s+=row(M(`cos^2 θ + sin^2 θ = ${dec(trigVal('cos',d)**2,4)} + ${dec(trigVal('sin',d)**2,4)} = 1`)+' ✓');
+    s+=`<table class="tbl sgn mini"><tr><th>الربع</th><th>sin</th><th>cos</th><th>tan</th></tr>${r(1,'+','+','+')}${r(2,'+','−','−')}${r(3,'−','−','+')}${r(4,'−','+','−')}</table>`;
+    this.ro(s); }
+  draw(){ if(!this.W) return; this.clear(); const d=this.cur.d, t=Math.tan(d*D2R), c=Math.cos(d*D2R);
+    const R=Math.min(3.2,Math.max(1.45,Math.abs(t)+.4)), {X,Y}=ucScene(this,R), pen=this.pen;
+    pen.line(X(1),Y(-R),X(1),Y(R),{color:COL['c-point'],w:1.8}); pen.text('A(1, 0)',X(1)+30,Y(0)+12,{size:12});
+    spiral(pen,X,Y,0,d,{r:.3,color:COL['c-center'],w:2});
+    const [x,y]=ptOnUC(pen,X,Y,d,'B',COL['c-center'],{proj:true});
+    if(Math.abs(c)>1e-6){ const ty=Math.max(-R,Math.min(R,t)); if(c>0) pen.line(X(x),Y(y),X(1),Y(ty),{color:COL['c-point'],w:1.6}); else pen.line(X(0),Y(0),X(1),Y(ty),{color:COL['c-point'],w:1.4,dash:[6,4]});
+      if(Math.abs(t)<=R){ pen.dot(X(1),Y(t),5,COL['c-point']); pen.text('C: tan θ = '+valStr('tan',this.tgt.d,2),X(1)-58,Y(t)-12,{color:COL['c-point'],size:12,wt:700}); } } }
+}
+
+/* ---- the six functions ---- */
+class SixLab extends Lab{
+  constructor(p){ super(p); this.fn='sin'; this.quad=2; this.p=3; this.q=5;
+    $('.qsel',p).innerHTML=[1,2,3,4].map(i=>`<button type="button" class="chip" data-qd="${i}">${i}</button>`).join('');
+    $$('[data-fn]',p).forEach(b=>b.onclick=()=>{ this.fn=b.dataset.fn; this.upd(); });
+    $$('[data-qd]',p).forEach(b=>b.onclick=()=>{ this.quad=+b.dataset.qd; this.upd(); });
+    $$('[data-pre]',p).forEach(b=>b.onclick=()=>{ const E={m4:['sin',3,5,2],m5:['sin',5,13,2]}[b.dataset.pre]; [this.fn,this.p,this.q,this.quad]=E; this.upd(); });
+    this.upd(); }
+  onSlide(k,v){ this[k]=v; this.upd(); }
+  upd(){ this.setVal('p',this.p); this.setVal('q',this.q);
+    $$('[data-fn]',this.page).forEach(b=>b.classList.toggle('on',b.dataset.fn===this.fn)); $$('[data-qd]',this.page).forEach(b=>b.classList.toggle('on',+b.dataset.qd===this.quad));
+    this.S=solveSix(this.fn,this.p,this.q,this.quad); if(!this.S.err) this.set({ang:this.S.ang}); this.ui(); this.kick(); }
+  ui(){ if(!this.S) return; const head=row(M(`${this.fn} x = ${this.p<0?'−':''}${Math.abs(this.p)}/${this.q}`)+` ، الربع ${QN[this.quad]}`);
+    this.ro(head+(this.S.err?row(bad(this.S.err)):this.S.rows.join(''))); }
+  draw(){ if(!this.W) return; this.clear(); const {X,Y}=ucScene(this,1.4), pen=this.pen; if(!this.S||this.S.err) return;
+    const d=this.cur.ang, x=Math.cos(d*D2R), y=Math.sin(d*D2R);
+    spiral(pen,X,Y,0,d,{r:.28,color:COL['c-center'],w:1.8}); ptOnUC(pen,X,Y,d,'',COL['c-point'],{proj:true});
+    pen.text(svStr(this.S.V.cos),X(x/2),Y(0)+(y>=0?14:-14),{color:COL['c-radius'],size:12,wt:700});
+    pen.text(svStr(this.S.V.sin),X(x)+(x>=0?30:-30),Y(y/2),{color:COL['c-std'],size:12,wt:700}); }
+}
+
+/* ---- related angles ---- */
+class RelLab extends Lab{
+  constructor(p){ super(p); $$('[data-d]',p).forEach(b=>b.onclick=()=>{ const d=+b.dataset.d; this.setVal('d',Math.round(d),dms(d).replace(' ','')); this.set({d}); }); this.setVal('d',120,'120°'); this.set({d:120}); }
+  onSlide(k,v){ this.setVal('d',v,v+'°'); this.set({d:v}); }
+  ui(){ const d=this.tgt.d, p=norm360(d), q=quadOf(p), a=refA(p), A=dms(a), P=dms(p); let s='';
+    if(d<0) s+=row(M(`sin(${dms(d)}) = −sin ${dms(-d)} , cos(${dms(d)}) = cos ${dms(-d)}`)+' <span class="k">(الزاوية السالبة)</span>');
+    if(d<0||d>=360){ const k=Math.round((d-p)/360); s+=row(M(`${dms(d)} = ${P} ${k<0?'−':'+'} 360° × ${Math.abs(k)}`)+` ⇐ القياس الرئيس ${M(P)}`); }
+    const forms={1:[`${P}`],2:[`180° − ${A}`,`90° + ${dms(90-a)}`],3:[`180° + ${A}`,`270° − ${dms(90-a)}`],4:[`360° − ${A}`,`270° + ${dms(90-a)}`]}[q];
+    if(q>1) s+=row(`الربع ${QN[q]}: ${M(P+' = '+forms.join(' = '))} <span class="k">منتسبة للزاوية</span> ${M(A)}`); else s+=row(q?'الربع الأول: الزاوية حادة':`الزاوية ${QN[0]}`);
+    const one=f=>{ const v=trigVal(f,p), ex=exactVal(f,p), sg=isFinite(v)?(v<0?'−':''):''; return M(`<span class="${f==='sin'?'cs':f==='cos'?'cr':f==='tan'?'cp':'cg'}">${f} ${P} = ${q>1&&isFinite(v)?sg+f+' '+A+' = ':''}${ex??dec(v,4)}</span>`); };
+    s+=row(['sin','cos','tan'].map(one).join(' ، ')); s+=row(['cot','sec','csc'].map(one).join(' ، '));
+    s+=row('<span class="k">بالحاسبة (DEG):</span> '+M(F6.slice(0,3).map(f=>`${f} = ${dec(trigVal(f,d),7)}`).join(' , ')))+row(M(F6.slice(3).map(f=>`${f} = ${dec(trigVal(f,d),7)}`).join(' , ')));
+    if(Math.abs(d-(35+22/60))<1e-6) s+=row(`<span class="k">في الكتاب ص ${N('70')}:</span> ${M('tan 35° 22′ = 0.620751391')} <span class="k">وهذا خطأ مطبعي؛ الصحيح</span> ${M('0.7097878')} <span class="k">ومنه</span> ${M('cot 35° 22′ = 1.4088718')}`);
+    this.ro(s); }
+  draw(){ if(!this.W) return; this.clear(); const d=this.cur.d, turns=Math.abs(d)/360, {X,Y}=ucScene(this,1.3+Math.min(.5,turns*.07)), pen=this.pen;
+    if(Math.abs(d)>.5) spiral(pen,X,Y,0,d,{r:.32,grow:.07,color:COL['c-center'],w:2});
+    const p=norm360(d), a=refA(p); ptOnUC(pen,X,Y,d,'B',COL['c-point'],{proj:true});
+    if(quadOf(p)>1){ const [bx,by]=[Math.cos(a*D2R),Math.sin(a*D2R)]; pen.line(X(0),Y(0),X(bx),Y(by),{color:COL['c-gen'],w:1.5,dash:[5,4]}); pen.dot(X(bx),Y(by),4,COL['c-gen']);
+      pen.text("B′ ("+dms(a)+")",X(bx)+30,Y(by)-10,{color:COL['c-gen'],size:12,wt:700}); pen.line(X(Math.cos(p*D2R)),Y(Math.sin(p*D2R)),X(bx),Y(by),{color:COL['c-gen'],w:1,dash:[2,4],passes:1}); } }
+}
+
+/* ---- sum & difference ---- */
+const SUMPRE={14:['c+',45,30,`${M('cos 75° = (√3 − 1)/(2√2)')} ، ${M('cos 15° = (√3 + 1)/(2√2)')}`],15:['s+',45,30,`${M('sin 75° = (√3 + 1)/(2√2)')} ، ${M('sin 15° = (√3 − 1)/(2√2)')}`],
+ 16:['t+',45,30,`${M('tan 75° = (√3 + 1)/(√3 − 1)')} ، ${M('tan 15° = (√3 − 1)/(√3 + 1)')}`],17:['d',Math.asin(.8)*R2D,0,`${M('sin 2α = 24/25 , cos 2α = −7/25 , tan 2α = −24/7')}`],
+ 18:['h',45,0,`${M('sin π/8 = √(2 − √2)/2 , cos π/8 = √(2 + √2)/2')}`],19:['h',210,0,`${M('sin 105° = √(2 + √3)/2 , cos 105° = −√(2 − √3)/2')} <span class="k">(كتبها الكتاب موجبة سهواً، و ${M('105°')} في الربع الثاني)</span>`]};
+class SumLab extends Lab{
+  constructor(p){ super(p); this.m='c+'; this.exact='';
+    $$('[data-m]',p).forEach(b=>b.onclick=()=>{ this.m=b.dataset.m; this.exact=''; this.upd(); });
+    $$('[data-pre]',p).forEach(b=>b.onclick=()=>{ const E=SUMPRE[b.dataset.pre]; this.m=E[0]; this.exact=E[3]; this.setVal('x1',Math.round(E[1]),dms(E[1])); this.setVal('x2',E[2],E[2]+'°'); this.set({x1:E[1],x2:E[2]}); this.upd(); });
+    this.set({x1:45,x2:30}); this.upd(); }
+  onSlide(k,v){ this.exact=''; this.setVal(k,v,v+'°'); this.set({[k]:v}); this.upd(); }
+  upd(){ $$('[data-m]',this.page).forEach(b=>b.classList.toggle('on',b.dataset.m===this.m)); $('.sl2 .sl:nth-child(2)',this.page).style.visibility=(this.m==='d'||this.m==='h')?'hidden':''; this.ui(); this.kick(); }
+  ui(){ const {x1,x2}=this.tgt, s=v=>Math.sin(v*D2R), c=v=>Math.cos(v*D2R), t=v=>Math.tan(v*D2R), A=dms(x1), B=dms(x2), m=this.m; let r='';
+    const eq=(L,Rt,lv,rv)=>{ r+=row(M(L+' = '+Rt)); r+=row(M(`${dec(lv,4)} = ${dec(rv,4)}`)+(Math.abs(lv-rv)<1e-9||(!isFinite(lv)&&!isFinite(rv))?' ✓':'')); };
+    if(m==='c+') eq(`cos(${A} + ${B})`,`cos ${A} cos ${B} − sin ${A} sin ${B}`,c(x1+x2),c(x1)*c(x2)-s(x1)*s(x2));
+    if(m==='c-') eq(`cos(${A} − ${B})`,`cos ${A} cos ${B} + sin ${A} sin ${B}`,c(x1-x2),c(x1)*c(x2)+s(x1)*s(x2));
+    if(m==='s+') eq(`sin(${A} + ${B})`,`sin ${A} cos ${B} + cos ${A} sin ${B}`,s(x1+x2),s(x1)*c(x2)+c(x1)*s(x2));
+    if(m==='s-') eq(`sin(${A} − ${B})`,`sin ${A} cos ${B} − cos ${A} sin ${B}`,s(x1-x2),s(x1)*c(x2)-c(x1)*s(x2));
+    if(m==='t+'||m==='t-'){ const sg=m==='t+'?1:-1, d=1-sg*t(x1)*t(x2), ok1=Math.abs(c(x1))>1e-9&&Math.abs(c(x2))>1e-9&&Math.abs(c(x1+sg*x2))>1e-9&&Math.abs(d)>1e-9;
+      if(!ok1) r+=row(bad('الظل غير معرّف لهذه القيم.')); else eq(`tan(${A} ${sg>0?'+':'−'} ${B})`,`(tan ${A} ${sg>0?'+':'−'} tan ${B})/(1 ${sg>0?'−':'+'} tan ${A} tan ${B})`,t(x1+sg*x2),(t(x1)+sg*t(x2))/d); }
+    if(m==='d'){ r+=row(M(`sin 2x = 2 sin x cos x = ${dec(2*s(x1)*c(x1),4)}`)+' ✓'); r+=row(M(`cos 2x = cos^2 x − sin^2 x = ${dec(c(x1)**2-s(x1)**2,4)}`)+' ✓');
+      r+=row(Math.abs(1-t(x1)**2)<1e-9||Math.abs(c(x1))<1e-9?M('tan 2x')+' غير معرّف':M(`tan 2x = 2 tan x/(1 − tan^2 x) = ${dec(2*t(x1)/(1-t(x1)**2),4)}`)+' ✓'); r+=row(`<span class="k">حيث</span> ${M('x = '+A)}`); }
+    if(m==='h'){ const hq=quadOf(x1/2); r+=row(M(`sin^2(x/2) = (1 − cos x)/2 = (1 − (${dec(c(x1),4)}))/2 = ${dec((1-c(x1))/2,4)}`));
+      r+=row(M(`cos^2(x/2) = (1 + cos x)/2 = ${dec((1+c(x1))/2,4)}`)); r+=row(`${M('x/2 = '+dms(x1/2))} ${hq?'في الربع '+QN[hq]:''}: ${M(`sin(x/2) = ${dec(s(x1/2),4)} , cos(x/2) = ${dec(c(x1/2),4)}`)}`); }
+    if(this.exact) r+=row('<span class="k">القيمة الدقيقة:</span> '+this.exact);
+    this.ro(r); }
+  draw(){ if(!this.W) return; this.clear(); const {x1,x2}=this.cur, {X,Y}=ucScene(this,1.35), pen=this.pen, m=this.m;
+    ptOnUC(pen,X,Y,x1,'x₁',COL['c-radius']);
+    if(m==='d'||m==='h'){ const r=m==='d'?2*x1:x1/2; spiral(pen,X,Y,0,r,{r:.3,color:COL['c-point'],w:2}); ptOnUC(pen,X,Y,r,m==='d'?'2x':'x/2',COL['c-point']); return; }
+    ptOnUC(pen,X,Y,x2,'x₂',COL['c-std']); const r=m.endsWith('+')?x1+x2:x1-x2; spiral(pen,X,Y,0,r,{r:.3,color:COL['c-point'],w:2}); ptOnUC(pen,X,Y,r,m.endsWith('+')?'x₁+x₂':'x₁−x₂',COL['c-point']); }
+}
+
+/* ---- simple trigonometric equations ---- */
+const EQPRE={21:['sin',Math.SQRT1_2,'sin 45°'],22:['sin',.5,'1/2'],23:['cos',Math.cos(75*D2R),'cos 75°'],24:['cos',-.5,'−1/2'],25:['tan',Math.tan(53*D2R),'tan 53°'],26:['tan',Math.sqrt(3),'√3']};
+function solveSimple(fn,k){ if(fn!=='tan'&&Math.abs(k)>1+1e-12) return null; let a,b;
+  if(fn==='sin'){ a=Math.asin(Math.max(-1,Math.min(1,k)))*R2D; b=180-a; } else if(fn==='cos'){ a=Math.acos(Math.max(-1,Math.min(1,k)))*R2D; b=360-a; } else { a=Math.atan(k)*R2D; b=a+180; }
+  const out=[norm360(a),norm360(b)].map(v=>Math.round(v*1e6)/1e6); return [...new Set(out)].sort((x,y)=>x-y); }
+class EqLab extends Lab{
+  constructor(p){ super(p); this.fn='sin'; this.lab='1/2';
+    $$('[data-fn]',p).forEach(b=>b.onclick=()=>{ this.fn=b.dataset.fn; this.lab=null; this.range(); this.upd(); });
+    $$('[data-pre]',p).forEach(b=>b.onclick=()=>{ const E=EQPRE[b.dataset.pre]; this.fn=E[0]; this.range(); this.lab=E[2]; this.setVal('k',Math.round(E[1]*20)/20,E[2]); this.set({k:E[1]}); this.upd(); });
+    this.range(); this.set({k:.5}); this.upd(); }
+  range(){ const i=$('input[data-k="k"]',this.page); if(this.fn==='tan'){ i.min=-4; i.max=4; } else { i.min=-1.2; i.max=1.2; } }
+  onSlide(k,v){ this.lab=null; this.setVal('k',v); this.set({k:v}); this.upd(); }
+  upd(){ $$('[data-fn]',this.page).forEach(b=>b.classList.toggle('on',b.dataset.fn===this.fn)); this.ui(); this.kick(); }
+  ui(){ const k=this.tgt.k, L=this.lab??dec(k,2), fn=this.fn, S=solveSimple(fn,k); let r=row(M(`<span class="cp">${fn} x = ${L}</span>`));
+    if(!S){ r+=row(bad(`لا حلّ: ${M('−1 ≤ '+fn+' x ≤ 1')} ، فمجموعة الحل ${M('∅')}`)); return this.ro(r); }
+    const th=S[0], rule={sin:`x = θ or x = 180° − θ`,cos:`x = θ or x = 360° − θ`,tan:`x = θ or x = 180° + θ`}[fn];
+    r+=row(M(`${fn} x = ${fn} θ ⇔ ${rule}`)); r+=row(M(`θ = ${dms(fn==='cos'?Math.acos(Math.max(-1,Math.min(1,k)))*R2D:fn==='sin'?Math.asin(Math.max(-1,Math.min(1,k)))*R2D:Math.atan(k)*R2D)}`));
+    r+=row('مجموعة الحل في '+M('[0°, 360°)')+' = '+M(`<span class="cc">{ ${S.map(dms).join(' , ')} }</span>`)); this.ro(r); }
+  draw(){ if(!this.W) return; this.clear(); const k=this.cur.k, fn=this.fn, R=fn==='tan'?Math.min(4.3,Math.max(1.45,Math.abs(k)+.4)):1.45, {X,Y}=ucScene(this,R), pen=this.pen;
+    if(fn==='sin') pen.line(X(-R),Y(k),X(R),Y(k),{color:COL['c-point'],w:1.8,dash:[7,5]});
+    if(fn==='cos') pen.line(X(k),Y(-R),X(k),Y(R),{color:COL['c-point'],w:1.8,dash:[7,5]});
+    if(fn==='tan'){ pen.line(X(1),Y(-R),X(1),Y(R),{color:COL['c-point'],w:1.4}); pen.dot(X(1),Y(k),4.5,COL['c-point']); pen.line(X(-Math.cos(Math.atan(k))*1.2),Y(-Math.sin(Math.atan(k))*1.2),X(1),Y(k),{color:COL['c-point'],w:1.4,dash:[6,4]}); }
+    const S=solveSimple(fn,k); (S||[]).forEach(d=>ptOnUC(pen,X,Y,d,dms(d),COL['c-center'])); }
+}
+
+/* ---- graphs of y = a f(bx) ---- */
+const GPRE={'4sin':['sin',4,1],sin2:['sin',1,2],sin3:['sin',1,3],cosh:['cos',1,.5],'2cos4':['cos',2,4]};
+const FX={sin:Math.sin,cos:Math.cos,tan:Math.tan,cot:x=>Math.cos(x)/Math.sin(x),sec:x=>1/Math.cos(x),csc:x=>1/Math.sin(x)};
+function periodInfo(fn,b){ const m=Math.round(b*2), pT=(fn==='tan'||fn==='cot')?[2,m]:[4,m]; /* T = pT[0]/pT[1] π */ const T=piFrac(pT[0],pT[1]);
+  const fr=(fn==='tan'||fn==='cot')?[m,2]:[m,4]; const g=gcd(fr[0],fr[1])||1, fn_=fr[0]/g, fd=fr[1]/g; return {T, f:`${fn_}/${fd===1?'':fd}π`}; }
+class GraphLab extends Lab{
+  constructor(p){ super(p); this.fn='sin';
+    $$('[data-fn]',p).forEach(b=>b.onclick=()=>{ this.fn=b.dataset.fn; this.upd(); });
+    $$('[data-pre]',p).forEach(b=>b.onclick=()=>{ const E=GPRE[b.dataset.pre]; this.fn=E[0]; this.setVal('a',E[1]); this.setVal('b',E[2]); this.set({a:E[1],b:E[2]}); this.upd(); });
+    this.set({a:1,b:1}); this.upd(); }
+  onSlide(k,v){ this.setVal(k,v); this.set({[k]:v}); this.upd(); }
+  upd(){ $$('[data-fn]',this.page).forEach(b=>b.classList.toggle('on',b.dataset.fn===this.fn)); this.ui(); this.kick(); }
+  ui(){ const {a,b}=this.tgt, fn=this.fn, P=periodInfo(fn,b), A=Math.abs(a), bs=b===1?'':fmtN(b), as=a===1?'':a===-1?'−':fmtN(a);
+    let r=row(M(`<span class="cp">y = ${as}${fn} ${bs}x</span>`)); if(a===0) return this.ro(r+row('عندما '+M('a = 0')+' تصبح الدالة '+M('y = 0')));
+    r+=row(`الدورة ${M('<span class="cg">'+P.T+'</span>')} ، التردد ${M(P.f)}`);
+    r+=row((fn==='sin'||fn==='cos')?`السعة ${M(`(${fmtN(A)} − (−${fmtN(A)}))/2 = <span class="cp">${fmtN(A)}</span>`)} ، اكبر قيمة ${M(fmtN(A))} واصغر قيمة ${M('−'+fmtN(A))}`:'المنحني غير محدود لا من الاعلى ولا من الاسفل، لذا ليس له سعة');
+    this.ro(r); }
+  draw(){ if(!this.W) return; this.clear(); const {a,b}=this.cur, fn=this.fn, f=FX[fn], sc=fn==='sin'||fn==='cos', ym=sc?Math.max(1,Math.abs(a))+.6:Math.max(3,Math.abs(a)*2.2), x1=4*Math.PI;
+    const G=graphAxes(this,0,x1,-ym,ym);
+    if(!sc){ const off=(fn==='tan'||fn==='sec')?Math.PI/2:0; for(let n=0;;n++){ const x=(off+n*Math.PI)/b; if(x>x1) break; if(x<=0) continue; this.pen.line(G.X(x),G.Y(-ym),G.X(x),G.Y(ym),{color:COL.muted,w:1,dash:[5,5],passes:1,a:.7}); } }
+    if(Math.abs(a-1)>1e-6||Math.abs(b-1)>1e-6) plotFn(this,G,f,0,x1,-ym,ym,{color:COL.muted,w:1.2,a:.5,passes:1});
+    plotFn(this,G,x=>a*f(b*x),0,x1,-ym,ym,{color:COL['c-point'],w:2.4}); }
+}
+
+/* ---- exercise checker ---- */
+const IDG=(L,R,o={})=>({graph:{fs:[{f:L,col:'c-point'},{f:R,col:'c-std',dash:[6,5]}],x0:o.x0??-Math.PI,x1:o.x1??3*Math.PI,ym:o.ym??3}});
+const EQS=['sin x = √3/2','cos x = √2/2','tan x = √3/3','sin 2x = sin(x + π/2)','cos 4x = cos(x + π)','tan 4x − cot x = 0','tan^2 x + 2tan x + 1 = 0','cos^2 x − cos x = 0','cos x = 2 sin^2(x/2)','tan 2x = 3 tan x','cos x = √2 sin^2 x','2 sin^2 x = cos 2x(4 sin 2x − 1)','cos^3 x = sin^3 x','sin x + cos x = 1'];
+EQS.forEach((e,i)=>EXQ['xE'+(i+1)]=['تمارين (4−6) · '+(i+1),'حل المعادلات الآتية : '+M(e)]);
+const sd=x=>Math.sin(x*D2R), cd=x=>Math.cos(x*D2R), td=x=>Math.tan(x*D2R);
+const EQF=[ x=>sd(x)-Math.sqrt(3)/2, x=>cd(x)-Math.SQRT1_2, x=>td(x)-Math.sqrt(3)/3, x=>sd(2*x)-sd(x+90), x=>cd(4*x)-cd(x+180), x=>td(4*x)-1/td(x), x=>td(x)**2+2*td(x)+1, x=>cd(x)**2-cd(x), x=>cd(x)-2*sd(x/2)**2, x=>td(2*x)-3*td(x), x=>cd(x)-Math.SQRT2*sd(x)**2, x=>2*sd(x)**2-cd(2*x)*(4*sd(2*x)-1), x=>cd(x)**3-sd(x)**3, x=>sd(x)+cd(x)-1 ];
+const EQSOL=[[60,120],[45,315],[30,210],[30,90,150,270],[36,60,108,180,252,300,324],[18,54,90,126,162,198,234,270,306,342],[135,315],[0,90,270],[60,300],[0,30,150,180,210,330],[45,315],[7.5,37.5,97.5,127.5,187.5,217.5,277.5,307.5],[45,225],[0,90]];
+const EQSTEP=['sin x = sin 60° ⇒ x = 60° or x = 180° − 60°','cos x = cos 45° ⇒ x = 45° or x = 360° − 45°','tan x = tan 30° ⇒ x = 30° or x = 180° + 30°','sin 2x = cos x ⇒ cos x(2 sin x − 1) = 0 ⇒ cos x = 0 or sin x = 1/2',
+ 'cos 4x = cos(x + 180°) ⇒ 4x = ±(x + 180°) + 360°k ⇒ x = 60° + 120°k or x = −36° + 72°k','tan 4x = cot x = tan(90° − x) ⇒ 4x = 90° − x + 180°k ⇒ x = 18° + 36°k','(tan x + 1)^2 = 0 ⇒ tan x = −1','cos x(cos x − 1) = 0 ⇒ cos x = 0 or cos x = 1','2 sin^2(x/2) = 1 − cos x ⇒ 2cos x = 1 ⇒ cos x = 1/2',
+ '2t/(1 − t^2) = 3t , t = tan x ⇒ t = 0 or t^2 = 1/3','cos x = √2(1 − cos^2 x) ⇒ √2 cos^2 x + cos x − √2 = 0 ⇒ cos x = 1/√2 (cos x = −√2 يهمل)','1 − cos 2x = 4 sin 2x cos 2x − cos 2x ⇒ 2 sin 4x = 1 ⇒ sin 4x = 1/2','cos x = sin x ⇒ tan x = 1','√2 sin(x + 45°) = 1 ⇒ x + 45° = 45° or 135°'];
+const eqItem=(id,lbl,f,sol,step,x0=0,x1=360,note='')=>[id,lbl,()=>({rows:[row(M(step)),row('مجموعة الحل = '+M(`<span class="cc">{ ${sol.map(v=>dms(v)).join(' , ')} }</span>`)+(note?` <span class="k">${note}</span>`:'')),row(ok(`عند كل حل: ${M('f(x) = 0')}`))],graph:{deg:true,fs:[{f,col:'c-point'}],x0,x1,ym:3,marks:sol}})];
+const SIX=(fn,p,q,quad)=>()=>{ const S=solveSix(fn,p,q,quad); return {rows:S.rows,uc:{angs:[{d:S.ang,col:'c-point'}]}}; };
+const EX4={
+ A:[
+  ['A1','(4−1) 1',()=>({rows:[row(M('a) 21π = 2(10)π + π ⇒ <span class="cc">θ = π</span>')),row(M('b) −15π/2 = 2(−4)π + π/2 ⇒ <span class="cc">θ = π/2</span>'))],uc:{angs:[{d:180,col:'c-center',lab:'π'},{d:90,col:'c-radius',lab:'π/2'}]}})],
+  ['A2','(4−1) 2',()=>({rows:[row(M('a) sin π/3 = <span class="cs">√3/2</span>')),row(M('b) cos 19π/6 = cos(2π + 7π/6) = cos 7π/6 = −cos π/6 = <span class="cr">−√3/2</span>')),row(M('c) cos 24π = cos(12 × 2π) = cos 0 = <span class="cr">1</span>'))],uc:{angs:[{d:60,col:'c-std',lab:'π/3'},{d:210,col:'c-radius',lab:'7π/6'},{d:0,col:'c-center',lab:'0'}]}})],
+  ['A3','(4−2) 1',()=>({rows:[row(M('a) sin x = −2/√5 , cos x = 1/√5 , tan x = −2')),row(M('b) sin x = √6/3 , cos x = −√3/3 , tan x = −√2')),row(M('c) sin x = √3/2 , cos x = 1/2 , tan x = √3')),row(M('d) sin x = −0.8 , cos x = −0.6 , tan x = 4/3')),row('<span class="k">لأن</span> '+M('(x, y) = (cos x , sin x)')+' <span class="k">و</span> '+M('tan x = y/x'))],uc:{pts:[[1/Math.sqrt(5),-2/Math.sqrt(5),'a'],[-Math.sqrt(3)/3,Math.sqrt(6)/3,'b'],[.5,Math.sqrt(3)/2,'c'],[-.6,-.8,'d']]}})],
+  ['A4','(4−2) 2',()=>({rows:[row(M('a) sin 30π = sin(15 × 2π) = sin 0 = 0')),row(M('b) cos(−13π/6) = cos 13π/6 = cos(2π + π/6) = √3/2')),row(M('c) tan 4π/3 = tan(π + π/3) = tan π/3 = √3')),row(M('d) cos 30π = cos 0 = 1'))],uc:{angs:[{d:0,col:'c-center',lab:'30π'},{d:-390,col:'c-radius',lab:'−13π/6'},{d:240,col:'c-point',lab:'4π/3'}]}})],
+  ['A5','(4−2) 3',()=>({rows:[row(M('a) sin^2 3 + cos^2 3 = 1')+' <span class="k">(لأي عدد حقيقي، و 3 هنا بالقياس الدائري)</span>'),row(M('b) cos^2 π/6 − sin^2 π/6 = 3/4 − 1/4 = 1/2'))],uc:{angs:[{d:3*R2D,col:'c-gen',lab:'3'},{d:30,col:'c-center',lab:'π/6'}]}})],
+  ['A6','(4−2) 4',()=>({rows:[row(M('(1/2)(1/2) + (√3/2)(√3/2) = 1/4 + 3/4 = 1')),row(M('sin π/2 = 1')+' ⇐ '+ok('الطرفان متساويان'))],uc:{angs:[{d:90,col:'c-point',lab:'π/2'}]}})]
+ ],
+ B:[
+  ['Bm6','م6',()=>({rows:[row(M('1/cos^2 x + 1/sin^2 x = (sin^2 x + cos^2 x)/(cos^2 x sin^2 x)')),row(M('= 1/(cos^2 x sin^2 x) = sec^2 x csc^2 x')+' = الطرف الايمن'),row(ok('المنحنيان متطابقان'))],...IDG(x=>1/Math.cos(x)**2+1/Math.sin(x)**2,x=>1/(Math.cos(x)**2*Math.sin(x)**2),{ym:12})})],
+  ['Bm7','م7',()=>({rows:[row(M('(3cos^2 x + (1 − sin^2 x))/sin^2 x = (3cos^2 x + cos^2 x)/sin^2 x')),row(M('= 4cos^2 x/sin^2 x = 4cot^2 x')+' = الطرف الايمن'),row(ok('المنحنيان متطابقان'))],...IDG(x=>(3*Math.cos(x)**2-Math.sin(x)**2+1)/Math.sin(x)**2,x=>4/Math.tan(x)**2,{ym:12})})],
+  ['B1','1',SIX('cos',2,3,4)], ['B2','2',SIX('tan',7,3,3)],
+  ['B3a','3a',()=>({rows:[row(M('sin x sec x = sin x × 1/cos x = sin x/cos x = tan x')),row(ok('متطابقة'))],...IDG(x=>Math.tan(x),x=>Math.sin(x)/Math.cos(x))})],
+  ['B3b','3b',()=>({rows:[row(M('(sin^2 x + cos^2 x)/(1 − sin^2 x) = 1/cos^2 x = sec^2 x')),row(ok('متطابقة'))],...IDG(x=>1/Math.cos(x)**2,x=>1/(1-Math.sin(x)**2),{ym:8})})],
+  ['B3c','3c',()=>({rows:[row(M('(1 − sin^2 x)(1 + tan^2 x) = cos^2 x × sec^2 x = 1')),row(ok('متطابقة'))],...IDG(x=>(1-Math.sin(x)**2)*(1+Math.tan(x)**2),x=>1)})],
+  ['B3d','3d',()=>({rows:[row(M('(1 − cos^2 x)/tan x = sin^2 x × cos x/sin x = sin x cos x')),row(ok('متطابقة'))],...IDG(x=>(1-Math.cos(x)**2)/Math.tan(x),x=>Math.sin(x)*Math.cos(x),{ym:1.5})})],
+  ['B3e','3e',()=>({rows:[row(M('(1 − sin^2 x + sin x)/cos x = (cos^2 x + sin x)/cos x = cos x + tan x')),row(ok('متطابقة'))],...IDG(x=>(1+Math.sin(x)-Math.sin(x)**2)/Math.cos(x),x=>Math.cos(x)+Math.tan(x),{ym:6})})]
+ ],
+ C:[
+  ['C1','1',()=>({rows:[row(M('cos^2 θ = 1 − 64/289 = 225/289 ⇒ cos θ = −15/17')+' <span class="k">(الربع الثالث)</span>'),row(M('cos(3π/2 − θ) = −sin θ = 8/17')),row(M('sin(π/2 + θ) = cos θ = −15/17'))],uc:{angs:[{d:180+Math.asin(8/17)*R2D,col:'c-point',lab:'θ'}]}})],
+  ['C2','2',()=>({rows:[row(M('sin β = −√(1 − 0.64) = −0.6')+' <span class="k">(الربع الرابع)</span>'),row(M('cos(270° + β) = sin β = −0.6')),row(M('cos(270° − β) = −sin β = 0.6'))],uc:{angs:[{d:360-Math.acos(.8)*R2D,col:'c-point',lab:'β'}]}})],
+  ['C3','3',()=>({rows:[row(M('cos α = −7/25')+' <span class="k">(الربع الثاني)</span>'),row(M('sin(90° − α) − cos(180° − α) + cos 120° = cos α + cos α − 1/2')),row(M('= −14/25 − 1/2 = <span class="cp">−53/50</span>'))],uc:{angs:[{d:180-Math.asin(24/25)*R2D,col:'c-point',lab:'α'}]}})],
+  ['C4','4',()=>({rows:[row(M('(−sin θ)(sin θ) − (−sin θ)(sin θ) = −sin^2 θ + sin^2 θ = 0')),row(ok('المقدار يساوي صفراً لكل θ'))],graph:{fs:[{f:t=>Math.cos(Math.PI/2+t)*Math.cos(Math.PI/2-t)-Math.sin(Math.PI+t)*Math.sin(Math.PI-t),col:'c-point'}],x0:0,x1:2*Math.PI,ym:2}})],
+  ['C5','5',()=>({rows:[row(M('a) sin > 0 , cos > 0')+' ⇐ الأول'),row(M('b) sin > 0 , cos < 0')+' ⇐ الثاني'),row(M('c) sin < 0 , cos < 0')+' ⇐ الثالث'),row(M('d) sin < 0 , cos > 0')+' ⇐ الرابع')],uc:{angs:[{d:45,col:'c-center',lab:'a'},{d:135,col:'c-radius',lab:'b'},{d:225,col:'c-std',lab:'c'},{d:315,col:'c-point',lab:'d'}]}})],
+  ['C6','6',()=>({rows:[row(M('a) −1 ≠ 2(1/2) = 1')+' ⇐ '+bad('خاطئة')),row(M('b) 1 = 2(1/2)')+' ⇐ '+ok('صحيحة')),row(M('c) −√3/2 = 1/2(−√3)')+' ⇐ '+ok('صحيحة')),row(M('d) cos 90° = 0 ≠ (√3 + 1)/2')+' ⇐ '+bad('خاطئة'))]})],
+  ['C7','7',()=>({rows:[row(M('a) cos α + tan α − cos α = tan α')+' ✓'),row(M('b) sin^2 135° = (1/√2)^2 = 1/2 , 1/2(1 − cos 270°) = 1/2(1 − 0) = 1/2')+' ✓')],...IDG(x=>Math.sin(Math.PI/2+x)+1/Math.tan(1.5*Math.PI-x)+Math.cos(Math.PI+x),x=>Math.tan(x))})]
+ ],
+ D:[
+  ['D1','1',()=>({rows:[row(M('sin x = 3/5 , cos x = 4/5')),row(M('sin 2x = 2(3/5)(4/5) = 24/25 , cos 2x = 16/25 − 9/25 = 7/25')),row(M('tan 2x = (24/25)/(7/25) = 24/7'))],uc:{angs:[{d:Math.atan(.75)*R2D,col:'c-radius',lab:'x'},{d:2*Math.atan(.75)*R2D,col:'c-point',lab:'2x'}]}})],
+  ['D2','2',()=>({rows:[row(M('cos α = 2/√5 , sin α = 1/√5')),row(M('sin 2α = 4/5 , cos 2α = 4/5 − 1/5 = 3/5')),row(M('cot 2α = 3/4 , csc 2α = 5/4'))],uc:{angs:[{d:Math.atan(.5)*R2D,col:'c-radius',lab:'α'},{d:2*Math.atan(.5)*R2D,col:'c-point',lab:'2α'}]}})],
+  ['D3','3',()=>({rows:[row(M('tan α = −2/3')+' <span class="k">(الربع الثاني)</span> ⇐ '+M('sin α = 2/√13 , cos α = −3/√13')),row(M('cos 2α = 9/13 − 4/13 = 5/13')),row(M('sin(2α − 90°) = −cos 2α = −5/13 , cos(180° − 2α) = −cos 2α = −5/13'))],uc:{angs:[{d:180-Math.atan(2/3)*R2D,col:'c-radius',lab:'α'}]}})],
+  ['D4','4',()=>({rows:[row(M('tan α = 2t , tan β = 3t , tan(α + β) = 5t/(1 − 6t^2) = 1')),row(M('6t^2 + 5t − 1 = 0 ⇒ t = 1/6 ⇒ tan α = 1/3 , tan β = 1/2')),row(M('tan 2α = (2/3)/(8/9) = 3/4 , tan 2β = 1/(3/4) = 4/3'))],uc:{angs:[{d:Math.atan(1/3)*R2D,col:'c-radius',lab:'α'},{d:Math.atan(.5)*R2D,col:'c-std',lab:'β'}]}})],
+  ['D5','5',()=>({rows:[row(M('cot^2(α/2) = cos^2(α/2)/sin^2(α/2) = (1 + cos α)/(1 − cos α)')),row(M('cot 15° = √((1 + √3/2)/(1 − √3/2)) = √((2 + √3)/(2 − √3)) = <span class="cp">2 + √3</span>'))],uc:{angs:[{d:15,col:'c-point',lab:'15°'}]}})],
+  ['D6a','6a',()=>({rows:[row(M('sin^2 θ + 2 sin θ cos θ + cos^2 θ = 1 + sin 2θ')),row(ok('متطابقة'))],...IDG(x=>(Math.sin(x)+Math.cos(x))**2,x=>1+Math.sin(2*x))})],
+  ['D6b','6b',()=>({rows:[row(M('1/cos(x − y) = 1/(cos x cos y + sin x sin y)')),row(M('بقسمة البسط والمقام على cos x cos y: = sec x sec y/(1 + tan x tan y)')),row('<span class="k">الرسم بأخذ</span> '+M('y = 0.5'))],...IDG(x=>1/Math.cos(x-.5),x=>(1/Math.cos(x))*(1/Math.cos(.5))/(1+Math.tan(x)*Math.tan(.5)),{ym:6})})],
+  ['D6c','6c',()=>({rows:[row(M('(−sin α + cos β)/(−sin α + cos β) + (−sin α + cos β)/(−sin α + cos β) = 1 + 1 = <span class="cp">2</span>')),row('<span class="k">الطرف الأيمن غير مطبوع في الكتاب، والمقدار يساوي</span> '+M('2')),row('<span class="k">الرسم بأخذ</span> '+M('β = 20°'))],graph:{fs:[{f:a=>(Math.sin(-a)-Math.sin(20*D2R-Math.PI/2))/(-Math.cos(1.5*Math.PI+a)+Math.cos(20*D2R))+(Math.sin(a-Math.PI)+Math.cos(-20*D2R))/(Math.sin(Math.PI+a)+Math.sin(20*D2R+Math.PI/2)),col:'c-point'},{f:()=>2,col:'c-std',dash:[6,5]}],x0:-Math.PI,x1:3*Math.PI,ym:4}})],
+  ['D6d','6d',()=>({rows:[row(M('cot α + sin α/(1 + cos α) = (cos α + cos^2 α + sin^2 α)/(sin α(1 + cos α))')),row(M('= (1 + cos α)/(sin α(1 + cos α)) = 1/sin α = csc α')+' ✓')],...IDG(x=>1/Math.tan(1.5*Math.PI-x)+Math.sin(Math.PI-x)/(1-Math.cos(Math.PI-x)),x=>1/Math.sin(x),{ym:6})})],
+  ['D6e','6e',()=>({rows:[row(M('sin 20° cos 10° + cos 20° sin 10° = sin(20° + 10°) = sin 30° = 1/2')+' ✓')],uc:{angs:[{d:30,col:'c-point',lab:'30°'}]}})],
+  ['D6f','6f',()=>({rows:[row(M('cos 55° = sin 35° , cos 65° = sin 25°')),row(M('cos 35° cos 25° − sin 35° sin 25° = cos 60° = 1/2')+' ✓')],uc:{angs:[{d:60,col:'c-point',lab:'60°'}]}})],
+  ['D6g','6g',()=>({rows:[row(M('sin^2 x cos^2 x = (sin 2x/2)^2 = sin^2 2x/4 = (1 − cos 4x)/8')+' ✓')],...IDG(x=>Math.sin(x)**2*Math.cos(x)**2,x=>(1-Math.cos(4*x))/8,{ym:.5})})],
+  ['D6h','6h',()=>({rows:[row(M('sin 4x = 2 sin 2x cos 2x = 4 sin x cos x(2cos^2 x − 1)')),row(M('= 8 cos^3 x sin x − 4 cos x sin x')+' ✓')],...IDG(x=>Math.sin(4*x),x=>8*Math.cos(x)**3*Math.sin(x)-4*Math.cos(x)*Math.sin(x),{ym:1.5})})],
+  ['D7','7',()=>({rows:[row(M('sin 3x = sin(2x + x) = <span class="cs">3 sin x − 4 sin^3 x</span>')),row(M('cos 3x = cos(2x + x) = <span class="cr">4 cos^3 x − 3 cos x</span>'))],...IDG(x=>Math.sin(3*x),x=>3*Math.sin(x)-4*Math.sin(x)**3,{ym:1.5})})]
+ ],
+ E:[
+  eqItem('Em27','م27',x=>td(4*x)+1/td(x),[30],'tan 4x = −cot x = tan(90° + x) ⇒ 4x = 90° + x ⇒ x = 30° (و x = 90° تهمل)',0.5,89.5,'في '+M('0 < x < 90°')),
+  eqItem('Em28','م28',x=>2*cd(x)**2+3*cd(x)-2,[60,300],'(cos x + 2)(2cos x − 1) = 0 ⇒ cos x = 1/2 (cos x = −2 يهمل)'),
+  eqItem('Em29','م29',x=>Math.sqrt(3)*sd(x)+cd(x)-Math.sqrt(3),[30,90],'cos(π/3 − x) = √3/2 ⇒ x = π/6 or x = π/2'),
+  eqItem('Em30','م30',x=>2*sd(x)**2+Math.sqrt(3)*sd(x)*cd(x)+3*cd(x)**2-3,[0,60],'√3 sin 2x + cos 2x = 1 ⇒ cos(π/3 − 2x) = cos π/3 ⇒ x = 0 or x = π/3',0,89.9,'في '+M('0° ≤ x < 90°')),
+  ...EQS.map((e,i)=>eqItem('E'+(i+1),String(i+1),EQF[i],EQSOL[i],EQSTEP[i]))
+ ],
+ F:[
+  ...[['sin',1,3,0,4/3,'y = sin 3x'],['sin',-1,1,0,2,'y = −sin x'],['sin',3,2,0,2,'y = 3sin 2x'],['cos',1,2,-1,2,'y = cos 2x'],['cos',-2,1,-2,2,'y = −2cos x'],['cos',2,3,0,3,'y = 2 cos 3x'],['tan',2,1,-.5,1.5,'y = 2 tan x'],['tan',1,2,0,1,'y = tan 2x']].map((g,i)=>['F1'+(i+1),'1−'+(i+1),()=>{ const P=periodInfo(g[0],g[2]), sc=g[0]!=='tan';
+     return {rows:[row(M(`<span class="cp">${g[5]}</span>`)),row(`الدورة ${M(P.T)} ، التردد ${M(P.f)}`),row(sc?`السعة ${M(String(Math.abs(g[1])))}`:'ليس له سعة')],graph:{fs:[{f:x=>g[1]*FX[g[0]](g[2]*x),col:'c-point'}],x0:g[3]*Math.PI,x1:g[4]*Math.PI,ym:sc?Math.abs(g[1])+.6:4,asym:sc?null:{b:g[2]}}}; }]),
+  ['F2','2−1',()=>({rows:[row(M('a) cos(20° + 50°) = cos 20° cos 50° <span class="cp">−</span> sin 20° sin 50°')),row(M('b) tan(3A − 2B) = (tan 3A <span class="cp">−</span> tan 2B)/(1 <span class="cp">+</span> tan 3A tan 2B)')),row(M('c) sin(80° <span class="cp">−</span> 10°) = sin 80° cos 10° − cos 80° sin 10°'))]})],
+  ['F3','2−2',()=>({rows:[row(M('a) sin(40° + 180°) = sin 40° <span class="cp">cos 180°</span> + <span class="cp">cos 40°</span> sin 180°')),row(M('b) 2 sin π/3 cos π/3 = sin <span class="cp">2π/3</span>')),row(M('c) 2 tan(x/3)/(1 − tan^2(x/3)) = <span class="cp">tan(2x/3)</span>')),row(M('d) cos^2 15° − sin^2 15° = cos <span class="cp">30°</span>'))]})]
+ ],
+ G:[
+  ['G1','2−3',()=>({rows:[row(M('a) sin 6x = 2 sin 3x cos 3x')+' ⇐ '+bad('خاطئة')),row(M('b) sin 15° cos 15° = 1/2 sin 30°')+' ⇐ '+bad('خاطئة')),row(M('c) cos 80° = cos(2 × 40°) = cos^2 40° − sin^2 40°')+' ⇐ '+ok('صحيحة')),row(M('d) cos x = −3/2 ∉ [−1, 1]')+' ⇐ '+ok('صحيحة'))]})],
+  ['G2','2−4',()=>({rows:[row(M('1) cos(4A + A) = cos 5A')+' ⇐ '+M('b')),row(M('2) sin(A − 4A) = sin(−3A)')+' ⇐ '+M('d')),row(M('3) sin(4A + A) = sin 5A')+' ⇐ '+M('a'))]})],
+  ['G3','5−1',SIX('cos',2,3,4)],
+  ['G4','5−2',()=>({rows:[row(M('sin x = −4/5')+' <span class="k">(الربع الرابع)</span>'),row(M('cos 2x = 9/25 − 16/25 = −7/25 , sin 2x = 2(−4/5)(3/5) = −24/25 , tan 2x = 24/7')),row(M('x/2')+' في الربع الثاني ⇐ '+M('sin(x/2) = √((1 − 3/5)/2) = 1/√5 , cos(x/2) = −√((1 + 3/5)/2) = −2/√5'))],uc:{angs:[{d:360-Math.acos(.6)*R2D,col:'c-radius',lab:'x'},{d:180-Math.acos(.6)*R2D/2,col:'c-point',lab:'x/2'}]}})],
+  ['G5','5−3',()=>({rows:[row(M('a) sin π/8 cos π/8 = 1/2 sin π/4 = 1/(2√2)')),row(M('b) cos^2 π/12 − sin^2 π/12 = cos π/6 = √3/2'))],uc:{angs:[{d:45,col:'c-point',lab:'π/4'},{d:30,col:'c-radius',lab:'π/6'}]}})],
+  ['G6a','5−4 a',()=>({rows:[row(M('cos^4 x − sin^4 x = (cos^2 x − sin^2 x)(cos^2 x + sin^2 x) = cos 2x')+' ✓')],...IDG(x=>Math.cos(x)**4-Math.sin(x)**4,x=>Math.cos(2*x),{ym:1.5})})],
+  ['G6b','5−4 b',()=>({rows:[row(M('(1 − cos x)/sin x = 2sin^2(x/2)/(2 sin(x/2) cos(x/2)) = tan(x/2)')+' ✓')],...IDG(x=>Math.tan(x/2),x=>(1-Math.cos(x))/Math.sin(x),{ym:5})})]
+ ]};
+class Chk4Lab extends Lab{
+  constructor(p){ super(p); this.items=EX4[p.dataset.set]; this.open=false; const sel=$('.xsel',p);
+    sel.innerHTML='<span class="lbl">التمرين:</span>'+this.items.map(([id,l],i)=>`<button type="button" class="chip" data-x="${i}">${l}</button>`).join('');
+    $$('[data-x]',p).forEach(b=>b.onclick=()=>this.show(+b.dataset.x)); this.box=$('.lab-flap',p);
+    setupFlap(this.box,o=>{ this.open=o; this.kick(); }); this.show(0); }
+  show(i){ this.i=i; this.showEx('x'+this.items[i][0]); this.S=this.items[i][2](); this.box.classList.remove('open'); this.open=false;
+    $$('[data-x]',this.page).forEach(b=>b.classList.toggle('on',+b.dataset.x===i)); this.ui(); this.kick(); }
+  ui(){ if(this.S) this.ro(this.S.rows.map(r=>r.replace(/^<div class="row"><bdi dir="ltr" class="m ([^"]*)">/,'<div class="row"><bdi dir="ltr" class="m blk $1">')).join('')); }
+  draw(){ if(!this.W||!this.S) return; this.clear(); const S=this.S; if(!this.open){ qMark(this); return; }
+    if(S.uc){ const {X,Y}=ucScene(this,1.45); (S.uc.angs||[]).forEach(a=>{ spiral(this.pen,X,Y,0,a.d,{r:.25+Math.random()*0,color:COL[a.col],w:1.4,arrow:false}); ptOnUC(this.pen,X,Y,a.d,a.lab||'',COL[a.col]); });
+      (S.uc.pts||[]).forEach(p=>{ this.pen.line(X(0),Y(0),X(p[0]),Y(p[1]),{color:COL['c-point'],w:1.4}); this.pen.dot(X(p[0]),Y(p[1]),4.5,COL['c-point']); this.pen.text(p[2],X(p[0]*1.15),Y(p[1]*1.15),{color:COL['c-point'],size:13,wt:700}); }); return; }
+    if(S.graph){ const g=S.graph, deg=!!g.deg, G=graphAxes(this,g.x0,g.x1,-g.ym,g.ym,{deg});
+      if(g.asym){ for(let n=-6;n<=12;n++){ const x=(Math.PI/2+n*Math.PI)/g.asym.b; if(x<=g.x0||x>=g.x1) continue; this.pen.line(G.X(x),G.Y(-g.ym),G.X(x),G.Y(g.ym),{color:COL.muted,w:1,dash:[5,5],passes:1,a:.7}); } }
+      g.fs.forEach(f=>plotFn(this,G,f.f,g.x0,g.x1,-g.ym,g.ym,{color:COL[f.col],dash:f.dash,w:f.dash?2:2.4}));
+      (g.marks||[]).forEach(m=>{ this.pen.dot(G.X(m),G.Y(0),4.5,COL['c-center']); this.pen.text(dms(m),G.X(m),G.Y(0)-12,{color:COL['c-center'],size:11,wt:700}); }); return; }
+    this.pen.text('✓',this.W/2,this.H/2,{size:Math.min(this.W,this.H)*.3,color:COL.ok,halo:false,it:false}); }
+}
+
+/* ---- challenge ---- */
+const ROUNDS4=[
+ {q:`ما قيمة ${M('cos 120°')} ؟`,o:[M('1/2'),M('−1/2'),M('√3/2')],a:1,why:`${M('cos 120° = −cos 60° = −1/2')} لأن الجيب تمام سالب في الربع الثاني.`,d:120},
+ {q:`في أي ربع يكون ${M('sin < 0')} و ${M('cos > 0')} ؟`,o:['الثاني','الثالث','الرابع'],a:2,why:`النقطة ${M('(x, −y)')} في الربع الرابع.`,d:315},
+ {q:`القياس الرئيس للزاوية ${M('8.75π')} هو:`,o:[M('3π/4'),M('π/4'),M('7π/4')],a:0,why:`${M('8.75π = 8π + 3π/4')}`,d:135},
+ {q:`${M('tan 5π/3')} = `,o:[M('√3'),M('−√3'),M('−1/√3')],a:1,why:`${M('5π/3')} في الربع الرابع: ${M('tan 5π/3 = −tan π/3 = −√3')}`,d:300},
+ {q:`دورة الدالة ${M('y = sin 3x')} هي:`,o:[M('2π'),M('2π/3'),M('3π')],a:1,why:`${M('2π/3')}، لأن الدورة ${M('2π/b')}.`,g:true},
+ {q:`${M('sin 75°')} = `,o:[M('(√3 + 1)/(2√2)'),M('(√3 − 1)/(2√2)'),M('√3/2 + 1/2')],a:0,why:`${M('sin(45° + 30°) = sin 45° cos 30° + cos 45° sin 30°')}`,d:75},
+ {q:`مجموعة حل ${M('cos x = −1/2')} في ${M('[0°, 360°)')} هي:`,o:[M('{60°, 300°}'),M('{120°, 240°}'),M('{120°, 300°}')],a:1,why:`الجيب تمام سالب في الربعين الثاني والثالث: ${M('180° ± 60°')}`,d:[120,240]},
+ {q:`اذا كان ${M('sin x = 3/5')} و ${M('x')} في الربع الثاني فان ${M('cos x')} = `,o:[M('4/5'),M('−4/5'),M('−3/4')],a:1,why:`${M('cos x = −√(1 − 9/25) = −4/5')}`,d:180-Math.asin(.6)*R2D}
+];
+class GameLab extends Lab{
+  constructor(p){ super(p); this.list=null; $('.gnext',p).onclick=()=>{ this.i++; this.render(); }; $('.gagain',p).onclick=()=>this.reset(); this.reset(); }
+  reset(){ this.i=0; this.res=ROUNDS4.map(()=>null); this.render(); }
+  stars(){ const sc=this.res.filter(Boolean).length; return sc>=8?3:sc>=6?2:sc>=3?1:0; }
+  render(){ const p=this.page, R=ROUNDS4[this.i], fin=this.i>=ROUNDS4.length; this.done=false;
+    $('.gtitle',p).textContent=fin?'النتيجة':`السؤال ${this.i+1} من ${ROUNDS4.length}`; $('.gagain',p).classList.toggle('hide',!fin); $('.gnext',p).classList.add('hide');
+    const go=$('.gopts',p); go.innerHTML=''; go.classList.toggle('hide',fin);
+    if(fin){ const sc=this.res.filter(Boolean).length, st=this.stars(); $('.gq',p).innerHTML=`نتيجتك ${N(sc+' / '+ROUNDS4.length)}`; this.ro(st===3?'ممتاز! أتقنت الدوال الدائرية.':st===2?'جيد جداً. راجع الأسئلة التي أخطأت فيها.':'راجع الفصول 3 و 5 و 7 ثم أعد التحدّي.'); }
+    else { $('.gq',p).innerHTML=R.q; R.o.forEach((o,j)=>{ const b=document.createElement('button'); b.type='button'; b.className='chip'; b.innerHTML=o; b.onclick=()=>this.choose(j); go.appendChild(b); }); this.ro('اختر إجابة واحدة.'); }
+    this.side(); this.kick(); }
+  side(){ if(!this.list) return; this.list.innerHTML=ROUNDS4.map((R,j)=>`<li class="${j===this.i?'cur':''}"><span class="st" style="color:${this.res[j]===true?'var(--ok)':this.res[j]===false?'var(--bad)':'var(--muted)'}">${this.res[j]===true?'✓':this.res[j]===false?'✗':N(j+1)}</span><span>${R.q}</span></li>`).join('');
+    const st=this.stars(), fin=this.i>=ROUNDS4.length; this.starEl.innerHTML=fin?'★'.repeat(st)+'<span style="opacity:.25">'+'★'.repeat(3-st)+'</span>':''; }
+  choose(j){ if(this.done) return; const R=ROUNDS4[this.i], okk=j===R.a; this.done=true; this.res[this.i]=okk;
+    $$('.gopts .chip',this.page).forEach((x,q)=>{ x.disabled=true; if(q===R.a) x.classList.add('right'); else if(q===j) x.classList.add('wrong'); });
+    this.ro(`${okk?'<b style="color:var(--ok)">✓ صحيح!</b>':'<b style="color:var(--bad)">✗ ليس تماماً.</b>'} ${R.why}`); $('.gnext',this.page).classList.remove('hide'); this.side(); this.kick(); }
+  draw(){ if(!this.W) return; this.clear(); const {W,H,pen}=this;
+    if(this.i>=ROUNDS4.length){ const st=this.stars(), cx=W/2, cy=H/2, R0=Math.min(W/7,H/3);
+      for(let j=0;j<3;j++){ const x=cx+(j-1)*R0*2.2, y=cy+(j===1?-R0*.25:R0*.1), pts=[]; for(let q=0;q<=10;q++){ const a=-Math.PI/2+q*Math.PI/5, rr=q%2?R0*.45:R0; pts.push([x+rr*Math.cos(a),y+rr*Math.sin(a)]); }
+        if(j<st) pen.hatch(c=>{ pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1])); c.closePath(); },'#d4a017',3.5,.85); pen.path(pts,{w:2,a:j<st?.95:.35}); } return; }
+    const R=ROUNDS4[this.i];
+    if(R.g){ const G=graphAxes(this,0,2*Math.PI,-1.6,1.6); if(this.done) plotFn(this,G,x=>Math.sin(3*x),0,2*Math.PI,-1.6,1.6,{color:COL['c-point']}); else plotFn(this,G,x=>Math.sin(x),0,2*Math.PI,-1.6,1.6,{color:COL.muted,w:1.2,a:.6,passes:1}); return; }
+    const {X,Y}=ucScene(this,1.4); if(this.done) [].concat(R.d).forEach(d=>{ spiral(pen,X,Y,0,d,{r:.3,color:COL['c-center'],w:1.8}); ptOnUC(pen,X,Y,d,dms(Math.round(d*100)/100),COL['c-point'],{proj:true}); }); }
+}
+
+/* ================= build pages ================= */
+const store=$('#store'), book=$('#book'), slotL=$('.slot.L',book), slotR=$('.slot.R',book);
+const SP=PAGES.map(([r,l])=>{ const t=document.createElement('div'); t.innerHTML=r.trim(); const R=t.firstElementChild; t.innerHTML=l.trim(); const L=t.firstElementChild; store.append(R,L); return {R,L}; });
+readCols();
+const LABMAP={intro:IntroLab,wind:WindLab,princ:PrincLab,tanc:TancLab,six:SixLab,rel:RelLab,sum:SumLab,eq:EqLab,graph:GraphLab,chk4:Chk4Lab,game:GameLab};
+SP.forEach(sp=>{ const L=new LABMAP[sp.L.dataset.lab](sp.L); sp.lab=L; });
+const GSP=SP.find(sp=>sp.L.dataset.lab==='game'); const game=GSP.lab; game.list=$('.rounds',GSP.R); game.starEl=$('.stars',GSP.R); game.side();
+/* numbering, lab headers and table of contents are generated so they always match the page order */
+SP.forEach((sp,i)=>{ $('.pno',sp.R).innerHTML=N(2*i+1); $('.pno',sp.L).innerHTML=N(2*i+2);
+  if(i){ const nm=$('h2 .num',sp.R); if(nm) nm.textContent=i; const rs=$('.run span',sp.L); if(rs) rs.textContent='مختبر '+i; } });
+$('.toc',SP[0].R).innerHTML=SP.slice(1).map((sp,j)=>{ const h=$('h2',sp.R).cloneNode(true); h.querySelector('.num')?.remove(); const pg=$('.run span:last-child',sp.R).innerHTML.split('·').pop();
+  return `<li><button type="button" data-go="${j+1}"><span class="i">${j+1}</span><span>${h.textContent.trim()}</span><em>${pg.includes('ص')?pg:''}</em></button></li>`; }).join('');
+
+/* paper flaps (predict boxes and exercise answers) */
+function setupFlap(box,onState){
+  const flap=$('.flap',box); let sy=null, moved=false, h=1;
+  const setOpen=o=>{ flap.style.transform=''; box.classList.toggle('open',o); flap.setAttribute('aria-label',o?'أنزل اللسان':'ارفع اللسان لكشف الإجابة'); onState&&onState(o); };
+  flap.addEventListener('pointerdown',e=>{ e.stopPropagation(); sy=e.clientY; moved=false; h=flap.offsetHeight||40; flap.setPointerCapture(e.pointerId); flap.style.transition='none'; });
+  flap.addEventListener('pointermove',e=>{ if(sy===null) return; const dy=sy-e.clientY; if(Math.abs(dy)>4) moved=true; const base=box.classList.contains('open')?102:0; const a=Math.max(0,Math.min(110,base+dy/h*90)); flap.style.transform=`perspective(700px) rotateX(${a}deg)`; });
+  const up=e=>{ if(sy===null) return; const dy=sy-e.clientY; sy=null; flap.style.transition='';
+    const open=box.classList.contains('open'); if(!moved) setOpen(!open); else setOpen(open?dy>-h*.4:dy>h*.35); };
+  flap.addEventListener('pointerup',up); flap.addEventListener('pointercancel',up);
+  flap.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); setOpen(!box.classList.contains('open')); } });
+  $('.ans',box).addEventListener('click',()=>{ if(box.classList.contains('open')) setOpen(false); });
+}
+$$('.predict').forEach(pd=>{
+  const ans=+pd.dataset.ans, box=$('.flapbox',pd), opts=$$('.popts .chip',pd); let picked=null;
+  const mark=()=>{ if(!box.classList.contains('open')) return; opts.forEach((b,i)=>{ b.classList.toggle('right',i===ans); b.classList.toggle('wrong',i===picked&&i!==ans); }); };
+  opts.forEach((b,i)=>b.onclick=()=>{ picked=i; opts.forEach(x=>x.classList.toggle('on',x===b)); mark(); });
+  setupFlap(box,o=>{ if(o) mark(); else opts.forEach(b=>b.classList.remove('right','wrong')); });
+});
+$$('.flapbox.mini').forEach(b=>setupFlap(b));
+$$('[data-go]').forEach(b=>b.addEventListener('click',()=>goSpread(+b.dataset.go)));
+
+/* ================= layout ================= */
+let single=false, pos=0; /* pos = spread index */
+let sub=0; /* in single mode: 0=text page,1=lab page */
+function layout(){
+  const W=innerWidth, Hs=innerHeight, TB=60, H=Hs-TB-20;
+  const was=single; single = (W/H<1.12) || W<640;
+  let pw,ph,fs;
+  if(!single){ ph=Math.min(H*.93,((W-40)/2)/.74); ph=Math.max(ph,11*42); pw=ph*.74; fs=ph/42; }
+  else { pw=Math.min(W-28,H*.95*.8); ph=Math.min(H*.95,pw/.5); ph=Math.max(ph,560); pw=Math.min(pw,ph*.8); fs=Math.max(11.5,Math.min(ph/49,pw/26.5)); }
+  const rs=document.documentElement.style;
+  rs.setProperty('--pw',pw.toFixed(1)+'px'); rs.setProperty('--ph',ph.toFixed(1)+'px'); rs.setProperty('--fs',fs.toFixed(2)+'px');
+  rs.setProperty('--cv',Math.max(7,ph*.02).toFixed(1)+'px'); rs.setProperty('--tilt',single?'7deg':'18deg');
+  book.classList.toggle('single',single);
+  if(was!==single||!book.dataset.ready){ book.dataset.ready=1; place(); LABS.forEach(l=>l.fit()); }
+}
+function sideOf(pg,s){ pg.classList.remove('sR','sL'); pg.classList.add(s); }
+function place(){
+  SP.forEach(sp=>{ if(sp.R.parentNode!==store) store.append(sp.R); if(sp.L.parentNode!==store) store.append(sp.L); sp.L.classList.remove('risen'); });
+  const sp=SP[pos];
+  if(!single){ sideOf(sp.R,'sR'); sideOf(sp.L,'sL'); slotR.replaceChildren(sp.R); slotL.replaceChildren(sp.L); }
+  else { const pg=sub?sp.L:sp.R; sideOf(pg,'sL'); slotL.replaceChildren(pg); slotR.replaceChildren(); }
+  nav(); riseSoon();
+}
+function visibleLabs(){ return $$('.page.lab',book); }
+function riseSoon(){ setTimeout(()=>{ visibleLabs().forEach(p=>p.classList.add('risen')); SP[0].lab[slotHas(SP[0].L)?'start':'stop'](); },60); }
+function slotHas(pg){ return pg.parentNode===slotL||pg.parentNode===slotR; }
+
+/* ================= navigation & flip ================= */
+const dotsEl=$('#dots');
+SP.forEach((_,i)=>{ const b=document.createElement('button'); b.type='button'; b.setAttribute('aria-label',i?`الفصل ${i}`:'الغلاف والقاموس'); b.onclick=()=>goSpread(i); dotsEl.append(b); });
+function nav(){
+  $$('button',dotsEl).forEach((b,i)=>b.classList.toggle('on',i===pos)); $('#cnt').innerHTML=N(`${pos+1} / ${SP.length}`);
+  const atStart=pos===0&&(!single||sub===0), atEnd=pos===SP.length-1&&(!single||sub===1);
+  $('#bPrev').disabled=atStart; $('#bNext').disabled=atEnd;
+  try{ localStorage.setItem('lb-ch4-pos',JSON.stringify({pos,sub,total:SP.length})); }catch(e){}
+}
+let busy=false;
+function snap(pg,off){
+  const c=pg.cloneNode(true); c.classList.remove('risen'); c.style.left=off+'px';
+  const a=$$('canvas',pg), b=$$('canvas',c); a.forEach((cv,i)=>{ b[i].width=cv.width; b[i].height=cv.height; try{ b[i].getContext('2d').drawImage(cv,0,0); }catch(e){} });
+  const ia=$$('input',pg), ib=$$('input',c); ia.forEach((x,i)=>ib[i].value=x.value);
+  return c;
+}
+function blank(off){ const d=document.createElement('div'); d.className='page blank'; d.style.left=off+'px'; return d; }
+function face(cls,content){ const f=document.createElement('div'); f.className='face '+cls; f.append(content); return f; }
+function mkSeg(left,origin,fr,bk){ const s=document.createElement('div'); s.className='seg'; s.style.left=left; s.style.width='50%'; s.style.transformOrigin=origin; s.append(face('front',fr),face('back',bk)); return s; }
+const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+function animate(seg1,seg2,th0,th1,bendSign,wrap){
+  return new Promise(res=>{
+    const dur=RM?1:820, t0=performance.now();
+    const fr=now=>{ const t=Math.min(1,(now-t0)/dur), e=ease(t), th=th0+(th1-th0)*e, b=bendSign*34*Math.sin(Math.PI*e);
+      seg1.style.transform=`rotateY(${th}deg)`; seg2.style.transform=`rotateY(${b}deg)`; wrap.style.setProperty('--sh',(Math.sin(Math.PI*e)*.9).toFixed(3));
+      if(t<1) requestAnimationFrame(fr); else res(); };
+    requestAnimationFrame(fr);
+  });
+}
+async function flip(dir,target){ /* dir 1 = forward, -1 = back; target = {pos,sub} */
+  if(busy) return; busy=true; sound();
+  const labs=visibleLabs(); if(labs.some(p=>p.classList.contains('risen'))){ labs.forEach(p=>p.classList.remove('risen')); await wait(RM?0:240); }
+  const pw=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--pw'));
+  const wrap=document.createElement('div'); wrap.className='flip';
+  const cur=SP[pos], nx=SP[target.pos];
+  let seg1,seg2,th0,th1,bs,finish;
+  if(!single){
+    if(dir>0){
+      const f1=snap(cur.L,-pw/2), f2=snap(cur.L,0); sideOf(nx.R,'sR'); sideOf(nx.L,'sL'); const b1=snap(nx.R,0), b2=snap(nx.R,-pw/2);
+      seg1=mkSeg(`${pw/2}px`,'100% 50%',f1,b1); seg2=mkSeg('-100%','100% 50%',f2,b2); seg1.style.width=pw/2+'px'; seg2.style.width='100%';
+      slotL.replaceChildren(nx.L); th0=0; th1=180; bs=1; finish=()=>slotR.replaceChildren(nx.R);
+    } else {
+      const f1=snap(cur.R,0), f2=snap(cur.R,-pw/2); sideOf(nx.R,'sR'); sideOf(nx.L,'sL'); const b1=snap(nx.L,-pw/2), b2=snap(nx.L,0);
+      seg1=mkSeg(`${pw}px`,'0% 50%',f1,b1); seg2=mkSeg('100%','0% 50%',f2,b2); seg1.style.width=pw/2+'px'; seg2.style.width='100%';
+      slotR.replaceChildren(nx.R); th0=0; th1=-180; bs=-1; finish=()=>slotL.replaceChildren(nx.L);
+    }
+  } else {
+    const curPg=sub?cur.L:cur.R, nxPg=target.sub?nx.L:nx.R; sideOf(nxPg,'sL');
+    if(dir>0){ seg1=mkSeg(`${pw/2}px`,'100% 50%',snap(curPg,-pw/2),blank(0)); seg2=mkSeg('-100%','100% 50%',snap(curPg,0),blank(-pw/2));
+      slotL.replaceChildren(nxPg); th0=0; th1=180; bs=1; finish=()=>{}; }
+    else { seg1=mkSeg(`${pw/2}px`,'100% 50%',snap(nxPg,-pw/2),blank(0)); seg2=mkSeg('-100%','100% 50%',snap(nxPg,0),blank(-pw/2));
+      th0=180; th1=0; bs=1; finish=()=>slotL.replaceChildren(nxPg); }
+    seg1.style.width=pw/2+'px'; seg2.style.width='100%';
+  }
+  seg1.style.transform=`rotateY(${th0}deg)`; seg1.querySelector('.face.back').after(seg2);
+  wrap.append(seg1); book.append(wrap);
+  SP.forEach(sp=>{ [sp.R,sp.L].forEach(pg=>{ if(!slotHas(pg)&&pg.parentNode!==store) store.append(pg); }); });
+  await animate(seg1,seg2,th0,th1,bs,wrap);
+  finish(); wrap.remove();
+  SP.forEach(sp=>{ [sp.R,sp.L].forEach(pg=>{ if(!slotHas(pg)) store.append(pg); }); });
+  pos=target.pos; sub=target.sub; nav(); riseSoon(); busy=false;
+}
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function next(){ if(teachOn) return teachMove(1); if(!single){ if(pos<SP.length-1) flip(1,{pos:pos+1,sub:0}); } else { if(sub===0) flip(1,{pos,sub:1}); else if(pos<SP.length-1) flip(1,{pos:pos+1,sub:0}); } }
+function prev(){ if(teachOn) return teachMove(-1); if(!single){ if(pos>0) flip(-1,{pos:pos-1,sub:0}); } else { if(sub===1) flip(-1,{pos,sub:0}); else if(pos>0) flip(-1,{pos:pos-1,sub:1}); } }
+function goSpread(i){ if(teachOn){ pos=i; teachShow(); return; } if(i===pos&&(!single||sub===0)) return; flip(i>pos||(i===pos)?1:-1,{pos:i,sub:0}); }
+$('#bNext').onclick=next; $('#bPrev').onclick=prev;
+addEventListener('keydown',e=>{ if(e.target.matches('input,textarea')) return;
+  if(e.key==='ArrowLeft'||e.key==='PageDown'){ e.preventDefault(); next(); } else if(e.key==='ArrowRight'||e.key==='PageUp'){ e.preventDefault(); prev(); } else if(e.key==='Escape'&&teachOn) teachExit(); });
+/* swipe */
+let sw=null;
+const swEnd=(x,y)=>{ if(!sw) return; const dx=x-sw.x, dy=y-sw.y; sw=null; if(Math.abs(dx)>45&&Math.abs(dx)>1.3*Math.abs(dy)){ dx>0?next():prev(); } };
+const swOk=t=>!t.closest('input,button,.flap,a,.toc');
+$('#scene').addEventListener('pointerdown',e=>{ if(e.pointerType==='touch'||!swOk(e.target)) return; sw={x:e.clientX,y:e.clientY}; });
+addEventListener('pointerup',e=>{ if(e.pointerType!=='touch') swEnd(e.clientX,e.clientY); });
+$('#scene').addEventListener('touchstart',e=>{ if(e.touches.length!==1||!swOk(e.target)){ sw=null; return; } sw={x:e.touches[0].clientX,y:e.touches[0].clientY}; },{passive:true});
+$('#scene').addEventListener('touchend',e=>{ const t=e.changedTouches[0]; if(t) swEnd(t.clientX,t.clientY); },{passive:true});
+$('#scene').addEventListener('touchcancel',()=>sw=null);
+
+/* ================= sound ================= */
+let muted=false, actx=null;
+try{ muted=localStorage.getItem('lb-mute')==='1'; }catch(e){}
+function muteUI(){ const b=$('#bMute'); b.setAttribute('aria-pressed',muted); b.setAttribute('aria-label',muted?'تشغيل الصوت':'كتم الصوت'); $('.w',b).style.display=muted?'none':''; $('.x',b).style.display=muted?'':'none'; }
+$('#bMute').onclick=()=>{ muted=!muted; try{localStorage.setItem('lb-mute',muted?'1':'0');}catch(e){} muteUI(); };
+muteUI();
+function sound(){ if(muted) return; try{
+  actx=actx||new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume();
+  const t=actx.currentTime, len=.42, sr=actx.sampleRate, buf=actx.createBuffer(1,Math.floor(sr*len),sr), d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++){ const x=i/d.length; d[i]=(Math.random()*2-1)*Math.pow(1-x,1.6)*(0.6+0.4*Math.sin(x*40)); }
+  const src=actx.createBufferSource(); src.buffer=buf; const bp=actx.createBiquadFilter(); bp.type='bandpass'; bp.Q.value=.7;
+  bp.frequency.setValueAtTime(700,t); bp.frequency.exponentialRampToValueAtTime(3200,t+.3);
+  const g=actx.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.12,t+.06); g.gain.exponentialRampToValueAtTime(.001,t+len);
+  src.connect(bp).connect(g).connect(actx.destination); src.start(t);
+}catch(e){} }
+
+/* ================= theme ================= */
+function themeNow(){ const a=document.documentElement.dataset.theme; return a||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'); }
+try{ const t=localStorage.getItem('lb-theme'); if(t) document.documentElement.dataset.theme=t; }catch(e){}
+function themeChanged(){ readCols(); LABS.forEach(l=>l.draw()); $('#bTheme').setAttribute('aria-label',themeNow()==='dark'?'الوضع الفاتح':'الوضع الداكن'); }
+$('#bTheme').onclick=()=>{ const t=themeNow()==='dark'?'light':'dark'; document.documentElement.dataset.theme=t; try{localStorage.setItem('lb-theme',t);}catch(e){} themeChanged(); };
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',themeChanged);
+
+/* ================= teacher mode ================= */
+let teachOn=false; const teach=$('#teach'), board=$('#tBoard');
+function teachSize(pg){ const W=innerWidth, H=innerHeight; let w,h; if(W/H<1.05){ w=W*.95; h=H*.84; } else { w=Math.min(W*.94,(H*.86)*1.6); h=Math.min(H*.86,w/1.25); w=Math.min(w,h*1.75); }
+  const wide=w/h>1.15; pg.classList.toggle('wide',wide); pg.style.width=w+'px'; pg.style.height=h+'px'; pg.style.fontSize=Math.max(13,Math.min(h/(wide?30:40),w/(wide?52:24)))+'px'; }
+function teachShow(){ const pg=SP[pos].L; board.querySelectorAll('.page').forEach(p=>{ p.classList.remove('wide','risen'); p.style.cssText=''; store.append(p); });
+  pg.classList.remove('risen'); sideOf(pg,'sL'); teachSize(pg); board.replaceChildren(pg); SP[pos].lab.fit(); SP[0].lab[pos===0?'start':'stop']();
+  $('#tPrev').disabled=pos===0; $('#tNext').disabled=pos===SP.length-1; setTimeout(()=>pg.classList.add('risen'),80); }
+function teachEnter(){ teachOn=true; teach.classList.add('on'); $('#bTeach').classList.add('on'); $('#bTeach').setAttribute('aria-pressed','true'); teachShow(); $('#tExit').focus(); }
+function teachExit(){ teachOn=false; teach.classList.remove('on'); $('#bTeach').classList.remove('on'); $('#bTeach').setAttribute('aria-pressed','false');
+  board.querySelectorAll('.page').forEach(p=>{ p.classList.remove('wide','risen'); p.style.cssText=''; }); place(); LABS.forEach(l=>l.fit()); }
+function teachMove(d){ const n=pos+d; if(n<0||n>=SP.length) return; pos=n; sub=0; sound(); teachShow(); }
+$('#bTeach').onclick=()=>teachOn?teachExit():teachEnter(); $('#tExit').onclick=teachExit;
+$('#tNext').onclick=()=>teachMove(1); $('#tPrev').onclick=()=>teachMove(-1);
+
+/* ================= init ================= */
+let rz; addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ layout(); if(teachOn) teachSize(SP[pos].L); },120); });
+/* resume where the student stopped */
+try{ const o=JSON.parse(localStorage.getItem('lb-ch4-pos')||'null'); if(o&&o.pos>=0&&o.pos<SP.length){ pos=o.pos|0; sub=o.sub?1:0; } }catch(e){}
+layout();
+if('serviceWorker' in navigator && location.protocol!=='file:') navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>

@@ -98,7 +98,7 @@ const CHAPTERS=[
   {n:1,t:'اللوغاريتمات',pg:'5–18',c:['#1d4ed8','#1e3a8a']},
   {n:2,t:'المتتابعات',pg:'19–38',c:['#0f766e','#134e4a']},
   {n:3,t:'القطوع المخروطية',pg:'39–53',c:['#b45309','#7b2d1e'],file:'ch3.html',key:'lb-ch3-pos'},
-  {n:4,t:'الدوال الدائرية',pg:'54–103',c:['#7e22ce','#4c1d95']},
+  {n:4,t:'الدوال الدائرية',pg:'54–103',c:['#7e22ce','#4c1d95'],file:'ch4.html',key:'lb-ch4-pos'},
   {n:5,t:'الغاية والاستمرارية',pg:'104–123',c:['#be185d','#831843']},
   {n:6,t:'المشتقات',pg:'124–163',c:['#15803d','#14532d']},
   {n:7,t:'الهندسة الفضائية (المجسمة)',pg:'164–189',c:['#0369a1','#0c4a6e']},
@@ -109,11 +109,11 @@ const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k
 const prog=ch=>{ if(!ch.key) return null; try{ const o=JSON.parse(ls.get(ch.key)||'null'); if(!o||!o.total) return null; const page=o.pos*2+o.sub+1; return {page,total:o.total*2,pct:Math.round(page/(o.total*2)*100)}; }catch(e){ return null; } };
 const shelf=document.getElementById('shelf');
 shelf.innerHTML=CHAPTERS.map(ch=>{ const p=prog(ch), lock=!ch.file;
-  return `<a class="book ${lock?'lock':''}" ${lock?'aria-disabled="true"':`href="${ch.file}"`} style="--c1:${ch.c[0]};--c2:${ch.c[1]}">
+  return `<a class="book ${lock?'lock':''}" ${lock?'aria-disabled="true"':`href="${ch.file}" onclick="ls.set('lb-last-${ch.n}',Date.now())"`} style="--c1:${ch.c[0]};--c2:${ch.c[1]}">
    <div class="cv"><span class="badge ${lock?'':'on'}">${lock?'قريباً':'متاح'}</span>
     <div class="n">الفصل <bdi>${ch.n}</bdi></div><div class="ti">${ch.t}</div>
     <div>${p?`<div class="prog"><i style="width:${p.pct}%"></i></div>`:''}<div class="pg">ص <bdi dir="ltr">${ch.pg}</bdi></div></div></div></a>`; }).join('');
-const last=CHAPTERS.find(ch=>prog(ch)); if(last){ const p=prog(last);
+const last=CHAPTERS.filter(ch=>prog(ch)).sort((a,b)=>(+ls.get('lb-last-'+b.n)||0)-(+ls.get('lb-last-'+a.n)||0))[0]; if(last){ const p=prog(last);
   document.getElementById('resume').classList.remove('hide');
   document.getElementById('rT').textContent='تابع القراءة: '+last.t;
   document.getElementById('rS').innerHTML=`وصلت إلى الصفحة <bdi>${p.page}</bdi> من <bdi>${p.total}</bdi>`;
