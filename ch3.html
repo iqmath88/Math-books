@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>القطوع المخروطية – كتاب حي</title>
 <meta name="theme-color" content="#4f1a10">
-<link rel="manifest" href="../manifest.webmanifest">
-<link rel="icon" href="../icons/favicon.png" type="image/png">
-<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="الرياضيات الحيّة">
@@ -299,7 +299,7 @@ input[type=range]::-moz-range-thumb{width:max(1.35em,20px);height:max(1.35em,20p
 </div>
 
 <nav id="tb" aria-label="التنقل">
-  <a class="tbtn" id="bHome" href="../index.html" aria-label="المكتبة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 012-2h12v18H6a2 2 0 01-2-1.5zM4 19.5A2 2 0 016 18h12"/></svg><span class="lbl">المكتبة</span></a>
+  <a class="tbtn" id="bHome" href="index.html" aria-label="المكتبة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 012-2h12v18H6a2 2 0 01-2-1.5zM4 19.5A2 2 0 016 18h12"/></svg><span class="lbl">المكتبة</span></a>
   <span class="sep"></span>
   <button class="tbtn" id="bPrev" type="button" aria-label="الصفحة السابقة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg><span class="lbl">السابق</span></button>
   <div class="dots" id="dots"></div><span class="cnt" id="cnt"></span>
@@ -1424,7 +1424,7 @@ let rz; addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ la
 /* resume where the student stopped */
 try{ const o=JSON.parse(localStorage.getItem('lb-ch3-pos')||'null'); if(o&&o.pos>=0&&o.pos<SP.length){ pos=o.pos|0; sub=o.sub?1:0; } }catch(e){}
 layout();
-if('serviceWorker' in navigator && location.protocol!=='file:') navigator.serviceWorker.register('../sw.js').catch(()=>{});
+if('serviceWorker' in navigator && location.protocol!=='file:') navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
 </html>

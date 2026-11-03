@@ -1,9 +1,9 @@
 /* يحفظ ملفات التطبيق في الجهاز ليعمل بدون إنترنت. غيّر رقم الإصدار عند كل تحديث للمحتوى. */
-const VERSION = 'math5-v1';
+const VERSION = 'math5-v2';
 const FILES = [
   './', './index.html', './manifest.webmanifest',
-  './chapters/ch3.html',
-  './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png', './icons/apple-touch-icon.png', './icons/favicon.png'
+  './ch3.html',
+  './icon-192.png', './icon-512.png', './maskable-512.png', './apple-touch-icon.png', './favicon.png'
 ];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
