@@ -244,11 +244,14 @@ input[type=range]::-moz-range-thumb{width:max(1.35em,20px);height:max(1.35em,20p
 @media (max-width:560px){ .tbtn .lbl{display:none} .tbtn{padding:0 .55rem} #tb{gap:.25rem} }
 .cnt{display:none;font:600 14px/1 inherit;min-width:4.2em;text-align:center}
 @media (max-width:820px){ .dots{display:none} .cnt{display:inline-block} }
-.exl{list-style:none;margin:.2em 0;padding:0;display:flex;flex-direction:column;gap:.5em}
+.exl{list-style:none;margin:.2em 0;padding:0;display:flex;flex-direction:column;gap:.4em}
 .exl li{display:flex;gap:.55em;align-items:flex-start;font-size:.92em;line-height:1.55}
 .exl li>div{flex:1;min-width:0}
 .exn{display:inline-grid;place-items:center;width:1.7em;height:1.7em;border-radius:50%;background:var(--c-point);color:#fff;font-size:.8em;flex:none;margin-top:.15em}
 .parts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.05em .8em;margin:.15em 0}
+.parts.one{grid-template-columns:1fr}
+.exq{font-size:.82em;line-height:1.6;background:var(--card);border:1px solid var(--rule);border-inline-start:3px solid var(--c-point);padding:.3em .55em;border-radius:.35em}
+.exq b{color:var(--c-point);margin-inline-end:.35em}
 .exhint{font-size:.8em;color:var(--muted)}
 .pl{display:inline-grid;place-items:center;min-width:1.35em;height:1.35em;border-radius:.3em;background:var(--paper2);border:1px solid var(--rule);font-size:.78em;margin-inline-end:.35em;font-family:Georgia,serif}
 .flapbox.mini{margin-top:.3em}
@@ -404,6 +407,7 @@ const PAGES=[
  <h3 class="lt"><span class="lab-ic">مختبر</span>مستوٍ يقطع مخروطاً مزدوجاً</h3>
  ${stage}
  <div class="side">
+  <div class="exq hide"></div>
   <div class="ro"></div>
   <div class="ctl">
    ${slider('th','ميل المستوي',0,90,1,0,'--c-cut')}
@@ -420,7 +424,7 @@ const PAGES=[
  ${RUN(CH,'[3−1] [3−2] · ص '+N('42–44'))}
  <h2><span class="num">2</span>الدائرة ومعادلتها القياسية</h2>
  <div class="tb"><div>
-  <p><b>الدائرة</b> مجموعة النقط في المستوي التي بعدها عن نقطة ثابتة (<span class="cc">المركز ${M('C(h, k)')}</span>) يساوي مقداراً ثابتاً (<span class="cr">نصف القطر ${M('r')}</span>).</p>
+  <p><b>الدائرة (Circle)</b>: هي مجموعة النقط في المستوي التي يكون بعدها من نقطة ثابتة تسمى (<span class="cc">المركز Center</span>) يساوي مقداراً ثابتاً يسمى (<span class="cr">نصف القطر Radius</span>). لذا سنرمز لمركز الدائرة بالرمز ${M('<span class="cc">C (h , k)</span>')}، ونرمز لنصف قطر الدائرة بالرمز (${M('<span class="cr">r</span>')}).</p>
   <div class="law">${M('Circle = { p : pc = <span class="cr">r</span> , <span class="cr">r</span> > 0 }')}</div>
   <p>نطبّق قانون البعد بين ${M('<span class="cp">P(x, y)</span>')} والمركز، ثم نربّع الطرفين:</p>
   <div class="law std">${M('√((x − <span class="cc">h</span>)^2 + (y − <span class="cc">k</span>)^2) = <span class="cr">r</span>')}<br>${M('<span class="cs">(x − <span class="cc">h</span>)^2 + (y − <span class="cc">k</span>)^2 = <span class="cr">r</span>^2</span>')}<small>الصيغة القياسية لمعادلة الدائرة</small></div>
@@ -435,6 +439,7 @@ const PAGES=[
  <h3 class="lt"><span class="lab-ic">مختبر</span>حرّك المركز ونصف القطر والنقطة ${M('P')}</h3>
  ${stage}
  <div class="side">
+  <div class="exq hide"></div>
   <div class="ro"></div>
   <div class="ctl">
    ${slider('h','<span class="cc">h</span> (المركز)',-6,6,1,2,'--c-center')}
@@ -442,7 +447,7 @@ const PAGES=[
    ${slider('r','<span class="cr">r</span> نصف القطر',0.5,7,0.5,3,'--c-radius')}
    ${slider('t','موقع <span class="cp">P</span>',0,359,1,40,'--c-point')}
    <div class="btns"><button type="button" class="chip" data-tan>المماس عند P</button><span class="lbl">أمثلة:</span>
-    <button type="button" class="chip" data-ex="1">مثال 1</button><button type="button" class="chip" data-ex="2">مثال 2</button><button type="button" class="chip" data-ex="3">مثال 3</button><button type="button" class="chip" data-ex="7">مثال 7</button></div>
+    <button type="button" class="chip" data-ex="1" data-q="c1">مثال 1</button><button type="button" class="chip" data-ex="2" data-q="c2">مثال 2</button><button type="button" class="chip" data-ex="3" data-q="c3">مثال 3</button><button type="button" class="chip" data-ex="7" data-q="t7">مثال 7</button></div>
   </div>
  </div>
  ${FOOT(6)}
@@ -470,12 +475,13 @@ const PAGES=[
  <h3 class="lt"><span class="lab-ic">مختبر</span>من القطر أو من المستقيم إلى المعادلة</h3>
  ${stage}
  <div class="side">
+  <div class="exq hide"></div>
   <div class="ro"></div>
   <div class="ctl">
    <div class="btns"><button type="button" class="chip" data-mode="d">نهايتا قطر</button><button type="button" class="chip" data-mode="l">مستقيم مماس</button>
     <span class="lbl">أمثلة:</span>
-    <button type="button" class="chip" data-pre='{"m":"d","v":{"x1":4,"y1":5,"x2":-2,"y2":3}}'>مثال 2</button>
-    <button type="button" class="chip" data-pre='{"m":"l","v":{"h":0,"k":0,"a":3,"b":-4,"c":-15}}'>مثال 3</button></div>
+    <button type="button" class="chip" data-q="d2" data-pre='{"m":"d","v":{"x1":4,"y1":5,"x2":-2,"y2":3}}'>مثال 2</button>
+    <button type="button" class="chip" data-q="d3" data-pre='{"m":"l","v":{"h":0,"k":0,"a":3,"b":-4,"c":-15}}'>مثال 3</button></div>
    <div class="g-d">
     ${slider('x1','<span class="cp">x₁</span>',-6,6,1,4,'--c-point')}
     ${slider('y1','<span class="cp">y₁</span>',-6,6,1,5,'--c-point')}
@@ -517,13 +523,15 @@ const PAGES=[
  <h3 class="lt"><span class="lab-ic">مختبر</span>متى تلمس الدائرة المحور؟</h3>
  ${stage}
  <div class="side">
+  <div class="exq hide"></div>
   <div class="ro"></div>
   <div class="ctl">
    ${slider('h','<span class="cc">h</span>',-7,7,1,3,'--c-center')}
    ${slider('k','<span class="cc">k</span>',-7,7,1,2,'--c-center')}
    ${slider('r','<span class="cr">r</span>',1,7,1,3,'--c-radius')}
    <div class="btns"><button type="button" class="chip" data-m="x">تمسّ السينات</button><button type="button" class="chip" data-m="y">تمسّ الصادات</button>
-    <span class="lbl">تمسّ المحورين:</span><button type="button" class="chip" data-q="1">الربع 1</button><button type="button" class="chip" data-q="2">2</button><button type="button" class="chip" data-q="3">3</button><button type="button" class="chip" data-q="4">4</button></div>
+    <span class="lbl">تمسّ المحورين:</span><button type="button" class="chip" data-qd="1">الربع 1</button><button type="button" class="chip" data-qd="2">2</button><button type="button" class="chip" data-qd="3">3</button><button type="button" class="chip" data-qd="4">4</button></div>
+   <div class="btns"><span class="lbl">أمثلة:</span><button type="button" class="chip" data-tx="3,2,2" data-q="a1">مثال 1</button><button type="button" class="chip" data-tx="4,-1,4" data-q="a2">مثال 2</button><button type="button" class="chip" data-tx="4,-4,4" data-q="a3">مثال 3</button><button type="button" class="chip" data-tx="-5,-5,5" data-q="a4">مثال 4</button></div>
   </div>
  </div>
  ${FOOT(8)}
@@ -550,13 +558,14 @@ const PAGES=[
  <h3 class="lt"><span class="lab-ic">مختبر</span>غيّر ${M('A , B , C')} وراقب الدائرة</h3>
  ${stage}
  <div class="side">
+  <div class="exq hide"></div>
   <div class="ro"></div>
   <div class="ctl">
    ${slider('A','<span class="cg">A</span>',-12,12,1,-2,'--c-gen')}
    ${slider('B','<span class="cg">B</span>',-12,12,1,6,'--c-gen')}
    ${slider('C','<span class="cg">C</span>',-30,30,1,-19,'--c-gen')}
    <div class="btns"><button type="button" class="chip" data-x2>المعاملات × 2</button><span class="lbl">أمثلة:</span>
-    <button type="button" class="chip" data-ex="2">مثال 2</button><button type="button" class="chip" data-ex="d">1−d</button><button type="button" class="chip" data-ex="e">1−e</button><button type="button" class="chip" data-ex="6">مثال 6</button></div>
+    <button type="button" class="chip" data-ex="d" data-q="g1d">1−d</button><button type="button" class="chip" data-ex="e" data-q="g1e">1−e</button><button type="button" class="chip" data-ex="2" data-q="g2">مثال 2</button><button type="button" class="chip" data-ex="3" data-q="g3">مثال 3</button><button type="button" class="chip" data-ex="6" data-q="k6">مثال 6</button></div>
   </div>
  </div>
  ${FOOT(10)}
@@ -586,10 +595,11 @@ const PAGES=[
  <h3 class="lt"><span class="lab-ic">مختبر</span>حرّك النقاط وراقب الحلّ يتغيّر</h3>
  ${stage}
  <div class="side">
+  <div class="exq hide"></div>
   <div class="ro"></div>
   <div class="ctl">
    <div class="btns"><span class="lbl">مسألة:</span>
-    <button type="button" class="chip" data-pre="ax">تمسّ المحورين</button><button type="button" class="chip" data-pre="ya">مركزها على ص</button><button type="button" class="chip" data-pre="th">ثلاث نقاط</button><button type="button" class="chip" data-pre="ln">مركزها على مستقيم</button></div>
+    <button type="button" class="chip" data-q="k5" data-pre="ax">تمسّ المحورين</button><button type="button" class="chip" data-q="k4" data-pre="ya">مركزها على ص</button><button type="button" class="chip" data-q="k51" data-pre="th">ثلاث نقاط</button><button type="button" class="chip" data-q="k6" data-pre="ln">مركزها على مستقيم</button></div>
    <div class="btns"><span class="lbl">حرّك:</span><span class="psel"></span></div>
    ${slider('px','<span class="cp">x</span> للنقطة',-8,8,1,2,'--c-point')}
    ${slider('py','<span class="cp">y</span> للنقطة',-8,8,1,1,'--c-point')}
@@ -621,12 +631,13 @@ const PAGES=[
  <h3 class="lt"><span class="lab-ic">مختبر</span>اختر نقطة التماس وراقب المماس</h3>
  ${stage}
  <div class="side">
+  <div class="exq hide"></div>
   <div class="ro"></div>
   <div class="ctl">
    <div class="sl2">${slider('h','<span class="cc">h</span>',-6,6,1,0,'--c-center')}${slider('k','<span class="cc">k</span>',-6,6,1,0,'--c-center')}</div>
    ${slider('r2','<span class="cr">r²</span>',1,40,1,5,'--c-radius')}
    ${slider('pi','النقطة <span class="cp">P</span>',0,7,1,1,'--c-point')}
-   <div class="btns"><span class="lbl">أمثلة:</span><button type="button" class="chip" data-pre="7">مثال 7</button><button type="button" class="chip" data-pre="12">تمرين 12</button></div>
+   <div class="btns"><span class="lbl">أمثلة:</span><button type="button" class="chip" data-q="t7" data-pre="7">مثال 7</button><button type="button" class="chip" data-q="x12" data-pre="12">تمرين 12</button></div>
   </div>
  </div>
  ${FOOT(0)}
@@ -636,16 +647,16 @@ const PAGES=[
 [`<section class="page text">
  ${RUN(CH,'تمارين (3−1) · ص '+N('53'))}
  <h2><span class="num"></span>التمارين من 1 إلى 4</h2>
- <p class="exhint">حلّ في دفترك أولاً، ثم ارفع لسان «الحل». اضغط رقم التمرين في المختبر المقابل لترى الرسم والخطوات.</p>
+ <p class="exhint">حلّ في دفترك، ثم ارفع لسان «الحل» أو افتح التمرين في المختبر.</p>
  <ol class="exl">
-  <li><b class="exn">1</b><div>بيّن أيّ المعادلات الآتية تمثّل معادلة دائرة:
+  <li><b class="exn">1</b><div>بين أي من المعادلات الآتية تمثل معادلة دائرة .
    <div class="parts"><span><b class="pl">a</b>${M('x^2 + 3y^2 − 2x + 3y = 0')}</span><span><b class="pl">b</b>${M('x^2 + y^2 + 4x − 6y = 12')}</span><span><b class="pl">c</b>${M('x^2 + y^2 + 2xy = 1')}</span><span><b class="pl">d</b>${M('x^2 + y^2 = 0')}</span><span><b class="pl">e</b>${M('y = −2x')}</span></div>
    ${MINI(`${N('b')} فقط: ${M('C(−2, 3) , r = 5')}. ${N('a')}: معامل ${M('x^2')} ≠ معامل ${M('y^2')}، ${N('c')}: فيها ${M('xy')}، ${N('d')}: ${M('r = 0')}، ${N('e')}: ليست من الدرجة الثانية.`)}</div></li>
-  <li><b class="exn">2</b><div>جد معادلة الدائرة: أ) مركزها ${M('c(3, −2)')} و ${M('r = 5')}. ب) مركزها الأصل وتمرّ بـ ${M('p(−4, 3)')}. ج) مركزها ${M('c(−1, 5)')} وتمرّ بـ ${M('p(4, 3)')}.
+  <li><b class="exn">2</b><div>جد معادلة الدائرة في كل حالة من الحالات الآتية :<div class="parts one"><span><b class="pl">أ</b>مركزها ${M('c(3, −2)')} ونصف قطرها ${N('5')} وحدات</span><span><b class="pl">ب</b>مركزها نقطة الاصل وتمر بالنقطة ${M('p(−4, 3)')}</span><span><b class="pl">ج</b>مركزها ${M('c(−1, 5)')} وتمر بالنقطة ${M('p(4, 3)')}</span></div>
    ${MINI(`أ) ${M('x^2 + y^2 − 6x + 4y − 12 = 0')} ب) ${M('x^2 + y^2 = 25')} ج) ${M('(x + 1)^2 + (y − 5)^2 = 29')}`)}</div></li>
-  <li><b class="exn">3</b><div>جد معادلة الدائرة التي نهايتا قطرها ${M('p<sub>1</sub>(2, −3) , p<sub>2</sub>(4, 1)')} بثلاث طرق مختلفة.
+  <li><b class="exn">3</b><div>جد معادلة الدائرة التي نهايتي قطر فيها ${M('p<sub>1</sub>(2, −3) , p<sub>2</sub>(4, 1)')} بثلاثة طرق مختلفة .
    ${MINI(`${M('C(3, −1) , r = √5')}: ${M('(x − 3)^2 + (y + 1)^2 = 5')} أي ${M('x^2 + y^2 − 6x + 2y + 5 = 0')}`)}</div></li>
-  <li><b class="exn">4</b><div>جد أحداثيات المركز ونصف القطر للدوائر الآتية:<div class="parts"><span><b class="pl">a</b>${M('(x + 5)^2 + (y − 4)^2 = 36')}</span><span><b class="pl">b</b>${M('(x − 2)^2 + y^2 = 9')}</span><span><b class="pl">c</b>${M('2x^2 + 2y^2 + 3x + 4y = 0')}</span></div>
+  <li><b class="exn">4</b><div>جد أحداثيات المركز ونصف قطر الدوائر الآتية : −<div class="parts"><span><b class="pl">a</b>${M('(x + 5)^2 + (y − 4)^2 = 36')}</span><span><b class="pl">b</b>${M('(x − 2)^2 + y^2 = 9')}</span><span><b class="pl">c</b>${M('2x^2 + 2y^2 + 3x + 4y = 0')}</span></div>
    ${MINI(`<b class="pl">a</b>${M('(−5, 4) , r = 6')} <b class="pl">b</b>${M('(2, 0) , r = 3')} <b class="pl">c</b>${M('(−3/4, −1) , r = 5/4')}`)}</div></li>
  </ol>
  ${FOOT(0)}
@@ -654,7 +665,7 @@ const PAGES=[
  ${RUN('مختبر','تحقّق من حلّك')}
  <h3 class="lt"><span class="lab-ic">تحقّق</span>اختر التمرين</h3>
  ${stage}
- <div class="side"><div class="ro"></div><div class="ctl"><div class="btns xsel"></div></div></div>
+ <div class="side"><div class="exq hide"></div><div class="ro"></div><div class="ctl"><div class="btns xsel"></div></div></div>
  ${FOOT(0)}
 </section>`],
 
@@ -662,13 +673,13 @@ const PAGES=[
  ${RUN(CH,'تمارين (3−1) · ص '+N('53'))}
  <h2><span class="num"></span>التمارين من 5 إلى 8</h2>
  <ol class="exl">
-  <li><b class="exn">5</b><div>جد معادلة الدائرة التي تمسّ المستقيم ${M('y = 4')} ومركزها ${M('c(−2, −3)')}.
+  <li><b class="exn">5</b><div>جد معادلة الدائرة التي تمس المستقيم ${M('y = 4')} ومركزها ${M('c(−2, −3)')}
    ${MINI(`${M('r = |4 − (−3)| = 7')}: ${M('(x + 2)^2 + (y + 3)^2 = 49')}`)}</div></li>
-  <li><b class="exn">6</b><div>جد معادلة الدائرة التي تمسّ المحورين الإحداثيين وتمسّ المستقيم ${M('y = 6')}.
+  <li><b class="exn">6</b><div>جد معادلة الدائرة التي تمس المحورين الاحداثيين وتمس المستقيم ${M('y = 6')}
    ${MINI(`${M('r = 3')} ودائرتان: ${M('(x − 3)^2 + (y − 3)^2 = 9')} و ${M('(x + 3)^2 + (y − 3)^2 = 9')}`)}</div></li>
-  <li><b class="exn">7</b><div>جد معادلة الدائرة التي تمرّ بالنقطة ${M('(−3, 6)')} وتمسّ المحورين الإحداثيين.
+  <li><b class="exn">7</b><div>جد معادلة الدائرة التي تمر بالنقطة ${M('(−3, 6)')} وتمس المحورين الاحداثيين
    ${MINI(`${M('r^2 − 18r + 45 = 0')} ⇐ ${M('r = 3')} أو ${M('r = 15')}: ${M('(x + 3)^2 + (y − 3)^2 = 9')} و ${M('(x + 15)^2 + (y − 15)^2 = 225')}`)}</div></li>
-  <li><b class="exn">8</b><div>جد معادلة الدائرة التي نصف قطرها ${M('5')} وتمسّ المحورين وتقع: أولاً في الربع الثاني، ثانياً في الربع الرابع، ثالثاً في الربع الأول.
+  <li><b class="exn">8</b><div>جد معادلة الدائرة التي نصف قطرها ${N('5')} وحدات و تمس المحورين الاحداثيين والواقعة :−<div class="parts one"><span><b class="pl">أولاً</b>في الربع الثاني</span><span><b class="pl">ثانياً</b>في الربع الرابع</span><span><b class="pl">ثالثاً</b>في الربع الاول</span></div>
    ${MINI(`أولاً ${M('(x + 5)^2 + (y − 5)^2 = 25')} ثانياً ${M('(x − 5)^2 + (y + 5)^2 = 25')} ثالثاً ${M('(x − 5)^2 + (y − 5)^2 = 25')}`)}</div></li>
  </ol>
  <p class="exhint">في التمرين ${N('7')} قرأنا النقطة ${M('(−3, 6)')}؛ إن كانت ${M('(6, −3)')} فالدائرتان في الربع الرابع بنصفي القطر نفسيهما.</p>
@@ -678,7 +689,7 @@ const PAGES=[
  ${RUN('مختبر','تحقّق من حلّك')}
  <h3 class="lt"><span class="lab-ic">تحقّق</span>اختر التمرين</h3>
  ${stage}
- <div class="side"><div class="ro"></div><div class="ctl"><div class="btns xsel"></div></div></div>
+ <div class="side"><div class="exq hide"></div><div class="ro"></div><div class="ctl"><div class="btns xsel"></div></div></div>
  ${FOOT(0)}
 </section>`],
 
@@ -686,13 +697,13 @@ const PAGES=[
  ${RUN(CH,'تمارين (3−1) · ص '+N('53'))}
  <h2><span class="num"></span>التمارين من 9 إلى 12</h2>
  <ol class="exl">
-  <li><b class="exn">9</b><div>اكتب المعادلة العامة للدائرة التي مركزها ${M('c(2, −3)')} ونصف قطرها ${M('4')}.
+  <li><b class="exn">9</b><div>اكتب المعادلة العامة للدائرة التي مركزها ${M('c(2, −3)')} ونصف قطرها ${N('4')} وحدات .
    ${MINI(`${M('x^2 + y^2 − 4x + 6y − 3 = 0')}`)}</div></li>
-  <li><b class="exn">10</b><div>جد معادلة الدائرة التي تمرّ بالنقطتين ${M('p<sub>1</sub>(3, −1) , p<sub>2</sub>(5, 1)')} ويقع مركزها على محور السينات.
+  <li><b class="exn">10</b><div>جد معادلة الدائرة التي تمر بالنقطتين ${M('p<sub>1</sub>(3, −1)')} ، ${M('p<sub>2</sub>(5, 1)')} ويقع مركزها على محور السينات
    ${MINI(`${M('C(4, 0) , r = √2')}: ${M('(x − 4)^2 + y^2 = 2')}`)}</div></li>
-  <li><b class="exn">11</b><div>جد معادلة الدائرة التي تمرّ بالنقاط ${M('p<sub>1</sub>(1, 0) , p<sub>2</sub>(0, 1) , p<sub>3</sub>(3, 4)')}.
+  <li><b class="exn">11</b><div>جد معادلة الدائرة التي تمر بالنقاط ${M('p<sub>1</sub>(1, 0) , p<sub>2</sub>(0, 1) , p<sub>3</sub>(3, 4)')} .
    ${MINI(`${M('x^2 + y^2 − 4x − 4y + 3 = 0')}، مركزها ${M('(2, 2)')} و ${M('r = √5')}`)}</div></li>
-  <li><b class="exn">12</b><div>جد معادلة المماس للدائرة ${M('(x − 3)^2 + (y − 2)^2 = 5')} عند النقطة ${M('p(1, 1)')}.
+  <li><b class="exn">12</b><div>اوجد معادلة المماس للدائرة ${M('(x − 3)^2 + (y − 2)^2 = 5')} عند النقطة ${M('p(1, 1)')}
    ${MINI(`${M('m<sub>1</sub> = 1/2 , m<sub>2</sub> = −2')}: ${M('2x + y − 3 = 0')}`)}</div></li>
  </ol>
  <p class="exhint">في التمرين ${N('9')} قرأنا المركز ${M('(2, −3)')}؛ إن كان ${M('(−3, 2)')} فالمعادلة ${M('x^2 + y^2 + 6x − 4y − 3 = 0')}.</p>
@@ -702,7 +713,7 @@ const PAGES=[
  ${RUN('مختبر','تحقّق من حلّك')}
  <h3 class="lt"><span class="lab-ic">تحقّق</span>اختر التمرين</h3>
  ${stage}
- <div class="side"><div class="ro"></div><div class="ctl"><div class="btns xsel"></div></div></div>
+ <div class="side"><div class="exq hide"></div><div class="ro"></div><div class="ctl"><div class="btns xsel"></div></div></div>
  ${FOOT(0)}
 </section>`],
 
@@ -798,6 +809,51 @@ function coordPlane(pen,W,H,R){
   return {X,Y,s,fs};
 }
 
+
+/* ===== منطوق الأمثلة والتمارين كما ورد في الكتاب (الإحداثيات بالترتيب الذي يستعمله حلّ الكتاب) ===== */
+const EXQ={
+ c1:['مثال 1 · ص 42',`جد معادلة الدائرة التي مركزها ${M('(5 , 3)')} ونصف قطرها (${N('4')}) وحدات`],
+ c2:['مثال 2 · ص 43',`جد معادلة الدائرة التي مركزها نقطة الاصل ونصف قطرها (${N('6')}) وحدات`],
+ c3:['مثال 3 · ص 43',`أوجد مركز ونصف قطر الدائرة التي معادلتها ${M('(x − 5)^2 + (y + 3)^2 = 49')}`],
+ d2:['مثال 2 · ص 44',`جد معادلة الدائرة التي نهايتي أحد أقطارها النقطتان ${M('p<sub>1</sub>(4 , 5) , p<sub>2</sub>(−2 , 3)')}`],
+ d3:['مثال 3 · ص 45',`جد معادلة الدائرة التي مركزها نقطة الأصل وتمس المستقيم ${M('3x − 4y − 15 = 0')}`],
+ a1:['مثال 1 · ص 46',`جد معادلة الدائرة التي تمس المحور السيني ومركزها ${M('(3 , 2)')}`],
+ a2:['مثال 2 · ص 46',`جد معادلة الدائرة التي تمس المحور الصادي ومركزها ${M('(4 , −1)')}`],
+ a3:['مثال 3 · ص 47',`جد معادلة الدائرة التي تمس المحورين الأحداثيين ومركزها ${M('(4 , −4)')}`],
+ a4:['مثال 4 · ص 47',`جد معادلة الدائرة التي تمس المحورين وتقع في الربع الثالث ونصف قطرها ${N('5')} وحدات`],
+ k5:['مثال 5 · ص 48',`جد معادلة الدائرة المارة بالنقطة ${M('p(2 , 1)')}. وتمس المحورين الاحداثيين.`],
+ g1d:['مثال 1 · ص 49',`اي المعادلات الآتية يمثل معادلة دائرة: ${M('d. x^2 + y^2 − 2x + 6y + 19 = 0')}`],
+ g1e:['مثال 1 · ص 49',`اي المعادلات الآتية يمثل معادلة دائرة: ${M('e. x^2 + y^2 − 2x + 6y − 19 = 0')}`],
+ g2:['مثال 2 · ص 50',`جد أحداثيات مركز ونصف قطر الدائرة ${M('2x^2 + 2y^2 + 12x − 8y + 6 = 0')}`],
+ g3:['مثال 3 · ص 50',`أكتب المعادلة العامة للدائرة التي مركزها ${M('C (1 , −3) , r = 2')} وحدات`],
+ k4:['مثال 4 · ص 51',`جد معادلة الدائرة التي تمر بالنقطتين ${M('p<sub>1</sub>(1 , −2) , p<sub>2</sub>(4 , −3)')} ويقع مركزها على محور الصادات .`],
+ k51:['مثال 5 · ص 51',`جد معادلة الدائرة التي تمر بالنقط ${M('p<sub>1</sub>(0 , 0) , p<sub>2</sub>(2 , 0) , p<sub>3</sub>(3 , −1)')}`],
+ k6:['مثال 6 · ص 52',`جد معادلة الدائرة التي تمر بالنقطتين ${M('p<sub>1</sub>(2 , 1) , p<sub>2</sub>(−1 , 1)')} ويقع مركزها على المستقيم الذي معادلته ${M('2x − 4y − 5 = 0')}`],
+ t7:['مثال 7 · ص 52',`اوجد معادلة مماس الدائرة ${M('x^2 + y^2 = 5')} عند النقطة ${M('p(1 , 2)')}`],
+ x1a:['تمرين 1 · ص 53',`بين أي من المعادلات الآتية تمثل معادلة دائرة . ${M('a. x^2 + 3y^2 − 2x + 3y = 0')}`],
+ x1b:['تمرين 1 · ص 53',`بين أي من المعادلات الآتية تمثل معادلة دائرة . ${M('b. x^2 + y^2 + 4x − 6y = 12')}`],
+ x1c:['تمرين 1 · ص 53',`بين أي من المعادلات الآتية تمثل معادلة دائرة . ${M('c. x^2 + y^2 + 2xy = 1')}`],
+ x1d:['تمرين 1 · ص 53',`بين أي من المعادلات الآتية تمثل معادلة دائرة . ${M('d. x^2 + y^2 = 0')}`],
+ x1e:['تمرين 1 · ص 53',`بين أي من المعادلات الآتية تمثل معادلة دائرة . ${M('e. y = −2x')}`],
+ 'x2أ':['تمرين 2 · ص 53',`جد معادلة الدائرة في كل حالة من الحالات الآتية : أ. مركزها ${M('c(3, −2)')} ونصف قطرها ${N('5')} وحدات`],
+ 'x2ب':['تمرين 2 · ص 53',`جد معادلة الدائرة في كل حالة من الحالات الآتية : ب. مركزها نقطة الاصل وتمر بالنقطة ${M('p(−4, 3)')}`],
+ 'x2ج':['تمرين 2 · ص 53',`جد معادلة الدائرة في كل حالة من الحالات الآتية : ج. مركزها ${M('c(−1, 5)')} وتمر بالنقطة ${M('p(4 , 3)')}`],
+ x3:['تمرين 3 · ص 53',`جد معادلة الدائرة التي نهايتي قطر فيها ${M('p<sub>1</sub>(2 , −3) , p<sub>2</sub>(4 , 1)')} بثلاثة طرق مختلفة .`],
+ x4a:['تمرين 4 · ص 53',`جد أحداثيات المركز ونصف قطر الدوائر الآتية : − ${M('a. (x + 5)^2 + (y − 4)^2 = 36')}`],
+ x4b:['تمرين 4 · ص 53',`جد أحداثيات المركز ونصف قطر الدوائر الآتية : − ${M('b. (x − 2)^2 + y^2 = 9')}`],
+ x4c:['تمرين 4 · ص 53',`جد أحداثيات المركز ونصف قطر الدوائر الآتية : − ${M('c. 2x^2 + 2y^2 + 3x + 4y = 0')}`],
+ x5:['تمرين 5 · ص 53',`جد معادلة الدائرة التي تمس المستقيم ${M('y = 4')} ومركزها ${M('c(−2 , −3)')}`],
+ x6:['تمرين 6 · ص 53',`جد معادلة الدائرة التي تمس المحورين الاحداثيين وتمس المستقيم ${M('y = 6')}`],
+ x7:['تمرين 7 · ص 53',`جد معادلة الدائرة التي تمر بالنقطة ${M('(−3 , 6)')} وتمس المحورين الاحداثيين`],
+ 'x8أ':['تمرين 8 · ص 53',`جد معادلة الدائرة التي نصف قطرها ${N('5')} وحدات و تمس المحورين الاحداثيين والواقعة :− أولاً : في الربع الثاني`],
+ 'x8ب':['تمرين 8 · ص 53',`جد معادلة الدائرة التي نصف قطرها ${N('5')} وحدات و تمس المحورين الاحداثيين والواقعة :− ثانياً : في الربع الرابع`],
+ 'x8ج':['تمرين 8 · ص 53',`جد معادلة الدائرة التي نصف قطرها ${N('5')} وحدات و تمس المحورين الاحداثيين والواقعة :− ثالثاً : في الربع الاول`],
+ x9:['تمرين 9 · ص 53',`اكتب المعادلة العامة للدائرة التي مركزها ${M('c(2 , −3)')} ونصف قطرها ${N('4')} وحدات .`],
+ x10:['تمرين 10 · ص 53',`جد معادلة الدائرة التي تمر بالنقطتين ${M('p<sub>1</sub>(3, −1)')} ، ${M('p<sub>2</sub>(5, 1)')} ويقع مركزها على محور السينات`],
+ x11:['تمرين 11 · ص 53',`جد معادلة الدائرة التي تمر بالنقاط ${M('p<sub>1</sub>(1 , 0) , p<sub>2</sub>(0 , 1) , p<sub>3</sub>(3 , 4)')} .`],
+ x12:['تمرين 12 · ص 53',`اوجد معادلة المماس للدائرة ${M('(x − 3)^2 + (y − 2)^2 = 5')} عند النقطة ${M('p(1 , 1)')}`]
+};
+
 /* ================= Lab base ================= */
 /* pre-stretch drawings vertically so that, after the pop-up card leans and the book tilts, circles still look round */
 function AK(page){ const inT=!!(page&&page.closest('#teach')); const r=inT?14:(single?28:32), t=inT?9:(single?7:18); return 1/(Math.cos(r*Math.PI/180)*Math.cos(t*Math.PI/180)); }
@@ -807,7 +863,8 @@ class Lab{
     this.page=page; this.cv=$('canvas',page); this.c=this.cv.getContext('2d'); this.pen=new Pen(this.c);
     this.cur={}; this.tgt={}; this.W=0; this.H=0; this.d=1;
     new ResizeObserver(()=>this.fit()).observe(this.cv);
-    $$('input[type=range]',page).forEach(inp=>inp.addEventListener('input',()=>{ this.onSlide(inp.dataset.k,parseFloat(inp.value)); }));
+    $$('input[type=range]',page).forEach(inp=>inp.addEventListener('input',()=>{ this.hideEx(); this.onSlide(inp.dataset.k,parseFloat(inp.value)); }));
+    page.addEventListener('click',e=>{ const b=e.target.closest('[data-q]'); if(b) this.showEx(b.dataset.q); });
     LABS.push(this);
   }
   fit(){ const w=this.cv.clientWidth,h=this.cv.clientHeight; if(!w||!h) return; const d=Math.min(3,(devicePixelRatio||1)*1.5), K=AK(this.page);
@@ -820,6 +877,8 @@ class Lab{
     if(this.W) this.draw(); if(mv||this.anim) this.kick(); }
   clear(){ const c=this.c; c.setTransform(this.d,0,0,this.d*this.K,0,0); c.clearRect(0,0,this.W,this.H); c.fillStyle=COL.card; c.fillRect(0,0,this.W,this.H); }
   ro(html){ $('.ro',this.page).innerHTML=html; }
+  showEx(key){ const q=EXQ[key], el=$('.exq',this.page); if(!q||!el) return; el.innerHTML=`<b>${q[0]}</b>${q[1]}`; el.classList.remove('hide'); }
+  hideEx(){ const el=$('.exq',this.page); if(el) el.classList.add('hide'); }
   onSlide(){} ui(){} draw(){}
 }
 
@@ -939,7 +998,8 @@ class TouchLab extends Lab{
   constructor(p){ super(p);
     $$('[data-m]',p).forEach(b=>b.onclick=()=>{ let {h,k,r}=this.tgt;
       if(b.dataset.m==='x'){ if(k===0) k=r; r=Math.min(7,Math.abs(k)); } else { if(h===0) h=r; r=Math.min(7,Math.abs(h)); } this.apply({h,k,r}); });
-    $$('[data-q]',p).forEach(b=>b.onclick=()=>{ const r=this.tgt.r, q=+b.dataset.q; this.apply({h:(q===1||q===4)?r:-r, k:(q<=2)?r:-r, r}); });
+    $$('[data-tx]',p).forEach(b=>b.onclick=()=>{ const [h,k,r]=b.dataset.tx.split(',').map(Number); this.apply({h,k,r}); });
+    $$('[data-qd]',p).forEach(b=>b.onclick=()=>{ const r=this.tgt.r, q=+b.dataset.qd; this.apply({h:(q===1||q===4)?r:-r, k:(q<=2)?r:-r, r}); });
     this.set({h:3,k:2,r:3}); }
   apply(o){ for(const k in o) this.setVal(k,o[k]); this.set(o); }
   onSlide(k,v){ this.setVal(k,v); this.set({[k]:v}); }
@@ -967,7 +1027,7 @@ class TouchLab extends Lab{
 class GenLab extends Lab{
   constructor(p){ super(p); this.x2=false;
     $('[data-x2]',p).onclick=e=>{ this.x2=!this.x2; e.currentTarget.classList.toggle('on',this.x2); this.ui(); };
-    $$('[data-ex]',p).forEach(b=>b.onclick=()=>{ const E={2:[6,-4,3,true],d:[-2,6,19,false],e:[-2,6,-19,false],6:[-1,2,-5,false]}[b.dataset.ex];
+    $$('[data-ex]',p).forEach(b=>b.onclick=()=>{ const E={2:[6,-4,3,true],3:[-2,6,6,false],d:[-2,6,19,false],e:[-2,6,-19,false],6:[-1,2,-5,false]}[b.dataset.ex];
       const [A,B,C,x2]=E; this.x2=x2; $('[data-x2]',p).classList.toggle('on',x2); this.setVal('A',A); this.setVal('B',B); this.setVal('C',C); this.upd(A,B,C); });
     this.upd(-2,6,-19); }
   onSlide(k,v){ this.setVal(k,v); const t={A:this.A,B:this.B,C:this.C,[k]:v}; this.upd(t.A,t.B,t.C); }
@@ -1183,7 +1243,7 @@ class CheckLab extends Lab{
   constructor(p){ super(p); this.items=EXS[p.dataset.set]; const sel=$('.xsel',p);
     sel.innerHTML='<span class="lbl">التمرين:</span>'+this.items.map(([id],i)=>`<button type="button" class="chip" data-x="${i}">${id}</button>`).join('');
     $$('[data-x]',p).forEach(b=>b.onclick=()=>this.show(+b.dataset.x)); this.show(0); }
-  show(i){ this.i=i; this.S=this.items[i][1](); $$('[data-x]',this.page).forEach(b=>b.classList.toggle('on',+b.dataset.x===i)); this.ui(); this.kick(); }
+  show(i){ this.i=i; this.showEx('x'+this.items[i][0]); this.S=this.items[i][1](); $$('[data-x]',this.page).forEach(b=>b.classList.toggle('on',+b.dataset.x===i)); this.ui(); this.kick(); }
   ui(){ if(this.S) this.ro(this.S.rows.join('')); }
   draw(){ if(!this.W||!this.S) return; this.clear(); drawScene(this,this.S); }
 }
