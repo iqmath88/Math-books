@@ -1318,14 +1318,17 @@ $('.toc',SP[0].R).innerHTML=SP.slice(1).map((sp,j)=>{ const h=$('h2',sp.R).clone
 /* paper flaps (predict boxes and exercise answers) */
 function setupFlap(box,onState){
   const flap=$('.flap',box); let sy=null, moved=false, h=1;
-  const setOpen=o=>{ flap.style.transform=''; box.classList.toggle('open',o); flap.setAttribute('aria-label',o?'أنزل اللسان':'ارفع اللسان لكشف الإجابة'); onState&&onState(o); };
+  let tOpen=0;
+  const setOpen=o=>{ tOpen=Date.now(); flap.style.transform=''; box.classList.toggle('open',o); flap.setAttribute('aria-label',o?'أنزل اللسان':'ارفع اللسان لكشف الإجابة'); onState&&onState(o); };
   flap.addEventListener('pointerdown',e=>{ e.stopPropagation(); sy=e.clientY; moved=false; h=flap.offsetHeight||40; flap.setPointerCapture(e.pointerId); flap.style.transition='none'; });
   flap.addEventListener('pointermove',e=>{ if(sy===null) return; const dy=sy-e.clientY; if(Math.abs(dy)>4) moved=true; const base=box.classList.contains('open')?102:0; const a=Math.max(0,Math.min(110,base+dy/h*90)); flap.style.transform=`perspective(700px) rotateX(${a}deg)`; });
   const up=e=>{ if(sy===null) return; const dy=sy-e.clientY; sy=null; flap.style.transition='';
     const open=box.classList.contains('open'); if(!moved) setOpen(!open); else setOpen(open?dy>-h*.4:dy>h*.35); };
   flap.addEventListener('pointerup',up); flap.addEventListener('pointercancel',up);
   flap.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); setOpen(!box.classList.contains('open')); } });
-  $('.ans',box).addEventListener('click',()=>{ if(box.classList.contains('open')) setOpen(false); });
+  /* on touch screens the tap that opens the flap is followed by a click on the answer underneath: ignore it */
+  $('.ans',box).addEventListener('click',()=>{ if(box.classList.contains('open')&&Date.now()-tOpen>600) setOpen(false); });
+  flap.addEventListener('click',e=>e.stopPropagation());
 }
 $$('.predict').forEach(pd=>{
   const ans=+pd.dataset.ans, box=$('.flapbox',pd), opts=$$('.popts .chip',pd); let picked=null;

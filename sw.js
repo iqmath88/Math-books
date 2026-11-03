@@ -1,5 +1,5 @@
 /* يحفظ ملفات التطبيق في الجهاز ليعمل بدون إنترنت. غيّر رقم الإصدار عند كل تحديث للمحتوى. */
-const VERSION = 'math5-v4';
+const VERSION = 'math5-v5';
 const FILES = [
   './', './index.html', './manifest.webmanifest',
   './ch3.html', './ch4.html',
