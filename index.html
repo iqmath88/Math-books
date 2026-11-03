@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>الرياضيات الحيّة</title>
+<meta name="description" content="كتاب إلكتروني تفاعلي – رياضيات الصف الخامس العلمي">
+<meta name="theme-color" content="#4f1a10">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="الرياضيات الحيّة">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{
+  --desk1:#8d5f3d; --desk2:#5f3b22; --ink:#f7eedd; --muted:#e2cfae; --panel:rgba(30,18,10,.55); --line:rgba(255,255,255,.14);
+  --paper:#f8f1e2; --pink:#be185d; --gold:#f3c56b; --ok:#4ade80;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --desk1:#2c1f16; --desk2:#140d09; --panel:rgba(0,0,0,.45); color-scheme:dark; } }
+:root[data-theme="dark"]{ --desk1:#2c1f16; --desk2:#140d09; --panel:rgba(0,0,0,.45); color-scheme:dark; }
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:"Segoe UI","Noto Sans Arabic","Noto Naskh Arabic","Geeza Pro",Tahoma,sans-serif;color:var(--ink);
+  background:radial-gradient(ellipse 70% 55% at 50% 30%,rgba(255,214,160,.2),transparent 70%),
+    repeating-linear-gradient(91deg,rgba(0,0,0,.05) 0 2px,transparent 2px 11px),linear-gradient(180deg,var(--desk1),var(--desk2));
+  background-attachment:fixed;padding:env(safe-area-inset-top) 16px calc(24px + env(safe-area-inset-bottom));}
+bdi{unicode-bidi:isolate}
+.wrap{max-width:1100px;margin:0 auto}
+header{display:flex;align-items:center;gap:14px;padding:18px 0 10px}
+header img{width:52px;height:52px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+header h1{margin:0;font-size:clamp(20px,4vw,28px)}
+header p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.sp{flex:1}
+.ib{text-decoration:none;height:42px;min-width:42px;border-radius:21px;border:1px solid var(--line);background:var(--panel);color:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 14px;font:600 14px/1 inherit;cursor:pointer}
+.ib svg{width:20px;height:20px}
+.ib.gold{background:var(--gold);color:#2b1b0c;border-color:var(--gold)}
+.hide{display:none!important}
+.resume{display:flex;align-items:center;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin:8px 0 18px;backdrop-filter:blur(6px)}
+.resume .t{flex:1;min-width:0}
+.resume b{display:block;font-size:17px}
+.resume small{color:var(--muted)}
+.bar{height:6px;border-radius:3px;background:rgba(255,255,255,.15);margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--gold);border-radius:3px}
+h2{font-size:16px;color:var(--muted);font-weight:600;margin:6px 0 10px}
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:26px 18px;padding:18px 6px 30px;position:relative}
+.shelf::after{content:"";position:absolute;inset:auto -6px 0 -6px;height:14px;border-radius:3px;background:linear-gradient(180deg,#6b4428,#3f2614);box-shadow:0 8px 16px rgba(0,0,0,.4)}
+.book{all:unset;box-sizing:border-box;cursor:pointer;display:block;perspective:900px;position:relative;z-index:1}
+.book:focus-visible .cv{outline:3px solid var(--gold);outline-offset:3px}
+.cv{position:relative;aspect-ratio:3/4.1;border-radius:4px 10px 10px 4px;padding:14px 12px;display:flex;flex-direction:column;justify-content:space-between;
+  background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;transform:rotateY(-14deg);transform-origin:right center;transition:transform .35s ease;
+  box-shadow:inset -8px 0 10px rgba(0,0,0,.25),inset 6px 0 0 rgba(255,255,255,.12),6px 10px 18px rgba(0,0,0,.45)}
+.cv::before{content:"";position:absolute;top:4px;bottom:4px;left:-6px;width:6px;border-radius:3px 0 0 3px;background:repeating-linear-gradient(180deg,#f3ead6 0 2px,#d9cdb1 2px 3px)}
+.book:hover .cv{transform:rotateY(-4deg) translateY(-6px)}
+.cv .n{font-size:13px;opacity:.85}
+.cv .ti{font-size:18px;font-weight:800;line-height:1.35}
+.cv .pg{font-size:12px;opacity:.85}
+.cv .badge{position:absolute;top:10px;left:10px;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;background:rgba(0,0,0,.35)}
+.cv .badge.on{background:var(--ok);color:#06280f}
+.book.lock{cursor:default}
+.book.lock .cv{filter:grayscale(.55) brightness(.8)}
+.book.lock:hover .cv{transform:rotateY(-14deg)}
+.cv .prog{height:5px;border-radius:3px;background:rgba(255,255,255,.25);overflow:hidden}
+.cv .prog i{display:block;height:100%;background:var(--gold)}
+.tip{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.7;margin:6px 0 16px}
+.tip b{color:var(--gold)}
+footer{color:var(--muted);font-size:12px;text-align:center;margin-top:10px}
+@media (prefers-reduced-motion: reduce){ .cv{transition:none} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="icons/icon-192.png" alt="">
+    <div><h1>الرياضيات الحيّة</h1><p>الصف الخامس العلمي · منهج العراق</p></div>
+    <span class="sp"></span>
+    <button class="ib gold hide" id="install" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>ثبّت التطبيق</button>
+    <button class="ib" id="theme" type="button" aria-label="الوضع الداكن"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/></svg></button>
+  </header>
+
+  <div class="tip hide" id="ios">لتثبيت التطبيق على الآيفون أو الآيباد: اضغط زر <b>المشاركة</b> في سفاري، ثم اختر <b>«إضافة إلى الشاشة الرئيسية»</b>.</div>
+
+  <div class="resume hide" id="resume">
+    <div class="t"><b id="rT">تابع القراءة</b><small id="rS"></small><div class="bar"><i id="rB"></i></div></div>
+    <a class="ib gold" id="rGo" href="chapters/ch3.html">تابع</a>
+  </div>
+
+  <h2>فصول الكتاب</h2>
+  <div class="shelf" id="shelf"></div>
+  <footer>يعمل التطبيق بدون إنترنت بعد أول فتح. تُضاف الفصول الأخرى تباعاً.</footer>
+</div>
+<script>
+"use strict";
+/* قائمة الفصول: لإضافة فصل جديد ضع ملفه في مجلد chapters واكتب اسمه في file، ثم أضفه إلى قائمة FILES في sw.js */
+const CHAPTERS=[
+  {n:1,t:'اللوغاريتمات',pg:'5–18',c:['#1d4ed8','#1e3a8a']},
+  {n:2,t:'المتتابعات',pg:'19–38',c:['#0f766e','#134e4a']},
+  {n:3,t:'القطوع المخروطية',pg:'39–53',c:['#b45309','#7b2d1e'],file:'chapters/ch3.html',key:'lb-ch3-pos'},
+  {n:4,t:'الدوال الدائرية',pg:'54–103',c:['#7e22ce','#4c1d95']},
+  {n:5,t:'الغاية والاستمرارية',pg:'104–123',c:['#be185d','#831843']},
+  {n:6,t:'المشتقات',pg:'124–163',c:['#15803d','#14532d']},
+  {n:7,t:'الهندسة الفضائية (المجسمة)',pg:'164–189',c:['#0369a1','#0c4a6e']},
+  {n:8,t:'مبدأ العد والتباديل',pg:'190–215',c:['#a16207','#713f12']},
+  {n:9,t:'المصفوفات',pg:'216–258',c:['#475569','#1e293b']}
+];
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const prog=ch=>{ if(!ch.key) return null; try{ const o=JSON.parse(ls.get(ch.key)||'null'); if(!o||!o.total) return null; const page=o.pos*2+o.sub+1; return {page,total:o.total*2,pct:Math.round(page/(o.total*2)*100)}; }catch(e){ return null; } };
+const shelf=document.getElementById('shelf');
+shelf.innerHTML=CHAPTERS.map(ch=>{ const p=prog(ch), lock=!ch.file;
+  return `<a class="book ${lock?'lock':''}" ${lock?'aria-disabled="true"':`href="${ch.file}"`} style="--c1:${ch.c[0]};--c2:${ch.c[1]}">
+   <div class="cv"><span class="badge ${lock?'':'on'}">${lock?'قريباً':'متاح'}</span>
+    <div class="n">الفصل <bdi>${ch.n}</bdi></div><div class="ti">${ch.t}</div>
+    <div>${p?`<div class="prog"><i style="width:${p.pct}%"></i></div>`:''}<div class="pg">ص <bdi dir="ltr">${ch.pg}</bdi></div></div></div></a>`; }).join('');
+const last=CHAPTERS.find(ch=>prog(ch)); if(last){ const p=prog(last);
+  document.getElementById('resume').classList.remove('hide');
+  document.getElementById('rT').textContent='تابع القراءة: '+last.t;
+  document.getElementById('rS').innerHTML=`وصلت إلى الصفحة <bdi>${p.page}</bdi> من <bdi>${p.total}</bdi>`;
+  document.getElementById('rB').style.width=p.pct+'%'; document.getElementById('rGo').href=last.file; }
+/* theme */
+const root=document.documentElement; const t0=ls.get('lb-theme'); if(t0) root.dataset.theme=t0;
+document.getElementById('theme').onclick=()=>{ const d=(root.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))==='dark'?'light':'dark'; root.dataset.theme=d; ls.set('lb-theme',d); };
+/* install */
+let deferred=null; const ib=document.getElementById('install');
+addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); deferred=e; ib.classList.remove('hide'); });
+ib.onclick=async()=>{ if(!deferred) return; deferred.prompt(); await deferred.userChoice; deferred=null; ib.classList.add('hide'); };
+addEventListener('appinstalled',()=>ib.classList.add('hide'));
+const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!standalone) document.getElementById('ios').classList.remove('hide');
+if('serviceWorker' in navigator && location.protocol!=='file:') navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
