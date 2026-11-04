@@ -443,7 +443,7 @@ const PAGES=[
   <div class="ctl">
    ${slider('a','<span class="cc">a</span>',-3,5,0.5,3,'--c-center')}
    ${slider('e','<span class="cp">ε</span>',0.1,2,0.1,0.5,'--c-point')}
-   <div class="btns"><button type="button" class="chip" data-t="0">جوار</button><button type="button" class="chip" data-t="1">جوار أيسر</button><button type="button" class="chip" data-t="2">جوار أيمن</button><button type="button" class="chip" data-go>اقترب من ${M('a')}</button></div>
+   <div class="btns"><button type="button" class="chip" data-t="0">جوار</button><button type="button" class="chip" data-t="1">جوار أيسر</button><button type="button" class="chip" data-t="2">جوار أيمن</button><button type="button" class="chip" data-run>اقترب من ${M('a')}</button></div>
   </div></div>
  ${FOOT(0)}
 </section>`],
@@ -802,7 +802,7 @@ class IntroLab extends Lab{
 class NbhdLab extends Lab{
   constructor(p){ super(p); this.t=0; this.k=0;
     $$('[data-t]',p).forEach(b=>b.onclick=()=>{ this.t=+b.dataset.t; this.k=0; this.mark(); this.ui(); this.kick(); });
-    $('[data-go]',p).onclick=()=>this.go();
+    $('[data-run]',p).onclick=()=>this.go();
     this.setVal('a',3,'3'); this.setVal('e',.5,'0.5'); this.set({a:3,e:.5}); this.mark(); }
   mark(){ $$('[data-t]',this.page).forEach(b=>b.classList.toggle('on',+b.dataset.t===this.t)); }
   onSlide(k,v){ this.setVal(k,v,fmt(v)); this.k=0; this.set({[k]:v}); }
