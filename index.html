@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>الرياضيات الحيّة</title>
-<meta name="description" content="كتاب إلكتروني تفاعلي – رياضيات الصف الخامس العلمي">
+<meta name="description" content="كتب رياضيات تفاعلية – منهج العراق">
 <meta name="theme-color" content="#4f1a10">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="favicon.png" type="image/png">
@@ -44,7 +44,8 @@ header p{margin:2px 0 0;color:var(--muted);font-size:14px}
 .resume small{color:var(--muted)}
 .bar{height:6px;border-radius:3px;background:rgba(255,255,255,.15);margin-top:8px;overflow:hidden}
 .bar i{display:block;height:100%;background:var(--gold);border-radius:3px}
-h2{font-size:16px;color:var(--muted);font-weight:600;margin:6px 0 10px}
+h2{font-size:17px;color:var(--ink);font-weight:800;margin:14px 0 4px}
+h2 small{font-size:12px;color:var(--muted);font-weight:600;margin-inline-start:8px}
 .shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:26px 18px;padding:18px 6px 30px;position:relative}
 .shelf::after{content:"";position:absolute;inset:auto -6px 0 -6px;height:14px;border-radius:3px;background:linear-gradient(180deg,#6b4428,#3f2614);box-shadow:0 8px 16px rgba(0,0,0,.4)}
 .book{all:unset;box-sizing:border-box;cursor:pointer;display:block;perspective:900px;position:relative;z-index:1}
@@ -74,7 +75,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:10px}
 <div class="wrap">
   <header>
     <img src="icon-192.png" alt="">
-    <div><h1>الرياضيات الحيّة</h1><p>الصف الخامس العلمي · منهج العراق</p></div>
+    <div><h1>الرياضيات الحيّة</h1><p>كتب تفاعلية · منهج العراق</p></div>
     <span class="sp"></span>
     <button class="ib gold hide" id="install" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>ثبّت التطبيق</button>
     <button class="ib" id="theme" type="button" aria-label="الوضع الداكن"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/></svg></button>
@@ -87,14 +88,14 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:10px}
     <a class="ib gold" id="rGo" href="ch3.html">تابع</a>
   </div>
 
-  <h2>فصول الكتاب</h2>
-  <div class="shelf" id="shelf"></div>
-  <footer>يعمل التطبيق بدون إنترنت بعد أول فتح. تُضاف الفصول الأخرى تباعاً.</footer>
+  <div id="shelves"></div>
+  <footer>يعمل التطبيق بدون إنترنت بعد أول فتح. تُضاف الفصول والكتب الأخرى تباعاً.</footer>
 </div>
 <script>
 "use strict";
-/* قائمة الفصول: لإضافة فصل جديد ضع ملفه بجانب index.html واكتب اسمه في file، ثم أضفه إلى قائمة FILES في sw.js */
-const CHAPTERS=[
+/* الكتب ورفوفها: لإضافة فصل ضع ملفه بجانب index.html واكتب اسمه في file، ثم أضفه إلى قائمة FILES في sw.js */
+const BOOKS=[
+ {id:'g5',t:'الرياضيات · الصف الخامس العلمي',ch:[
   {n:1,t:'اللوغاريتمات',pg:'5–18',c:['#1d4ed8','#1e3a8a']},
   {n:2,t:'المتتابعات',pg:'19–38',c:['#0f766e','#134e4a']},
   {n:3,t:'القطوع المخروطية',pg:'39–53',c:['#b45309','#7b2d1e'],file:'ch3.html',key:'lb-ch3-pos'},
@@ -103,20 +104,28 @@ const CHAPTERS=[
   {n:6,t:'المشتقات',pg:'124–163',c:['#15803d','#14532d'],file:'ch6.html',key:'lb-ch6-pos'},
   {n:7,t:'الهندسة الفضائية (المجسمة)',pg:'164–189',c:['#0369a1','#0c4a6e']},
   {n:8,t:'مبدأ العد والتباديل',pg:'190–215',c:['#a16207','#713f12']},
-  {n:9,t:'المصفوفات',pg:'216–258',c:['#475569','#1e293b']}
+  {n:9,t:'المصفوفات',pg:'216–258',c:['#475569','#1e293b']}]},
+ {id:'g9',t:'الرياضيات · الصف الثالث المتوسط',ch:[
+  {n:1,t:'العلاقات والمتباينات في الأعداد الحقيقية',pg:'4–22',c:['#c2410c','#7c2d12'],file:'g9c1.html',key:'lb-g9c1-pos'},
+  {n:2,t:'المقادير الجبرية',pg:'23–49',c:['#7e22ce','#4c1d95']},
+  {n:3,t:'المعادلات',pg:'50–78',c:['#0f766e','#134e4a']},
+  {n:4,t:'الهندسة الإحداثية',pg:'79–97',c:['#1d4ed8','#1e3a8a']},
+  {n:5,t:'الهندسة والقياس',pg:'98–124',c:['#be185d','#831843']},
+  {n:6,t:'الإحصاء والاحتمالات',pg:'125–143',c:['#15803d','#14532d']}]}
 ];
 const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const prog=ch=>{ if(!ch.key) return null; try{ const o=JSON.parse(ls.get(ch.key)||'null'); if(!o||!o.total) return null; const page=o.pos*2+o.sub+1; return {page,total:o.total*2,pct:Math.round(page/(o.total*2)*100)}; }catch(e){ return null; } };
-const shelf=document.getElementById('shelf');
-shelf.innerHTML=CHAPTERS.map(ch=>{ const p=prog(ch), lock=!ch.file;
-  return `<a class="book ${lock?'lock':''}" ${lock?'aria-disabled="true"':`href="${ch.file}" onclick="ls.set('lb-last-${ch.n}',Date.now())"`} style="--c1:${ch.c[0]};--c2:${ch.c[1]}">
+const all=[]; BOOKS.forEach(B=>B.ch.forEach(ch=>{ ch.b=B; ch.uid=B.id+'-'+ch.n; all.push(ch); }));
+const card=ch=>{ const p=prog(ch), lock=!ch.file;
+  return `<a class="book ${lock?'lock':''}" ${lock?'aria-disabled="true"':`href="${ch.file}" onclick="ls.set('lb-last-${ch.uid}',Date.now())"`} style="--c1:${ch.c[0]};--c2:${ch.c[1]}">
    <div class="cv"><span class="badge ${lock?'':'on'}">${lock?'قريباً':'متاح'}</span>
     <div class="n">الفصل <bdi>${ch.n}</bdi></div><div class="ti">${ch.t}</div>
-    <div>${p?`<div class="prog"><i style="width:${p.pct}%"></i></div>`:''}<div class="pg">ص <bdi dir="ltr">${ch.pg}</bdi></div></div></div></a>`; }).join('');
-const last=CHAPTERS.filter(ch=>prog(ch)).sort((a,b)=>(+ls.get('lb-last-'+b.n)||0)-(+ls.get('lb-last-'+a.n)||0))[0]; if(last){ const p=prog(last);
+    <div>${p?`<div class="prog"><i style="width:${p.pct}%"></i></div>`:''}<div class="pg">ص <bdi dir="ltr">${ch.pg}</bdi></div></div></div></a>`; };
+document.getElementById('shelves').innerHTML=BOOKS.map(B=>`<section class="bk"><h2>${B.t} <small>${B.ch.filter(c=>c.file).length} من ${B.ch.length} فصول متاحة</small></h2><div class="shelf">${B.ch.map(card).join('')}</div></section>`).join('');
+const last=all.filter(ch=>prog(ch)).sort((a,b)=>(+ls.get('lb-last-'+b.uid)||0)-(+ls.get('lb-last-'+a.uid)||0))[0]; if(last){ const p=prog(last);
   document.getElementById('resume').classList.remove('hide');
   document.getElementById('rT').textContent='تابع القراءة: '+last.t;
-  document.getElementById('rS').innerHTML=`وصلت إلى الصفحة <bdi>${p.page}</bdi> من <bdi>${p.total}</bdi>`;
+  document.getElementById('rS').innerHTML=`${last.b.t.split('·').pop().trim()} · وصلت إلى الصفحة <bdi>${p.page}</bdi> من <bdi>${p.total}</bdi>`;
   document.getElementById('rB').style.width=p.pct+'%'; document.getElementById('rGo').href=last.file; }
 /* theme */
 const root=document.documentElement; const t0=ls.get('lb-theme'); if(t0) root.dataset.theme=t0;
