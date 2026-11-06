@@ -61,6 +61,17 @@ button{font-family:inherit}
 bdi.n,bdi.m{unicode-bidi:isolate;direction:ltr}
 .m{font-family:"Cambria Math",Cambria,"Times New Roman","Noto Serif",serif;white-space:nowrap;font-size:1.04em}
 .m sup,.n sup{font-size:.68em;line-height:0}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.8em;line-height:1.02;margin:0 .1em;white-space:nowrap}
+.fr>.nu{border-bottom:.08em solid currentColor;padding:0 .2em .02em}
+.fr>.de{padding:.07em .2em 0}
+.lim{display:inline-flex;flex-direction:column;align-items:center;vertical-align:baseline;line-height:1.05;margin-inline-end:.15em}
+.lim .ls{font-size:.6em;line-height:1;white-space:nowrap}
+.lim .ls sup{font-size:.8em}
+.fr .fr{font-size:.92em}
+.fr sup{line-height:0}
+.rad{white-space:nowrap}
+.rad .rc{border-top:.075em solid currentColor;padding:.05em .1em 0;margin-inline-start:-.03em}
+.rad .ri{font-size:.55em;vertical-align:.95em;margin-inline-end:-.42em}
 .cc{color:var(--c-center);font-weight:700}
 .cr{color:var(--c-radius);font-weight:700}
 .cs{color:var(--c-std);font-weight:700}
@@ -342,7 +353,43 @@ const MI='−';
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function fmt(x){ if(!isFinite(x)) return '?'; let v=Math.round(x*100)/100; if(Math.abs(v)<1e-9) v=0; return (v<0?MI:'')+String(Math.abs(v)); }
 const N=s=>`<bdi dir="ltr" class="n">${s}</bdi>`;
-const M=(s,c='')=>`<bdi dir="ltr" class="m ${c}">${s.replace(/\^(\d|[a-z])/g,'<sup>$1</sup>')}</bdi>`;
+/* ---- math typesetting: stacked fractions, radicals with a bar, superscripts ---- */
+const MF_ATOM=/(?:<su[bp]>[^<]*<\/su[bp]>|\^[0-9a-z]|[A-Za-z0-9.πΔθεαβ′√∛])+$/;
+const MF_ATOMF=/^(?:[−-]?)(?:<su[bp]>[^<]*<\/su[bp]>|\^[0-9a-z]|[A-Za-z0-9.πΔθεαβ′√∛])+/;
+const MF_UNIT_N=/^(m|cm|km|mol|foot|N|k|L)$/, MF_UNIT_D=/^(sec|s|h|L|m\^2|m|sec\^2|ثا)$/;
+function mfParBack(s,j){ let d=0; for(let k=j;k>=0;k--){ if(s[k]===')') d++; else if(s[k]==='('){ d--; if(d===0) return k; } } return -1; }
+function mfParFwd(s,j){ let d=0; for(let k=j;k<s.length;k++){ if(s[k]==='(') d++; else if(s[k]===')'){ d--; if(d===0) return k; } } return -1; }
+function mfFrac(s){
+  for(let i=1;i<s.length-1;i++){ if(s[i]!=='/'||s[i-1]==='<'||s[i-1]===' '||s[i+1]===' '||s[i+1]==='>') continue;
+    const pre_=s.slice(0,i); if(pre_.lastIndexOf('<sup>')>pre_.lastIndexOf('</sup>')) continue;
+    /* numerator */ let a, num, keepN=false; const L=s.slice(0,i);
+    if(L.endsWith(')')){ const k=mfParBack(s,i-1); if(k<0) continue; a=k; num=s.slice(k+1,i-1); const pre=L.slice(0,k).match(/[A-Za-z]+$/); if(pre&&!/^(sin|cos|tan|cot|sec|csc|lim)$/.test(pre[0])){ a=k-pre[0].length; num=s.slice(a,i); keepN=true; } }
+    else { const m=L.match(MF_ATOM); if(!m) continue; a=i-m[0].length; num=m[0]; keepN=true;
+      const fn=s.slice(0,a).match(/(?:sin|cos|tan|cot|sec|csc)(?:\^[0-9])? $/); if(fn){ a-=fn[0].length; num=s.slice(a,i); }
+      if(a>0&&s[a-1]===')'){ const k=mfParBack(s,a-1); if(k>=0){ num=s.slice(k,i); a=k; } } }
+    /* denominator */ let b, den; const R=s.slice(i+1);
+    if(R.startsWith('(')){ const k=mfParFwd(s,i+1); if(k<0) continue; b=k+1; den=s.slice(i+2,k); const ex=s.slice(b).match(/^(\^[0-9a-z]|<sup>[^<]*<\/sup>)/); if(ex){ den='('+den+')'+ex[0]; b+=ex[0].length; } }
+    else { const m=R.match(MF_ATOMF); if(!m) continue; den=m[0]; b=i+1+m[0].length;
+      if(/[A-Za-z]$/.test(den)&&s[b]==='('){ const k=mfParFwd(s,b); if(k>0){ den=s.slice(i+1,k+1); b=k+1; } } }
+    const nTxt=num.replace(/<[^>]+>/g,''), dTxt=den.replace(/<[^>]+>/g,'');
+    if(MF_UNIT_N.test(nTxt)&&MF_UNIT_D.test(dTxt)) continue; if(/^(sec|s|h|L)$/.test(dTxt)) continue;
+    const out=`<span class="fr"><span class="nu">${mfFrac(num)}</span><span class="de">${mfFrac(den)}</span></span>`;
+    return s.slice(0,a)+out+mfFrac(s.slice(b)); }
+  return s; }
+function mfRadicals(s){ let out='', i=0;
+  while(i<s.length){ const ch=s[i];
+    if((ch==='√'||ch==='∛')){ const idx=ch==='∛'?'<span class="ri">3</span>':''; 
+      if(s[i+1]==='('){ const k=mfParFwd(s,i+1); if(k>0){ out+=`<span class="rad">${idx}√<span class="rc">${mfRadicals(s.slice(i+2,k))}</span></span>`; i=k+1; continue; } }
+      const m=s.slice(i+1).match(/^[A-Za-z0-9.π]+/); if(m){ out+=`<span class="rad">${idx}√<span class="rc">${m[0]}</span></span>`; i+=1+m[0].length; continue; } }
+    out+=ch; i++; }
+  return out; }
+const MF_VF={'½':['1','2'],'⅓':['1','3'],'⅔':['2','3'],'¼':['1','4'],'¾':['3','4']};
+function mfmt(s){ s=String(s);
+  s=s.replace(/(\d?)([½⅓⅔¼¾])/g,(m,d,f)=>d?m:`(${MF_VF[f][0]})/(${MF_VF[f][1]})`);
+  s=mfFrac(s); s=mfRadicals(s);
+  s=s.replace(/lim<sub>((?:[^<]|<sup>[^<]*<\/sup>)*)<\/sub>/g,'<span class="lim">lim<span class="ls">$1</span></span>');
+  return s.replace(/\^(\d|[a-z])/g,'<sup>$1</sup>'); }
+const M=(s,c='')=>`<bdi dir="ltr" class="m ${c}">${mfmt(s)}</bdi>`;
 const P2=(x,y)=>`(${fmt(x)}, ${fmt(y)})`;
 function sq(v,val){ return Math.abs(val)<1e-9?`${v}<sup>2</sup>`:`(${v} ${val>0?'−':'+'} <span class="cc">${fmt(Math.abs(val))}</span>)<sup>2</sup>`; }
 function stdEq(h,k,r2){ return `<bdi dir="ltr" class="m">${sq('x',h)} + ${sq('y',k)} = <span class="cr">${fmt(r2)}</span></bdi>`; }
@@ -376,7 +423,7 @@ const FOOT=n=>`<footer class="pno">${N(n)}</footer>`;
 const CH='الفصل الخامس · الغاية والاستمرارية';
 const PT=(arr,cls='')=>`<div class="parts ${cls}">${arr.map(([l,h,w])=>`<span${w?' class="full"':''}><b class="pl">${l}</b>${h}</span>`).join('')}</div>`;
 const LIM=(a,f,side='')=>`lim<sub>x→${a}${side?'<sup>'+side+'</sup>':''}</sub> ${f}`;
-const PW=rows=>`<bdi dir="ltr" class="m pw"><span class="pwb">{</span><span class="pwr">${rows.map(([e,c])=>`<span>${e.replace(/\^(\d|[a-z])/g,'<sup>$1</sup>')}</span><span>, ${c}</span>`).join('')}</span></bdi>`;
+const PW=rows=>`<bdi dir="ltr" class="m pw"><span class="pwb">{</span><span class="pwr">${rows.map(([e,c])=>`<span>${mfmt(e)}</span><span>, ${c}</span>`).join('')}</span></bdi>`;
 const EXHINT='<p class="exhint">حلّ في دفترك، ثم اضغط رقم التمرين في المختبر المقابل وارفع اللسان لترى الحل.</p>';
 const chkPage=(set,title)=>`<section class="page lab" data-lab="chk5" data-set="${set}">
  ${RUN('مختبر','تحقّق من حلّك')}
@@ -419,7 +466,7 @@ const PAGES=[
 [`<section class="page text">
  ${RUN(CH,'[5−1] · ص '+N('105–106'))}
  <h2><span class="num"></span>جوار العدد</h2>
- <div class="hook">القيم ${M('2.9 , 2.99 , 2.999 , …')} تكبر دائماً لكنها لا تتجاوز عدداً معيناً. ما هذا العدد؟</div>
+ <div class="hook">القيم ${M('2.9 , 2.99 , …')} تكبر ولا تتجاوز عدداً معيناً. ما هو؟</div>
  <div class="tb"><div>
   <p>القيم المتزايدة ${M('2.9 , 2.99 , …')} تتقارب نحو ${N('3')} من اليسار ${M('<span class="cr">a → 3<sup>−</sup></span>')}، والمتناقصة ${M('3.1 , 3.01 , …')} من اليمين ${M('<span class="cs">b → 3<sup>+</sup></span>')}.</p>
   <p><b>تعريف [${N('5−1')}]:</b> اذا كان ${M('a')} عدداً وكان ${M('ε')} (إبسلون) عدداً موجباً تسمى الفترة:</p>
@@ -533,11 +580,11 @@ const PAGES=[
  ${RUN(CH,'[5−4] · ص '+N('120–122'))}
  <h2><span class="num"></span>الاستمرارية</h2>
  <div class="tb"><div>
-  <p>تكون الدالة مستمرة عند ${M('x = b')} اذا حققت الشروط الثلاث:</p>
+  <p>مستمرة عند ${M('x = b')} اذا حققت الشروط الثلاث:</p>
   <ul class="cases"><li><b>${N('1')}</b><span>${M('f(b)')} معرفة</span></li><li><b>${N('2')}</b><span>${M(LIM('b','f(x)'))} موجودة</span></li><li><b>${N('3')}</b><span>${M('<span class="cg">'+LIM('b','f(x)')+' = f(b)</span>')}</span></li></ul>
-  <p><b>تعريف:</b> ${M('f')} مستمرة اذا كانت مستمرة في جميع عناصر مجالها.</p>
+  <p>${M('f')} مستمرة اذا كانت مستمرة في جميع عناصر مجالها.</p>
   <p><b>[${N('5−4−1')}] و [${N('5−4−2')}]:</b> مستمرة عن يسار ${M('b')} اذا ${M(LIM('b','f(x)','−')+' = f(b)')}، وعن يمين ${M('b')} اذا ${M(LIM('b','f(x)','+')+' = f(b)')}.</p>
-  <p><b>[${N('5−4−3')}]:</b> مستمرة على ${M('[a, b]')} اذا كانت مستمرة على ${M('(a, b)')} وعن يمين ${M('a')} ويسار ${M('b')}.</p>
+  <p><b>[${N('5−4−3')}]:</b> مستمرة على ${M('[a, b]')} اذا استمرت على ${M('(a, b)')} وعن يمين ${M('a')} ويسار ${M('b')}.</p>
  </div>
  <aside class="mg"><span class="mt">مثال 2 · ص ${N('120')}</span><p>غير مستمرة عند ${M('0')}: غير معرفة.</p><p>عند ${M('1')}: ${M(LIM('1','f(x)')+' ≠ f(1)')}.</p><p>عند ${M('3')}: الغايتان مختلفتان.</p></aside></div>
  ${predict(`في مثال 2: ${M('f(1) = 6')} و ${M(LIM('1','f(x)')+' = 3')}. هل الدالة مستمرة عند ${M('x = 1')} ؟`,['نعم','لا'],1,
