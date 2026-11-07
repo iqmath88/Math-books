@@ -9,9 +9,11 @@ const CORE = [
   './guided-explanation.css', './guided-explanation.js',
   './teacher-tools-v1.6.css', './teacher-tools-v1.6.js',
   './board-v1.7.css', './board-v1.7.js',
-  './board-v1.7.1.css', './board-v1.7.1.js',
+  './board-v1.7.1.css',
   './board-v1.7.2.css', './board-v1.7.2.js',
-  './board-v1.7.3.css', './board-v1.7.3.js',
+  './board-controls-v1.7.5.css', './board-controls-v1.7.5.js',
+  
+  
   './ch3.html', './ch4.html', './ch5.html', './ch6.html',
   './g9c1.html', './g9c5.html',
   './icon-192.png', './icon-512.png', './maskable-512.png',

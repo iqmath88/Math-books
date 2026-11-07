@@ -9,7 +9,7 @@
  present.addEventListener('click',()=>requestAnimationFrame(sync));
  $('bTeach')?.addEventListener('click',()=>requestAnimationFrame(sync));
  $('tExit')?.addEventListener('click',()=>requestAnimationFrame(sync));
- toggle.addEventListener('click',()=>document.body.classList.remove('mb-tools-collapsed'));
+ // Handled centrally by board-v1.7.4.js.
  const collapse=document.createElement('button');collapse.type='button';collapse.id='mbCollapse';collapse.textContent='▾ إخفاء الشريط';collapse.title='إخفاء شريط الأدوات لإتاحة مساحة إضافية';toolbar.insertBefore(collapse,$('mbHide'));
  collapse.addEventListener('click',()=>{if(document.body.classList.contains('mb-presentation'))document.body.classList.add('mb-tools-collapsed');else $('mbHide')?.click();});
  // Show a clear one-tap way to return to reading mode.
