@@ -1,0 +1,10 @@
+/* Teacher-only visual controls. Preserve original math layout. */
+#mbTeacherMessage{position:fixed;z-index:100005;top:70px;left:50%;transform:translateX(-50%);background:#122b41;color:white;padding:10px 16px;border-radius:12px;box-shadow:0 4px 20px #0004;font:600 15px system-ui;display:none;pointer-events:none;max-width:85vw;text-align:center}
+body.mb-presentation #mbTeacherMessage.active{display:block}
+body.mb-teacher-select #teach.on .page{cursor:crosshair!important}
+body.mb-presentation #teach.on .mb-teacher-covered{position:relative!important;filter:none!important;color:transparent!important;background:#dfe9f2!important;border:2px dashed #497aa2!important;border-radius:8px!important;min-height:32px!important;overflow:hidden!important}
+body.mb-presentation #teach.on .mb-teacher-covered *{visibility:hidden!important}
+body.mb-presentation #teach.on .mb-teacher-covered::after{content:'خطوة مخفية — كشف التالي';position:absolute!important;inset:0!important;display:flex!important;align-items:center!important;justify-content:center!important;color:#24435e!important;background:#dfe9f2!important;font:600 clamp(13px,1.5vw,22px) system-ui!important;visibility:visible!important;z-index:3!important}
+body:not(.mb-presentation) #mbTeacherMessage{display:none}
+@media(max-width:800px){body.mb-presentation #mbTools #mbTeacherUndo,body.mb-presentation #mbTools #mbTeacherRedo,body.mb-presentation #mbTools #mbTeacherReveal,body.mb-presentation #mbTools #mbTeacherNext,body.mb-presentation #mbTools #mbTeacherReset{min-width:48px!important;font-size:13px!important}}
+@media print{#mbTeacherMessage{display:none!important}}
