@@ -6,6 +6,7 @@ const CORE = [
   './', './index.html', './manifest.webmanifest', './app-version.js',
   './classroom.css', './classroom.js', './classroom-enhancements.js',
   './board-v1.4.css', './board-v1.4.js',
+  './guided-explanation.css', './guided-explanation.js',
   './ch3.html', './ch4.html', './ch5.html', './ch6.html',
   './g9c1.html', './g9c5.html',
   './icon-192.png', './icon-512.png', './maskable-512.png',
