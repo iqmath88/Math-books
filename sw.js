@@ -1,24 +1,70 @@
-/* يحفظ ملفات التطبيق في الجهاز ليعمل بدون إنترنت. غيّر رقم الإصدار عند كل تحديث للمحتوى. */
-const VERSION = 'math5-v10';
-const FILES = [
-  './', './index.html', './manifest.webmanifest',
-  './ch3.html', './ch4.html', './ch5.html', './ch6.html', './g9c1.html', './g9c5.html',
-  './icon-192.png', './icon-512.png', './maskable-512.png', './apple-touch-icon.png', './favicon.png'
+/* Math-books offline engine. The version is defined only in app-version.js. */
+importScripts('./app-version.js');
+const {version, cachePrefix} = self.MATH_BOOKS_RELEASE;
+const CACHE_NAME = cachePrefix + version;
+const CORE = [
+  './', './index.html', './manifest.webmanifest', './app-version.js',
+  './classroom.css', './classroom.js',
+  './ch3.html', './ch4.html', './ch5.html', './ch6.html',
+  './g9c1.html', './g9c5.html',
+  './icon-192.png', './icon-512.png', './maskable-512.png',
+  './apple-touch-icon.png', './favicon.png'
 ];
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
+const APP_ROOT = new URL('./', self.registration.scope);
+const INDEX_URL = new URL('./index.html', APP_ROOT).href;
+const CORE_URLS = new Set(CORE.map(path => new URL(path, APP_ROOT).href));
+
+self.addEventListener('install', event => {
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(CORE)));
+  // Do not call skipWaiting: avoid switching versions mid-lesson.
 });
-self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== VERSION).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys => Promise.all(
+      keys.filter(key => key.startsWith(cachePrefix) && key !== CACHE_NAME)
+          .map(key => caches.delete(key))
+    )).then(() => self.clients.claim())
+  );
 });
-self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
-  e.respondWith(
-    caches.match(e.request, {ignoreSearch: true}).then(hit => hit || fetch(e.request).then(res => {
-      if (res.ok && new URL(e.request.url).origin === location.origin) {
-        const copy = res.clone(); caches.open(VERSION).then(c => c.put(e.request, copy));
+self.addEventListener('fetch', event => {
+  const req = event.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  if (url.origin !== APP_ROOT.origin || !url.pathname.startsWith(APP_ROOT.pathname)) return;
+
+  // Never cache unknown paths or arbitrary query variations.
+  const canonical = new URL(url.pathname, url.origin).href;
+  if (!CORE_URLS.has(canonical)) return;
+
+  if (req.mode === 'navigate') {
+    // Prefer the latest page online, but preserve offline access.
+    event.respondWith(
+      fetch(req).then(response => {
+        if (response.ok) {
+          const copy = response.clone();
+          event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put(canonical, copy)));
+        }
+        return response;
+      }).catch(async () => {
+        const cache = await caches.open(CACHE_NAME);
+        return (await cache.match(canonical)) || (await cache.match(INDEX_URL)) ||
+          Response.error();
+      })
+    );
+    return;
+  }
+  // Versioned static files are immutable within a release.
+  event.respondWith(
+    caches.open(CACHE_NAME).then(async cache => {
+      const hit = await cache.match(canonical);
+      if (hit) return hit;
+      try {
+        const response = await fetch(req);
+        if (response.ok) event.waitUntil(cache.put(canonical, response.clone()));
+        return response;
+      } catch (_) {
+        return Response.error();
       }
-      return res;
-    }).catch(() => e.request.mode === 'navigate' ? caches.match('./index.html') : undefined))
+    })
   );
 });

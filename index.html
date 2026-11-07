@@ -69,7 +69,43 @@ h2 small{font-size:12px;color:var(--muted);font-weight:600;margin-inline-start:8
 .tip b{color:var(--gold)}
 footer{color:var(--muted);font-size:12px;text-align:center;margin-top:10px}
 @media (prefers-reduced-motion: reduce){ .cv{transition:none} }
+
+
+/* v1.2.0 — modern, readable, responsive interface */
+:root{--desk1:#142b3b;--desk2:#091a28;--gold:#e6c184;--ink:#f6f6f1;--muted:#cad7dd;--panel:rgba(13,31,44,.78);--line:rgba(215,232,241,.19)}
+:root[data-theme="dark"]{--desk1:#091521;--desk2:#050d16;--panel:rgba(7,16,27,.87)}
+body{background:radial-gradient(circle at 15% 10%,rgba(48,111,143,.33),transparent 36%),radial-gradient(circle at 90% 75%,rgba(188,138,74,.12),transparent 35%),linear-gradient(145deg,var(--desk1),var(--desk2));background-attachment:fixed}
+.wrap{max-width:1240px}
+header{padding:22px 0 24px;flex-wrap:wrap}
+header img{border-radius:16px;box-shadow:0 12px 30px #0005}
+header h1{font-size:clamp(24px,4vw,34px);letter-spacing:-.035em}
+header p{font-size:14px}
+.ib{border-radius:13px;min-height:44px;transition:background .18s,transform .18s}
+.ib:hover{transform:translateY(-1px);background:rgba(255,255,255,.12)}
+.ib.gold:hover{background:#f3d6a5}
+.shelf{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:20px;padding:20px 0 34px}
+.shelf::after{display:none}
+.book{padding:10px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.045);transition:background .2s,transform .2s}
+.book:hover{background:rgba(255,255,255,.095);transform:translateY(-3px)}
+.cv{transform:none;border-radius:12px;padding:18px;box-shadow:0 14px 24px #0003;aspect-ratio:3/3.7}
+.cv::before{display:none}
+.book:hover .cv,.book.lock:hover .cv{transform:none}
+.cv .ti{font-size:19px}
+.cv .badge{background:#091a28b8}
+.resume,.tip{background:var(--panel);border-radius:18px;box-shadow:0 10px 35px #0002}
+h2{font-size:21px;margin-top:28px}
+footer{padding:24px 0}
+.library-hero{padding:26px 28px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(115deg,rgba(24,65,83,.9),rgba(22,39,54,.78));box-shadow:0 14px 40px #0002;margin:0 0 22px}
+.library-hero h2{font-size:clamp(22px,4vw,32px);margin:0 0 8px;color:#fff}
+.library-hero p{margin:0 0 18px;color:#dce7e9;line-height:1.8}
+.library-search{width:100%;max-width:520px;border:1px solid #ffffff55;border-radius:14px;background:#fff;color:#1b3442;padding:13px 16px;font:inherit;font-size:16px}
+.library-search:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.library-count{display:inline-block;margin-inline-start:12px;color:#dce7e9;font-size:13px}
+@media(max-width:550px){body{padding-inline:12px}.library-hero{padding:22px 18px}.shelf{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.book{padding:7px;border-radius:15px}.cv{padding:12px}.cv .ti{font-size:16px}header{gap:10px}header img{width:44px;height:44px}}
+@media(prefers-reduced-motion:reduce){.ib,.book{transition:none}}
+
 </style>
+<script src="app-version.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -88,6 +124,12 @@ footer{color:var(--muted);font-size:12px;text-align:center;margin-top:10px}
     <a class="ib gold" id="rGo" href="ch3.html">تابع</a>
   </div>
 
+  <section class="library-hero" aria-label="البحث في الكتب">
+    <h2>مكتبتك الرياضية التفاعلية</h2>
+    <p>اختر الفصل، تابع من آخر صفحة، أو استخدم البحث للوصول إلى موضوعك بسرعة.</p>
+    <input id="librarySearch" class="library-search" type="search" placeholder="ابحث عن فصل أو موضوع رياضي..." aria-label="البحث في فصول الرياضيات">
+    <span id="libraryCount" class="library-count" aria-live="polite"></span>
+  </section>
   <div id="shelves"></div>
   <footer>يعمل التطبيق بدون إنترنت بعد أول فتح. تُضاف الفصول والكتب الأخرى تباعاً.</footer>
 </div>
@@ -137,7 +179,18 @@ ib.onclick=async()=>{ if(!deferred) return; deferred.prompt(); await deferred.us
 addEventListener('appinstalled',()=>ib.classList.add('hide'));
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
 if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!standalone) document.getElementById('ios').classList.remove('hide');
-if('serviceWorker' in navigator && location.protocol!=='file:') navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator && location.protocol!=='file:') navigator.serviceWorker.register('sw.js', {updateViaCache:'none'}).then(reg=>{ if(navigator.onLine) reg.update().catch(()=>{}); }).catch(()=>{});
+</script>
+<script>
+(()=>{
+ const field=document.getElementById('librarySearch');
+ const count=document.getElementById('libraryCount');
+ if(!field)return;
+ const normalize=s=>String(s||'').normalize('NFKD').replace(/[\u064B-\u065F]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').toLowerCase();
+ const cards=[...document.querySelectorAll('.book')];
+ function filter(){let visible=0;const q=normalize(field.value.trim());for(const card of cards){const ok=normalize(card.textContent).includes(q);card.hidden=!ok;card.style.display=ok?'':'none';if(ok)visible++;}count.textContent=visible+' فصل';}
+ field.addEventListener('input',filter);filter();
+})();
 </script>
 </body>
 </html>

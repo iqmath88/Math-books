@@ -311,6 +311,8 @@ input[type=range]::-moz-range-thumb{width:max(1.35em,20px);height:max(1.35em,20p
   .risen .card,.card,.flap,#book{transition-duration:.01s!important}
 }
 </style>
+<script src="app-version.js"></script>
+<link rel="stylesheet" href="classroom.css">
 </head>
 <body>
 <div id="scene">
@@ -1259,7 +1261,8 @@ let rz; addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ la
 /* resume where the student stopped */
 try{ const o=JSON.parse(localStorage.getItem('lb-ch5-pos')||'null'); if(o&&o.pos>=0&&o.pos<SP.length){ pos=o.pos|0; sub=o.sub?1:0; } }catch(e){}
 layout();
-if('serviceWorker' in navigator && location.protocol!=='file:') navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator && location.protocol!=='file:') navigator.serviceWorker.register('sw.js', {updateViaCache:'none'}).then(reg=>{ if(navigator.onLine) reg.update().catch(()=>{}); }).catch(()=>{});
 </script>
+<script src="classroom.js" defer></script>
 </body>
 </html>
