@@ -6,7 +6,7 @@ const root = path.resolve(__dirname, '..');
 const pages = ['index.html','ch3.html','ch4.html','ch5.html','ch6.html','g9c1.html','g9c5.html'];
 const originalPages = process.env.ORIGINAL_DIR;
 const version = fs.readFileSync(path.join(root,'app-version.js'),'utf8');
-assert.match(version, /version: '1\.2\.0'/);
+assert.match(version, /version: '1\.3\.0'/);
 const manifest = JSON.parse(fs.readFileSync(path.join(root,'manifest.webmanifest'),'utf8'));
 assert.equal(manifest.start_url, './index.html');
 for (const file of pages) {

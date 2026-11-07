@@ -2072,5 +2072,6 @@ layout();
 if('serviceWorker' in navigator && location.protocol!=='file:') navigator.serviceWorker.register('sw.js', {updateViaCache:'none'}).then(reg=>{ if(navigator.onLine) reg.update().catch(()=>{}); }).catch(()=>{});
 </script>
 <script src="classroom.js" defer></script>
+<script src="classroom-enhancements.js" defer></script>
 </body>
 </html>

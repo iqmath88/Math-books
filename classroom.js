@@ -25,6 +25,7 @@
  $('mbPen').onclick=()=>switchMode('pen');$('mbErase').onclick=()=>switchMode('erase');
  for(const [id,c] of [['mbRed','#e44949'],['mbBlue','#2878e4']]){$(id).onclick=()=>{color=c;for(const x of ['mbRed','mbBlue'])$(x).setAttribute('aria-pressed',String(x===id));mode='off';switchMode('pen')}}
  $('mbClear').onclick=()=>{strokes=[];render();status('تم مسح الرسم')};
+ window.addEventListener('mb-undo-stroke',()=>{if(strokes.length){strokes.pop();render();status('تم التراجع عن آخر خط')}else status('لا توجد خطوط للتراجع')});
  $('mbFocus').onclick=()=>{const active=document.body.classList.toggle('mb-focus');$('mbFocus').setAttribute('aria-pressed',String(active))};
  $('mbZoom').onclick=()=>{const active=document.body.classList.toggle('mb-bigtext');$('mbZoom').setAttribute('aria-pressed',String(active))};
  $('mbFull').onclick=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else if(document.documentElement.requestFullscreen){await document.documentElement.requestFullscreen()}else{status('ملء الشاشة غير مدعوم في هذا المتصفح')}}catch(_){status('تعذر تفعيل ملء الشاشة')}};

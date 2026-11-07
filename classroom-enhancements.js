@@ -1,0 +1,41 @@
+/* v1.3.0: non-invasive classroom presentation controls */
+(()=>{'use strict';
+ const $=id=>document.getElementById(id);
+ const toolbar=$('mbTools'); if(!toolbar)return;
+ const add=(id,label,title)=>{const b=document.createElement('button');b.id=id;b.type='button';b.textContent=label;b.title=title||label;toolbar.insertBefore(b,$('mbHide'));return b;};
+ const present=add('mbPresent','▣ عرض صفي','عرض صفحة واحدة مكبرة باستخدام وضع المعلم الأصلي');
+ const undo=add('mbUndo','↶ تراجع','التراجع عن آخر خط مرسوم');
+ const mask=add('mbMask','▤ غطاء الحل','إخفاء جزء من الصفحة ثم كشفه بالتدريج');
+ const reset=add('mbReset','↺ إعادة','إعادة عرض كامل المحتوى');
+ const label=document.createElement('span');label.id='mbRelease';label.textContent='v'+(globalThis.MATH_BOOKS_RELEASE?.version||'1.3.0');toolbar.append(label);
+ const status=msg=>{const el=$('mbStatus');if(el)el.textContent=msg;};
+ present.addEventListener('click',()=>{
+   if(!$('teach')||!$('bTeach'))return;
+   if(!$('teach').classList.contains('on')) $('bTeach').click();
+   else $('tExit')?.click();
+   const on=$('teach').classList.contains('on');present.setAttribute('aria-pressed',String(on));
+   document.body.classList.toggle('mb-presentation',on);
+   status(on?'العرض الصفي مفعل':'وضع القراءة');
+ });
+ $('tExit')?.addEventListener('click',()=>{document.body.classList.remove('mb-presentation');present.setAttribute('aria-pressed','false')});
+ const cover=document.createElement('div');cover.id='mbCover';cover.hidden=true;
+ cover.innerHTML='<div class="mb-cover-handle" role="slider" tabindex="0" aria-label="اسحب لكشف الحل" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">اسحب للأسفل لكشف الحل ↕</div>';
+ document.body.append(cover);
+ let fraction=0,dragging=false;
+ const setReveal=v=>{fraction=Math.max(0,Math.min(1,v));cover.style.setProperty('--reveal',fraction*100+'%');cover.firstElementChild.setAttribute('aria-valuenow',String(Math.round(fraction*100)));};
+ const target=()=>document.querySelector('#teach.on .board')||document.querySelector('#book');
+ const locate=()=>{const rect=target()?.getBoundingClientRect();if(!rect)return;cover.style.left=rect.left+'px';cover.style.top=rect.top+'px';cover.style.width=rect.width+'px';cover.style.height=rect.height+'px';};
+ const disable=()=>{cover.hidden=true;mask.setAttribute('aria-pressed','false');};
+ mask.addEventListener('click',()=>{cover.hidden=!cover.hidden;mask.setAttribute('aria-pressed',String(!cover.hidden));if(!cover.hidden){setReveal(0);locate();status('اسحب الغطاء للأسفل لإظهار الحل تدريجياً');}else status('الغطاء مغلق');});
+ reset.addEventListener('click',()=>{setReveal(0);disable();status('تمت إعادة عرض الصفحة');});
+ cover.addEventListener('pointerdown',e=>{dragging=true;cover.setPointerCapture(e.pointerId);e.preventDefault();});
+ cover.addEventListener('pointermove',e=>{if(!dragging)return;const r=cover.getBoundingClientRect();setReveal((e.clientY-r.top)/Math.max(1,r.height));});
+ cover.addEventListener('pointerup',()=>{dragging=false});cover.addEventListener('pointercancel',()=>{dragging=false});
+ cover.firstElementChild.addEventListener('keydown',e=>{if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();setReveal(fraction+(e.key==='ArrowDown'?.1:-.1));}});
+ // v1.2 canvas implementation keeps strokes private; dispatch a request handled in the drawing module.
+ undo.addEventListener('click',()=>window.dispatchEvent(new Event('mb-undo-stroke')));
+ for(const id of ['bNext','bPrev','tNext','tPrev']) $(id)?.addEventListener('click',()=>{disable();setReveal(0);});
+ window.addEventListener('resize',()=>{if(!cover.hidden)locate()});
+ window.addEventListener('orientationchange',()=>{if(!cover.hidden)locate()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!cover.hidden)disable();});
+})();
