@@ -307,6 +307,16 @@ input[type=range]::-moz-range-thumb{width:max(1.35em,20px);height:max(1.35em,20p
 @media (prefers-reduced-motion: reduce){
   .risen .card,.card,.flap,#book{transition-duration:.01s!important}
 }
+/* worked examples (v1.10) */
+.steps-ro{overflow:auto;max-height:calc(var(--ph)*.34);scroll-behavior:smooth}
+.row.st{display:flex;gap:.45em;align-items:flex-start;opacity:.62;border-bottom:1px dotted var(--rule);padding:.12em 0}
+.row.st.cur{opacity:1}
+.row.st .sn{flex:none;display:inline-grid;place-items:center;width:1.45em;height:1.45em;border-radius:50%;background:var(--c-radius);color:#fff;font-size:.72em;margin-top:.15em}
+.row.st.cur .sn{background:var(--c-point)}
+.row.st small{display:block;color:var(--c-radius);font-size:.84em}
+.row.st .m.blk{text-align:right}
+.chip.gold{background:var(--c-point);color:#fff;border-color:var(--c-point)}
+.exl.wx{gap:.25em}.exl.wx li{font-size:.82em;line-height:1.5}
 </style>
 <script src="app-version.js"></script>
 <link rel="stylesheet" href="classroom-v2.css">
@@ -1391,11 +1401,139 @@ class GameLab extends Lab{
     const {X,Y}=ucScene(this,1.4); if(this.done) [].concat(R.d).forEach(d=>{ spiral(pen,X,Y,0,d,{r:.3,color:COL['c-center'],w:1.8}); ptOnUC(pen,X,Y,d,dms(Math.round(d*100)/100),COL['c-point'],{proj:true}); }); }
 }
 
+/* ================= worked examples, step by step (v1.10) ================= */
+/* self-contained: uses only Lab, $, $$, M, N, COL from the chapter engine */
+const WX=(()=>{
+ const row=h=>`<div class="row">${h}</div>`, okk=h=>`<b style="color:var(--ok)">✓ ${h}</b>`;
+ const f2=x=>{ if(!isFinite(x)) return '?'; let v=Math.round(x*100)/100; if(Math.abs(v)<1e-9) v=0; return (v<0?'−':'')+String(Math.abs(v)); };
+ const step=(r,px,min=34)=>{ for(const s of [0.05,0.1,0.2,0.25,0.5,1,2,5,10,20,25,50,100,200,500]) if(px*s/r>=min) return s; return 1000; };
+ function axes(lab,S){ const {pen,W,H}=lab, c=pen.c, pl=26, pr=10, T=10, B=H-18; let {x0,x1,y0,y1}=S;
+  if(S.eq){ const span=(x1-x0)*(B-T)/(W-pl-pr), yc=(y0+y1)/2; if(span>=y1-y0){ y0=yc-span/2; y1=yc+span/2; } else { const sx=(y1-y0)*(W-pl-pr)/(B-T), xc=(x0+x1)/2; x0=xc-sx/2; x1=xc+sx/2; } }
+  const X=x=>pl+(x-x0)/(x1-x0)*(W-pl-pr), Y=y=>T+(y1-y)/(y1-y0)*(B-T), sx=step(x1-x0,W-pl-pr), sy=step(y1-y0,B-T,24);
+  c.save(); c.strokeStyle=COL.grid; c.lineWidth=1; c.beginPath();
+  for(let g=Math.ceil(x0/sx)*sx;g<=x1+1e-9;g+=sx){ c.moveTo(X(g),T); c.lineTo(X(g),B); } for(let g=Math.ceil(y0/sy)*sy;g<=y1+1e-9;g+=sy){ c.moveTo(pl,Y(g)); c.lineTo(W-pr,Y(g)); } c.stroke(); c.restore();
+  const yA=Math.min(Math.max(0,y0),y1), xA=Math.min(Math.max(0,x0),x1);
+  pen.line(pl-4,Y(yA),W-pr,Y(yA),{w:1.3}); pen.arrowHead(W-pr,Y(yA),0,{w:1.2}); pen.line(X(xA),B+4,X(xA),T-2,{w:1.3}); pen.arrowHead(X(xA),T-2,-Math.PI/2,{w:1.2});
+  for(let g=Math.ceil(x0/sx)*sx;g<=x1+1e-9;g+=sx){ if(Math.abs(g)<1e-9) continue; const x=X(g); if(x>W-pr-8) continue; pen.text(f2(g),x,Math.min(B+11,Y(yA)+12),{size:10,it:false,wt:500,color:COL.muted}); }
+  for(let g=Math.ceil(y0/sy)*sy;g<=y1+1e-9;g+=sy){ if(Math.abs(g)<1e-9) continue; const y=Y(g); if(y<T+4||y>B-4) continue; pen.text(f2(g),Math.max(pl-2,X(xA)-5),y,{size:10,it:false,wt:500,color:COL.muted,al:'right'}); }
+  return {X,Y,x0,x1,y0,y1,T,B,pl,pr}; }
+ function clip(lab,G,fn){ const c=lab.c; c.save(); c.beginPath(); c.rect(G.pl-2,G.T-2,lab.W-G.pl-G.pr+4,G.B-G.T+4); c.clip(); fn(); c.restore(); }
+ function plot(lab,G,f,a,b,col,o={}){ const pts=[], n=400; let seg=[]; const out=()=>{ if(seg.length>1) lab.pen.path(seg,{color:col,w:o.w||2.2,dash:o.dash}); seg=[]; };
+  clip(lab,G,()=>{ for(let i=0;i<=n;i++){ const x=a+(b-a)*i/n, y=f(x); if(!isFinite(y)||Math.abs(y)>1e6){ out(); continue; } seg.push([G.X(x),G.Y(y)]); } out(); }); }
+ function implicit(lab,G,F,col){ const c=lab.c, nx=150, ny=120, dx=(G.x1-G.x0)/nx, dy=(G.y1-G.y0)/ny, v=[];
+  for(let j=0;j<=ny;j++){ v[j]=[]; for(let i=0;i<=nx;i++) v[j][i]=F(G.x0+i*dx,G.y0+j*dy); }
+  c.save(); c.strokeStyle=col; c.lineWidth=2.2; c.lineCap='round'; c.globalAlpha=.9; c.beginPath();
+  const P=(i,j)=>[G.X(G.x0+i*dx),G.Y(G.y0+j*dy)], L=(a,b,va,vb)=>{ const t=va/(va-vb); return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]; };
+  for(let j=0;j<ny;j++) for(let i=0;i<nx;i++){ const q=[[i,j],[i+1,j],[i+1,j+1],[i,j+1]], vals=q.map(([a,b])=>v[b][a]); if(vals.some(z=>!isFinite(z))) continue; const pts=[];
+   for(let k=0;k<4;k++){ const a=vals[k], b=vals[(k+1)%4]; if((a<0)!==(b<0)) pts.push(L(P(...q[k]),P(...q[(k+1)%4]),a,b)); }
+   if(pts.length>=2){ c.moveTo(...pts[0]); c.lineTo(...pts[1]); } if(pts.length===4){ c.moveTo(...pts[2]); c.lineTo(...pts[3]); } }
+  c.stroke(); c.restore(); }
+ /* figure spec: {x0,x1,y0,y1,eq, C:[[h,k,r,col,dash]], I:[[F,col]], P:[[f,a,b,col,dash]], L:[[A,B,C,col,dash]] (Ax+By+C=0), S:[[x1,y1,x2,y2,col,dash,label]], V:[x], Pt:[[x,y,label,col]], R:[[x0,y0,x1,y1,col]] shading} */
+ function draw(lab,F){ if(!F) return; const G=axes(lab,F), pen=lab.pen, cc=k=>COL[k||'c-point']||k;
+  (F.V||[]).forEach(x=>pen.line(G.X(x),G.T,G.X(x),G.B,{color:COL.muted,w:1,dash:[5,5],passes:1}));
+  (F.L||[]).forEach(([A,B,C,col,dash])=>clip(lab,G,()=>{ if(Math.abs(B)<1e-12){ const x=-C/A; pen.line(G.X(x),G.T,G.X(x),G.B,{color:cc(col||'c-radius'),w:1.9,dash:dash?[6,4]:undefined,passes:1}); } else { const y=x=>(-C-A*x)/B; pen.line(G.X(G.x0),G.Y(y(G.x0)),G.X(G.x1),G.Y(y(G.x1)),{color:cc(col||'c-radius'),w:1.9,dash:dash?[6,4]:undefined,passes:1}); } }));
+  (F.C||[]).forEach(([h,k,r,col,dash])=>clip(lab,G,()=>{ const pts=[]; for(let i=0;i<=120;i++){ const a=i/120*Math.PI*2; pts.push([G.X(h+r*Math.cos(a)),G.Y(k+r*Math.sin(a))]); } lab.c.save(); lab.c.globalAlpha=.12; lab.c.fillStyle=cc(col||'c-std'); lab.c.beginPath(); pts.forEach((p,i)=>i?lab.c.lineTo(...p):lab.c.moveTo(...p)); lab.c.fill(); lab.c.restore(); pen.path(pts,{color:cc(col||'c-std'),w:2.3,dash:dash?[6,4]:undefined}); }));
+  (F.I||[]).forEach(([Fn,col])=>implicit(lab,G,Fn,cc(col||'c-std')));
+  (F.P||[]).forEach(([f,a,b,col,dash])=>plot(lab,G,f,a??G.x0,b??G.x1,cc(col||'c-std'),{dash:dash?[6,4]:undefined}));
+  (F.S||[]).forEach(([x1,y1,x2,y2,col,dash,l])=>{ pen.line(G.X(x1),G.Y(y1),G.X(x2),G.Y(y2),{color:cc(col||'c-radius'),w:2,dash:dash?[5,4]:undefined,passes:1}); if(l) pen.text(l,(G.X(x1)+G.X(x2))/2+8,(G.Y(y1)+G.Y(y2))/2-9,{color:cc(col||'c-radius'),size:13,wt:700,al:'left'}); });
+  (F.Pt||[]).forEach(([x,y,l,col])=>{ const X=G.X(x), Y=G.Y(y); pen.dot(X,Y,4.4,cc(col||'c-center')); if(l) pen.text(l,X+(X>lab.W*.7?-8:8),Y-13,{color:cc(col||'c-center'),size:12,wt:700,al:X>lab.W*.7?'right':'left'}); });
+  return G; }
+ class ExLab extends Lab{
+  constructor(p){ super(p); this.L=WXD[p.dataset.set]; this.k=0; this.n=0;
+   $('.esel',p).innerHTML='<span class="lbl">مثال:</span>'+this.L.map((E,i)=>`<button type="button" class="chip" data-e="${i}"><bdi dir="ltr">${E.l}</bdi></button>`).join('');
+   $$('[data-e]',p).forEach(b=>b.onclick=()=>this.pick(+b.dataset.e));
+   $('[data-nx]',p).onclick=()=>{ this.n=Math.min(this.L[this.k].st.length-1,this.n+1); this.upd(); };
+   $('[data-pv]',p).onclick=()=>{ this.n=Math.max(0,this.n-1); this.upd(); };
+   $('[data-all]',p).onclick=()=>{ this.n=this.L[this.k].st.length-1; this.upd(); };
+   this.pick(0); }
+  pick(k){ this.k=k; this.n=0; $$('[data-e]',this.page).forEach(b=>b.classList.toggle('on',+b.dataset.e===k)); this.showEx(this.L[k].q); this.upd(); }
+  upd(){ const E=this.L[this.k], last=this.n===E.st.length-1;
+   let s=E.st.slice(0,this.n+1).map(([m,w],i)=>`<div class="row st${i===this.n?' cur':''}"><span class="sn">${N(i+1)}</span><div>${m?M(m,'blk'):''}${w?`<small>${w}</small>`:''}</div></div>`).join('');
+   s+=row(`<span class="k">الخطوة ${N(this.n+1)} من ${N(E.st.length)}</span>${last?' '+okk('اكتمل الحل'):''}`);
+   this.ro(s); const ro=$('.ro',this.page); ro.scrollTop=ro.scrollHeight; this.kick(); }
+  draw(){ if(!this.W) return; this.clear(); const E=this.L[this.k]; draw(this,typeof E.f==='function'?E.f(this.n):E.f); }
+ }
+ const page=(set,title)=>`<section class="page lab" data-lab="ex" data-set="${set}">
+ ${RUN('مختبر','حل مفصّل خطوة بخطوة')}
+ <h3 class="lt"><span class="lab-ic">أمثلة</span>${title}</h3>
+ ${stage}
+ <div class="side"><div class="exq hide"></div><div class="ro steps-ro"></div>
+  <div class="ctl"><div class="btns esel"></div>
+   <div class="btns"><button type="button" class="chip" data-pv>▸ السابقة</button><button type="button" class="chip gold" data-nx>الخطوة التالية ◂</button><button type="button" class="chip" data-all>كل الخطوات</button></div>
+  </div></div>
+ ${FOOT(0)}
+</section>`;
+ const HINT='<p class="exhint">اضغط اسم المثال في المختبر المقابل، ثم «الخطوة التالية» لترى حل الكتاب خطوة بخطوة مع الرسم.</p>';
+ /* add a spread right after the spread whose lab is `afterLab` (or at index) */
+ function insert(afterLab,text,lab){ const key=afterLab.includes("=")?afterLab:`data-lab="${afterLab}"`; let i=PAGES.findIndex(([r,l])=>l.includes(key)); if(i<0) i=PAGES.length-2; PAGES.splice(i+1,0,[text,lab]); }
+ return {ExLab,page,HINT,insert};
+})();
+
+/* ---- chapter 4 (grade 5): worked examples, steps as solved in the book pp. 58–90 ---- */
+EXQ.u20=['مثال 20 · ص 86',`بين أن: ${M('cos^4 x/2 − sin^4 x/2 = cos x , ∀ x ∈ R')}`];
+EXQ.e27=['مثال 27 · ص 90',`حل المعادلة ${M('tan 4x + cot x = 0')} حيث أن ${M('0 < x < 90°')}`];
+EXQ.e28=['مثال 28 · ص 90',`حل المعادلة : ${M('2cos^2 x + 3cos x − 2 = 0')}`];
+const R3=Math.sqrt(3), rd=d=>d*Math.PI/180;
+/* unit circle with the terminal side of each angle (degrees) */
+const UC=(angs,o={})=>({x0:-1.6,x1:1.6,y0:-1.35,y1:1.35,eq:1,C:[[0,0,1,'c-std']],
+  S:angs.map(([a,l,col])=>[0,0,Math.cos(rd(a)),Math.sin(rd(a)),col||'c-radius',0,'']),
+  Pt:angs.map(([a,l,col])=>[Math.cos(rd(a)),Math.sin(rd(a)),l,col||'c-point']),...o});
+const WXD={
+ s1:[
+  {q:'p1a',l:'1a',st:[['8.75π = 8π + 0.75π','القياس الرئيس θ يحقق 0 ≤ θ < 2π ، والزاوية = 2kπ + θ'],['0.75π = (3/4)π'],['القياس الرئيس = (3/4)π','للزاوية التي قياسها 8.75π']],f:n=>UC([[135,n>=2?'(3/4)π':'']])},
+  {q:'p1b',l:'1b',st:[['66 = 66 × (7/22) π','نحوّل الى مضاعفات π باعتبار π ≅ 22/7'],['= 21π = 20π + π'],['القياس الرئيس = π ≅ 3.14']],f:n=>UC([[180,n>=2?'π':'']])},
+  {q:'p2',l:'2',st:[['−7π/2 = −4π + π/2'],['القياس الرئيس للزاوية −7π/2 هو π/2'],['sin(−7π/2) = sin π/2 = 1','الاحداثي الصادي للنقطة المثلثية (0 , 1)']],f:n=>UC([[90,n>=1?'(0 , 1)':'']])},
+  {q:'t3',l:'3',st:[['θ = 5π/3','الزاوية تنتهي في الربع الرابع، النقطة المثلثية (1/2 , −√3/2)'],['tan 5π/3 = (sin 5π/3)/(cos 5π/3)'],['= (−√3/2)/(1/2) = −√3 ≅ −1.732']],f:UC([[300,'(1/2 , −√3/2)']])},
+  {q:'s4',l:'4',st:[['sin^2 θ + cos^2 θ = 1 ⇒ 9/25 + cos^2 θ = 1'],['cos^2 θ = 1 − 9/25 = 16/25 ⇒ cos θ = ±4/5'],['cos θ = −4/5','وبما ان θ تقع في الربع الثاني ∴ cos θ < 0'],['tan θ = sin θ/cos θ = (3/5)/(−4/5) = −3/4']],f:n=>UC([[180-36.87,n>=2?'(−4/5 , 3/5)':'']])},
+  {q:'s5',l:'5',st:[['(5/13)^2 + cos^2 x = 1 ⇒ cos^2 x = 1 − 25/169 = 144/169'],['cos x = ± 12/13'],['cos x = −12/13','وبما ان π/2 < x < π اي انها تقع في الربع الثاني ∴ cos x < 0'],['tan x = sin x/cos x = (5/13)/(−12/13) = −5/12'],['cot x = −12/5 , sec x = 1/cos x = −13/12 , csc x = 1/sin x = 13/5']],f:n=>UC([[180-22.62,n>=2?'(−12/13 , 5/13)':'']])}
+ ],
+ s2:[
+  {q:'r8',l:'8',st:[['sin 51° = 0.7771459','نضغط على المفاتيح بالترتيب: sin 5 1'],['csc 51° = 1.2867597','ثم 2ndf ثم 1/x (مقلوب sin)']],f:UC([[51,'51°']])},
+  {q:'r9',l:'9',st:[['22 ÷ 60 = 0.3666666','1. نحول الدقائق الى كسر عشري من الدرجات'],['35° 22′ = 35.366667','2. نكمل كتابة قياس الزاوية'],['tan 35° 22′ = 0.620751391','3. نجد قيمة tan'],['cot 35° 22′ = 1.61095086','4. نجد مقلوب الدالة tan بالضغط على 2nd ثم 1/x']],f:UC([[35.37,'35° 22′']])},
+  {q:'r10',l:'10',st:[['B(x , y) = B(cos 120° , sin 120°)','الزاوية 120° تقع في الربع الثاني'],['B′(x′ , y′) = (cos 60° , sin 60°)','B → B′ تحت تأثير انعكاس في المحور Y'],['x = −x′ ⇒ cos 120° = − cos 60° = −1/2'],['y = y′ ⇒ sin 120° = sin 60° = √3/2']],f:n=>UC([[120,'B'],...(n>=1?[[60,'B′','c-gen']]:[])])},
+  {q:'r11',l:'11',st:[['sin 30° = 1/2 , cos 30° = √3/2 , tan 30° = 1/√3','أ. الزاوية 30° تقع في الربع الاول'],['sin 150° = sin (180° − 30°) = sin 30° = 1/2','ب. الزاوية 150° في الربع الثاني، أو sin (90° + 60°) = cos 60°'],['cos 150° = − cos 30° = −√3/2 , tan 150° = −1/√3'],['sin 210° = sin (180° + 30°) = − sin 30° = −1/2','جـ. الزاوية 210° في الربع الثالث'],['sin 330° = sin (360° − 30°) = − sin 30° = −1/2','د. الزاوية 330° في الربع الرابع'],['420° = 60° + 360° ⇒ sin 420° = sin 60° = √3/2 , cos 420° = 1/2','هـ. نطرح 360°']],f:n=>UC([[30,'30°'],...(n>=1?[[150,'150°']]:[]),...(n>=3?[[210,'210°']]:[]),...(n>=4?[[330,'330°']]:[]),...(n>=5?[[60,'420°','c-gen']]:[])])},
+  {q:'r12',l:'12',st:[['sin (−240°) = − sin 240° = − sin (180° + 60°)','sin(−θ) = − sin θ'],['= sin 60 = √3/2'],['cos (−240°) = cos (240°) = cos (180° + 60°) = −cos 60° = −1/2','cos(−θ) = cos θ']],f:UC([[-240,'−240°']])},
+  {q:'r13',l:'13',st:[['sin (19π/2) = sin (3π/2 + 8π) = sin (3π/2) = −1'],['cos 780° = cos (2 × 360 + 60°) = cos 60° = 1/2'],['tan (−300°) = − tan 300° = − tan (360 − 60)'],['= −(−tan 60) = tan 60 = √3']],f:n=>UC([[270,'19π/2'],...(n>=1?[[60,'780°','c-gen']]:[]),...(n>=2?[[-300,'','c-cut']]:[])])}
+ ],
+ s3:[
+  {q:'u14',l:'14',st:[['cos 75° = cos (45° + 30°) = cos 45° cos 30° − sin 45° sin 30°','cos (x₁ + x₂) = cos x₁ cos x₂ − sin x₁ sin x₂'],['= (1/√2) × (√3/2) − (1/√2) × (1/2) = (√3 − 1)/(2√2)'],['cos 15° = cos (45° − 30°) = cos 45° cos 30° + sin 45° sin 30°'],['= (1/√2) × (√3/2) + (1/√2) × (1/2) = (√3 + 1)/(2√2)']],f:n=>UC([[45,'45°','c-gen'],[75,'75°'],...(n>=2?[[15,'15°']]:[])])},
+  {q:'u15',l:'15',st:[['sin 75° = sin (45° + 30°) = sin 45° cos 30° + cos 45° sin 30°'],['= (1/√2) × (√3/2) + (1/√2) × (1/2) = (√3 + 1)/(2√2)'],['sin 15° = sin (45° − 30°) = sin 45° cos 30° − cos 45° sin 30°'],['= (√3 − 1)/(2√2)']],f:n=>UC([[75,'75°'],...(n>=2?[[15,'15°']]:[])])},
+  {q:'u16',l:'16',st:[['tan 75° = tan (45° + 30°) = (tan 45° + tan 30°)/(1 − tan 45° tan 30°)'],['= (1 + 1/√3)/(1 − 1 × 1/√3) = (√3 + 1)/(√3 − 1)'],['tan 15° = tan (45° − 30°) = (tan 45° − tan 30°)/(1 + tan 45° tan 30°)'],['= (1 − 1/√3)/(1 + 1 × 1/√3) = (√3 − 1)/(√3 + 1)']],f:n=>UC([[75,'75°'],...(n>=2?[[15,'15°']]:[])])},
+  {q:'u17',l:'17',st:[['sin^2 α + cos^2 α = 1 ⇒ 16/25 + cos^2 α = 1 ⇒ cos^2 α = 9/25'],['cos α = ±3/5 , 0 < α < 90° ⇒ cos α = 3/5'],['sin 2α = 2 sin α cos α = 2 × (4/5) × (3/5) = 24/25'],['cos 2α = cos^2 α − sin^2 α = 9/25 − 16/25 = −7/25'],['tan 2α = sin 2α/cos 2α = (24/25)/(−7/25) = −24/7']],f:n=>UC([[53.13,'α'],...(n>=2?[[106.26,'2α','c-gen']]:[])])},
+  {q:'u18',l:'18',st:[['sin^2 π/8 = (1 − cos π/4)/2 = (1 − 1/√2)/2','نتيجة (2): sin²(x/2) = (1 − cos x)/2'],['= (√2 − 1)/(2√2) = (2 − √2)/4','بضرب البسط والمقام في √2'],['sin π/8 = √(2 − √2)/2'],['cos^2 π/8 = (1 + cos π/4)/2 ⇒ cos π/8 = √(2 + √2)/2']],f:UC([[22.5,'π/8'],[45,'π/4','c-gen']])},
+  {q:'u19',l:'19',st:[['','الزاوية 105° تقع في الربع الثاني وهي نصف الزاوية 210°، نستخدم قانون نصف الزاوية'],['sin 105 = √((1 − cos 210°)/2) = √((1 − (−cos 30))/2)'],['= √((1 + √3/2)/2) = √(2 + √3)/2'],['cos 105 = −√((1 + cos 210°)/2) = −√((1 − √3/2)/2) = −√(2 − √3)/2','انتبه: كتب الكتاب الناتج موجباً، والصحيح سالب لأن 105° في الربع الثاني']],f:UC([[105,'105°'],[210,'210°','c-gen']])},
+  {q:'u20',l:'20',st:[['cos^4 x/2 − sin^4 x/2 = (cos^2 x/2 − sin^2 x/2)(cos^2 x/2 + sin^2 x/2)','فرق بين مربعين'],['= cos (2 (x/2)) (1)','cos 2θ = cos² θ − sin² θ و cos² θ + sin² θ = 1'],['= cos x']],f:{x0:-6.5,x1:6.5,y0:-1.4,y1:1.4,P:[[x=>Math.cos(x/2)**4-Math.sin(x/2)**4],[x=>Math.cos(x),-6.5,6.5,'c-radius',1]]}}
+ ],
+ s4:[
+  {q:'e21',l:'21',st:[['sin x = sin 45° ⇔ x = 45° or x = 180° − 45°','sin x = sin θ ⇔ x = θ or x = 180° − θ'],['x = 45° or x = 135°']],f:UC([[45,'45°'],[135,'135°']],{L:[[0,1,-Math.SQRT1_2,'c-cut',1]]})},
+  {q:'e22',l:'22',st:[['sin 30° = 1/2','نعلم ان'],['sin x = sin 30° ⇔ x = 30° or x = 180 − 30° = 150°']],f:UC([[30,'30°'],[150,'150°']],{L:[[0,1,-.5,'c-cut',1]]})},
+  {q:'e23',l:'23',st:[['cos x = cos 75° ⇔ x = 75° or x = 360° − 75°','cos x = cos θ ⇔ x = θ or x = 360° − θ'],['x = 75° or x = 285°'],['{75° , 285°}','مجموعة الحل']],f:UC([[75,'75°'],[285,'285°']],{L:[[1,0,-Math.cos(rd(75)),'c-cut',1]]})},
+  {q:'e24',l:'24',st:[['cos x < 0','x تقع في أحد الربعين الثاني أو الثالث'],['180° − 60° , 180° + 60°','وهي منتسبة الى 60° لان cos 60 = 1/2'],['cos x = −1/2 ⇔ x = 120° or x = 240°'],['{120° , 240°}','مجموعة الحل']],f:n=>UC(n>=2?[[120,'120°'],[240,'240°']]:[[60,'60°','c-gen']],{L:[[1,0,.5,'c-cut',1]]})},
+  {q:'e25',l:'25',st:[['tan x = tan 53° ⇔ x = 53° or x = 180° + 53°','tan x = tan θ ⇔ x = θ or x = 180° + θ'],['x = 53° or x = 233°'],['{53° , 233°}','مجموعة الحل']],f:UC([[53,'53°'],[233,'233°']])},
+  {q:'e26',l:'26',st:[['tan x = √3 ⇔ tan x = tan 60°'],['x = 60° or x = 180° + 60° = 240°'],['{60° , 240°}','مجموعة الحل']],f:UC([[60,'60°'],[240,'240°']])},
+  {q:'e27',l:'27',st:[['tan 4x = −cot x'],['tan 4x = tan (90° + x) ⇒ 4x = 90° + x ⇒ 3x = 90° ⇒ x = 30°','في الربع الثاني'],['tan 4x = tan (270° + x) ⇒ 4x = 270° + x ⇒ 3x = 270° ⇒ x = 90°','في الربع الرابع، x = 90° تهمل لأن 0 < x < 90°'],['{30°}','مجموعة الحل']],f:{x0:0,x1:1.6,y0:-6,y1:6,P:[[x=>Math.tan(4*x)+1/Math.tan(x),.05,1.55]],Pt:[[Math.PI/6,0,'x = 30°']]}},
+  {q:'e28',l:'28',st:[['(cos x + 2)(2cos x − 1) = 0','نحلل الطرف الايسر'],['cos x = −2','يهمل لانه −1 ≤ cos x ≤ 1'],['cos x = 1/2','ويكون cos x موجباً في الربعين الاول والرابع'],['cos x = cos 60° ⇒ x = 60°','أ) في الربع الاول'],['cos x = cos (360° − 60°) ⇒ x = 360° − 60° = 300°','ب) في الربع الرابع'],['{60° , 300°}','مجموعة الحل']],f:n=>UC(n>=3?[[60,'60°'],...(n>=4?[[300,'300°']]:[])]:[],{L:[[1,0,-.5,'c-cut',1]]})}
+ ]};
+const exList=(set,pick)=>`<ol class="exl tight wx">${WXD[set].map(E=>`<li><b class="exn">${E.l}</b><div>${pick?pick(E):EXQ[E.q][1]}</div></li>`).join('')}</ol>`;
+const exText=(set,run,title,law,pick,note)=>`<section class="page text">
+ ${RUN(CH,run)}
+ <h2><span class="num"></span>${title}</h2>
+ ${WX.HINT}
+ ${law||''}
+ ${exList(set,pick)}
+ ${note||''}
+ ${FOOT(0)}
+</section>`;
+WX.insert('six',exText('s1','[4−3] [4−4] · ص '+N('58–66'),'أمثلة القياس الرئيس والدوال الدائرية خطوة بخطوة','',E=>({p1a:'اوجد القياس الرئيس للزاوية '+M('8.75π'),p1b:'اوجد القياس الرئيس للزاوية '+M('66'),s4:EXQ.s4[1].replace(/^اذا كانت /,'')}[E.q]||EXQ[E.q][1])),WX.page('s1','القياس الرئيس والدوال · ص 58–66'));
+WX.insert('rel',exText('s2','[4−6] [4−7] [4−8] · ص '+N('70–77'),'أمثلة الحاسبة والزوايا المنتسبة خطوة بخطوة'),WX.page('s2','الحاسبة والزوايا المنتسبة · ص 70–77'));
+WX.insert('sum',exText('s3','[4−9] · ص '+N('79–86'),'أمثلة مجموع وفرق زاويتين وضعف ونصف الزاوية خطوة بخطوة','',null,`<aside class="mg"><span class="mt">ملاحظة على الكتاب · ص ${N('86')}</span><p>في مثال ${N('19')} كُتب ${M('cos 105° = √(2 − √3)/2')} موجباً، والصحيح ${M('−√(2 − √3)/2')} لأن ${M('105°')} في الربع الثاني.</p></aside>`),WX.page('s3','مجموع وفرق زاويتين · ص 79–86'));
+WX.insert('eq',exText('s4','[4−10] · ص '+N('88–90'),'أمثلة المعادلات المثلثية خطوة بخطوة'),WX.page('s4','المعادلات المثلثية · ص 88–90'));
+
 /* ================= build pages ================= */
 const store=$('#store'), book=$('#book'), slotL=$('.slot.L',book), slotR=$('.slot.R',book);
 const SP=PAGES.map(([r,l])=>{ const t=document.createElement('div'); t.innerHTML=r.trim(); const R=t.firstElementChild; t.innerHTML=l.trim(); const L=t.firstElementChild; store.append(R,L); return {R,L}; });
 readCols();
-const LABMAP={intro:IntroLab,wind:WindLab,princ:PrincLab,tanc:TancLab,six:SixLab,rel:RelLab,sum:SumLab,eq:EqLab,graph:GraphLab,chk4:Chk4Lab,game:GameLab};
+const LABMAP={ex:WX.ExLab,intro:IntroLab,wind:WindLab,princ:PrincLab,tanc:TancLab,six:SixLab,rel:RelLab,sum:SumLab,eq:EqLab,graph:GraphLab,chk4:Chk4Lab,game:GameLab};
 SP.forEach(sp=>{ const L=new LABMAP[sp.L.dataset.lab](sp.L); sp.lab=L; });
 const GSP=SP.find(sp=>sp.L.dataset.lab==='game'); const game=GSP.lab; game.list=$('.rounds',GSP.R); game.starEl=$('.stars',GSP.R); game.side();
 /* numbering, lab headers and table of contents are generated so they always match the page order */
