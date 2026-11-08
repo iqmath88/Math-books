@@ -1,0 +1,1850 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>تطبيقات التفاضل – كتاب حي</title>
+<meta name="theme-color" content="#4f1a10">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="الرياضيات الحيّة">
+<style>
+:root{
+  --noise:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .42 0 0 0 0 .33 0 0 0 0 .2 .16 0 0 0 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --tb:60px; --pw:420px; --ph:570px; --fs:14px; --tilt:20deg; --cv:12px;
+  --desk1:#8d5f3d; --desk2:#5f3b22;
+  --paper:#f8f1e2; --paper2:#efe5cf; --card:#fffaf0; --ink:#2b2520; --graphite:#3a3631;
+  --muted:#7d705f; --rule:#d8c9ab; --grid:rgba(90,130,170,.20); --margin-line:#e3a49a;
+  --c-center:#c2410c; --c-radius:#1d4ed8; --c-std:#15803d; --c-gen:#7e22ce; --c-point:#be185d; --c-cut:#0f766e;
+  --ok:#15803d; --bad:#b91c1c; --kraft:#e6cf9f; --kraft2:#cdb27a; --cover1:#7b2d1e; --cover2:#4f1a10;
+  --stack1:#e8dcc2; --stack2:#cfc0a0;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --desk1:#2c1f16; --desk2:#140d09;
+    --paper:#2a251f; --paper2:#221e19; --card:#332d26; --ink:#efe6d6; --graphite:#ddd3c2;
+    --muted:#a99a86; --rule:#4a4135; --grid:rgba(140,170,210,.16); --margin-line:#7a3f38;
+    --c-center:#fb923c; --c-radius:#7aa7ff; --c-std:#4ade80; --c-gen:#c99bff; --c-point:#f472b6; --c-cut:#2dd4bf;
+    --ok:#4ade80; --bad:#f87171; --kraft:#6b5634; --kraft2:#54432a; --cover1:#4a1c13; --cover2:#2a0f09;
+    --stack1:#3a332b; --stack2:#2b261f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --desk1:#2c1f16; --desk2:#140d09;
+  --paper:#2a251f; --paper2:#221e19; --card:#332d26; --ink:#efe6d6; --graphite:#ddd3c2;
+  --muted:#a99a86; --rule:#4a4135; --grid:rgba(140,170,210,.16); --margin-line:#7a3f38;
+  --c-center:#fb923c; --c-radius:#7aa7ff; --c-std:#4ade80; --c-gen:#c99bff; --c-point:#f472b6; --c-cut:#2dd4bf;
+  --ok:#4ade80; --bad:#f87171; --kraft:#6b5634; --kraft2:#54432a; --cover1:#4a1c13; --cover2:#2a0f09;
+  --stack1:#3a332b; --stack2:#2b261f;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+html{overflow-x:hidden}
+body{
+  font-family:"Segoe UI","Noto Sans Arabic","Noto Naskh Arabic","Geeza Pro","Arial",Tahoma,sans-serif;
+  color:var(--ink); overflow-x:hidden;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 38%, rgba(255,214,160,.22), transparent 70%),
+    repeating-linear-gradient(91deg, rgba(0,0,0,.05) 0 2px, transparent 2px 11px),
+    repeating-linear-gradient(89deg, rgba(255,255,255,.035) 0 1px, transparent 1px 29px),
+    linear-gradient(180deg,var(--desk1),var(--desk2));
+  background-attachment:fixed;
+  -webkit-tap-highlight-color:transparent;
+}
+button{font-family:inherit}
+bdi.n,bdi.m{unicode-bidi:isolate;direction:ltr}
+.m{font-family:"Cambria Math",Cambria,"Times New Roman","Noto Serif",serif;white-space:nowrap;font-size:1.04em}
+.m sup,.n sup{font-size:.68em;line-height:0}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.8em;line-height:1.02;margin:0 .1em;white-space:nowrap}
+.fr>.nu{border-bottom:.08em solid currentColor;padding:0 .2em .02em}
+.fr>.de{padding:.07em .2em 0}
+.lim{display:inline-flex;flex-direction:column;align-items:center;vertical-align:baseline;line-height:1.05;margin-inline-end:.15em}
+.lim .ls{font-size:.6em;line-height:1;white-space:nowrap}
+.lim .ls sup{font-size:.8em}
+.fr .fr{font-size:.92em}
+.fr sup{line-height:0}
+.rad{white-space:nowrap}
+.rad .rc{border-top:.075em solid currentColor;padding:.05em .1em 0;margin-inline-start:-.03em}
+.rad .ri{font-size:.55em;vertical-align:.95em;margin-inline-end:-.42em}
+.cc{color:var(--c-center);font-weight:700}
+.cr{color:var(--c-radius);font-weight:700}
+.cs{color:var(--c-std);font-weight:700}
+.cg{color:var(--c-gen);font-weight:700}
+.cp{color:var(--c-point);font-weight:700}
+.ct{color:var(--c-cut);font-weight:700}
+
+/* ---------- scene & book ---------- */
+#scene{position:relative;min-height:calc(100dvh - var(--tb));display:grid;place-items:center;
+  padding:10px 0 calc(var(--tb) + 12px);overflow-x:hidden;overflow-x:clip;perspective:2200px;perspective-origin:50% 20%;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+#book{position:relative;width:calc(var(--pw)*2);height:var(--ph);transform-style:preserve-3d;transform:rotateX(var(--tilt));transition:transform .7s ease}
+#book.single{width:var(--pw);--rise:-28deg}
+#teach{--rise:-14deg}
+#teach .cover{position:absolute;inset:calc(var(--cv)*-1);transform:translateZ(-9px);border-radius:7px;
+  background:linear-gradient(135deg,var(--cover1),var(--cover2));box-shadow:0 0 0 2px rgba(0,0,0,.25) inset}
+.bshadow{position:absolute;inset:calc(var(--cv)*-1);transform:translateZ(-12px) translateY(14px);background:rgba(0,0,0,.55);filter:blur(22px);border-radius:20px}
+.slot{position:absolute;top:0;width:var(--pw);height:var(--ph);transform-style:preserve-3d}
+.slot.R{right:0}.slot.L{left:0}
+.slot.R{box-shadow:1px 1px 0 var(--stack1),2px 2px 0 var(--stack2),3px 3px 0 var(--stack1),4px 4px 0 var(--stack2),5px 5px 0 var(--stack1),6px 6px 0 rgba(0,0,0,.25)}
+.slot.L{box-shadow:-1px 1px 0 var(--stack1),-2px 2px 0 var(--stack2),-3px 3px 0 var(--stack1),-4px 4px 0 var(--stack2),-5px 5px 0 var(--stack1),-6px 6px 0 rgba(0,0,0,.25)}
+#book.single .slot.R{display:none}
+#book.single .slot.L{box-shadow:-1px 1px 0 var(--stack1),-2px 2px 0 var(--stack2),-3px 3px 0 var(--stack1),-4px 4px 0 var(--stack2),-5px 5px 0 rgba(0,0,0,.25), 3px 0 0 var(--cover2)}
+.spine{position:absolute;top:0;bottom:0;left:calc(50% - 10px);width:20px;transform:translateZ(.5px);pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(0,0,0,.16) 45%,rgba(0,0,0,.22) 50%,rgba(0,0,0,.16) 55%,transparent)}
+#book.single .spine{display:none}
+
+/* ---------- page ---------- */
+.page{position:relative;width:var(--pw);height:var(--ph);font-size:var(--fs);line-height:1.6;
+  background-color:var(--paper);background-image:var(--noise);padding:1.5em 1.55em 1.1em;display:flex;flex-direction:column;transform-style:preserve-3d}
+
+.page.sR{background-image:linear-gradient(90deg,rgba(0,0,0,.17),rgba(0,0,0,.05) 4%,transparent 9%),var(--noise)}
+.page.sL{background-image:linear-gradient(270deg,rgba(0,0,0,.17),rgba(0,0,0,.05) 4%,transparent 9%),var(--noise)}
+.page.text{overflow-y:auto;overflow-x:hidden;transform-style:flat;scrollbar-width:thin}
+.run{display:flex;justify-content:space-between;gap:1em;font-size:.7em;color:var(--muted);border-bottom:1px solid var(--rule);padding-bottom:.3em;margin-bottom:.55em;flex:none}
+.pno{margin-top:auto;padding-top:.35em;text-align:center;font-size:.72em;color:var(--muted);flex:none}
+h1,h2,h3{margin:0;line-height:1.3}
+h2{font-size:1.38em;margin:.05em 0 .45em;display:flex;align-items:center;gap:.45em}
+h2 .num{display:inline-grid;place-items:center;width:1.55em;height:1.55em;border-radius:50%;background:var(--ink);color:var(--paper);font-size:.72em;flex:none}
+p{margin:.3em 0}
+.tb{display:grid;grid-template-columns:minmax(0,1fr) 27%;gap:.9em;align-items:start}
+.single .tb, #store .single-like .tb{grid-template-columns:minmax(0,1fr)}
+.mg{border-inline-start:1.5px solid var(--margin-line);padding-inline-start:.65em;font-size:.8em;color:var(--muted);line-height:1.55}
+.mg .mt{display:block;color:var(--c-point);font-weight:700;margin-bottom:.15em}
+.mg p{margin:.2em 0 .55em}
+.m.blk{display:block;text-align:right;white-space:normal;margin:.1em 0}
+#book.single .mg{border-inline-start:0;border-top:1.5px dashed var(--margin-line);padding:.45em 0 0}
+.law{font-size:1.06em;text-align:center;padding:.4em .5em;margin:.45em 0;border:1.5px solid var(--rule);border-radius:.55em;background:var(--card);overflow-x:auto;scrollbar-width:none}
+.law.std{border-color:var(--c-std)} .law.gen{border-color:var(--c-gen)}
+.law small{display:block;font-size:.7em;color:var(--muted);font-family:inherit}
+.hook{font-size:1.02em;padding:.5em .7em;margin:.1em 0 .5em;border-radius:.5em;background:var(--paper2);border-inline-start:4px solid var(--c-cut)}
+.cases{margin:.3em 0;padding:0;list-style:none;font-size:.9em}
+.cases li{display:flex;gap:.4em;align-items:baseline;padding:.15em 0;border-bottom:1px dotted var(--rule)}
+.cases li b{flex:none}
+.tbl{width:100%;border-collapse:collapse;font-size:.86em;margin:.35em 0}
+.tbl td,.tbl th{border:1px solid var(--rule);padding:.25em .4em;text-align:start;vertical-align:middle}
+.tbl th{background:var(--paper2);font-weight:700}
+
+/* predict flap */
+.predict{margin-top:.55em;border:1.5px dashed var(--muted);border-radius:.6em;padding:.45em .6em .55em;background:var(--paper2)}
+.pq{font-size:.92em}
+.pq b.tag{display:inline-block;background:var(--c-point);color:#fff;padding:0 .45em;border-radius:.3em;margin-inline-end:.3em;font-size:.85em}
+.popts{display:flex;flex-wrap:wrap;gap:.35em;margin:.4em 0 .35em}
+.flapbox{position:relative;margin-top:.2em}
+.ans{padding:.45em .6em;font-size:.86em;line-height:1.6;background:var(--card);border-radius:.4em;border:1px solid var(--rule);min-height:3.4em}
+.flap{position:absolute;inset:0;transform-origin:50% 0;transition:transform .7s cubic-bezier(.3,1.25,.5,1);cursor:grab;touch-action:none;z-index:2}
+.flap .f{position:absolute;inset:0;border-radius:.4em;transition:opacity .4s}
+.flapbox.open .flap .f{opacity:.0}
+.flapbox.open .flap{background:var(--kraft2);border-radius:.4em}
+.flap .f{display:grid;place-items:center;font-weight:700;font-size:.9em;color:#5a4320;
+  background:repeating-linear-gradient(135deg,transparent 0 9px,rgba(0,0,0,.035) 9px 10px),linear-gradient(180deg,var(--kraft),var(--kraft2));
+  box-shadow:0 2px 3px rgba(0,0,0,.25);border:1px solid rgba(0,0,0,.12)}
+:root[data-theme="dark"] .flap .f{color:#f1dfb8}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .flap .f{color:#f1dfb8}}
+.flap .f::after{content:"";position:absolute;top:-1px;left:50%;width:2.6em;height:.5em;transform:translateX(-50%);background:rgba(0,0,0,.12);border-radius:0 0 .4em .4em}
+.flapbox.open .flap{transform:perspective(700px) rotateX(102deg)}
+.flap{transform:none}
+
+/* chips */
+.chip{font:inherit;font-size:.8em;line-height:1.2;padding:.32em .75em;min-height:2.15em;border-radius:999px;border:1px solid var(--rule);background:var(--card);color:var(--ink);cursor:pointer;transition:background .2s}
+.chip:hover{background:var(--paper2)}
+.chip:active{filter:brightness(.92)}
+.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip.right{background:color-mix(in srgb,var(--ok) 22%,var(--card));border-color:var(--ok)}
+.chip.wrong{background:color-mix(in srgb,var(--bad) 20%,var(--card));border-color:var(--bad)}
+.chip:disabled{opacity:.55;cursor:default}
+.chip:focus-visible,.tbtn:focus-visible,.flap:focus-visible{outline:2px solid var(--c-radius);outline-offset:2px}
+
+/* ---------- lab page ---------- */
+.lt{font-size:1.08em;display:flex;align-items:center;gap:.4em;flex:none}
+.lt .lab-ic{font-size:.7em;background:var(--c-cut);color:#fff;border-radius:.3em;padding:.05em .45em;font-weight:700}
+.stage{position:relative;flex:1 1 auto;min-height:7em;margin:.25em 0 .2em;perspective:calc(var(--fs) * 55);perspective-origin:50% 0}
+.page.lab{transform-style:flat}
+.pop{position:absolute;inset:0;transform-style:preserve-3d}
+.crease{position:absolute;left:5%;right:5%;bottom:calc(7% - 1px);height:2px;background:linear-gradient(90deg,transparent,rgba(0,0,0,.22) 15%,rgba(0,0,0,.22) 85%,transparent)}
+.stage::after{content:"";position:absolute;left:4%;right:4%;bottom:1.5%;height:5.5%;border-radius:50%;pointer-events:none;opacity:0;transition:opacity .4s;
+  background:radial-gradient(ellipse 50% 70% at 50% 0,rgba(40,25,10,.35),transparent 75%)}
+.risen .stage::after{opacity:1;transition:opacity 1s .15s}
+.risen .card{box-shadow:0 0 0 1px rgba(0,0,0,.10),0 -6px 18px rgba(40,25,10,.18)}
+.card{position:absolute;left:7%;right:7%;top:5%;bottom:7%;transform-origin:50% 100%;transform:rotateX(0deg);
+  transition:transform .28s ease-in;transform-style:preserve-3d;border-radius:3px;
+  background:var(--card);box-shadow:0 0 0 1px rgba(0,0,0,.10)}
+.card::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:3px;
+  background:linear-gradient(0deg,rgba(0,0,0,.13),transparent 22%),linear-gradient(180deg,rgba(255,255,255,.18),transparent 30%)}
+.card .edge{position:absolute;left:0;right:0;top:0;height:4px;background:var(--stack2);transform-origin:50% 0;transform:rotateX(90deg)}
+.card canvas{position:absolute;inset:0;width:100%;height:100%;display:block;border-radius:3px}
+.risen .card{transform:rotateX(var(--rise,-32deg));transition:transform 1.1s cubic-bezier(.25,1.45,.45,1)}
+.risen .side{flex:none;display:flex;flex-direction:column;gap:.25em}
+.ro{font-size:.84em;line-height:1.55;background:var(--paper2);border-radius:.45em;padding:.3em .55em;border:1px solid var(--rule)}
+.ro .row{display:flex;flex-wrap:wrap;gap:.1em .5em;align-items:baseline}
+.ro .eq{font-size:1.12em}
+.ro .k{color:var(--muted)}
+.ctl{display:flex;flex-direction:column;gap:.15em}
+.sl{display:grid;grid-template-columns:5.6em minmax(0,1fr) 3.3em;align-items:center;gap:.45em;font-size:.84em}
+.sl .nm{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sl output{text-align:center;font-family:"Cambria Math",Cambria,"Times New Roman",serif;font-weight:700;background:var(--card);border:1px solid var(--rule);border-radius:.35em;padding:.05em .2em}
+.btns{display:flex;flex-wrap:wrap;gap:.3em;align-items:center}
+.btns .lbl{font-size:.76em;color:var(--muted)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:max(1.9em,26px);background:transparent;direction:ltr;margin:0;cursor:pointer;touch-action:none}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--graphite),var(--muted));opacity:.85}
+input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--graphite),var(--muted))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:max(1.35em,20px);height:max(1.35em,20px);border-radius:50%;margin-top:calc((4px - max(1.35em,20px))/2);
+  background:var(--cc,var(--ink));border:2.5px solid var(--card);box-shadow:0 1px 4px rgba(0,0,0,.4)}
+input[type=range]::-moz-range-thumb{width:max(1.35em,20px);height:max(1.35em,20px);border-radius:50%;background:var(--cc,var(--ink));border:2.5px solid var(--card);box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.dict{width:100%;border-collapse:collapse;font-size:.85em}
+.dict td{border-bottom:1px dotted var(--rule);padding:.28em .3em}
+.dict td:first-child{white-space:nowrap}
+.dot{display:inline-block;width:.7em;height:.7em;border-radius:50%;margin-inline-end:.35em;vertical-align:middle}
+.gq{font-size:.9em;font-weight:600;min-height:1.6em;flex:none;margin-top:.15em}
+.gfb{min-height:2.4em}
+.hide{display:none!important}
+
+/* title page */
+.tp{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.25em;flex:1}
+.ribbon{background:var(--c-cut);color:#fff;padding:.15em 1.2em;border-radius:999px;font-weight:700;font-size:.9em;margin-top:.4em}
+.tp h1{font-size:2.1em;margin-top:.15em}
+.tp .en{font-family:Georgia,"Times New Roman",serif;font-style:italic;color:var(--muted);direction:ltr}
+.tp .lead{font-size:.92em;max-width:22em}
+.toc{list-style:none;margin:.4em 0 0;padding:0;width:100%;text-align:start}
+.toc button{all:unset;box-sizing:border-box;display:flex;width:100%;gap:.6em;align-items:baseline;padding:.2em .2em;border-bottom:1px dotted var(--rule);cursor:pointer;font-size:.86em}
+.toc button:hover{background:var(--paper2)}
+.toc button:focus-visible{outline:2px solid var(--c-radius)}
+.toc .i{display:inline-grid;place-items:center;width:1.6em;height:1.6em;border-radius:50%;background:var(--ink);color:var(--paper);font-size:.78em;flex:none}
+.toc em{margin-inline-start:auto;font-style:normal;color:var(--muted);font-size:.85em;white-space:nowrap}
+.howto{display:grid;gap:.25em;margin-top:.6em;font-size:.78em;color:var(--muted);text-align:start;width:100%}
+.howto div::before{content:"✎ ";color:var(--c-point)}
+
+/* game list */
+.rounds{list-style:none;margin:.35em 0;padding:0;font-size:.86em}
+.rounds li{display:flex;gap:.5em;align-items:center;padding:.22em 0;border-bottom:1px dotted var(--rule)}
+.rounds .st{width:1.4em;text-align:center;font-weight:700;flex:none}
+.rounds li.cur{font-weight:700}
+.stars{font-size:1.7em;letter-spacing:.1em;text-align:center;color:#d4a017}
+
+/* ---------- flipper ---------- */
+.flip{position:absolute;inset:0;transform-style:preserve-3d;pointer-events:none;transform:translateZ(2px);--sh:0}
+.seg{position:absolute;top:0;height:100%;transform-style:preserve-3d}
+.face{position:absolute;inset:0;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform-style:flat}
+.face.back{transform:rotateY(180deg)}
+.face .page{position:absolute;top:0;transform-style:flat}
+.face .page *{transform-style:flat!important}
+.face::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(0,0,0,0) 60%);opacity:var(--sh)}
+.face.back::after{background:linear-gradient(270deg,rgba(0,0,0,.3),rgba(255,255,255,.08) 70%)}
+.blank{background-color:var(--paper)}
+
+#store{position:fixed;left:-300vw;top:0;visibility:hidden;pointer-events:none}
+
+/* ---------- toolbar ---------- */
+#tb{position:fixed;left:0;right:0;bottom:0;height:var(--tb);padding:0 .5rem env(safe-area-inset-bottom);display:flex;align-items:center;justify-content:center;gap:.45rem;z-index:50;
+  background:rgba(25,15,8,.62);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#f7eedd;border-top:1px solid rgba(255,255,255,.08)}
+.tbtn{text-decoration:none;height:42px;min-width:42px;border-radius:21px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:inherit;
+  display:inline-flex;align-items:center;justify-content:center;gap:.35rem;padding:0 .75rem;font:600 14px/1 inherit;cursor:pointer}
+.tbtn:hover{background:rgba(255,255,255,.16)}
+.tbtn:disabled{opacity:.35;cursor:default}
+.tbtn svg{width:20px;height:20px;flex:none}
+.tbtn.on{background:#f3c56b;color:#2b1b0c;border-color:#f3c56b}
+.dots{display:flex;align-items:center}
+.dots button{width:22px;height:34px;border:0;background:none;padding:0;cursor:pointer;display:grid;place-items:center}
+.dots button::before{content:"";width:9px;height:9px;border-radius:5px;background:rgba(255,255,255,.35);transition:all .25s}
+.dots button.on::before{width:20px;background:#f3c56b}
+.sep{width:1px;height:26px;background:rgba(255,255,255,.18)}
+@media (max-width:560px){ .tbtn .lbl{display:none} .tbtn{padding:0 .55rem} #tb{gap:.25rem} }
+.cnt{display:none;font:600 14px/1 inherit;min-width:4.2em;text-align:center}
+@media (max-width:820px){ .dots{display:none} .cnt{display:inline-block} }
+.exl{list-style:none;margin:.2em 0;padding:0;display:flex;flex-direction:column;gap:.4em}
+.exl li{display:flex;gap:.55em;align-items:flex-start;font-size:.92em;line-height:1.55}
+.exl li>div{flex:1;min-width:0}
+.exn{display:inline-grid;place-items:center;width:1.7em;height:1.7em;border-radius:50%;background:var(--c-point);color:#fff;font-size:.8em;flex:none;margin-top:.15em}
+.parts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.05em .8em;margin:.15em 0}
+.parts.one{grid-template-columns:1fr}
+.exq{font-size:.82em;line-height:1.6;background:var(--card);border:1px solid var(--rule);border-inline-start:3px solid var(--c-point);padding:.3em .55em;border-radius:.35em}
+.exq b{color:var(--c-point);margin-inline-end:.35em}
+.exhint{font-size:.8em;color:var(--muted)}
+.pl{display:inline-grid;place-items:center;min-width:1.35em;height:1.35em;border-radius:.3em;background:var(--paper2);border:1px solid var(--rule);font-size:.78em;margin-inline-end:.35em;font-family:Georgia,serif}
+.flapbox.mini{margin-top:.3em}
+.flapbox.mini .ans{min-height:2.3em;font-size:.84em;padding:.3em .55em}
+.flapbox.mini .flap .f{font-size:.82em}
+.sl2{display:grid;grid-template-columns:1fr 1fr;gap:.6em}
+.sl2 .sl{grid-template-columns:1.6em minmax(0,1fr) 2.8em}
+.psel{display:contents}
+.steps-ro{overflow:auto;max-height:calc(var(--ph)*.34);scroll-behavior:smooth}
+.row.st{display:flex;gap:.45em;align-items:flex-start;opacity:.62;border-bottom:1px dotted var(--rule);padding:.12em 0}
+.row.st.cur{opacity:1}
+.row.st .sn{flex:none;display:inline-grid;place-items:center;width:1.45em;height:1.45em;border-radius:50%;background:var(--c-radius);color:#fff;font-size:.72em;margin-top:.15em}
+.row.st.cur .sn{background:var(--c-point)}
+.row.st small{display:block;color:var(--c-radius);font-size:.84em}
+.row.st .m.blk{text-align:right}
+.chip.gold{background:var(--c-point);color:#fff;border-color:var(--c-point)}
+.exl.tight li{font-size:.84em;line-height:1.5}
+.law.sm .steps{text-align:right;margin:.2em 0}
+.tbl.mini{font-size:.78em;margin:.2em 0 0}
+.tbl.mini td,.tbl.mini th{padding:.12em .3em}
+.tbl.ap{font-size:.72em;width:100%;table-layout:fixed}
+.tbl.ap td,.tbl.ap th{padding:.08em .15em;text-align:center;overflow:hidden}
+.tbl.rulez{width:100%;font-size:.84em}
+.exl.tight{gap:.3em}
+.exl.tight li{font-size:.86em}
+.lab-flap{margin:0}
+.lab-flap .ans{min-height:4.6em;font-size:1em;padding:.3em .55em}
+.lab-flap .flap .f{font-size:.95em}
+.toc.compact button{padding:.1em .2em;font-size:.8em}
+.law.sm{font-size:.86em;line-height:1.7}
+.ro .m.blk{text-align:right}
+.lab-flap.open .flap{opacity:0;pointer-events:none}
+.lab-flap .flap{transition:transform .7s cubic-bezier(.3,1.25,.5,1),opacity .4s .25s}
+.pw{display:inline-flex;align-items:center;gap:.15em;vertical-align:middle}
+.pwb{font-size:2.1em;line-height:1;font-weight:300}
+.pwr{display:inline-grid;grid-template-columns:auto auto;column-gap:.5em;line-height:1.25}
+.prm.dim{opacity:.45}
+.parts span.full{grid-column:1/-1}
+.steps{margin:.3em 0;padding-inline-start:1.4em;font-size:.9em}
+.steps li{margin:.12em 0}
+.note{font-size:.84em;color:var(--muted);margin:.25em 0}
+.cases.rules li span small{display:block;color:var(--muted);font-size:.85em}
+.btns.mk:empty{display:none}
+
+
+/* ---------- teacher mode ---------- */
+#teach{position:fixed;inset:0;z-index:80;display:none;place-items:center;perspective:2400px;perspective-origin:50% 15%;
+  background:radial-gradient(ellipse at 50% 40%,rgba(255,214,160,.18),transparent 70%),linear-gradient(180deg,var(--desk1),var(--desk2))}
+#teach.on{display:grid}
+#teach .board{transform:rotateX(9deg);transform-style:preserve-3d;position:relative}
+#teach .board::before{content:"";position:absolute;inset:-14px;background:linear-gradient(135deg,var(--cover1),var(--cover2));transform:translateZ(-6px);border-radius:8px}
+#teach .tx{position:fixed;top:12px;left:12px;z-index:3}
+#teach .tnav{position:fixed;top:12px;right:12px;display:flex;gap:.4rem;z-index:3}
+#teach .tbtn{background:rgba(25,15,8,.6);color:#f7eedd}
+.page.lab.wide{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1.6fr);grid-template-rows:auto auto auto minmax(0,1fr) auto;
+  grid-template-areas:"run run" "lt lt" "gq gq" "side stage" "pno pno";column-gap:1.2em}
+.wide .run{grid-area:run}.wide .lt{grid-area:lt}.wide .gq{grid-area:gq}.wide .stage{grid-area:stage;margin:0}.wide .side{grid-area:side;align-self:center}.wide .pno{grid-area:pno}
+.wide .sl{grid-template-columns:6.4em minmax(0,1fr) 3.3em}
+
+@media (prefers-reduced-motion: reduce){
+  .risen .card,.card,.flap,#book{transition-duration:.01s!important}
+}
+</style>
+<script src="app-version.js"></script>
+<link rel="stylesheet" href="classroom.css">
+<link rel="stylesheet" href="board-v1.4.css">
+<link rel="stylesheet" href="guided-explanation.css">
+<link rel="stylesheet" href="teacher-tools-v1.6.css">
+<link rel="stylesheet" href="board-v1.7.css">
+<link rel="stylesheet" href="board-v1.7.2.css">
+<link rel="stylesheet" href="board-v1.7.1.css">
+<link rel="stylesheet" href="board-controls-v1.7.5.css">
+</head>
+<body>
+<div id="scene">
+  <div id="book">
+    <div class="bshadow"></div>
+    <div class="cover"></div>
+    <div class="slot L"></div>
+    <div class="slot R"></div>
+    <div class="spine"></div>
+  </div>
+</div>
+<div id="store"></div>
+
+<div id="teach" role="dialog" aria-label="وضع المعلم">
+  <button class="tbtn tx" id="tExit" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="lbl">خروج</span></button>
+  <div class="tnav">
+    <button class="tbtn" id="tPrev" type="button" aria-label="المختبر السابق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+    <button class="tbtn" id="tNext" type="button" aria-label="المختبر التالي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+  </div>
+  <div class="board" id="tBoard"></div>
+</div>
+
+<nav id="tb" aria-label="التنقل">
+  <a class="tbtn" id="bHome" href="index.html" aria-label="المكتبة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 012-2h12v18H6a2 2 0 01-2-1.5zM4 19.5A2 2 0 016 18h12"/></svg><span class="lbl">المكتبة</span></a>
+  <span class="sep"></span>
+  <button class="tbtn" id="bPrev" type="button" aria-label="الصفحة السابقة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg><span class="lbl">السابق</span></button>
+  <div class="dots" id="dots"></div><span class="cnt" id="cnt"></span>
+  <button class="tbtn" id="bNext" type="button" aria-label="الصفحة التالية"><span class="lbl">التالي</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+  <span class="sep"></span>
+  <button class="tbtn" id="bTeach" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20h8M7 12l3-3 2 2 4-4"/></svg><span class="lbl">وضع المعلم</span></button>
+  <button class="tbtn" id="bMute" type="button" aria-pressed="false" aria-label="كتم الصوت"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="w" d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12"/><path class="x" d="M16 9l6 6M22 9l-6 6" style="display:none"/></svg></button>
+  <button class="tbtn" id="bTheme" type="button" aria-label="الوضع الداكن"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/></svg></button>
+</nav>
+
+<script>
+"use strict";
+/* ================= helpers ================= */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const MI='−';
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function fmt(x){ if(!isFinite(x)) return '?'; let v=Math.round(x*100)/100; if(Math.abs(v)<1e-9) v=0; return (v<0?MI:'')+String(Math.abs(v)); }
+const N=s=>`<bdi dir="ltr" class="n">${s}</bdi>`;
+/* ---- math typesetting: stacked fractions, radicals with a bar, superscripts ---- */
+const MF_ATOM=/(?:<su[bp]>[^<]*<\/su[bp]>|\^[0-9a-z]|[A-Za-z0-9.πΔθεαβ′√∛])+$/;
+const MF_ATOMF=/^(?:[−-]?)(?:<su[bp]>[^<]*<\/su[bp]>|\^[0-9a-z]|[A-Za-z0-9.πΔθεαβ′√∛])+/;
+const MF_UNIT_N=/^(m|cm|km|mol|foot|N|k|L)$/, MF_UNIT_D=/^(sec|s|h|L|m\^2|m|sec\^2|ثا)$/;
+function mfParBack(s,j){ let d=0; for(let k=j;k>=0;k--){ if(s[k]===')') d++; else if(s[k]==='('){ d--; if(d===0) return k; } } return -1; }
+function mfParFwd(s,j){ let d=0; for(let k=j;k<s.length;k++){ if(s[k]==='(') d++; else if(s[k]===')'){ d--; if(d===0) return k; } } return -1; }
+function mfFrac(s){
+  for(let i=1;i<s.length-1;i++){ if(s[i]!=='/'||s[i-1]==='<'||s[i-1]===' '||s[i+1]===' '||s[i+1]==='>') continue;
+    const pre_=s.slice(0,i); if(pre_.lastIndexOf('<sup>')>pre_.lastIndexOf('</sup>')) continue;
+    /* numerator */ let a, num, keepN=false; const L=s.slice(0,i);
+    if(L.endsWith(')')){ const k=mfParBack(s,i-1); if(k<0) continue; a=k; num=s.slice(k+1,i-1); const pre=L.slice(0,k).match(/[A-Za-z]+$/); if(pre&&!/^(sin|cos|tan|cot|sec|csc|lim)$/.test(pre[0])){ a=k-pre[0].length; num=s.slice(a,i); keepN=true; } }
+    else { const m=L.match(MF_ATOM); if(!m) continue; a=i-m[0].length; num=m[0]; keepN=true;
+      const fn=s.slice(0,a).match(/(?:sin|cos|tan|cot|sec|csc)(?:\^[0-9])? $/); if(fn){ a-=fn[0].length; num=s.slice(a,i); }
+      if(a>0&&s[a-1]===')'){ const k=mfParBack(s,a-1); if(k>=0){ num=s.slice(k,i); a=k; } } }
+    /* denominator */ let b, den; const R=s.slice(i+1);
+    if(R.startsWith('(')){ const k=mfParFwd(s,i+1); if(k<0) continue; b=k+1; den=s.slice(i+2,k); const ex=s.slice(b).match(/^(\^[0-9a-z]|<sup>[^<]*<\/sup>)/); if(ex){ den='('+den+')'+ex[0]; b+=ex[0].length; } }
+    else { const m=R.match(MF_ATOMF); if(!m) continue; den=m[0]; b=i+1+m[0].length;
+      if(/[A-Za-z]$/.test(den)&&s[b]==='('){ const k=mfParFwd(s,b); if(k>0){ den=s.slice(i+1,k+1); b=k+1; } } }
+    const nTxt=num.replace(/<[^>]+>/g,''), dTxt=den.replace(/<[^>]+>/g,'');
+    if(MF_UNIT_N.test(nTxt)&&MF_UNIT_D.test(dTxt)) continue; if(/^(sec|s|h|L)$/.test(dTxt)) continue;
+    const out=`<span class="fr"><span class="nu">${mfFrac(num)}</span><span class="de">${mfFrac(den)}</span></span>`;
+    return s.slice(0,a)+out+mfFrac(s.slice(b)); }
+  return s; }
+function mfRadicals(s){ let out='', i=0;
+  while(i<s.length){ const ch=s[i];
+    if((ch==='√'||ch==='∛')){ const idx=ch==='∛'?'<span class="ri">3</span>':''; 
+      if(s[i+1]==='('){ const k=mfParFwd(s,i+1); if(k>0){ out+=`<span class="rad">${idx}√<span class="rc">${mfRadicals(s.slice(i+2,k))}</span></span>`; i=k+1; continue; } }
+      const m=s.slice(i+1).match(/^[A-Za-z0-9.π]+/); if(m){ out+=`<span class="rad">${idx}√<span class="rc">${m[0]}</span></span>`; i+=1+m[0].length; continue; } }
+    out+=ch; i++; }
+  return out; }
+const MF_VF={'½':['1','2'],'⅓':['1','3'],'⅔':['2','3'],'¼':['1','4'],'¾':['3','4']};
+function mfmt(s){ s=String(s);
+  s=s.replace(/(\d?)([½⅓⅔¼¾])/g,(m,d,f)=>d?m:`(${MF_VF[f][0]})/(${MF_VF[f][1]})`);
+  s=mfFrac(s); s=mfRadicals(s);
+  s=s.replace(/lim<sub>((?:[^<]|<sup>[^<]*<\/sup>)*)<\/sub>/g,'<span class="lim">lim<span class="ls">$1</span></span>');
+  return s.replace(/\^(\d|[a-z])/g,'<sup>$1</sup>'); }
+const M=(s,c='')=>`<bdi dir="ltr" class="m ${c}">${mfmt(s)}</bdi>`;
+const P2=(x,y)=>`(${fmt(x)}, ${fmt(y)})`;
+function sq(v,val){ return Math.abs(val)<1e-9?`${v}<sup>2</sup>`:`(${v} ${val>0?'−':'+'} <span class="cc">${fmt(Math.abs(val))}</span>)<sup>2</sup>`; }
+function stdEq(h,k,r2){ return `<bdi dir="ltr" class="m">${sq('x',h)} + ${sq('y',k)} = <span class="cr">${fmt(r2)}</span></bdi>`; }
+function genEq(A,B,C,a=1){
+  const t=(c,v)=>{ if(Math.abs(c)<1e-9) return ''; const ac=Math.abs(c); return ` ${c<0?'−':'+'} <span class="cg">${(ac===1&&v)?'':fmt(ac)}</span>${v}`; };
+  const q=a!==1?a:'';
+  return `<bdi dir="ltr" class="m">${q}x<sup>2</sup> + ${q}y<sup>2</sup>${t(A,'x')}${t(B,'y')}${t(C,'')} = 0</bdi>`;
+}
+function rad(r2){
+  if(r2<=1e-9) return null;
+  const s=Math.sqrt(r2);
+  if(Math.abs(s*100-Math.round(s*100))<1e-6) return fmt(s);
+  if(Math.abs(r2-Math.round(r2))<1e-9){ const n=Math.round(r2); let a=1; for(let i=Math.floor(Math.sqrt(n));i>1;i--) if(n%(i*i)===0){a=i;break;} const b=n/(a*a); return `${a>1?a:''}√${b} ≈ ${s.toFixed(2)}`; }
+  return `√${fmt(r2)} ≈ ${s.toFixed(2)}`;
+}
+const slider=(k,name,min,max,step,val,cc)=>`<label class="sl" style="--cc:var(${cc})"><span class="nm">${name}</span><input type="range" data-k="${k}" min="${min}" max="${max}" step="${step}" value="${val}" aria-label="${k}"><output data-o="${k}"><bdi dir="ltr">${fmt(val)}</bdi></output></label>`;
+function predict(q,opts,ans,answer){
+  return `<div class="predict" data-ans="${ans}">
+  <div class="pq"><b class="tag">توقّع</b>${q}</div>
+  <div class="popts">${opts.map((o,i)=>`<button type="button" class="chip" data-i="${i}">${o}</button>`).join('')}</div>
+  <div class="flapbox"><div class="ans">${answer}</div>
+    <div class="flap" role="button" tabindex="0" aria-label="ارفع اللسان لكشف الإجابة"><div class="f">ارفع اللسان لتكشف الإجابة ⤒</div></div></div>
+</div>`;
+}
+const MINI=a=>`<div class="flapbox mini"><div class="ans">${a}</div><div class="flap" role="button" tabindex="0" aria-label="ارفع اللسان لكشف الحل"><div class="f">الحل ⤒</div></div></div>`;
+const stage=`<div class="stage"><div class="pop"><div class="crease"></div><div class="card"><div class="edge"></div><canvas dir="ltr"></canvas></div></div></div>`;
+const RUN=(a,b)=>`<header class="run"><span>${a}</span><span>${b}</span></header>`;
+const FOOT=n=>`<footer class="pno">${N(n)}</footer>`;
+
+/* ================= content ================= */
+const CH='الفصل الثالث · تطبيقات التفاضل';
+const LIM=(a,f,side='')=>`lim<sub>${a}${side?'<sup>'+side+'</sup>':''}</sub> ${f}`;
+const PT=(arr,cls='')=>`<div class="parts ${cls}">${arr.map(([l,h,w])=>`<span${w?' class="full"':''}><b class="pl">${l}</b>${h}</span>`).join('')}</div>`;
+const PW=rows=>`<bdi dir="ltr" class="m pw"><span class="pwb">{</span><span class="pwr">${rows.map(([e,c])=>`<span>${mfmt(e)}</span><span>, ${c}</span>`).join('')}</span></bdi>`;
+const EXHINT='<p class="exhint">حلّ في دفترك، ثم اضغط رقم التمرين في المختبر المقابل وارفع اللسان لترى الحل.</p>';
+const EXLHINT='<p class="exhint">اضغط اسم المثال في المختبر المقابل، ثم «الخطوة التالية» لترى الحل خطوة بخطوة مع الرسم.</p>';
+const chkPage=(set,title)=>`<section class="page lab" data-lab="chk3" data-set="${set}">
+ ${RUN('مختبر','تحقّق من حلّك')}
+ <h3 class="lt"><span class="lab-ic">تحقّق</span>${title}</h3>
+ ${stage}
+ <div class="side"><div class="exq hide"></div>
+  <div class="flapbox lab-flap"><div class="ans ro"></div><div class="flap" role="button" tabindex="0" aria-label="ارفع اللسان لكشف الحل"><div class="f">ارفع اللسان لترى الحل ⤒</div></div></div>
+  <div class="ctl"><div class="btns xsel"></div></div></div>
+ ${FOOT(0)}
+</section>`;
+const exPage=(set,title)=>`<section class="page lab" data-lab="ex3" data-set="${set}">
+ ${RUN('مختبر','حل مفصّل خطوة بخطوة')}
+ <h3 class="lt"><span class="lab-ic">أمثلة</span>${title}</h3>
+ ${stage}
+ <div class="side"><div class="exq hide"></div><div class="ro steps-ro"></div>
+  <div class="ctl"><div class="btns esel"></div>
+   <div class="btns"><button type="button" class="chip" data-pv>▸ السابقة</button><button type="button" class="chip gold" data-nx>الخطوة التالية ◂</button><button type="button" class="chip" data-all>كل الخطوات</button></div>
+  </div></div>
+ ${FOOT(0)}
+</section>`;
+const labPage=(lab,set,run,title,ctl)=>`<section class="page lab" data-lab="${lab}" data-set="${set}">
+ ${RUN('مختبر',run)}
+ <h3 class="lt"><span class="lab-ic">مختبر</span>${title}</h3>
+ ${stage}
+ <div class="side"><div class="exq hide"></div><div class="ro"></div>
+  <div class="ctl">${ctl}</div></div>
+ ${FOOT(0)}
+</section>`;
+const EXL=items=>`<ol class="exl tight">${items.map(([n,h])=>`<li><b class="exn">${n}</b><div>${h}</div></li>`).join('')}</ol>`;
+const PAGES=[
+/* ---- 0 : title + dictionary ---- */
+[`<section class="page text">
+ ${RUN('رياضيات · الصف السادس العلمي','منهج العراق')}
+ <div class="tp">
+  <div class="ribbon">الفصل الثالث</div>
+  <h1>تطبيقات التفاضل</h1>
+  <div class="en">Applications of Differentiation</div>
+  <ol class="toc compact"></ol>
+ </div>
+ ${FOOT(0)}
+</section>`,
+`<section class="page lab" data-lab="intro">
+ ${RUN('قاموس الفصل','ص '+N('90'))}
+ <h3 class="lt"><span class="lab-ic">مجسّم</span>المماس يخبرنا: صعود أم نزول؟</h3>
+ ${stage}
+ <div class="side">
+  <table class="dict">
+   <tr><td><span class="dot" style="background:var(--c-point)"></span>التغير التقريبي عند ${M('a')}</td><td>${M('<span class="cp">hf′(a) , h = b − a</span>')}</td></tr>
+   <tr><td><span class="dot" style="background:var(--c-radius)"></span>مبرهنة القيمة المتوسطة</td><td>${M('<span class="cr">f′(c) = (f(b) − f(a))/(b − a)</span>')}</td></tr>
+   <tr><td><span class="dot" style="background:var(--c-std)"></span>متزايدة / متناقصة</td><td>${M('<span class="cs">f′(x) > 0 / f′(x) < 0</span>')}</td></tr>
+   <tr><td><span class="dot" style="background:var(--c-gen)"></span>مقعرة / محدبة</td><td>${M('<span class="cg">f″(x) > 0 / f″(x) < 0</span>')}</td></tr>
+  </table>
+  <p class="note"><b>تمهيد:</b> لقد سبق أن تعلمت في الصف الخامس العلمي متى تكون الدالة قابلة للاشتقاق وتعرفت على قواعد ايجاد مشتقات الدوال الجبرية والدائرية والتفسير الهندسي والفيزيائي للمشتقة وفي هذا الفصل سنتناول بعض المفاهيم الاخرى وبعض استعمالات وتطبيقات حساب التفاضل.</p>
+ </div>
+ ${FOOT(0)}
+</section>`],
+
+/* ---- 1 : related rates ---- */
+[`<section class="page text">
+ ${RUN(CH,'[3−1] · ص '+N('90–91'))}
+ <h2><span class="num"></span>المعدلات المرتبطة</h2>
+ <p>اذا وجد أكثر من متغير بحيث تتوقف قيمة كل من هذه المتغيرات على متغير واحد يسمى (بارامتر) ومثاله الزمن فتتغير كل المتغيرات تبعاً لتغيره، فإننا نسمي المعدلات الزمنية هذه <b>بالمعدلات الزمنية المرتبطة</b>. فمثلاً اذا كان ${M('y = g(t) , x = f(t)')} فالمتغيران ${M('x , y')} تابعان للمتغير المستقل ${M('t')}، ويمكن أن نجد معدل تغير كل منهما:</p>
+ <div class="law">${M('<span class="cc">dx/dt = f′(t)</span> , <span class="cr">dy/dt = g′(t)</span>')}</div>
+ <p>وقد يتوافر الربط بين المتغيرين بمعادلة، وفي هذه الحالة <b>نشتق الطرفين بالنسبة للزمن</b> ${M('t')}، فمثلاً من المعادلة ${M('x^2 + y^2 − 4y + 6x = 0')}:</p>
+ <div class="law sm">${M('2x <span class="cc">dx/dt</span> + 2y <span class="cr">dy/dt</span> − 4 <span class="cr">dy/dt</span> + 6 <span class="cc">dx/dt</span> = 0')}</div>
+ ${predict(`سلم ينزلق طرفه الأسفل مبتعداً عن الحائط بسرعة ثابتة. هل ينزلق طرفه العلوي بسرعة ثابتة أيضاً؟`,['نعم، بالسرعة نفسها','لا، تتغير سرعته'],1,
+   `لا. ${M('x^2 + y^2 = 100 ⇒ dy/dt = −(x/y) dx/dt')}، فكلما اقترب السلم من الأرض كبرت ${M('x/y')} وازدادت سرعة الطرف العلوي. جرّبه في المختبر.`)}
+ ${FOOT(0)}
+</section>`,
+labPage('rate','','معدلات تتحرك أمامك','حرّك المتغير أو شغّل الزمن وراقب المعدلات',
+ `${slider('v','<span class="cc">x</span>',0.5,9.8,0.05,8,'--c-center')}
+  <div class="btns"><span class="lbl">المسألة:</span><button type="button" class="chip" data-s="0" data-q="r4">السلم</button><button type="button" class="chip" data-s="1" data-q="r1">الخزان</button><button type="button" class="chip" data-s="2" data-q="r5">المرشح المخروطي</button></div>
+  <div class="btns"><button type="button" class="chip gold" data-play>شغّل الزمن ▶</button></div>`)],
+
+/* ---- 2 : related rates examples ---- */
+[`<section class="page text">
+ ${RUN(CH,'[3−1] · ص '+N('91–96'))}
+ <h2><span class="num"></span>أمثلة المعدلات المرتبطة</h2>
+ <aside class="law sm" style="text-align:right"><b>ملاحظة:</b> لحل أي سؤال يتعلق بالمعدلات المرتبطة حاول إتباع ما يلي إن أمكن:</aside>
+ <ol class="steps">
+  <li>ارسم مخططاً للمسألة (أن احتجت الى ذلك) وحدد المتغيرات والثوابت وضع لها الرموز وحدد العلاقة الرئيسية في حل السؤال.</li>
+  <li>حاول إيجاد علاقة أخرى بين المتغيرات لكي تقلل من عدد المتغيرات.</li>
+  <li>نشتق الطرفين بالنسبة للمتغير (الزمن) ${M('t')}.</li>
+  <li>عوض معطيات السؤال من المتغيرات بعد الاشتقاق.</li>
+ </ol>
+ ${EXLHINT}
+ ${PT([['1','خزان يتسرب منه الماء'],['2','صفيحة تتمدد ومساحتها ثابتة'],['3','مكعب مغطى بالجليد'],['4','سلم ينزلق'],['5','مرشح مخروطي'],['6','نقطة على قطع مكافئ']])}
+ <aside class="mg"><span class="mt">ملاحظة على الكتاب · ص ${N('92')}</span><p>في مثال ${N('1')} المعدل معطى بالساعة ${M('0.4 m^3 / h')} فالناتج ${M('0.1 m / h')} وليس ${M('m / s')}.</p></aside>
+ ${FOOT(0)}
+</section>`, exPage('e1','أمثلة البند [3−1]')],
+
+/* ---- 3 : exercises 3-1 ---- */
+[`<section class="page text">
+ ${RUN(CH,'تمارين (3−1) · ص '+N('97'))}
+ <h2><span class="num"></span>تمارين (3−1)</h2>
+ ${EXHINT}
+ ${EXL([
+  ['1',`سلم يستند طرفه الأسفل على أرض أفقية وطرفه الأعلى على حائط رأسي فاذا أنزلق الطرف الأسفل مبتعداً عن الحائط بمعدل ${M('2 m / s')} ، فجد معدل انزلاق الطرف العلوي عندما يكون قياس الزاوية بين السلم والأرض تساوي ${M('π/3')} .`],
+  ['2',`عمود طوله ${M('7.2m')} في نهايته مصباح، يتحرك رجل طوله ${M('1.8m')} مبتعداً عن العمود وبسرعة ${M('30 m / min')} ، جد معدل تغير طول ظل الرجل.`],
+  ['3',`لتكن ${M('M')} نقطة تتحرك على القطع المكافئ ${M('y = x^2')} ، جد احداثيي النقطة ${M('M')} عندما يكون المعدل الزمني لأبتعادها عن النقطة ${M('(0 , 3/2)')} يساوي ثلثي المعدل الزمني لتغير الاحداثي الصادي للنقطة ${M('M')} .`],
+  ['4',`جد النقط التي تنتمي للدائرة ${M('x^2 + y^2 + 4x − 8y = 108')} والتي عندها يكون المعدل الزمني لتغير ${M('x')} يساوي المعدل الزمني لتغير ${M('y')} بالنسبة للزمن ${M('t')} .`],
+  ['5',`متوازي سطوح مستطيلة أبعاده تتغير بحيث تبقى قاعدته مربعة الشكل، يزداد طول ضلع القاعدة بمعدل ${M('0.3 cm / s')} ، وارتفاعه يتناقص بمعدل ${M('0.5 cm / s')} ، جد معدل تغير الحجم عندما يكون طول ضلع القاعدة ${M('4cm')} والارتفاع ${M('3cm')} .`]])}
+ ${FOOT(0)}
+</section>`, chkPage('A','تمارين (3−1)')],
+
+/* ---- 4 : critical numbers ---- */
+[`<section class="page text">
+ ${RUN(CH,'[3−2] · ص '+N('98–99'))}
+ <h2><span class="num"></span>القيم العظمى والصغرى والعدد الحرج</h2>
+ <p class="note">قبل أن نتعرف الى مبرهنتي رول والقيمة المتوسطة نذكر بعض التعاريف والمبرهنة التي تمهد لهما (للاطلاع):</p>
+ <div class="law sm" style="text-align:right"><b>تعريف (${N('3−2−1')})</b> إذا كانت ${M('f')} دالة معرفة على الفترة المغلقة ${M('[a , b]')} فإن: ${N('1')}) ${M('f')} تأخذ قيمة عظمى عند ${M('c ∈ [a , b]')} اذا وفقط اذا ${M('f(c) ≥ f(x)')} لكل ${M('x ∈ [a , b]')} . ${N('2')}) ${M('f')} تأخذ قيمة صغرى عند ${M('c')} اذا وفقط اذا ${M('f(c) ≤ f(x)')} لكل ${M('x ∈ [a , b]')}</div>
+ <div class="law sm" style="text-align:right"><b>مبرهنة (${N('3−2−2')})</b> إذا كانت ${M('f')} دالة معرفة على ${M('[a , b]')} وكان للدالة ${M('f')} قيمة عظمى أو صغرى عند ${M('c ∈ (a , b)')} وأن ${M('f′(c)')} موجودة فان ${M('<span class="cp">f′(c) = 0</span>')}</div>
+ <div class="law std sm" style="text-align:right"><b>تعريف (${N('3−2−3')})</b> لتكن الدالة ${M('f')} معرّفة عند العدد ${M('c')} . يقال عن العدد ${M('c')} بأنه <b>عدد حرج</b> (Critical Number) اذا كان ${M('f′(c) = 0')} او ان الدالة غير قابلة للاشتقاق في ${M('c')} وتسمى النقطة ${M('(c , f(c))')} بالنقطة الحرجة</div>
+ ${predict(`مثال ${N('1')}: ${M('f(x) = |x|')} على ${M('[−1 , 1]')} تمتلك أصغر قيمة عند ${M('x = 0')}. هل ${M('f′(0) = 0')} ؟`,['نعم','لا، المشتقة غير موجودة'],1,
+   `${M('f′(0)')} غير موجودة، ∴ لا يشترط أن يكون ${M('f′(c) = 0')}، والعدد صفر هو العدد الحرج و ${M('(0 , f(0))')} هي النقطة الحرجة.`)}
+ ${FOOT(0)}
+</section>`,
+labPage('thm','crit','العدد الحرج','حرّك c وابحث عن المماس الأفقي أو الزاوية الحادة',
+ `${slider('c','<span class="cp">c</span>',-1,1,0.01,0.5,'--c-point')}<div class="btns tsel"></div>`)],
+
+/* ---- 5 : Rolle ---- */
+[`<section class="page text">
+ ${RUN(CH,'[3−2−4] · ص '+N('100–101'))}
+ <h2><span class="num"></span>مبرهنة رول</h2>
+ <p>لقد وضع العالم الفرنسي (متشل رول) مبرهنة مبسطة لإيجاد نقط تمثل نقطاً حرجة للدالة في الفترة المعطاة وسميت هذه المبرهنة باسمه.</p>
+ <div class="law" style="text-align:right"><b>مبرهنة رول (${N('3−2−4')})</b> إذا كانت الدالة ${M('f')}:
+  <ol class="steps"><li>مستمرة في الفترة المغلقة ${M('[a , b]')}</li><li>قابلة للاشتقاق في الفترة المفتوحة ${M('(a , b)')}</li><li>${M('f(b) = f(a)')}</li></ol>
+  فإنه يوجد على الأقل قيمة واحدة ${M('c')} تنتمي الى ${M('(a , b)')} وتحقق: ${M('<span class="cp">f′(c) = 0</span>')}</div>
+ <p class="note">الشروط الثلاثة كلها ضرورية: إذا سقط شرط واحد قد لا يوجد مماس أفقي. جرّب أمثلة الكتاب في المختبر.</p>
+ ${predict(`${M('f(x) = 9x + 3x^2 − x^3 , x ∈ [−1 , 1]')} هل تتحقق مبرهنة رول؟`,['نعم','لا'],1,
+   `${M('f(−1) = −5 ≠ f(1) = 11')} فالشرط الثالث لم يتحقق (مثال ${N('2')} b، ص ${N('101')}).`)}
+ ${FOOT(0)}
+</section>`,
+labPage('thm','rolle','مبرهنة رول','افحص الشروط الثلاثة ثم حرّك c الى المماس الأفقي',
+ `${slider('c','<span class="cp">c</span>',0,4,0.01,1,'--c-point')}<div class="btns tsel"></div><div class="btns"><button type="button" class="chip gold" data-find>جد c</button></div>`)],
+
+/* ---- 6 : MVT ---- */
+[`<section class="page text">
+ ${RUN(CH,'[3−2−5] · ص '+N('102–103'))}
+ <h2><span class="num"></span>مبرهنة القيمة المتوسطة</h2>
+ <div class="law" style="text-align:right"><b>مبرهنة (${N('3−2−5')})</b> إذا كانت ${M('f')} دالة مستمرة في الفترة المغلقة ${M('[a , b]')} وقابلة للاشتقاق على الفترة المفتوحة ${M('(a , b)')} فإنه يوجد على الأقل قيمة واحدة ${M('c')} تنتمي الى ${M('(a , b)')} وتحقق:
+  <div style="text-align:center">${M('<span class="cr">f′(c) = (f(b) − f(a))/(b − a)</span>')} او ${M('f(b) − f(a) = f′(c)(b − a)')}</div></div>
+ <p><b>التفسير الهندسي:</b> ميل الوتر المار بالنقطتين ${M('A , B')} يساوي ${M('Δy/Δx = (f(b) − f(a))/(b − a)')}، وميل المماس للمنحني عند ${M('c')} هو ${M('f′(c)')}. لكن <b>المماس والوتر متوازيان</b> لذا يتساوى ميلاهما.</p>
+ <aside class="law std sm" style="text-align:right"><b>ملاحظة:</b> مبرهنة رول هي حالة خاصة من مبرهنة القيمة المتوسطة ففي مبرهنة رول يجب توافر شرط ثالث هو: ${M('f(a) = f(b)')} أي أن الوتر والمماس يوازيان محور السينات، أي فرق الصادات = ${N('0')} لذا يصبح الميل = ${N('0')} فنحصل على: ${M('f′(c) = 0')}</aside>
+ ${predict(`ميل الوتر للدالة ${M('f(x) = x^2 − 6x + 4')} على ${M('[−1 , 7]')} يساوي:`,[M('0'),M('8'),M('2')],0,
+   `${M('(f(7) − f(−1))/(7 + 1) = (11 − 11)/8 = 0')}، فـ ${M('2c − 6 = 0 ⇒ c = 3')} (مثال ${N('3')} a).`)}
+ ${FOOT(0)}
+</section>`,
+labPage('thm','mvt','مبرهنة القيمة المتوسطة','حرّك c حتى يوازي المماسُ الوترَ AB',
+ `${slider('c','<span class="cp">c</span>',-1,7,0.01,1,'--c-point')}<div class="btns tsel"></div><div class="btns"><button type="button" class="chip gold" data-find>جد c</button></div>`)],
+
+/* ---- 7 : Rolle & MVT examples ---- */
+[`<section class="page text">
+ ${RUN(CH,'[3−2] · ص '+N('100–105'))}
+ <h2><span class="num"></span>أمثلة رول والقيمة المتوسطة</h2>
+ ${EXLHINT}
+ <p><b>مثال ${N('2')}:</b> بين هل أن مبرهنة رول تتحقق لكل من الدوال التالية؟ وجد قيمة ${M('c')} الممكنة:</p>
+ ${PT([['a',M('f(x) = (2 − x)^2 , x ∈ [0 , 4]')],['b',M('f(x) = 9x + 3x^2 − x^3 , x ∈ [−1 , 1]')],['c',PW([['x^2 + 1','x ∈ [−1 , 2]'],['−1','x ∈ [−4 , −1)']])],['d',M('f(x) = k , x ∈ [a , b]')]],'one')}
+ <p><b>مثال ${N('3')}:</b> برهن ان الدوال الاتية تحقق شروط مبرهنة القيمة المتوسطة واوجد قيم ${M('c')}:</p>
+ ${PT([['a',M('f(x) = x^2 − 6x + 4 , x ∈ [−1 , 7]')],['b',M('f(x) = √(25 − x^2) , x ∈ [−4 , 0]')]],'one')}
+ <p><b>مثال ${N('4')}:</b> اذا كانت ${M('f : [0 , b] → R , f(x) = x^3 − 4x^2')} وكانت ${M('f')} تحقق مبرهنة القيمة المتوسطة عند ${M('c = 2/3')} فجد قيمة ${M('b')} .</p>
+ ${FOOT(0)}
+</section>`, exPage('e2','أمثلة رول والقيمة المتوسطة')],
+
+/* ---- 8 : approximation ---- */
+[`<section class="page text">
+ ${RUN(CH,'[3−2−6] · ص '+N('105–106'))}
+ <h2><span class="num"></span>نتيجة مبرهنة القيمة المتوسطة والتقريب</h2>
+ <div class="law" style="text-align:right"><b>نتيجة (${N('3−2−6')})</b> إذا كانت ${M('f')} دالة مستمرة ومعرفة على ${M('[a , b]')} وقابلة للاشتقاق في ${M('(a , b)')} ولو اعتبرنا ${M('h = b − a')} فأن ${M('b = a + h')} حيث ${M('h ≠ 0 , h ∈ R')} فانه بموجب مبرهنة القيمة المتوسطة نحصل على:
+  <div style="text-align:center">${M('f′(c) = (f(a + h) − f(a))/h ⇒ f(a + h) = f(a) + hf′(c)')}</div></div>
+ <p>وعندما يكون اقتراب ${M('b')} من ${M('a')} قرباً كافياً تكون ${M('h')} صغيرة ويصبح الوتر صغيراً، أي أن المماس عند ${M('c')} سيكون مماساً للمنحني عند نقطة قريبة جداً من ${M('x = a')} ولذلك يصبح:</p>
+ <div class="law">${M('<span class="cp">f(a + h) ≈ f(a) + hf′(a)</span>')}<small>يقال للمقدار ${M('hf′(a)')} التغير التقريبي للدالة.</small></div>
+ <p class="note"><b>ملاحظة:</b> سوف نقتصر في حل تمارين التقريب باستخدام نتيجة مبرهنة القيمة المتوسطة فقط.</p>
+ ${predict(`لتقريب ${M('√26')} نختار ${M('a')} =`,[M('26'),M('25'),M('36')],1,`${M('a = 25')} أقرب مربع كامل من ${N('26')}، فـ ${M('h = 1')} و ${M('√26 ≅ 5 + 1 × (0.1) = 5.1')}.`)}
+ ${FOOT(0)}
+</section>`,
+labPage('apx','','المماس يقرّب المنحني','صغّر h وقارن التقريب بالقيمة الحقيقية',
+ `${slider('h','<span class="cr">h</span>',-1,1,0.01,1,'--c-radius')}<div class="btns asel"></div>`)],
+
+/* ---- 9 : approximation examples ---- */
+[`<section class="page text">
+ ${RUN(CH,'[3−2−6] · ص '+N('106–111'))}
+ <h2><span class="num"></span>أمثلة التقريب</h2>
+ ${EXLHINT}
+ <div class="law sm">${M('b')} القيمة المطلوبة · ${M('a')} القيمة السهلة · ${M('h = b − a')}<br>${M('f(b) ≅ f(a) + (b − a)f′(a)')}</div>
+ ${PT([['5',`تقريب مناسب للعدد ${M('√26')}`,1],['6',`${M('f(x) = x^3 + 3x^2 + 4x + 5')} فجد بصورة تقريبية ${M('f(1.001)')}`,1],['7',`مكعب طول حرفه ${M('9.98cm')} جد حجمه بصورة تقريبية`,1],['8',`${M('f(x) = ∛(x^2)')} تغيرت ${M('x')} من ${N('8')} إلى ${N('8.06')}: التغير التقريبي`,1],['9',`حجم طلاء مكعب طول ضلعه ${M('10cm')} بسمك ${M('0.15cm')}`,1],['10',`${M('a) ⁵√((0.98)^3) + (0.98)^4 + 3')} &nbsp; ${M('b) ∛7.8')} &nbsp; ${M('c) √17 + ⁴√17')} &nbsp; ${M('d) ∛0.12')}`,1]])}
+ ${FOOT(0)}
+</section>`, exPage('e3','أمثلة التقريب')],
+
+/* ---- 10 : exercises 3-2 (1-5) ---- */
+[`<section class="page text">
+ ${RUN(CH,'تمارين (3−2) · ص '+N('112'))}
+ <h2><span class="num"></span>تمارين (3−2) · الجزء الأول</h2>
+ ${EXHINT}
+ ${EXL([
+  ['1',`اوجد قيمة ${M('c')} التي تعينها مبرهنة رول في كل مما يأتي: ${PT([['a',M('f(x) = x^3 − 9x , x ∈ [−3 , 3]')],['b',M('f(x) = 2x + 2/x , x ∈ [1/2 , 2]')],['c',M('f(x) = (x^2 − 3)^2 , x ∈ [−1 , 1]')]])}`],
+  ['2',`جد تقريباً لكل مما يلي باستخدام نتيجة مبرهنة القيمة المتوسطة: ${PT([['a',M('√63 + ∛63')],['b',M('(1.04)^3 + 3(1.04)^4')],['c',M('1/∛9')],['d',M('1/101')],['e',M('√(1/2)')]])}`],
+  ['3',`كرة نصف قطرها ${M('6cm')} طليت بطلاء سمكه ${M('0.1cm')} جد حجم الطلاء بصورة تقريبية باستخدام نتيجة مبرهنة القيمة المتوسطة.`],
+  ['4',`كرة حجمها ${M('84π cm^3')} ، جد نصف قطرها بصورة تقريبية باستخدام نتيجة مبرهنة القيمة المتوسطة.`],
+  ['5',`مخروط دائري قائم ارتفاعه يساوي طول قطر قاعدته فاذا كان ارتفاعه يساوي ${M('2.98cm')} فجد حجمه بصورة تقريبية باستخدام نتيجة مبرهنة القيمة المتوسطه.`]])}
+ ${FOOT(0)}
+</section>`, chkPage('B','تمارين (3−2) · 1–5')],
+
+/* ---- 11 : exercises 3-2 (6-7) ---- */
+[`<section class="page text">
+ ${RUN(CH,'تمارين (3−2) · ص '+N('112'))}
+ <h2><span class="num"></span>تمارين (3−2) · الجزء الثاني</h2>
+ ${EXHINT}
+ ${EXL([
+  ['6',`بين أن كل دالة من الدوال التالية تحقق مبرهنة رول على الفترة المعطاة ازاء كل منها ثم جد قيمة ${M('c')} : ${PT([['a',M('f(x) = (x − 1)^4 , [−1 , 3]')],['b',M('h(x) = x^3 − x , [−1 , 1]')],['c',M('g(x) = x^2 − 3x , [−1 , 4]')],['d',M('f(x) = cos 2x + 2cos x , [0 , 2π]')]])}`],
+  ['7',`اختبر امكانية تطبيق القيمة المتوسطة للدوال التالية على الفترة المعطاة ازاءها مع ذكر السبب وإن تحققت المبرهنة، جد قيم ${M('c')} الممكنة. ${PT([['a',M('f(x) = x^3 − x − 1 , [−1 , 2]')],['b',M('h(x) = x^2 − 4x + 5 , [−1 , 5]')],['c',M('g(x) = 4/(x + 2) , [−1 , 2]')],['d',M('B(x) = ∛((x + 1)^2) , [−2 , 7]')]])}`]])}
+ ${predict(`في التمرين ${N('7')} d: لماذا قد لا تتحقق المبرهنة؟`,['لأن الدالة غير مستمرة','لأنها غير قابلة للاشتقاق عند نقطة داخل الفترة'],1,`${M('B′(x) = 2/(3∛(x + 1))')} غير معرفة عند ${M('x = −1 ∈ (−2 , 7)')}.`)}
+ ${FOOT(0)}
+</section>`, chkPage('B2','تمارين (3−2) · 6–7')],
+
+/* ---- 12 : increasing / decreasing, local extrema ---- */
+[`<section class="page text">
+ ${RUN(CH,'[3−3] [3−4] · ص '+N('113–116'))}
+ <h2><span class="num"></span>التزايد والتناقص والنهايات المحلية</h2>
+ <div class="law sm" style="text-align:right"><b>نتيجة [${N('3−3−1')}]</b> لتكن ${M('f')} مستمرة في الفترة المغلقة ${M('[a , b]')} وقابلة للاشتقاق في الفترة المفتوحة ${M('(a , b)')} فإذا كانت:<br>${N('1')}) ${M('<span class="cs">f′(x) > 0 , ∀x ∈ (a , b) ⇒ f</span>')} متزايدة (Increasing)<br>${N('2')}) ${M('<span class="cr">f′(x) < 0 , ∀x ∈ (a , b) ⇒ f</span>')} متناقصة (Decreasing)</div>
+ <div class="law std sm" style="text-align:right"><b>تعريف [${N('3−4−1')}]</b> لتكن ${M('f')} دالة مستمرة على ${M('[a , b]')} وقابلة للاشتقاق عند ${M('x = c ∈ (a , b)')} فاذا كانت:<br>${N('1')}) ${M('f′(x) > 0 ∀x ∈ (a , c) , f′(x) < 0 ∀x ∈ (c , b) , f′(c) = 0')} فإن ${M('f(c)')} <b>نهاية عظمى محلية</b><br>${N('2')}) ${M('f′(x) < 0 ∀x ∈ (a , c) , f′(x) > 0 ∀x ∈ (c , b) , f′(c) = 0')} فإن ${M('f(c)')} <b>نهاية صغرى محلية</b></div>
+ <p class="note"><b>ملاحظة:</b> نجد الاعداد الحرجة بحل ${M('f′(x) = 0')} ونختبر إشارة ${M('f′(x)')} بجوار كل منها: من موجبة الى سالبة نهاية عظمى محلية، ومن سالبة الى موجبة نهاية صغرى محلية، وإذا لم تتغير الإشارة فلا توجد نهاية.</p>
+ ${predict(`إشارة ${M('f′')} حول ${M('x = 2')} هي ${M('+ + + | − − −')}. النقطة ${M('(2 , f(2))')}:`,['نهاية عظمى محلية','نهاية صغرى محلية','لا توجد نهاية'],0,`تتغير من التزايد الى التناقص، فهي نهاية عظمى محلية.`)}
+ ${FOOT(0)}
+</section>`,
+labPage('sign','f1','إشارة المشتقة الأولى','حرّك x وراقب المماس وخط الإشارة',
+ `${slider('x','<span class="cc">x</span>',-3,3,0.01,0,'--c-center')}<div class="btns ssel"></div>`)],
+
+/* ---- 13 : examples 3-3 / 3-4 ---- */
+[`<section class="page text">
+ ${RUN(CH,'[3−3] [3−4] · ص '+N('113–118'))}
+ <h2><span class="num"></span>أمثلة التزايد والتناقص والنهايات</h2>
+ ${EXLHINT}
+ <p><b>[${N('3−3')}] مثال ${N('1')}:</b> لتكن ${M('y = f(x) = x^2')} . جد مناطق التزايد والتناقص.</p>
+ <p><b>مثال ${N('2')}:</b> جد مناطق التزايد والتناقص لكل من الدالتين الاتيتين: ${M('a) f(x) = 9x + 3x^2 − x^3')} &nbsp; ${M('b) f(x) = ∛(x^2)')}</p>
+ <p><b>[${N('3−4')}] مثال ${N('3')}:</b> جد نقط النهايات العظمى والصغرى المحلية للدالة ${M('f')} في حالة وجودها اذا علمت أن:</p>
+ ${PT([['a',M('f(x) = 1 + (x − 2)^2')],['b',M('f(x) = 1 − (x − 2)^2')],['c',M('f(x) = x^3 − 9x^2 + 24x')]])}
+ <p class="note">${M('*')} سنقتصر في بحثنا على الدوال القابلة للاشتقاق.</p>
+ ${FOOT(0)}
+</section>`, exPage('e4','أمثلة [3−3] و [3−4]')],
+
+/* ---- 14 : concavity ---- */
+[`<section class="page text">
+ ${RUN(CH,'[3−5] · ص '+N('119–121'))}
+ <h2><span class="num"></span>تقعر وتحدب المنحنيات ونقط الانقلاب</h2>
+ <div class="law sm" style="text-align:right"><b>تعريف [${N('3−5−1')}]</b> إذا كانت ${M('f')} دالة قابلة للاشتقاق في الفترة المفتوحة ${M('(a , b)')} فيقال عن الدالة ${M('f')} بأنها <b>محدبة</b> اذا كانت ${M('f′')} متناقصة خلال تلك الفترة وتسمى <b>مقعرة</b> اذا كانت ${M('f′')} متزايدة خلال تلك الفترة.</div>
+ <p class="note"><b>ملاحظة:</b> المنحني مقعر في ${M('(a , b)')} (Concave up) ⇔ المنحني يقع فوق جميع مماساته، والمنحني محدب (Concave down) ⇔ المنحني يقع تحت جميع مماساته.</p>
+ <div class="law gen sm" style="text-align:right"><b>مبرهنة [${N('3−5−2')}]</b> اذا كانت ${M('f')} معرفة في ${M('[a , b]')} ولها مشتقة أولى وثانية على ${M('(a , b)')} فإنها تكون مقعرة على ${M('(a , b)')} اذا ${M('<span class="cg">f″(x) > 0</span>')} لكل ${M('x ∈ (a , b)')} ، وتكون محدبة اذا ${M('<span class="cr">f″(x) < 0</span>')} لكل ${M('x ∈ (a , b)')}</div>
+ <div class="law std sm" style="text-align:right"><b>تعريف [${N('3−5−3')}]</b> تدعى النقطة التي تنتمي لمنحني دالة والتي يتغير عندها منحني الدالة (من تقعر الى تحدب) أو بالعكس (من تحدب الى تقعر) <b>بنقطة انقلاب</b> لهذا المنحني.</div>
+ ${predict(`المنحني ${M('y = x^3')} عند ${M('(0 , 0)')}:`,['نقطة نهاية صغرى','نقطة انقلاب'],1,`${M('f″(x) = 6x')} تتغير إشارتها عند الصفر: محدب قبلها ومقعر بعدها (مثال ${N('1')} b، ص ${N('120')}).`)}
+ ${FOOT(0)}
+</section>`,
+labPage('sign','f2','إشارة المشتقة الثانية','حرّك المماس: هل المنحني فوقه أم تحته؟',
+ `${slider('x','<span class="cc">x</span>',-3,3,0.01,0,'--c-center')}<div class="btns ssel"></div>`)],
+
+/* ---- 15 : examples 3-5 ---- */
+[`<section class="page text">
+ ${RUN(CH,'[3−5] · ص '+N('120–124'))}
+ <h2><span class="num"></span>أمثلة التقعر والتحدب</h2>
+ ${EXLHINT}
+ <p><b>مثال ${N('1')}:</b> إدرس تقعر وتحدب كل من الدالتين: ${M('a) f(x) = x^2')} &nbsp; ${M('b) f(x) = x^3')}</p>
+ <p><b>مثال ${N('2')}:</b> جد نقطة الانقلاب للمنحني: ${M('f(x) = 2x^3 − 3x^2 − 12x + 1')}</p>
+ <p><b>مثال ${N('3')}:</b> جد مناطق التحدب والتقعر ونقط الانقلاب إن وجدت للدوال التالية:</p>
+ ${PT([['a',M('f(x) = 4x^3 − x^4')],['b',M('f(x) = x + 1/x , x ≠ 0')],['c',M('h(x) = 4 − (x + 2)^4')],['d',M('f(x) = 3 − 2x − x^2')],['e',M('f(x) = x^4 + 3x^2 − 3')]])}
+ ${FOOT(0)}
+</section>`, exPage('e5','أمثلة البند [3−5]')],
+
+/* ---- 16 : second derivative test ---- */
+[`<section class="page text">
+ ${RUN(CH,'[3−6] · ص '+N('124–127'))}
+ <h2><span class="num"></span>اختبار المشتقة الثانية</h2>
+ <p>بدلاً من ملاحظة كيفية تغير اشارة ${M('f′')} عند المرور بالنقطة الحرجة حيث ${M('f′(x) = 0')} فانه بامكاننا استخدام الاختبار التالي لنقرر فيما إذا كانت النقطة الحرجة تمثل نقطة نهاية عظمى أو نهاية صغرى محلية:</p>
+ <ul class="cases rules">
+  <li><b>${N('1')}</b><span>اذا كان ${M('f′(c) = 0')} وإن ${M('<span class="cr">f″(c) < 0</span>')} فإن ${M('f')} تمتلك <b>نهاية عظمى محلية</b> عند ${M('x = c')}</span></li>
+  <li><b>${N('2')}</b><span>اذا كان ${M('f′(c) = 0')} وإن ${M('<span class="cg">f″(c) > 0</span>')} فإن ${M('f')} تمتلك <b>نهاية صغرى محلية</b> عند ${M('x = c')}</span></li>
+  <li><b>${N('3')}</b><span>اذا كانت ${M('f″(c) = 0')} او ${M('f″(c)')} غير معرفة فلا يصح هذا الاختبار (ويعاد الاختبار باستخدام المشتقة الاولى).</span></li>
+ </ul>
+ <p><b>مثال ${N('1')}:</b> باستخدام اختبار المشتقة الثانية ان أمكن، جد النهايات المحلية للدوال الآتية:</p>
+ ${PT([['a',M('f(x) = 6x − 3x^2 − 1')],['b',M('f(x) = x − 4/x^2 , x ≠ 0')],['c',M('f(x) = x^3 − 3x^2 − 9x')],['d',M('f(x) = 4 − (x + 1)^4')]])}
+ ${FOOT(0)}
+</section>`, exPage('e6','اختبار المشتقة الثانية · مثال 1')],
+
+/* ---- 17 : finding constants ---- */
+[`<section class="page text">
+ ${RUN(CH,'[3−6] · ص '+N('127–130'))}
+ <h2><span class="num"></span>إيجاد الثوابت من النهايات والانقلاب</h2>
+ ${EXLHINT}
+ <ol class="exl tight">
+  <li><b class="exn">2</b><div>لتكن ${M('f(x) = x^2 + a/x , x ≠ 0 , a ∈ R')} فجد قيمة ${M('a')} علماً أن الدالة تمتلك نقطة انقلاب عند ${M('x = 1')} ، ثم بين أن الدالة ${M('f')} لاتمتلك نهاية عظمى محلية.</div></li>
+  <li><b class="exn">3</b><div>عين قيمتي الثابتين ${M('b , a')} لكي يكون لمنحني الدالة ${M('y = x^3 + ax^2 + bx')} نهاية عظمى محلية عند ${M('x = −1')} ، ونهاية صغرى محلية عند ${M('x = 2')} ثم جد نقطة الانقلاب.</div></li>
+  <li><b class="exn">4</b><div>اذا كان منحني الدالة ${M('f(x) = ax^3 + bx^2 + c')} مقعر في ${M('{x : x > 1}')} ومحدب في ${M('{x : x < 1}')} ويمس المستقيم ${M('y + 9x = 28')} عند النقطة ${M('(3 , 1)')} فجد قيم الاعداد الحقيقية ${M('c , b , a')} .</div></li>
+  <li><b class="exn">5</b><div>اذا كان للدالة ${M('f(x) = ax^3 + 3x^2 + c')} نهاية عظمى محلية تساوي ${N('8')} ، ونقطة انقلاب عند ${M('x = 1')} فجد قيمة ${M('a , c ∈ R')} .</div></li>
+ </ol>
+ <aside class="mg"><span class="mt">ملاحظة على الكتاب · ص ${N('127')} و ${N('129')}</span><p>مثال ${N('2')}: ${M('f″ = 6 > 0')} عند النقطة الحرجة ${M('x = −∛(1/2)')} فقط، لا لكل ${M('x ∈ R')}. مثال ${N('4')}: الحل الصحيح يعطي ${M('a = −1')}، فالمنحني <b>مقعر</b> في ${M('{x : x < 1}')} و<b>محدب</b> في ${M('{x : x > 1}')}، بعكس نص السؤال.</p></aside>
+ ${FOOT(0)}
+</section>`, exPage('e7','أمثلة إيجاد الثوابت')],
+
+/* ---- 18 : exercises 3-3 .. 3-6 ---- */
+[`<section class="page text">
+ ${RUN(CH,'تمارين · ص '+N('131'))}
+ <h2><span class="num"></span>تمارين (3−3) الى (3−6)</h2>
+ ${EXHINT}
+ ${EXL([
+  ['1',`لتكن ${M('a ∈ {−4 , 8} , b ∈ R')} حيث ان ${M('f(x) = ax^2 − 6x + b')} جد قيمة ${M('a')} اذا كانت: أ) الدالة ${M('f')} محدبة ب) الدالة ${M('f')} مقعرة .`],
+  ['2',`اذا كانت ${M('(2 , 6)')} نقطة حرجة لمنحني الدالة ${M('f(x) = a − (x − b)^4')} فجد قيمة ${M('a , b ∈ R')} وبين نوع النقطة الحرجة.`],
+  ['3',`اذا كان ${M('g(x) = 1 − 12x , f(x) = ax^3 + bx^2 + cx')} وكان كل من ${M('g , f')} متماسان عند نقطة انقلاب المنحني ${M('f')} وهي ${M('(1 , −11)')} فجد قيمة الثوابت ${M('a , b , c ∈ R')}.`],
+  ['4',`اذا كانت ${N('6')} تمثل نهاية صغرى محلية لمنحني الدالة ${M('f(x) = 3x^2 − x^3 + c')} فجد قيمة ${M('c ∈ R')} ثم جد معادلة مماس المنحني في نقطة انقلابه.`],
+  ['5',`اذا كان ${M('f(x) = ax^3 + bx^2 + cx')} وكانت ${M('f')} مقعرة ${M('∀x > 1')} ومحدبة ${M('∀x < 1')} وللدالة ${M('f')} نقطة نهاية عظمى محلية هي ${M('(−1 , 5)')} فجد قيمة الثوابت ${M('a , b , c ∈ R')}.`],
+  ['6',`لتكن ${M('f(x) = x^2 − a/x , a ∈ R/{0} , x ≠ 0')} برهن أن الدالة ${M('f')} لا تمتلك نهاية عظمى محلية.`],
+  ['7',`المستقيم ${M('3x − y = 7')} يمس المنحني ${M('y = ax^2 + bx + c')} عند ${M('(2 , −1)')} وكانت له نهاية محلية عند ${M('x = 1/2')} جد قيمة ${M('a , b , c ∈ R')} وما نوع النهاية.`]])}
+ ${FOOT(0)}
+</section>`, chkPage('C','تمارين ص 131')],
+
+/* ---- 19 : graphing ---- */
+[`<section class="page text">
+ ${RUN(CH,'[3−7] · ص '+N('132–138'))}
+ <h2><span class="num"></span>رسم المخطط البياني للدالة</h2>
+ <p>ولكي نرسم المخطط البياني لدالة معطاة نتبع الخطوات الاتية:</p>
+ <ol class="steps">
+  <li>نحدد <b>أوسع مجال</b> للدالة: فاذا كانت الدالة حدودية (Polynomial) فإن أوسع مجال لها هو ${M('R')}، اما اذا كانت دالة نسبية ${M('f(x) = g(x)/h(x)')} فان اوسع مجال لها هو ${M('{x ∈ R : h(x) ≠ 0}')}</li>
+  <li>نبين نوع <b>التناظر</b>: حول محور الصادات ⇔ ${M('f(−x) = f(x)')} ، حول نقطة الاصل ⇔ ${M('f(−x) = −f(x)')}</li>
+  <li>نبين إن كان منحني الدالة <b>يقطع المحورين</b>: نجعل ${M('x = 0')} ونجد ${M('y')}، ونجعل ${M('y = 0')} ونجد ${M('x')} (ان امكن).</li>
+  <li>نجد <b>المستقيمات المحاذية</b> في الدوال النسبية: ${M('y = g(x)/h(x)')} نجعل ${M('h(x) = 0')} فنجد ${M('x = a')} المحاذي العمودي، واذا كانت ${M('x = n(y)/m(y)')} نجعل ${M('m(y) = 0')} فنجد ${M('y = b')} المحاذي الافقي.</li>
+  <li>نجد ${M('f′(x) , f″(x)')} ومنهما مناطق التزايد والتناقص والنقاط الحرجة ونوعها ومناطق التقعر والتحدب ونقط الانقلاب.</li>
+  <li>نجد نقط اضافية إن احتجنا الى ذلك ثم نرسم منحني الدالة.</li>
+ </ol>
+ <p class="note">في المختبر: كل خطوة تضيف الى الرسم ما تكشفه عن المنحني (أمثلة ص ${N('133–138')}).</p>
+ ${FOOT(0)}
+</section>`, exPage('e8','ارسم المنحني خطوة بخطوة')],
+
+/* ---- 20 : exercises 3-7 ---- */
+[`<section class="page text">
+ ${RUN(CH,'تمارين (3−7) · ص '+N('139'))}
+ <h2><span class="num"></span>تمارين (3−7)</h2>
+ ${EXHINT}
+ <p>أرسم بأستخدام معلوماتك في التفاضل الدوال التالية:</p>
+ ${PT([['1',M('f(x) = 10 − 3x − x^2')],['2',M('f(x) = x^2 + 4x + 3')],['3',M('f(x) = (1 − x)^3 + 1')],['4',M('f(x) = 6x − x^3')],['5',M('f(x) = 1/x')],['6',M('f(x) = (x − 1)/(x + 1)')],['7',M('f(x) = (x + 2)(x − 1)^2')],['8',M('f(x) = (x^2 − 1)/(x^2 + 1)')],['9',M('f(x) = 2x^2 − x^4')],['10',M('f(x) = 6/(x^2 + 3)')]],'two')}
+ ${predict(`كم مستقيماً محاذياً للمنحني ${M('f(x) = 1/x')} ؟`,[M('1'),M('2'),M('0')],1,`محاذٍ عمودي ${M('x = 0')} ومحاذٍ أفقي ${M('y = 0')}.`)}
+ ${FOOT(0)}
+</section>`, chkPage('D','تمارين (3−7)')],
+
+/* ---- 21 : optimisation ---- */
+[`<section class="page text">
+ ${RUN(CH,'[3−8] · ص '+N('140'))}
+ <h2><span class="num"></span>تطبيقات عملية على القيم العظمى او الصغرى</h2>
+ <div class="hook">ظهرت في القرن السابع عشر الكثير من الاسئلة دفعت الى تطور حساب التفاضل والتكامل، مثل اقصى ارتفاع تصله قذيفة، واقل زمن واقل كلفة، ومسائل من الصناعات مثل أقل مساحة وأكبر حجم وأقل محيط ... الخ.</div>
+ <p>ولحل هذه المسائل نتبع الخطوات الآتية:</p>
+ <ol class="steps">
+  <li>نرسم مخططاً للمسألة (إن امكن) ونعين عليه الأجزاء المهمة في المسألة.</li>
+  <li>نكوّن الدالة المراد ايجاد قيمتها العظمى او الصغرى ونحدد مجالها على ان تكون في متغير واحد.</li>
+  <li>اذا كان المجال فترة مغلقة نجد الاعداد الحرجة وقيم الدالة في اطراف الفترة وفي الاعداد الحرجة. فأيّها اكبر هي القيمة العظمى وأيّها أصغر هي القيمة الصغرى.</li>
+ </ol>
+ ${predict(`صندوق من قطعة مربعة طول ضلعها ${M('12cm')} بقص مربعات طول ضلعها ${M('x')}. كلما كبرت ${M('x')} يكبر الحجم دائماً؟`,['نعم','لا، يكبر ثم يصغر'],1,`${M('V = x(12 − 2x)^2')} يبدأ من ${N('0')} وينتهي بـ ${N('0')}، وأعظم قيمة عند ${M('x = 2')}: ${M('128 cm^3')}.`)}
+ ${FOOT(0)}
+</section>`,
+labPage('opt','','ابحث عن القيمة العظمى أو الصغرى','حرّك المتغير وراقب الدالة',
+ `${slider('x','<span class="cc">x</span>',0,6,0.01,1,'--c-center')}<div class="btns osel"></div><div class="btns"><button type="button" class="chip gold" data-best>الأفضل</button></div>`)],
+
+/* ---- 22 : optimisation examples ---- */
+[`<section class="page text">
+ ${RUN(CH,'[3−8] · ص '+N('140–146'))}
+ <h2><span class="num"></span>أمثلة التطبيقات العملية</h2>
+ ${EXLHINT}
+ ${PT([['1','جد العدد الذي اذا اضيف الى مربعه يكون الناتج اصغر ما يمكن .',1],['2',`صندوق مفتوح من قطعة نحاس مربعة طول ضلعها ${M('12cm')}: الحجم الأعظم`,1],['3',`أكبر مثلث متساوي الساقين داخل دائرة نصف قطرها ${M('12cm')}`,1],['4',`أكبر مستطيل داخل مثلث قاعدته ${M('24cm')} وارتفاعه ${M('18cm')}`,1],['5',`مجموع محيطي دائرة ومربع ${M('60cm')}: أصغر مجموع للمساحتين`,1],['6',`نقاط القطع الزائد ${M('y^2 − x^2 = 3')} الأقرب للنقطة ${M('(0 , 4)')}`,1]])}
+ <p class="note">النص الكامل لكل مثال يظهر في المختبر عند اختياره.</p>
+ ${FOOT(0)}
+</section>`, exPage('e9','أمثلة البند [3−8]')],
+
+/* ---- 23 : exercises 3-8 (1-6) ---- */
+[`<section class="page text">
+ ${RUN(CH,'تمارين (3−8) · ص '+N('147'))}
+ <h2><span class="num"></span>تمارين (3−8) · الجزء الأول</h2>
+ ${EXHINT}
+ ${EXL([
+  ['1',`جد عددين موجبين مجموعهما ${N('75')} وحاصل ضرب أحدهما في مربع الاخر أكبر ما يمكن.`],
+  ['2',`جد ارتفاع اكبر اسطوانة دائرية قائمة توضع داخل كرة نصف قطرها ${M('4√3cm')} .`],
+  ['3',`جد بعدي اكبر مستطيل يوضع داخل نصف دائرة نصف قطرها ${M('4√2cm')} .`],
+  ['4',`جد اكبر مساحة لمثلث متساوي الساقين طول كل من ساقيه ${M('8√2cm')} .`],
+  ['5',`جد اقل محيط ممكن للمستطيل الذي مساحته ${M('16 cm^2')} .`],
+  ['6',`جد حجم اكبر مخروط دائري قائم يمكن وضعه داخل كرة نصف قطرها ${M('3 cm')} .`]])}
+ ${FOOT(0)}
+</section>`, chkPage('E','تمارين (3−8) · 1–6')],
+
+/* ---- 24 : exercises 3-8 (7-12) ---- */
+[`<section class="page text">
+ ${RUN(CH,'تمارين (3−8) · ص '+N('147'))}
+ <h2><span class="num"></span>تمارين (3−8) · الجزء الثاني</h2>
+ ${EXHINT}
+ ${EXL([
+  ['7',`جد معادلة المستقيم الذي يمر من النقطة ${M('(6 , 8)')} والذي يصنع مع المحورين في الربع الاول أصغر مثلث.`],
+  ['8',`جد بعدي اكبر مستطيل يوضع داخل المنطقة المحددة بالدالة ${M('f(x) = 12 − x^2')} ومحور السينات، رأسان من رؤوسه على المنحني والرأسان الاخران على محور السينات ثم جد محيطه.`],
+  ['9',`جد ابعاد اكبر اسطوانة دائرية قائمة توضع داخل مخروط دائري قائم ارتفاعه ${M('8cm')} وطول قطر قاعدته ${M('12cm')} .`],
+  ['10',`جد اكبر حجم لمخروط دائري قائم ناتج من دوران مثلث قائم الزاوية طول وتره ${M('6√3 cm')} دورة كاملة حول احد ضلعيه القائمين.`],
+  ['11',`علبة اسطوانية الشكل مفتوحة من الأعلى سعتها ${M('(125π) cm^3')} جد أبعادها عندما تكون مساحة المعدن المستخدم في صنعها اقل مايمكن.`],
+  ['12',`خزان على شكل متوازي سطوح مستطيلة طول قاعدته ضعف عرضها فاذا كانت مساحة المعدن المستخدم في صناعته ${M('108 m^2')} جد ابعاد الخزان لكي يكون حجمه اكبر ما يمكن علماً ان الخزان ذو غطاء كامل.`]])}
+ ${FOOT(0)}
+</section>`, chkPage('E2','تمارين (3−8) · 7–12')],
+
+/* ---- challenge ---- */
+[`<section class="page text">
+ ${RUN(CH,'تحدٍّ')}
+ <h2><span class="num"></span>تحدّي تطبيقات التفاضل</h2>
+ <p>ثمانية أسئلة سريعة من الفصل كله. لكل إجابة صحيحة من المحاولة الأولى نقطة، وفي النهاية تحصل على النجوم.</p>
+ ${predict(`إحماء: اذا كانت ${M('f′(x) > 0')} لكل ${M('x ∈ (a , b)')} فإن ${M('f')}:`,['متزايدة','متناقصة','مقعرة'],0,`نتيجة [${N('3−3−1')}]، ص ${N('113')}.`)}
+ <ol class="rounds"></ol>
+ <div class="stars" aria-live="polite"></div>
+ ${FOOT(0)}
+</section>`,
+`<section class="page lab" data-lab="game">
+ ${RUN('مختبر','تحدٍّ')}
+ <h3 class="lt"><span class="lab-ic">لعبة</span><span class="gtitle">السؤال 1 من 8</span></h3>
+ <div class="gq"></div>
+ ${stage}
+ <div class="side">
+  <div class="ro gfb">اختر إجابة واحدة.</div>
+  <div class="ctl"><div class="btns gopts"></div><div class="btns"><button type="button" class="chip gnext hide">التالي</button><button type="button" class="chip gagain hide">أعد التحدّي</button></div></div>
+ </div>
+ ${FOOT(0)}
+</section>`]
+];
+
+/* ================= pencil drawing ================= */
+const COL={};
+function readCols(){ const cs=getComputedStyle(document.documentElement); ['graphite','muted','grid','c-center','c-radius','c-std','c-gen','c-point','c-cut','paper','card','ok','bad','ink'].forEach(k=>COL[k]=cs.getPropertyValue('--'+k).trim()); }
+function hash(n){ const s=Math.sin(n*127.1+311.7)*43758.5453; return s-Math.floor(s); }
+function noise(x){ const i=Math.floor(x), f=x-i, u=f*f*(3-2*f); return (hash(i)*(1-u)+hash(i+1)*u)*2-1; }
+class Pen{
+  constructor(c){this.c=c;}
+  path(pts,o={}){
+    const c=this.c, passes=o.passes||2, J=o.j??0.8;
+    c.save(); c.lineCap='round'; c.lineJoin='round'; c.strokeStyle=o.color||COL.graphite; if(o.dash) c.setLineDash(o.dash);
+    for(let p=0;p<passes;p++){
+      c.globalAlpha=(o.a??0.9)*(p?0.45:1); c.lineWidth=(o.w||1.3)*(p?0.65:1); c.beginPath();
+      pts.forEach(([x,y],i)=>{ const ox=noise(x*.05+y*.021+p*37.1)*J, oy=noise(y*.05-x*.017+p*19.7)*J; i?c.lineTo(x+ox,y+oy):c.moveTo(x+ox,y+oy); });
+      c.stroke();
+    }
+    c.restore();
+  }
+  line(x1,y1,x2,y2,o={}){
+    const d=Math.hypot(x2-x1,y2-y1)||1, n=Math.max(2,Math.ceil(d/7)), ex=o.over??1.5, ux=(x2-x1)/d, uy=(y2-y1)/d, pts=[];
+    for(let i=0;i<=n;i++){const t=i/n; pts.push([x1-ux*ex+(x2-x1+2*ux*ex)*t, y1-uy*ex+(y2-y1+2*uy*ex)*t]);}
+    this.path(pts,o);
+  }
+  circle(cx,cy,R,o={}){
+    const n=Math.max(32,Math.ceil(R*.6)), a0=noise(cx*.1+cy*.07)*3, pts=[];
+    for(let i=0;i<=n*1.04;i++){const a=a0+i/n*Math.PI*2, rr=R+noise(i*.31+cx*.01)*.7; pts.push([cx+rr*Math.cos(a),cy+rr*Math.sin(a)]);}
+    this.path(pts,o);
+  }
+  hatch(clip,col,sp=6,alpha=.32){
+    const c=this.c; c.save(); c.beginPath(); clip(c); c.clip(); c.strokeStyle=col; c.globalAlpha=alpha; c.lineWidth=1; c.beginPath();
+    for(let s=-this.H;s<this.W+this.H;s+=sp){ c.moveTo(s,0); c.lineTo(s-this.H*.75,this.H); }
+    c.stroke(); c.restore();
+  }
+  dot(x,y,r,col){ const c=this.c; c.save(); c.fillStyle=col; c.beginPath(); c.arc(x,y,r,0,7); c.fill(); c.restore(); this.circle(x,y,r+.6,{color:COL.graphite,w:.8,a:.6,passes:1}); }
+  text(s,x,y,o={}){
+    const c=this.c; c.save(); c.font=`${o.it===false?'':'italic '}${o.wt||600} ${o.size||13}px "Cambria Math",Cambria,"Times New Roman",serif`;
+    if(o.ar) c.font=`${o.wt||700} ${o.size||13}px "Segoe UI","Noto Sans Arabic",Tahoma,sans-serif`;
+    c.direction=o.ar?'rtl':'ltr'; c.textAlign=o.al||'center'; c.textBaseline=o.bl||'middle';
+    if(o.halo!==false){ c.lineWidth=3.2; c.strokeStyle=COL.card; c.globalAlpha=.9; c.strokeText(s,x,y); c.globalAlpha=1; }
+    c.fillStyle=o.color||COL.graphite; c.fillText(s,x,y); c.restore();
+  }
+  arrowHead(x,y,ang,o={}){ const L=o.L||7; this.line(x,y,x-L*Math.cos(ang-.45),y-L*Math.sin(ang-.45),{...o,over:0}); this.line(x,y,x-L*Math.cos(ang+.45),y-L*Math.sin(ang+.45),{...o,over:0}); }
+}
+function coordPlane(pen,W,H,R){
+  const pad=6, s=Math.min(W-2*pad,H-2*pad)/(2*R), ox=W/2, oy=H/2, X=x=>ox+x*s, Y=y=>oy-y*s, c=pen.c;
+  const step=s<11?5:s<17?2:1;
+  c.save(); c.strokeStyle=COL.grid; c.lineWidth=1; c.beginPath();
+  const xm=Math.ceil(W/2/s), ym=Math.ceil(H/2/s);
+  for(let i=-xm;i<=xm;i++){ if(step>1&&i%step) continue; c.moveTo(X(i),0); c.lineTo(X(i),H); }
+  for(let j=-ym;j<=ym;j++){ if(step>1&&j%step) continue; c.moveTo(0,Y(j)); c.lineTo(W,Y(j)); }
+  c.stroke(); c.restore();
+  pen.line(5,oy,W-5,oy,{w:1.25,a:.85}); pen.line(ox,H-5,ox,5,{w:1.25,a:.85});
+  pen.arrowHead(W-5,oy,0,{w:1.2}); pen.arrowHead(ox,5,-Math.PI/2,{w:1.2});
+  const fs=Math.max(9,Math.min(13,s*.5+3));
+  pen.text('X',W-10,oy-fs*.95,{size:fs+2,wt:700}); pen.text('Y',ox+fs*.85,10,{size:fs+2,wt:700});
+  let ts=step; while(ts*s<fs*2.1) ts=ts===1?2:ts===2?5:ts*2;
+  for(let i=-xm;i<=xm;i++){ if(!i||i%ts) continue; const x=X(i); if(x<14||x>W-22) continue; pen.line(x,oy-2.5,x,oy+2.5,{w:1,passes:1,over:0}); pen.text(fmt(i),x,oy+fs*.9,{size:fs,it:false,wt:500,color:COL.muted}); }
+  for(let j=-ym;j<=ym;j++){ if(!j||j%ts) continue; const y=Y(j); if(y<20||y>H-10) continue; pen.line(ox-2.5,y,ox+2.5,y,{w:1,passes:1,over:0}); pen.text(fmt(j),ox-4,y,{size:fs,it:false,wt:500,color:COL.muted,al:'right'}); }
+  return {X,Y,s,fs};
+}
+
+
+/* ===== منطوق الأمثلة والتمارين كما ورد في الكتاب ===== */
+const EXQ={
+ r1:['مثال 1 · ص 92',`خزان مملوء بالماء على شكل متوازي سطوح مستطيلة قاعدته مربعة طول ضلعها ${M('2m')} يتسرب منه الماء بمعدل ${M('0.4 m^3 / h')} جد معدل تغير انخفاض الماء في الخزان عند أي زمن ${M('t')} .`],
+ r2:['مثال 2 · ص 92',`صفيحة مستطيلة من المعدن مساحتها تساوي ${M('96 cm^2')} . يتمدد طولها بمعدل ${M('2 cm / s')} بحيث تبقى مساحتها ثابتة، جد معدل النقصان في عرضها وذلك عندما يكون عرضها ${M('8cm')} .`],
+ r3:['مثال 3 · ص 93',`مكعب صلد طول حرفه ${M('8cm')} مغطى بطبقة من الجليد بحيث شكله يبقى مكعباً، فإذا بدأ الجليد بالذوبان بمعدل ${M('6 cm^3 / s')} فجد معدل النقصان بسمك الجليد في اللحظة التي يكون فيها هذا السمك ${M('1cm')} .`],
+ r4:['مثال 4 · ص 94',`سلم طوله ${M('10m')} يستند طرفه الأسفل على أرض أفقية وطرفه العلوي على حائط رأسي، فإذا انزلق الطرف الأسفل مبتعداً عن الحائط بمعدل ${M('2 m / s')} عندما يكون الطرف الأسفل على بعد ${M('8m')} عن الحائط جد: ${N('1')}) معدل انزلاق الطرف العلوي. ${N('2')}) سرعة تغير الزاوية بين السلم والأرض.`],
+ r5:['مثال 5 · ص 95',`مرشح مخروطي قاعدته أُفقية ورأسه للأسفل، ارتفاعه يساوي ${M('24cm')} وطول قطر قاعدته ${M('16cm')} يصب فيه سائل بمعدل ${M('5 cm^3 / s')} بينما يتسرب منه السائل بمعدل ${M('1 cm^3 / s')} ، جد معدل تغير عمق السائل في اللحظة التي يكون فيها عمق السائل ${M('12cm')} .`],
+ r6:['مثال 6 · ص 96',`لتكن ${M('M')} نقطة متحركة على منحني القطع المكافئ ${M('y^2 = 4x')} بحيث يكون معدل ابتعادها عن النقطة ${M('(7 , 0)')} يساوي ${M('0.2 unit / s')} ، جد المعدل الزمني لتغير الاحداثي السيني للنقطة ${M('M')} عندما يكون ${M('x = 4')} .`],
+ eA1:['تمارين (3−1) · 1',`سلم يستند طرفه الأسفل على أرض أفقية وطرفه الأعلى على حائط رأسي فاذا أنزلق الطرف الأسفل مبتعداً عن الحائط بمعدل ${M('2 m / s')} ، فجد معدل انزلاق الطرف العلوي عندما يكون قياس الزاوية بين السلم والأرض تساوي ${M('π/3')} .`],
+ eA2:['تمارين (3−1) · 2',`عمود طوله ${M('7.2m')} في نهايته مصباح، يتحرك رجل طوله ${M('1.8m')} مبتعداً عن العمود وبسرعة ${M('30 m / min')} ، جد معدل تغير طول ظل الرجل.`],
+ eA3:['تمارين (3−1) · 3',`لتكن ${M('M')} نقطة تتحرك على القطع المكافئ ${M('y = x^2')} ، جد احداثيي النقطة ${M('M')} عندما يكون المعدل الزمني لأبتعادها عن النقطة ${M('(0 , 3/2)')} يساوي ثلثي المعدل الزمني لتغير الاحداثي الصادي للنقطة ${M('M')} .`],
+ eA4:['تمارين (3−1) · 4',`جد النقط التي تنتمي للدائرة ${M('x^2 + y^2 + 4x − 8y = 108')} والتي عندها يكون المعدل الزمني لتغير ${M('x')} يساوي المعدل الزمني لتغير ${M('y')} بالنسبة للزمن ${M('t')} .`],
+ eA5:['تمارين (3−1) · 5',`متوازي سطوح مستطيلة أبعاده تتغير بحيث تبقى قاعدته مربعة الشكل، يزداد طول ضلع القاعدة بمعدل ${M('0.3 cm / s')} ، وارتفاعه يتناقص بمعدل ${M('0.5 cm / s')} ، جد معدل تغير الحجم عندما يكون طول ضلع القاعدة ${M('4cm')} والارتفاع ${M('3cm')} .`],
+ k1:['مثال 1 · ص 99',`لتكن ${M('f : [−1 , 1] → R , f(x) = |x|')} وكما تلاحظ في الشكل فإن الدالة ${M('f')} تمتلك اعظم قيمة عند كل من ${M('x = −1')} ، ${M('x = 1')} وتمتلك اصغر قيمة عند ${M('x = 0')}`],
+ e2a:['مثال 2 a · ص 100',`بين هل أن مبرهنة رول تتحقق؟ وجد قيمة ${M('c')} الممكنة: ${M('f(x) = (2 − x)^2 , x ∈ [0 , 4]')}`],
+ e2b:['مثال 2 b · ص 101',`بين هل أن مبرهنة رول تتحقق؟ وجد قيمة ${M('c')} الممكنة: ${M('f(x) = 9x + 3x^2 − x^3 , x ∈ [−1 , 1]')}`],
+ e2c:['مثال 2 c · ص 101',`بين هل أن مبرهنة رول تتحقق؟ وجد قيمة ${M('c')} الممكنة: ${PW([['x^2 + 1','x ∈ [−1 , 2]'],['−1','x ∈ [−4 , −1)']])}`],
+ e2d:['مثال 2 d · ص 101',`بين هل أن مبرهنة رول تتحقق؟ وجد قيمة ${M('c')} الممكنة: ${M('f(x) = k , x ∈ [a , b]')}`],
+ e3a:['مثال 3 a · ص 103',`برهن ان الدالة تحقق شروط مبرهنة القيمة المتوسطة واوجد قيم ${M('c')}: ${M('f(x) = x^2 − 6x + 4 , x ∈ [−1 , 7]')}`],
+ e3b:['مثال 3 b · ص 104',`برهن ان الدالة تحقق شروط مبرهنة القيمة المتوسطة واوجد قيم ${M('c')}: ${M('f(x) = √(25 − x^2) , x ∈ [−4 , 0]')}`],
+ e4m:['مثال 4 · ص 105',`اذا كانت ${M('f : [0 , b] → R , f(x) = x^3 − 4x^2')} وكانت ${M('f')} تحقق مبرهنة القيمة المتوسطة عند ${M('c = 2/3')} فجد قيمة ${M('b')} .`],
+ x5:['مثال 5 · ص 106',`جد باستخدام نتيجة مبرهنة القيمة المتوسطة تقريباً مناسباً للعدد ${M('√26')}`],
+ x6:['مثال 6 · ص 107',`اذا كان ${M('f(x) = x^3 + 3x^2 + 4x + 5')} فجد بصورة تقريبية ${M('f(1.001)')}`],
+ x7:['مثال 7 · ص 107',`مكعب طول حرفه ${M('9.98cm')} جد حجمه بصورة تقريبية باستخدام نتيجة مبرهنة القيمة المتوسطة.`],
+ x8:['مثال 8 · ص 108',`لتكن ${M('f(x) = ∛(x^2)')} فاذا تغيرت ${M('x')} من ${N('8')} إلى ${N('8.06')} فما مقدار التغير التقريبي للدالة؟`],
+ x9:['مثال 9 · ص 108',`يراد طلاء مكعب طول ضلعه ${M('10cm')} فاذا كان سمك الطلاء ${M('0.15cm')} اوجد حجم الطلاء بصورة تقريبية وباستخدام نتيجة مبرهنة القيمة المتوسطة.`],
+ x10a:['مثال 10 a · ص 109',`باستخدام نتيجة مبرهنة القيمة المتوسطة جد وبصورة تقريبية ومقرباً لثلاث مراتب عشرية على الاقل: ${M('⁵√((0.98)^3) + (0.98)^4 + 3')}`],
+ x10b:['مثال 10 b · ص 110',`باستخدام نتيجة مبرهنة القيمة المتوسطة جد وبصورة تقريبية ومقرباً لثلاث مراتب عشرية على الاقل: ${M('∛7.8')}`],
+ x10c:['مثال 10 c · ص 110',`باستخدام نتيجة مبرهنة القيمة المتوسطة جد وبصورة تقريبية ومقرباً لثلاث مراتب عشرية على الاقل: ${M('√17 + ⁴√17')}`],
+ x10d:['مثال 10 d · ص 111',`باستخدام نتيجة مبرهنة القيمة المتوسطة جد وبصورة تقريبية ومقرباً لثلاث مراتب عشرية على الاقل: ${M('∛0.12')}`],
+ eB1:['تمارين (3−2) · 1',`اوجد قيمة ${M('c')} التي تعينها مبرهنة رول في كل مما يأتي: ${M('a) f(x) = x^3 − 9x , x ∈ [−3 , 3]')} ${M('b) f(x) = 2x + 2/x , x ∈ [1/2 , 2]')} ${M('c) f(x) = (x^2 − 3)^2 , x ∈ [−1 , 1]')}`],
+ eB2:['تمارين (3−2) · 2',`جد تقريباً لكل مما يلي باستخدام نتيجة مبرهنة القيمة المتوسطة: ${M('a) √63 + ∛63')} ${M('b) (1.04)^3 + 3(1.04)^4')} ${M('c) 1/∛9')} ${M('d) 1/101')} ${M('e) √(1/2)')}`],
+ eB3:['تمارين (3−2) · 3',`كرة نصف قطرها ${M('6cm')} طليت بطلاء سمكه ${M('0.1cm')} جد حجم الطلاء بصورة تقريبية باستخدام نتيجة مبرهنة القيمة المتوسطة.`],
+ eB4:['تمارين (3−2) · 4',`كرة حجمها ${M('84π cm^3')} ، جد نصف قطرها بصورة تقريبية باستخدام نتيجة مبرهنة القيمة المتوسطة.`],
+ eB5:['تمارين (3−2) · 5',`مخروط دائري قائم ارتفاعه يساوي طول قطر قاعدته فاذا كان ارتفاعه يساوي ${M('2.98cm')} فجد حجمه بصورة تقريبية باستخدام نتيجة مبرهنة القيمة المتوسطه.`],
+ eB6:['تمارين (3−2) · 6',`بين أن كل دالة من الدوال التالية تحقق مبرهنة رول على الفترة المعطاة ازاء كل منها ثم جد قيمة ${M('c')} : ${M('a) f(x) = (x − 1)^4 , [−1 , 3]')} ${M('b) h(x) = x^3 − x , [−1 , 1]')} ${M('c) g(x) = x^2 − 3x , [−1 , 4]')} ${M('d) f(x) = cos 2x + 2cos x , [0 , 2π]')}`],
+ eB7:['تمارين (3−2) · 7',`اختبر امكانية تطبيق القيمة المتوسطة للدوال التالية على الفترة المعطاة ازاءها مع ذكر السبب وإن تحققت المبرهنة، جد قيم ${M('c')} الممكنة: ${M('a) f(x) = x^3 − x − 1 , [−1 , 2]')} ${M('b) h(x) = x^2 − 4x + 5 , [−1 , 5]')} ${M('c) g(x) = 4/(x + 2) , [−1 , 2]')} ${M('d) B(x) = ∛((x + 1)^2) , [−2 , 7]')}`],
+ s1:['[3−3] مثال 1 · ص 113',`لتكن ${M('y = f(x) = x^2')} . جد مناطق التزايد والتناقص`],
+ s2a:['[3−3] مثال 2 a · ص 114',`جد مناطق التزايد والتناقص للدالة: ${M('f(x) = 9x + 3x^2 − x^3')}`],
+ s2b:['[3−3] مثال 2 b · ص 114',`جد مناطق التزايد والتناقص للدالة: ${M('f(x) = ∛(x^2)')}`],
+ s3a:['[3−4] مثال 3 a · ص 117',`جد نقط النهايات العظمى والصغرى المحلية للدالة ${M('f')} في حالة وجودها اذا علمت أن: ${M('f(x) = 1 + (x − 2)^2')}`],
+ s3b:['[3−4] مثال 3 b · ص 117',`جد نقط النهايات العظمى والصغرى المحلية للدالة ${M('f')} في حالة وجودها اذا علمت أن: ${M('f(x) = 1 − (x − 2)^2')}`],
+ s3c:['[3−4] مثال 3 c · ص 118',`جد نقط النهايات العظمى والصغرى المحلية للدالة ${M('f')} في حالة وجودها اذا علمت أن: ${M('f(x) = x^3 − 9x^2 + 24x')}`],
+ c1a:['[3−5] مثال 1 a · ص 120',`إدرس تقعر وتحدب الدالة: ${M('f(x) = x^2')}`],
+ c1b:['[3−5] مثال 1 b · ص 120',`إدرس تقعر وتحدب الدالة: ${M('f(x) = x^3')}`],
+ c2:['[3−5] مثال 2 · ص 121',`جد نقطة الانقلاب للمنحني: ${M('f(x) = 2x^3 − 3x^2 − 12x + 1')}`],
+ c3a:['[3−5] مثال 3 a · ص 122',`جد مناطق التحدب والتقعر ونقط الانقلاب إن وجدت للدالة: ${M('f(x) = 4x^3 − x^4')}`],
+ c3b:['[3−5] مثال 3 b · ص 123',`جد مناطق التحدب والتقعر ونقط الانقلاب إن وجدت للدالة: ${M('f(x) = x + 1/x , x ≠ 0')}`],
+ c3c:['[3−5] مثال 3 c · ص 123',`جد مناطق التحدب والتقعر ونقط الانقلاب إن وجدت للدالة: ${M('h(x) = 4 − (x + 2)^4')}`],
+ c3d:['[3−5] مثال 3 d · ص 124',`جد مناطق التحدب والتقعر ونقط الانقلاب إن وجدت للدالة: ${M('f(x) = 3 − 2x − x^2')}`],
+ c3e:['[3−5] مثال 3 e · ص 124',`جد مناطق التحدب والتقعر ونقط الانقلاب إن وجدت للدالة: ${M('f(x) = x^4 + 3x^2 − 3')}`],
+ t1a:['[3−6] مثال 1 a · ص 125',`باستخدام اختبار المشتقة الثانية ان أمكن، جد النهايات المحلية للدالة: ${M('f(x) = 6x − 3x^2 − 1')}`],
+ t1b:['[3−6] مثال 1 b · ص 125',`باستخدام اختبار المشتقة الثانية ان أمكن، جد النهايات المحلية للدالة: ${M('f(x) = x − 4/x^2 , x ≠ 0')}`],
+ t1c:['[3−6] مثال 1 c · ص 126',`باستخدام اختبار المشتقة الثانية ان أمكن، جد النهايات المحلية للدالة: ${M('f(x) = x^3 − 3x^2 − 9x')}`],
+ t1d:['[3−6] مثال 1 d · ص 126',`باستخدام اختبار المشتقة الثانية ان أمكن، جد النهايات المحلية للدالة: ${M('f(x) = 4 − (x + 1)^4')}`],
+ t2:['[3−6] مثال 2 · ص 127',`لتكن ${M('f(x) = x^2 + a/x , x ≠ 0 , a ∈ R')} فجد قيمة ${M('a')} علماً أن الدالة تمتلك نقطة انقلاب عند ${M('x = 1')} ، ثم بين أن الدالة ${M('f')} لاتمتلك نهاية عظمى محلية.`],
+ t3:['[3−6] مثال 3 · ص 128',`عين قيمتي الثابتين ${M('b , a')} لكي يكون لمنحني الدالة ${M('y = x^3 + ax^2 + bx')} نهاية عظمى محلية عند ${M('x = −1')} ، ونهاية صغرى محلية عند ${M('x = 2')} ثم جد نقطة الانقلاب.`],
+ t4:['[3−6] مثال 4 · ص 129',`اذا كان منحني الدالة ${M('f(x) = ax^3 + bx^2 + c')} مقعر في ${M('{x : x > 1}')} ومحدب في ${M('{x : x < 1}')} ويمس المستقيم ${M('y + 9x = 28')} عند النقطة ${M('(3 , 1)')} فجد قيم الاعداد الحقيقية ${M('c , b , a')} .`],
+ t5:['[3−6] مثال 5 · ص 130',`اذا كان للدالة ${M('f(x) = ax^3 + 3x^2 + c')} نهاية عظمى محلية تساوي ${N('8')} ، ونقطة انقلاب عند ${M('x = 1')} فجد قيمة ${M('a , c ∈ R')} .`],
+ eC1:['تمارين ص 131 · 1',`لتكن ${M('a ∈ {−4 , 8} , b ∈ R')} حيث ان ${M('f(x) = ax^2 − 6x + b')} جد قيمة ${M('a')} اذا كانت: أ) الدالة ${M('f')} محدبة ب) الدالة ${M('f')} مقعرة .`],
+ eC2:['تمارين ص 131 · 2',`اذا كانت ${M('(2 , 6)')} نقطة حرجة لمنحني الدالة ${M('f(x) = a − (x − b)^4')} فجد قيمة ${M('a , b ∈ R')} وبين نوع النقطة الحرجة.`],
+ eC3:['تمارين ص 131 · 3',`اذا كان ${M('g(x) = 1 − 12x , f(x) = ax^3 + bx^2 + cx')} وكان كل من ${M('g , f')} متماسان عند نقطة انقلاب المنحني ${M('f')} وهي ${M('(1 , −11)')} فجد قيمة الثوابت ${M('a , b , c ∈ R')}.`],
+ eC4:['تمارين ص 131 · 4',`اذا كانت ${N('6')} تمثل نهاية صغرى محلية لمنحني الدالة ${M('f(x) = 3x^2 − x^3 + c')} فجد قيمة ${M('c ∈ R')} ثم جد معادلة مماس المنحني في نقطة انقلابه.`],
+ eC5:['تمارين ص 131 · 5',`اذا كان ${M('f(x) = ax^3 + bx^2 + cx')} وكانت ${M('f')} مقعرة ${M('∀x > 1')} ومحدبة ${M('∀x < 1')} وللدالة ${M('f')} نقطة نهاية عظمى محلية هي ${M('(−1 , 5)')} فجد قيمة الثوابت ${M('a , b , c ∈ R')}.`],
+ eC6:['تمارين ص 131 · 6',`لتكن ${M('f(x) = x^2 − a/x , a ∈ R/{0} , x ≠ 0')} برهن أن الدالة ${M('f')} لا تمتلك نهاية عظمى محلية.`],
+ eC7:['تمارين ص 131 · 7',`المستقيم ${M('3x − y = 7')} يمس المنحني ${M('y = ax^2 + bx + c')} عند ${M('(2 , −1)')} وكانت له نهاية محلية عند ${M('x = 1/2')} جد قيمة ${M('a , b , c ∈ R')} وما نوع النهاية.`],
+ g1:['[3−7] مثال 1 · ص 133',`ارسم بالاستعانة بمعلوماتك في التفاضل منحني الدالة: ${M('f(x) = x^5')}`],
+ g2:['[3−7] مثال 2 · ص 134',`ارسم بالاستعانة بالتفاضل منحني الدالة: ${M('y = x^3 − 3x^2 + 4')}`],
+ g3:['[3−7] مثال 3 · ص 136',`بالاستعانة بالتفاضل ارسم منحني الدالة: ${M('f(x) = (3x − 1)/(x + 1)')}`],
+ g4:['[3−7] مثال 4 · ص 137',`باستخدام معلوماتك في التفاضل ارسم المنحني: ${M('f(x) = x^2/(x^2 + 1)')}`],
+ eD:['تمارين (3−7) · ص 139','أرسم بأستخدام معلوماتك في التفاضل الدالة:'],
+ o1:['[3−8] مثال 1 · ص 140','جد العدد الذي اذا اضيف الى مربعه يكون الناتج اصغر ما يمكن .'],
+ o2:['[3−8] مثال 2 · ص 141',`صنع صندوق مفتوح من قطعة من النحاس مربعة الشكل طول ضلعها ${M('12cm')} وذلك بقص أربعة مربعات متساوية الأبعاد من أركانها الأربعة ثم ثني الأجزاء البارزة منها. ما هو الحجم الأعظم لهذة العلبة؟`],
+ o3:['[3−8] مثال 3 · ص 142',`جد بعدي أكبر مثلث متساوي الساقين يمكن أن يوضع داخل دائرة نصف قطرها ${M('12cm')} ثم برهن أن نسبة مساحة المثلث إلى مساحة الدائرة كنسبة ${M('3√3/(4π)')}`],
+ o4:['[3−8] مثال 4 · ص 143',`جد بعدي أكبر مستطيل يمكن أن يوضع داخل مثلث طول قاعدته ${M('24cm')} وارتفاعه ${M('18cm')} بحيث أن رأسين متجاورين من رؤوسه تقعان على القاعدة والرأسين الباقيين تقعان على ساقيه .`],
+ o5:['[3−8] مثال 5 · ص 145',`مجموع محيطي دائرة ومربع يساوي ${M('60cm')} أثبت أنه عندما يكون مجموع مساحتي الشكلين أصغر ما يمكن فإن طول قطر الدائرة يساوي طول ضلع المربع.`],
+ o6:['[3−8] مثال 6 · ص 146',`جد نقطة أو نقاط تنتمي للقطع الزائد ${M('y^2 − x^2 = 3')} بحيث تكون أقرب ما يمكن للنقطة ${M('(0 , 4)')} .`],
+ eE1:['تمارين (3−8) · 1',`جد عددين موجبين مجموعهما ${N('75')} وحاصل ضرب أحدهما في مربع الاخر أكبر ما يمكن.`],
+ eE2:['تمارين (3−8) · 2',`جد ارتفاع اكبر اسطوانة دائرية قائمة توضع داخل كرة نصف قطرها ${M('4√3cm')} .`],
+ eE3:['تمارين (3−8) · 3',`جد بعدي اكبر مستطيل يوضع داخل نصف دائرة نصف قطرها ${M('4√2cm')} .`],
+ eE4:['تمارين (3−8) · 4',`جد اكبر مساحة لمثلث متساوي الساقين طول كل من ساقيه ${M('8√2cm')} .`],
+ eE5:['تمارين (3−8) · 5',`جد اقل محيط ممكن للمستطيل الذي مساحته ${M('16 cm^2')} .`],
+ eE6:['تمارين (3−8) · 6',`جد حجم اكبر مخروط دائري قائم يمكن وضعه داخل كرة نصف قطرها ${M('3 cm')} .`],
+ eE7:['تمارين (3−8) · 7',`جد معادلة المستقيم الذي يمر من النقطة ${M('(6 , 8)')} والذي يصنع مع المحورين في الربع الاول أصغر مثلث.`],
+ eE8:['تمارين (3−8) · 8',`جد بعدي اكبر مستطيل يوضع داخل المنطقة المحددة بالدالة ${M('f(x) = 12 − x^2')} ومحور السينات، رأسان من رؤوسه على المنحني والرأسان الاخران على محور السينات ثم جد محيطه.`],
+ eE9:['تمارين (3−8) · 9',`جد ابعاد اكبر اسطوانة دائرية قائمة توضع داخل مخروط دائري قائم ارتفاعه ${M('8cm')} وطول قطر قاعدته ${M('12cm')} .`],
+ eE10:['تمارين (3−8) · 10',`جد اكبر حجم لمخروط دائري قائم ناتج من دوران مثلث قائم الزاوية طول وتره ${M('6√3 cm')} دورة كاملة حول احد ضلعيه القائمين.`],
+ eE11:['تمارين (3−8) · 11',`علبة اسطوانية الشكل مفتوحة من الأعلى سعتها ${M('(125π) cm^3')} جد أبعادها عندما تكون مساحة المعدن المستخدم في صنعها اقل مايمكن.`],
+ eE12:['تمارين (3−8) · 12',`خزان على شكل متوازي سطوح مستطيلة طول قاعدته ضعف عرضها فاذا كانت مساحة المعدن المستخدم في صناعته ${M('108 m^2')} جد ابعاد الخزان لكي يكون حجمه اكبر ما يمكن علماً ان الخزان ذو غطاء كامل.`]
+};
+
+/* ================= Lab base ================= */
+/* pre-stretch drawings vertically so that, after the pop-up card leans and the book tilts, circles still look round */
+function AK(page){ const inT=!!(page&&page.closest('#teach')); const r=inT?14:(single?28:32), t=inT?9:(single?7:18); return 1/(Math.cos(r*Math.PI/180)*Math.cos(t*Math.PI/180)); }
+const LABS=[];
+class Lab{
+  constructor(page){
+    this.page=page; this.cv=$('canvas',page); this.c=this.cv.getContext('2d'); this.pen=new Pen(this.c);
+    this.cur={}; this.tgt={}; this.W=0; this.H=0; this.d=1;
+    new ResizeObserver(()=>this.fit()).observe(this.cv);
+    $$('input[type=range]',page).forEach(inp=>inp.addEventListener('input',()=>{ this.hideEx(); this.onSlide(inp.dataset.k,parseFloat(inp.value)); }));
+    page.addEventListener('click',e=>{ const b=e.target.closest('[data-q]'); if(b) this.showEx(b.dataset.q); });
+    LABS.push(this);
+  }
+  fit(){ const w=this.cv.clientWidth,h=this.cv.clientHeight; if(!w||!h) return; const d=Math.min(3,(devicePixelRatio||1)*1.5), K=AK(this.page);
+    this.cv.width=Math.round(w*d); this.cv.height=Math.round(h*d); this.d=d; this.K=K; this.W=w; this.H=h/K; this.pen.W=w; this.pen.H=this.H; this.draw(); }
+  setVal(k,v,label){ const inp=$(`input[data-k="${k}"]`,this.page); if(inp) inp.value=v; const o=$(`output[data-o="${k}"]`,this.page); if(o) o.innerHTML=`<bdi dir="ltr">${label??fmt(v)}</bdi>`; }
+  set(o){ Object.assign(this.tgt,o); for(const k in o) if(this.cur[k]===undefined) this.cur[k]=o[k]; this.ui(); this.kick(); }
+  kick(){ if(!this.raf) this.raf=requestAnimationFrame(()=>this.tick()); }
+  tick(){ this.raf=0; let mv=false;
+    for(const k in this.tgt){ const a=this.cur[k], b=this.tgt[k]; if(RM){this.cur[k]=b;continue;} const n=a+(b-a)*.2; if(Math.abs(b-n)<1e-3) this.cur[k]=b; else {this.cur[k]=n; mv=true;} }
+    if(this.W) this.draw(); if(mv||this.anim) this.kick(); }
+  clear(){ const c=this.c; c.setTransform(this.d,0,0,this.d*this.K,0,0); c.clearRect(0,0,this.W,this.H); c.fillStyle=COL.card; c.fillRect(0,0,this.W,this.H); }
+  ro(html){ $('.ro',this.page).innerHTML=html; }
+  showEx(key){ const q=EXQ[key], el=$('.exq',this.page); if(!q||!el) return; el.innerHTML=`<b>${q[0]}</b>${q[1]}`; el.classList.remove('hide'); }
+  hideEx(){ const el=$('.exq',this.page); if(el) el.classList.add('hide'); }
+  onSlide(){} ui(){} draw(){}
+}
+
+/* ================= helpers (chapter 6) ================= */
+const isInt=v=>Math.abs(v-Math.round(v))<1e-9;
+const row=h=>`<div class="row">${h}</div>`;
+const ok=h=>`<b style="color:var(--ok)">✓ ${h}</b>`, bad=h=>`<b style="color:var(--bad)">✗ ${h}</b>`;
+function dec(v,n=4){ if(!isFinite(v)) return 'غير معرّفة'; if(Math.abs(v)<5e-12) v=0; let s=v.toFixed(n); if(s.indexOf('.')>=0) s=s.replace(/0+$/,'').replace(/\.$/,''); if(s==='-0') s='0'; return s.replace('-','−'); }
+function frac(v,n=4){ if(!isFinite(v)) return '—'; for(let d=1;d<=12;d++){ const k=Math.round(v*d); if(Math.abs(k/d-v)<1e-9){ const s=k<0?'−':''; return d===1?s+Math.abs(k):s+Math.abs(k)+'/'+d; } } return dec(v,n); }
+const gcd=(a,b)=>{ a=Math.abs(Math.round(a)); b=Math.abs(Math.round(b)); while(b){ [a,b]=[b,a%b]; } return a; };
+function niceStep(range,px,minPx=34){ const c=[0.05,0.1,0.2,0.25,0.5,1,2,5,10,20,25,50,100,200,500]; for(const s of c){ if(px*s/range>=minPx) return s; } return 1000; }
+/* axes inside a region of the card. o.top/o.bot: fraction of height; o.eq: equal units (y-range derived from yc) */
+function axesN(lab,x0,x1,y0,y1,o={}){ const {pen,W,H}=lab, c=pen.c, pl=30, pr=12, T=(o.top||0)*H+12, B=(o.bot??1)*H-20;
+  if(o.eq){ const span=(x1-x0)*(B-T)/(W-pl-pr), yc=(y0+y1)/2; y0=yc-span/2; y1=yc+span/2; }
+  const X=x=>pl+(x-x0)/(x1-x0)*(W-pl-pr), Y=y=>T+(y1-y)/(y1-y0)*(B-T);
+  const sx=niceStep(x1-x0,W-pl-pr), sy=niceStep(y1-y0,B-T,24);
+  c.save(); c.strokeStyle=COL.grid; c.lineWidth=1; c.beginPath();
+  for(let g=Math.ceil(x0/sx)*sx;g<=x1+1e-9;g+=sx){ c.moveTo(X(g),T); c.lineTo(X(g),B); }
+  for(let g=Math.ceil(y0/sy)*sy;g<=y1+1e-9;g+=sy){ c.moveTo(pl,Y(g)); c.lineTo(W-pr,Y(g)); } c.stroke(); c.restore();
+  const yA=Math.min(Math.max(0,y0),y1), xA=Math.min(Math.max(0,x0),x1);
+  pen.line(pl-4,Y(yA),W-pr,Y(yA),{w:1.3}); pen.arrowHead(W-pr,Y(yA),0,{w:1.2}); pen.line(X(xA),B+4,X(xA),T-2,{w:1.3}); pen.arrowHead(X(xA),T-2,-Math.PI/2,{w:1.2});
+  const fs=10.5;
+  for(let g=Math.ceil(x0/sx)*sx;g<=x1+1e-9;g+=sx){ if(Math.abs(g)<1e-9) continue; const x=X(g); if(x>W-pr-8) continue; pen.text(fmt(g),x,Math.min(B+12,Y(yA)+fs+2),{size:fs,it:false,wt:500,color:COL.muted}); }
+  for(let g=Math.ceil(y0/sy)*sy;g<=y1+1e-9;g+=sy){ if(Math.abs(g)<1e-9) continue; const y=Y(g); if(y<T+4||y>B-4) continue; pen.text(fmt(g),Math.max(pl-2,X(xA)-5),y,{size:fs,it:false,wt:500,color:COL.muted,al:'right'}); }
+  if(o.yl) pen.text(o.yl,X(xA)+8,T+6,{size:12,wt:700,color:o.ylc||COL.graphite,al:'left'});
+  return {X,Y,x0,x1,y0,y1,T,B}; }
+function plotN(lab,G,f,a,b,o={}){ const {pen,c}=lab, n=o.n||500, y0=G.y0, y1=G.y1; let seg=[], prev=null;
+  c.save(); c.beginPath(); c.rect(G.X(G.x0)-3,G.T-3,G.X(G.x1)-G.X(G.x0)+6,G.B-G.T+6); c.clip();
+  const flush=()=>{ if(seg.length>1) pen.path(seg,{color:o.color||COL['c-point'],w:o.w||2.2,dash:o.dash,a:o.a??.95,passes:o.passes}); seg=[]; };
+  for(let i=0;i<=n;i++){ const x=a+(b-a)*i/n, y=f(x); if(!isFinite(y)||y>y1+3*(y1-y0)||y<y0-3*(y1-y0)){ flush(); prev=null; continue; }
+    if(prev!==null&&Math.abs(y-prev)>(y1-y0)*.9){ flush(); } seg.push([G.X(x),G.Y(y)]); prev=y; }
+  flush(); c.restore(); }
+function hole(lab,G,x,y,col){ const {pen,c}=lab; const X=G.X(x), Y=G.Y(y); c.save(); c.fillStyle=COL.card; c.beginPath(); c.arc(X,Y,4.6,0,7); c.fill(); c.restore(); pen.circle(X,Y,4.6,{color:col||COL['c-point'],w:1.8,passes:1,a:1}); }
+/* straight line of slope m through (x1,y1), clipped to the panel */
+function lineM(lab,G,m,x1,y1,o={}){ const c=lab.c; c.save(); c.beginPath(); c.rect(G.X(G.x0),G.T,G.X(G.x1)-G.X(G.x0),G.B-G.T); c.clip();
+  if(!isFinite(m)) lab.pen.line(G.X(x1),G.T,G.X(x1),G.B,{color:o.color||COL['c-radius'],w:o.w||1.8,dash:o.dash,passes:1});
+  else lab.pen.line(G.X(G.x0),G.Y(y1+m*(G.x0-x1)),G.X(G.x1),G.Y(y1+m*(G.x1-x1)),{color:o.color||COL['c-radius'],w:o.w||1.8,dash:o.dash,passes:o.passes||1});
+  c.restore(); }
+/* implicit curve F(x,y)=0 by marching squares (plain strokes) */
+function implicitN(lab,G,F,o={}){ const c=lab.c, nx=o.nx||160, ny=o.ny||120, dx=(G.x1-G.x0)/nx, dy=(G.y1-G.y0)/ny, v=[];
+  for(let j=0;j<=ny;j++){ v[j]=[]; for(let i=0;i<=nx;i++) v[j][i]=F(G.x0+i*dx,G.y0+j*dy); }
+  c.save(); c.strokeStyle=o.color||COL['c-point']; c.lineWidth=o.w||2.2; c.lineCap='round'; c.globalAlpha=.9; c.beginPath();
+  const P=(i,j)=>[G.X(G.x0+i*dx),G.Y(G.y0+j*dy)], L=(a,b,va,vb)=>{ const t=va/(va-vb); return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]; };
+  for(let j=0;j<ny;j++) for(let i=0;i<nx;i++){ const q=[[i,j],[i+1,j],[i+1,j+1],[i,j+1]], vals=q.map(([a,b])=>v[b][a]); if(vals.some(z=>!isFinite(z))) continue; const pts=[];
+    for(let k=0;k<4;k++){ const a=vals[k], b=vals[(k+1)%4]; if((a<0)!==(b<0)) pts.push(L(P(...q[k]),P(...q[(k+1)%4]),a,b)); }
+    if(pts.length>=2){ c.moveTo(...pts[0]); c.lineTo(...pts[1]); } if(pts.length===4){ c.moveTo(...pts[2]); c.lineTo(...pts[3]); } }
+  c.stroke(); c.restore(); }
+/* graph spec: {x0,x1,y0,y1,eq,P:[{f,a,b,col,dash}],I:[{F,col}],O,C,G:[[x,y,label,col]],L:[[m,x1,y1,col,dash]],V:[x]} */
+function drawG(lab,S,o={}){ const G=axesN(lab,S.x0,S.x1,S.y0,S.y1,{eq:S.eq,...o}), pen=lab.pen;
+  (S.V||[]).forEach(x=>pen.line(G.X(x),G.T,G.X(x),G.B,{color:COL.muted,w:1,dash:[5,5],passes:1,a:.7}));
+  (S.P||[]).forEach(p=>plotN(lab,G,p.f,Math.max(G.x0,p.a??G.x0),Math.min(G.x1,p.b??G.x1),{color:COL[p.col||'c-point'],dash:p.dash,w:p.w}));
+  (S.I||[]).forEach(p=>implicitN(lab,G,p.F,{color:COL[p.col||'c-point']}));
+  (S.L||[]).forEach(([m,x,y,col,dash])=>lineM(lab,G,m,x,y,{color:COL[col||'c-radius'],dash:dash?[6,4]:undefined}));
+  (S.G||[]).forEach(([x,y,l,col])=>{ const cc=COL[col||'c-center']; if(l) pen.text(l,G.X(x)+10,G.Y(y)-12,{color:cc,size:12,wt:700,al:'left'}); pen.dot(G.X(x),G.Y(y),4.2,cc); });
+  (S.O||[]).forEach(([x,y])=>hole(lab,G,x,y));
+  (S.C||[]).forEach(([x,y])=>pen.dot(G.X(x),G.Y(y),4.3,COL['c-point']));
+  return G; }
+function qMark(lab){ const {pen,W,H}=lab; pen.text('؟',W/2,H/2,{ar:true,size:Math.min(W,H)*.32,color:COL.muted,halo:false}); }
+const nd=(f,x,h=1e-5)=>(f(x+h)-f(x-h))/(2*h);
+/* line through (x1,y1) with slope m written as Ax + By + C = 0 with integer coefficients when possible */
+function lineEq(m,x1,y1){ let A,B,C;
+  if(!isFinite(m)){ A=1; B=0; C=-x1; } else { A=m; B=-1; C=y1-m*x1; }
+  for(let d=1;d<=60;d++){ if([A,B,C].every(v=>isInt(v*d))){ A*=d; B*=d; C*=d; const g=gcd(gcd(A,B),C)||1; A/=g; B/=g; C/=g; break; } }
+  if(A<0||(Math.abs(A)<1e-12&&B<0)){ A=-A; B=-B; C=-C; }
+  const t=(k,v,first)=>{ if(Math.abs(k)<1e-12) return ''; const s=k<0?'−':'+', a=Math.abs(k), n=v&&Math.abs(a-1)<1e-12?'':dec(a,3); return first?(k<0?'−':'')+n+v:` ${s} ${n}${v}`; };
+  let s=t(A,'x',true); s+=s?t(B,'y',false):t(B,'y',true); s+=t(C,'',false); return (s||'0')+' = 0'; }
+
+/* ================= chapter 3 (grade 12): shared drawing ================= */
+const RT=(m,t)=>row(M(m)+(t?` <span class="k">${t}</span>`:''));
+const TX=t=>row(`<span>${t}</span>`);
+function chipOn(p,attr,v){ $$(`[${attr}]`,p).forEach(b=>b.classList.toggle('on',b.getAttribute(attr)===String(v))); }
+/* oblique projection for simple solids */
+function obl(ox,oy,s){ return (X,Y,Z)=>[ox+X*s+Z*s*.42,oy-Y*s-Z*s*.3]; }
+function boxW(pen,P,a,b,h,o={}){ const v=[[0,0,0],[a,0,0],[a,0,b],[0,0,b],[0,h,0],[a,h,0],[a,h,b],[0,h,b]].map(q=>P(...q));
+  const E=[[0,1],[1,2],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6]], H=[[2,3],[3,0],[3,7]];
+  E.forEach(([i,j])=>pen.line(...v[i],...v[j],{color:o.color||COL.graphite,w:o.w||1.6,passes:1}));
+  H.forEach(([i,j])=>pen.line(...v[i],...v[j],{color:o.color||COL.graphite,w:1,dash:[4,4],passes:1,a:.6})); return v; }
+function poly(c,pts){ pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1])); c.closePath(); }
+function arrowL(pen,x1,y1,x2,y2,o={}){ pen.line(x1,y1,x2,y2,{...o,passes:1}); pen.arrowHead(x2,y2,Math.atan2(y2-y1,x2-x1),{...o,L:8}); }
+/* ---- scenes of the related-rates problems ---- */
+function figLadder(lab,x,o={}){ const {pen,W,H}=lab, L=o.L||10, y=Math.sqrt(Math.max(0,L*L-x*x));
+  const s=Math.min(W*.66/L,H*.74/L), wx=W*.2, gy=H*.86, bx=wx+x*s, ty=gy-y*s;
+  pen.hatch(c=>{ c.rect(wx-14,gy-L*s-12,14,L*s+12); },COL.muted,5,.4); pen.line(wx,gy+4,wx,gy-L*s-12,{w:2});
+  pen.hatch(c=>{ c.rect(wx-14,gy,W*.78,12); },COL.muted,5,.4); pen.line(wx-14,gy,W*.94,gy,{w:2});
+  pen.line(wx,ty,bx,gy,{color:COL['c-std'],w:3.4}); const n=9; for(let i=1;i<n;i++){ const t=i/n, X=wx+(bx-wx)*t, Y=ty+(gy-ty)*t, nx=-(gy-ty), ny=(bx-wx), d=Math.hypot(nx,ny)||1; pen.line(X-nx/d*5,Y-ny/d*5,X+nx/d*5,Y+ny/d*5,{color:COL['c-std'],w:1.2,passes:1}); }
+  const th=Math.atan2(y,x); lab.c.save(); lab.c.strokeStyle=COL['c-gen']; lab.c.lineWidth=1.6; lab.c.beginPath(); lab.c.arc(bx,gy,26,Math.PI,Math.PI+th,false); lab.c.stroke(); lab.c.restore();
+  pen.text('θ',bx-36,gy-12,{color:COL['c-gen'],size:15,wt:700});
+  pen.text((o.xl||'x')+(o.xv?' = '+o.xv:''),(wx+bx)/2,gy+14,{color:COL['c-center'],size:13,wt:700});
+  pen.text((o.yl||'y')+(o.yv?' = '+o.yv:''),wx+8,(gy+ty)/2,{color:COL['c-radius'],size:13,wt:700,al:'left'});
+  pen.text(L+'m',(wx+bx)/2+12,(gy+ty)/2-12,{color:COL['c-std'],size:13,wt:700,al:'left'});
+  if(o.arrows){ arrowL(pen,bx+6,gy-8,bx+6+o.vx*s*.6,gy-8,{color:COL['c-center'],w:2}); if(o.vy) arrowL(pen,wx+16,ty+4,wx+16,ty+4+Math.min(H*.25,-o.vy*s*.6),{color:COL['c-radius'],w:2}); }
+  pen.text('حائط',wx-24,gy-L*s*.5,{ar:true,size:11,color:COL.muted}); pen.text('ارض',W*.86,gy+14,{ar:true,size:11,color:COL.muted});
+}
+function figTank(lab,h,o={}){ const {pen,W,H,c}=lab, Ht=o.Ht||3, s=Math.min(W*.45/2,H*.62/Ht), P=obl(W*.3,H*.86,s);
+  const wv=[[0,0,0],[2,0,0],[2,h,0],[0,h,0]].map(q=>P(...q)), top=[[0,h,0],[2,h,0],[2,h,2],[0,h,2]].map(q=>P(...q)), side=[[2,0,0],[2,0,2],[2,h,2],[2,h,0]].map(q=>P(...q));
+  c.save(); c.globalAlpha=.22; c.fillStyle=COL['c-radius']; [wv,side].forEach(q=>{ c.beginPath(); poly(c,q); c.fill(); }); c.globalAlpha=.38; c.beginPath(); poly(c,top); c.fill(); c.restore();
+  boxW(pen,P,2,2,Ht); pen.path([...top,top[0]],{color:COL['c-radius'],w:1.6,passes:1});
+  const [lx,ly]=P(0,0,0), [tx,ty]=P(0,h,0); pen.line(lx-12,ly,tx-12,ty,{color:COL['c-radius'],w:1.4,passes:1}); pen.text('h'+(o.hv?' = '+o.hv:''),lx-16,(ly+ty)/2,{color:COL['c-radius'],size:13,wt:700,al:'right'});
+  const [ax,ay]=P(1,0,0); pen.text('2m',ax,ay+14,{size:12,wt:700}); const [bx2,by2]=P(2,0,1); pen.text('2m',bx2+16,by2+4,{size:12,wt:700});
+  if(o.leak!==false){ const [dx,dy]=P(1.7,0,0); for(let i=0;i<3;i++) pen.dot(dx+(i-1)*5,dy+10+i*7,2.2,COL['c-radius']); }
+}
+function figCone(lab,h,o={}){ const {pen,W,H,c}=lab, s=H*.74/24, cx=W*.4, ty=H*.1, vy=ty+24*s, R=8*s, r=h/3*s, ly=vy-h*s;
+  c.save(); c.globalAlpha=.3; c.fillStyle=COL['c-radius']; c.beginPath(); c.moveTo(cx,vy); c.lineTo(cx-r,ly); c.lineTo(cx+r,ly); c.closePath(); c.fill(); c.restore();
+  pen.line(cx-R,ty,cx,vy,{w:1.8}); pen.line(cx+R,ty,cx,vy,{w:1.8});
+  c.save(); c.strokeStyle=COL.graphite; c.lineWidth=1.4; c.beginPath(); c.ellipse(cx,ty,R,R*.18,0,0,7); c.stroke(); c.strokeStyle=COL['c-radius']; c.beginPath(); c.ellipse(cx,ly,Math.max(.1,r),Math.max(.1,r*.18),0,0,7); c.stroke(); c.restore();
+  pen.line(cx,ly,cx+r,ly,{color:COL['c-center'],w:1.6,passes:1}); pen.text('r',cx+r/2,ly-10,{color:COL['c-center'],size:13,wt:700});
+  pen.line(cx,vy,cx,ly,{color:COL['c-radius'],w:1.2,dash:[4,3],passes:1}); pen.text('h'+(o.hv?' = '+o.hv:''),cx+6,(vy+ly)/2+6,{color:COL['c-radius'],size:13,wt:700,al:'left'});
+  pen.line(cx-R-14,ty,cx-R-14,vy,{color:COL.muted,w:1,passes:1}); pen.text('24',cx-R-20,(ty+vy)/2,{size:12,color:COL.muted,al:'right'}); pen.text('16',cx,ty-14,{size:12,color:COL.muted});
+  pen.text('5 cm³/s ↓',cx+R+8,ty+4,{size:12,wt:700,color:COL['c-std'],al:'left',it:false}); pen.text('1 cm³/s ↓',cx+10,vy+12,{size:12,wt:700,color:COL['c-cut'],al:'left',it:false});
+}
+function figPlate(lab,o={}){ const {pen,W,H}=lab, s=Math.min(W*.6/12,H*.6/8), x0=W/2-6*s, y0=H/2-4*s;
+  pen.hatch(c=>c.rect(x0,y0,12*s,8*s),COL['c-std'],7,.25); pen.path([[x0,y0],[x0+12*s,y0],[x0+12*s,y0+8*s],[x0,y0+8*s],[x0,y0]],{w:1.8});
+  pen.text('x = 12',W/2,y0+8*s+16,{color:COL['c-center'],size:13,wt:700}); pen.text('y = 8',x0+12*s+10,H/2,{color:COL['c-radius'],size:13,wt:700,al:'left'});
+  arrowL(pen,x0+12*s+4,y0-10,x0+12*s+34,y0-10,{color:COL['c-center'],w:2}); pen.text('2 cm/s',x0+12*s+20,y0-24,{size:11,color:COL['c-center'],it:false});
+  arrowL(pen,x0-10,y0+4*s-18,x0-10,y0+4*s+18,{color:COL['c-radius'],w:2}); pen.text('A = 96',W/2,H/2,{size:15,wt:700,color:COL['c-std']}); }
+function figIce(lab,x=1){ const {pen,W,H}=lab, s=Math.min(W*.5/10,H*.62/10), P=obl(W*.3,H*.84,s), Q=obl(W*.3+x*s*1.0,H*.84-x*s*.75,s);
+  boxW(pen,P,8+2*x,8+2*x,8+2*x,{color:COL['c-radius']}); boxW(pen,Q,8,8,8,{w:2});
+  const [a1,b1]=Q(4,0,0); pen.text('8cm',a1,b1+12,{size:12,wt:700}); const [a2,b2]=P(0,0,0); pen.text('x',a2+x*s*.5,b2-x*s*.4,{size:13,wt:700,color:COL['c-radius']}); }
+function figLamp(lab,o={}){ const {pen,W,H}=lab, s=Math.min(W*.85/30,H*.72/7.2), gy=H*.86, px=W*.1, x=o.x||12, sh=x/3, mx=px+x*s;
+  pen.line(px,gy,px,gy-7.2*s,{w:3}); pen.dot(px,gy-7.2*s,6,COL['c-cut']); pen.line(px-10,gy,W*.96,gy,{w:2});
+  pen.line(mx,gy,mx,gy-1.8*s,{w:3.2,color:COL['c-center']}); pen.dot(mx,gy-1.8*s-4,4,COL['c-center']);
+  pen.line(px,gy-7.2*s,mx+sh*s,gy,{color:COL['c-cut'],w:1.2,dash:[5,4],passes:1}); pen.line(mx,gy+3,mx+sh*s,gy+3,{color:COL['c-radius'],w:4,passes:1});
+  pen.text('7.2',px-6,gy-3.6*s,{size:12,al:'right'}); pen.text('1.8',mx-6,gy-.9*s,{size:12,al:'right',color:COL['c-center']});
+  pen.text('x',(px+mx)/2,gy+14,{size:13,wt:700,color:COL['c-center']}); pen.text('s',mx+sh*s/2,gy+16,{size:13,wt:700,color:COL['c-radius']}); }
+
+/* ---- intro: a point riding the curve; tangent says up or down ---- */
+class IntroLab extends Lab{
+  constructor(p){ super(p); this.t0=performance.now(); }
+  start(){ if(RM) return; this.anim=true; this.kick(); }
+  stop(){ this.anim=false; }
+  draw(){ if(!this.W) return; this.clear(); const f=x=>x**3-9*x*x+24*x, d=x=>3*x*x-18*x+24, pen=this.pen;
+    const G=axesN(this,.6,5.4,10,27);
+    plotN(this,G,f,.6,2,{color:COL['c-std']}); plotN(this,G,f,2,4,{color:COL['c-radius']}); plotN(this,G,f,4,5.4,{color:COL['c-std']});
+    const t=RM?.35:((performance.now()-this.t0)/7000)%1, x=.8+4.4*(t<.5?2*t:2-2*t), y=f(x), m=d(x);
+    lineM(this,G,m,x,y,{color:COL[m>0?'c-std':'c-radius'],w:2});
+    pen.dot(G.X(x),G.Y(y),5.5,COL['c-point']);
+    pen.text(m>0.05?'f′ > 0 : متزايدة':m<-0.05?'f′ < 0 : متناقصة':'f′ = 0',G.X(x),G.Y(y)-22,{ar:true,size:13,color:COL[m>0?'c-std':'c-radius']});
+    [[2,20,'عظمى محلية'],[4,16,'صغرى محلية']].forEach(([a,b,l])=>{ pen.dot(G.X(a),G.Y(b),4.5,COL['c-center']); pen.text(l,G.X(a),G.Y(b)+(a===2?-16:18),{ar:true,size:11,color:COL['c-center']}); }); }
+}
+
+/* ---- related rates, live ---- */
+const RATE=[
+ {nm:'x',min:.5,max:9.8,v:8,step:.05,sp:2,unit:'m'},
+ {nm:'h',min:0,max:3,v:2,step:.01,sp:-.1,unit:'m'},
+ {nm:'h',min:1,max:24,v:12,step:.05,sp:0,unit:'cm'}];
+class RateLab extends Lab{
+  constructor(p){ super(p); this.s=0; this.inp=$('input[data-k="v"]',p); this.nm=$('.sl .nm',p);
+    $$('[data-s]',p).forEach(b=>b.onclick=()=>this.pick(+b.dataset.s)); $('[data-play]',p).onclick=()=>this.play(); this.pick(0); }
+  pick(s){ this.stopPlay(); this.s=s; const R=RATE[s]; this.inp.min=R.min; this.inp.max=R.max; this.inp.step=R.step; this.nm.innerHTML=`<span class="cc">${R.nm}</span>`;
+    chipOn(this.page,'data-s',s); this.setVal('v',R.v,fmt(R.v)); this.cur.v=R.v; this.set({v:R.v}); }
+  onSlide(k,v){ this.stopPlay(); this.setVal('v',v,dec(v,2)); this.set({v}); }
+  stopPlay(){ cancelAnimationFrame(this.pr); this.pr=0; const b=$('[data-play]',this.page); if(b) b.innerHTML='شغّل الزمن ▶'; }
+  play(){ if(this.pr){ this.stopPlay(); return; } const R=RATE[this.s]; let last=performance.now(); $('[data-play]',this.page).innerHTML='أوقف ■';
+    if(this.tgt.v>=R.max-.05&&R.sp>=0) this.tgt.v=this.cur.v=R.min; if(this.tgt.v<=R.min+.01&&this.s===1) this.tgt.v=this.cur.v=R.max;
+    if(this.s===2&&this.tgt.v>=R.max-.05) this.tgt.v=this.cur.v=R.min;
+    const step=now=>{ const dt=Math.min(.05,(now-last)/1000); last=now; let v=this.tgt.v;
+      if(this.s===0) v+=2*dt*.6; else if(this.s===1) v+=-.1*dt*6; else v+=36/(Math.PI*v*v)*dt*4;
+      if(v>R.max||v<R.min){ v=Math.max(R.min,Math.min(R.max,v)); this.cur.v=this.tgt.v=v; this.setVal('v',v,dec(v,2)); this.ui(); this.draw(); this.stopPlay(); return; }
+      this.cur.v=this.tgt.v=v; this.setVal('v',v,dec(v,2)); this.ui(); this.draw(); this.pr=requestAnimationFrame(step); };
+    this.pr=requestAnimationFrame(step); }
+  ui(){ const v=this.tgt.v; let s='';
+    if(this.s===0){ const x=v, y=Math.sqrt(100-x*x), dy=-2*x/y, dth=-2/y;
+      s=RT('x^2 + y^2 = 100 , dx/dt = 2 m / s')+RT(`x = ${dec(x,2)} ⇒ y = ${dec(y,3)}`)+RT(`<span class="cr">dy/dt = −(x/y) dx/dt = ${dec(dy,3)} m / s</span>`)+RT(`<span class="cg">dθ/dt = (1/x) dy/dt = ${dec(dth,3)} rad / s</span>`);
+      if(Math.abs(x-8)<.03) s+=row(ok('مثال '+N('4')+': '+M('dy/dt = −8/3 , dθ/dt = −1/3')));
+      else s+=row(`<span class="k">لاحظ: كلما اقترب السلم من الأرض ازدادت سرعة الطرف العلوي.</span>`); }
+    else if(this.s===1){ const h=v; s=RT('V = 4h ⇒ dV/dt = 4 dh/dt')+RT(`h = ${dec(h,2)} m ⇒ V = ${dec(4*h,2)} m^3`)+RT('dV/dt = −0.4 m^3 / h')+RT('<span class="cr">dh/dt = −0.1 m / h</span>');
+      s+=row(`<span class="k">المعدل ثابت مهما كان الارتفاع، لأن مساحة القاعدة ثابتة. (الزمن هنا: ساعة لكل ثانية تقريباً)</span>`); }
+    else { const h=v, dh=36/(Math.PI*h*h); s=RT('r = h/3 ⇒ v = (1/27) π h^3')+RT('dv/dt = 5 − 1 = 4 cm^3 / s')+RT(`h = ${dec(h,2)} ⇒ <span class="cr">dh/dt = 36/(π h^2) = ${dec(dh,4)} cm / s</span>`);
+      if(Math.abs(h-12)<.06) s+=row(ok(M('h = 12 ⇒ dh/dt = 1/(4π) ≈ 0.0796')+' (مثال '+N('5')+')')); else s+=row(`<span class="k">العمق يرتفع بسرعة في الأسفل (المخروط ضيق) ثم يتباطأ.</span>`); }
+    this.ro(s); }
+  draw(){ if(!this.W) return; this.clear(); const v=this.cur.v;
+    if(this.s===0){ const y=Math.sqrt(100-v*v); figLadder(this,v,{xv:dec(v,1),yv:dec(y,1),arrows:true,vx:2,vy:-2*v/y}); }
+    else if(this.s===1) figTank(this,v,{hv:dec(v,2)}); else figCone(this,v,{hv:dec(v,1)}); }
+}
+
+/* ---- critical numbers, Rolle, mean value ---- */
+const pwc=x=>x>=-1?x*x+1:-1;
+const THM={
+ crit:[
+  {l:'|x|',q:'k1',f:Math.abs,d:x=>x>1e-9?1:x<-1e-9?-1:NaN,a:-1,b:1,r:{x0:-1.4,x1:1.4,y0:-.3,y1:1.4},C:[0],N:[0],c0:.5},
+  {l:'9x + 3x^2 − x^3',f:x=>9*x+3*x*x-x**3,d:x=>9+6*x-3*x*x,a:-2,b:4,r:{x0:-2.4,x1:4.4,y0:-8,y1:30},C:[-1,3],c0:1}],
+ rolle:[
+  {l:'a',q:'e2a',f:x=>(2-x)**2,d:x=>-2*(2-x),a:0,b:4,r:{x0:-.6,x1:4.6,y0:-.6,y1:5},C:[2],cond:[1,1,1],c0:1},
+  {l:'b',q:'e2b',f:x=>9*x+3*x*x-x**3,d:x=>9+6*x-3*x*x,a:-1,b:1,r:{x0:-1.5,x1:1.5,y0:-7,y1:13},C:[],cond:[1,1,0],c0:0},
+  {l:'c',q:'e2c',f:pwc,d:x=>x>-1?2*x:x<-1?0:NaN,a:-4,b:2,r:{x0:-4.5,x1:2.5,y0:-2,y1:6},C:[0],cond:[0,0,0],jump:-1,c0:1},
+  {l:'d',q:'e2d',f:()=>3,d:()=>0,a:1,b:5,r:{x0:-.5,x1:6,y0:-.5,y1:4.5},C:[3],cond:[1,1,1],any:1,c0:2}],
+ mvt:[
+  {l:'3a',q:'e3a',f:x=>x*x-6*x+4,d:x=>2*x-6,a:-1,b:7,r:{x0:-1.6,x1:7.6,y0:-6.5,y1:13},C:[3],c0:1},
+  {l:'3b',q:'e3b',f:x=>Math.sqrt(25-x*x),d:x=>-x/Math.sqrt(25-x*x),a:-4,b:0,r:{x0:-5.3,x1:1,y0:-.4,y1:6},C:[-Math.sqrt(5)],c0:-1,full:[-5,5]},
+  {l:'4',q:'e4m',f:x=>x**3-4*x*x,d:x=>3*x*x-8*x,a:0,b:2,r:{x0:-.5,x1:3,y0:-9,y1:2},C:[2/3],c0:1.5}]};
+const CONDT=['مستمرة في '+M('[a , b]'),'قابلة للاشتقاق في '+M('(a , b)'),M('f(a) = f(b)')];
+class ThmLab extends Lab{
+  constructor(p){ super(p); this.mode=p.dataset.set; this.L=THM[this.mode]; this.k=0; this.inp=$('input[data-k="c"]',p);
+    $('.tsel',p).innerHTML='<span class="lbl">'+(this.mode==='crit'?'الدالة:':'مثال:')+'</span>'+this.L.map((P,i)=>`<button type="button" class="chip" data-t="${i}"${P.q?` data-q="${P.q}"`:''}><bdi dir="ltr">${this.mode==='crit'?M(P.l):P.l}</bdi></button>`).join('');
+    $$('[data-t]',p).forEach(b=>b.onclick=()=>this.pick(+b.dataset.t)); const fb=$('[data-find]',p); if(fb) fb.onclick=()=>this.find(); this.pick(0); }
+  pick(k){ this.k=k; const P=this.L[k]; this.inp.min=P.a; this.inp.max=P.b; this.inp.step=((P.b-P.a)/400).toFixed(4); chipOn(this.page,'data-t',k);
+    this.setVal('c',P.c0,dec(P.c0,2)); this.cur.c=P.c0; this.set({c:P.c0}); }
+  onSlide(k,v){ this.hideEx(); this.setVal('c',v,dec(v,2)); this.set({c:v}); }
+  target(){ const P=this.L[this.k], c=this.tgt.c; if(!P.C.length) return null; return P.C.reduce((a,b)=>Math.abs(b-c)<Math.abs(a-c)?b:a); }
+  find(){ const P=this.L[this.k]; if(this.mode==='rolle'&&!P.cond.every(Boolean)){ this.ro(this.rows()+row(bad('الشروط غير متحققة، فالمبرهنة لا تضمن وجود '+M('c')))); return; } const t=this.target(); if(t===null) return; this.setVal('c',t,dec(t,3)); this.set({c:t}); }
+  slope(){ const P=this.L[this.k]; return this.mode==='mvt'?(P.f(P.b)-P.f(P.a))/(P.b-P.a):0; }
+  rows(){ const P=this.L[this.k], c=this.tgt.c, m=P.d(c); let s='';
+    if(this.mode==='rolle') s+=P.cond.map((v,i)=>row(`${v?ok(''):bad('')} ${CONDT[i]}`)).join('')+RT(`f(${fmt(P.a)}) = ${dec(P.f(P.a),3)} , f(${fmt(P.b)}) = ${dec(P.f(P.b),3)}`);
+    if(this.mode==='mvt') s+=RT(`<span class="cr">ميل الوتر = (f(b) − f(a))/(b − a) = (${dec(P.f(P.b),3)} − ${dec(P.f(P.a),3)})/(${fmt(P.b)} − ${fmt(P.a)}) = ${frac(this.slope())}</span>`);
+    s+=RT(`c = ${dec(c,3)} ⇒ <span class="cp">f′(c) = ${isFinite(m)?dec(m,3):'غير موجودة'}</span>`);
+    return s; }
+  ui(){ const P=this.L[this.k], c=this.tgt.c, m=P.d(c), sl=this.slope(); let s=this.rows();
+    const hit=isFinite(m)&&Math.abs(m-sl)<.02*(1+Math.abs(sl));
+    if(this.mode==='crit'){ if(!isFinite(m)) s+=row(ok(`${M('f′('+dec(c,2)+')')} غير موجودة ⇒ ${M('c = '+dec(c,2))} عدد حرج`)); else if(Math.abs(m)<.05) s+=row(ok(`${M('f′(c) = 0')} ⇒ عدد حرج، والمماس أفقي`)); else s+=row(`<span class="k">الأعداد الحرجة: ${M(P.C.map(v=>fmt(v)).join(' , '))}</span>`); }
+    else if(this.mode==='rolle'){ if(!P.cond.every(Boolean)) s+=row(bad('لا تتحقق مبرهنة رول')); else if(hit) s+=row(ok(P.any?'أي قيمة ضمن '+M('(a , b)')+' تصلح':`${M('f′(c) = 0')} : المماس أفقي`)); }
+    else if(hit) s+=row(ok('المماس يوازي الوتر: '+M('f′(c) = ميل الوتر'.replace('ميل الوتر',frac(sl)))));
+    this.ro(s); }
+  draw(){ if(!this.W) return; this.clear(); const P=this.L[this.k], c=this.cur.c, pen=this.pen, sl=this.slope();
+    const pieces=P.jump!==undefined?[{f:P.f,a:P.a,b:P.jump-1e-6,col:'c-std'},{f:P.f,a:P.jump,b:P.b,col:'c-std'}]:[{f:P.f,a:P.full?P.full[0]:P.r.x0,b:P.full?P.full[1]:P.r.x1,col:'muted',w:1.1},{f:P.f,a:P.a,b:P.b,col:'c-std'}];
+    const G=drawG(this,{...P.r,P:pieces,V:[P.a,P.b]});
+    if(P.jump!==undefined){ hole(this,G,P.jump,-1); pen.dot(G.X(P.jump),G.Y(P.f(P.jump)),4.3,COL['c-std']); }
+    const A=[P.a,P.f(P.a)], B=[P.b,P.f(P.b)];
+    if(this.mode!=='crit'){ pen.line(G.X(A[0]),G.Y(A[1]),G.X(B[0]),G.Y(B[1]),{color:COL['c-radius'],w:1.6,dash:[6,4],passes:1});
+      pen.dot(G.X(A[0]),G.Y(A[1]),4.6,COL['c-radius']); pen.dot(G.X(B[0]),G.Y(B[1]),4.6,COL['c-radius']); pen.text('A',G.X(A[0])-10,G.Y(A[1])-12,{color:COL['c-radius'],size:13,wt:700}); pen.text('B',G.X(B[0])+10,G.Y(B[1])-12,{color:COL['c-radius'],size:13,wt:700}); }
+    const y=P.f(c), m=P.d(c), hit=isFinite(m)&&Math.abs(m-sl)<.02*(1+Math.abs(sl));
+    if(isFinite(m)) lineM(this,G,m,c,y,{color:COL[hit?'ok':'c-point'],w:2.2});
+    else { lineM(this,G,1,c,y,{color:COL['c-point'],w:1.4,dash:[4,4]}); lineM(this,G,-1,c,y,{color:COL['c-point'],w:1.4,dash:[4,4]}); }
+    pen.dot(G.X(c),G.Y(y),5.2,COL['c-point']); pen.text('c',G.X(c),G.B+12,{color:COL['c-point'],size:13,wt:700});
+    pen.line(G.X(c),G.Y(y),G.X(c),G.B,{color:COL['c-point'],w:1,dash:[3,4],passes:1,a:.6});
+    if(this.mode==='crit') P.C.forEach(v=>pen.dot(G.X(v),G.Y(P.f(v)),4,COL['c-center'])); }
+}
+
+/* ---- approximation f(a+h) ≈ f(a) + h f′(a) ---- */
+const APX=[
+ {l:'√26',q:'x5',f:Math.sqrt,d:x=>1/(2*Math.sqrt(x)),a:25,h:1,hm:12,F:'f(x) = √x',A:'25'},
+ {l:'f(1.001)',q:'x6',f:x=>x**3+3*x*x+4*x+5,d:x=>3*x*x+6*x+4,a:1,h:.001,hm:.6,F:'f(x) = x^3 + 3x^2 + 4x + 5',A:'1'},
+ {l:'9.98^3',q:'x7',f:x=>x**3,d:x=>3*x*x,a:10,h:-.02,hm:3,F:'v(x) = x^3',A:'10'},
+ {l:'∛(x^2)',q:'x8',f:x=>Math.cbrt(x*x),d:x=>2/(3*Math.cbrt(x)),a:8,h:.06,hm:6,F:'f(x) = ∛(x^2)',A:'8'},
+ {l:'∛7.8',q:'x10b',f:Math.cbrt,d:x=>1/(3*Math.cbrt(x*x)),a:8,h:-.2,hm:6,F:'f(x) = ∛x',A:'8'},
+ {l:'∛0.12',q:'x10d',f:Math.cbrt,d:x=>1/(3*Math.cbrt(x*x)),a:.125,h:-.005,hm:.1,F:'f(x) = x<sup>1/3</sup>',A:'0.125'}];
+class ApxLab extends Lab{
+  constructor(p){ super(p); this.k=0; this.inp=$('input[data-k="h"]',p);
+    $('.asel',p).innerHTML='<span class="lbl">مثال:</span>'+APX.map((P,i)=>`<button type="button" class="chip" data-a="${i}" data-q="${P.q}">${M(P.l)}</button>`).join('');
+    $$('[data-a]',p).forEach(b=>b.onclick=()=>this.pick(+b.dataset.a)); this.pick(0); }
+  pick(k){ this.k=k; const P=APX[k]; this.inp.min=-P.hm; this.inp.max=P.hm; this.inp.step=(P.hm/300).toPrecision(2); chipOn(this.page,'data-a',k);
+    this.setVal('h',P.h,dec(P.h,4)); this.cur.h=P.h; this.set({h:P.h}); }
+  onSlide(k,v){ this.hideEx(); this.setVal('h',v,dec(v,3)); this.set({h:v}); }
+  ui(){ const P=APX[this.k], h=this.tgt.h, a=P.a, fa=P.f(a), da=P.d(a), ap=fa+h*da, tr=P.f(a+h);
+    let s=RT(`${P.F} , a = ${P.A}`)+RT(`h = ${dec(h,4)} ⇒ b = a + h = ${dec(a+h,4)}`)+RT(`f(a) = ${dec(fa,4)} , <span class="cp">f′(a) = ${dec(da,4)}</span>`);
+    s+=RT(`<span class="cp">f(a) + hf′(a) = ${dec(ap,5)}</span>`,'التقريب')+RT(`<span class="cr">f(b) = ${dec(tr,5)}</span>`,'بالحاسبة')+RT(`الخطأ = ${dec(Math.abs(tr-ap),6)}`);
+    if(Math.abs(h-P.h)<1e-9) s+=row(ok('قيمة '+M('h')+' في مثال الكتاب')); else s+=row(`<span class="k">كلما صغرت ${M('h')} صغر الخطأ.</span>`);
+    this.ro(s); }
+  draw(){ if(!this.W) return; this.clear(); const P=APX[this.k], h=this.cur.h, a=P.a, pen=this.pen, w=P.hm*1.25;
+    const x0=Math.max(P.f===Math.sqrt?0:-1e9,a-w), x1=a+w; let lo=1e9, hi=-1e9; for(let i=0;i<=60;i++){ const x=x0+(x1-x0)*i/60, y=P.f(x); if(isFinite(y)){ lo=Math.min(lo,y); hi=Math.max(hi,y); } }
+    const pad=(hi-lo)*.15||1, G=axesN(this,x0,x1,lo-pad,hi+pad); plotN(this,G,P.f,x0,x1,{color:COL['c-std'],n:600});
+    const fa=P.f(a), da=P.d(a), b=a+h; lineM(this,G,da,a,fa,{color:COL['c-point'],w:1.8});
+    pen.line(G.X(a),G.Y(fa),G.X(a),G.B,{color:COL.muted,w:1,dash:[4,4],passes:1}); pen.line(G.X(b),G.Y(P.f(b)),G.X(b),G.B,{color:COL.muted,w:1,dash:[4,4],passes:1});
+    pen.line(G.X(b),G.Y(P.f(b)),G.X(b),G.Y(fa+h*da),{color:COL['c-cut'],w:2.6,passes:1});
+    pen.dot(G.X(a),G.Y(fa),5,COL['c-center']); pen.text('a',G.X(a),G.B-10,{color:COL['c-center'],size:13,wt:700});
+    pen.dot(G.X(b),G.Y(fa+h*da),4.5,COL['c-point']); pen.dot(G.X(b),G.Y(P.f(b)),4.5,COL['c-radius']); pen.text('b',G.X(b)+(h>=0?10:-10),G.B-10,{color:COL['c-radius'],size:13,wt:700});
+    const ym=G.B-24; if(Math.abs(G.X(b)-G.X(a))>14){ pen.line(G.X(a),ym,G.X(b),ym,{color:COL['c-radius'],w:1.3,passes:1}); pen.text('h',(G.X(a)+G.X(b))/2,ym-10,{color:COL['c-radius'],size:13,wt:700}); } }
+}
+
+/* ---- sign of f′ / f″ on a number line ---- */
+const SGN={
+ f1:[
+  {l:'x^2',q:'s1',f:x=>x*x,d:x=>2*x,d2:()=>2,r:[-3,3],y:[-1,9],Z:[0],U:[]},
+  {l:'9x + 3x^2 − x^3',q:'s2a',f:x=>9*x+3*x*x-x**3,d:x=>9+6*x-3*x*x,d2:x=>6-6*x,r:[-3,5],y:[-12,30],Z:[-1,3],U:[]},
+  {l:'∛(x^2)',q:'s2b',f:x=>Math.cbrt(x*x),d:x=>2/(3*Math.cbrt(x)),d2:x=>-2/(9*Math.cbrt(x**4)),r:[-3,3],y:[-.5,2.5],Z:[],U:[0]},
+  {l:'1 + (x − 2)^2',q:'s3a',f:x=>1+(x-2)**2,d:x=>2*(x-2),d2:()=>2,r:[-1,5],y:[-1,10],Z:[2],U:[]},
+  {l:'1 − (x − 2)^2',q:'s3b',f:x=>1-(x-2)**2,d:x=>-2*(x-2),d2:()=>-2,r:[-1,5],y:[-8,3],Z:[2],U:[]},
+  {l:'x^3 − 9x^2 + 24x',q:'s3c',f:x=>x**3-9*x*x+24*x,d:x=>3*x*x-18*x+24,d2:x=>6*x-18,r:[-.5,6],y:[-5,40],Z:[2,4],U:[]}],
+ f2:[
+  {l:'x^3',q:'c1b',f:x=>x**3,d:x=>3*x*x,d2:x=>6*x,r:[-2,2],y:[-8,8],Z:[0],U:[]},
+  {l:'2x^3 − 3x^2 − 12x + 1',q:'c2',f:x=>2*x**3-3*x*x-12*x+1,d:x=>6*x*x-6*x-12,d2:x=>12*x-6,r:[-3,4],y:[-25,25],Z:[.5],U:[]},
+  {l:'4x^3 − x^4',q:'c3a',f:x=>4*x**3-x**4,d:x=>12*x*x-4*x**3,d2:x=>24*x-12*x*x,r:[-1.5,4.3],y:[-15,32],Z:[0,2],U:[]},
+  {l:'x + 1/x',q:'c3b',f:x=>x+1/x,d:x=>1-1/(x*x),d2:x=>2/x**3,r:[-4,4],y:[-8,8],Z:[],U:[0]},
+  {l:'4 − (x + 2)^4',q:'c3c',f:x=>4-(x+2)**4,d:x=>-4*(x+2)**3,d2:x=>-12*(x+2)**2,r:[-4.5,.5],y:[-12,6],Z:[-2],U:[]},
+  {l:'x^4 + 3x^2 − 3',q:'c3e',f:x=>x**4+3*x*x-3,d:x=>4*x**3+6*x,d2:x=>12*x*x+6,r:[-2,2],y:[-4,12],Z:[],U:[]}]};
+/* draw the graph (top) and the sign line (bottom). mode f1: sign of f′, f2: sign of f″ */
+function drawSign(lab,P,mode,o={}){ const {pen,W,H}=lab, g=mode==='f1'?P.d:P.d2, pos=COL[mode==='f1'?'c-std':'c-gen'], neg=COL['c-radius'];
+  const G=axesN(lab,P.r[0],P.r[1],P.y[0],P.y[1],{bot:o.full?1:.72}); const cuts=[P.r[0],...P.Z,...P.U,P.r[1]].sort((a,b)=>a-b);
+  for(let i=0;i<cuts.length-1;i++){ const a=cuts[i]+1e-6, b=cuts[i+1]-1e-6, sg=Math.sign(g((a+b)/2)); plotN(lab,G,P.f,a,b,{color:o.plain?COL['c-std']:sg>0?pos:neg,n:300}); }
+  P.U.forEach(u=>{ if(!isFinite(P.f(u))) pen.line(G.X(u),G.T,G.X(u),G.B,{color:COL.muted,w:1,dash:[5,5],passes:1}); });
+  if(o.pts) o.pts.forEach(([x,y,l,col])=>{ pen.dot(G.X(x),G.Y(y),4.6,COL[col||'c-center']); if(l) pen.text(l,G.X(x)+8,G.Y(y)-14,{color:COL[col||'c-center'],size:12,wt:700,al:'left'}); });
+  if(o.full||o.noLine) return G;
+  const ly=H*.86, X=G.X; pen.line(X(P.r[0]),ly,X(P.r[1]),ly,{w:1.4}); pen.arrowHead(X(P.r[1]),ly,0,{w:1.2});
+  pen.text(mode==='f1'?'f′(x)':'f″(x)',X(P.r[0])+2,ly-20,{size:12,wt:700,al:'left',color:COL.muted});
+  for(let i=0;i<cuts.length-1;i++){ const a=cuts[i], b=cuts[i+1], mid=(a+b)/2, sg=Math.sign(g(mid)), xm=X(mid), wpx=X(b)-X(a);
+    pen.line(X(a)+3,ly-1,X(b)-3,ly-1,{color:sg>0?pos:neg,w:3,passes:1,a:.6});
+    if(wpx>26) pen.text(sg>0?'+ + +':'− − −',xm,ly-11,{color:sg>0?pos:neg,size:12,wt:800,it:false});
+    if(wpx>40){ if(mode==='f1'){ const d=sg>0?-1:1; arrowL(pen,xm-12,ly+18-d*6,xm+12,ly+18+d*6,{color:sg>0?pos:neg,w:1.6}); }
+      else pen.text(sg>0?'تقعر':'تحدب',xm,ly+18,{ar:true,size:12,color:sg>0?pos:neg}); } }
+  P.Z.forEach(z=>{ pen.line(X(z),ly-6,X(z),ly+6,{w:1.6,passes:1}); pen.text(frac(z),X(z),ly+30,{size:11,it:false,wt:700}); });
+  P.U.forEach(u=>{ hole(lab,{X:X,Y:()=>ly},u,0); pen.text(frac(u),X(u),ly+30,{size:11,it:false,wt:700}); });
+  if(o.x!==undefined){ const xx=X(o.x); pen.line(xx,ly-24,xx,ly-6,{color:COL['c-point'],w:2,passes:1}); pen.arrowHead(xx,ly-6,Math.PI/2,{color:COL['c-point'],w:2}); }
+  return G; }
+class SignLab extends Lab{
+  constructor(p){ super(p); this.mode=p.dataset.set; this.L=SGN[this.mode]; this.k=0; this.inp=$('input[data-k="x"]',p);
+    $('.ssel',p).innerHTML='<span class="lbl">الدالة:</span>'+this.L.map((P,i)=>`<button type="button" class="chip" data-g="${i}" data-q="${P.q}">${M(P.l)}</button>`).join('');
+    $$('[data-g]',p).forEach(b=>b.onclick=()=>this.pick(+b.dataset.g)); this.pick(0); }
+  pick(k){ this.k=k; const P=this.L[k]; this.inp.min=P.r[0]; this.inp.max=P.r[1]; this.inp.step=((P.r[1]-P.r[0])/400).toFixed(4); chipOn(this.page,'data-g',k);
+    const x0=P.r[0]+(P.r[1]-P.r[0])*.2; this.setVal('x',x0,dec(x0,2)); this.cur.x=x0; this.set({x:x0}); }
+  onSlide(k,v){ this.hideEx(); this.setVal('x',v,dec(v,2)); this.set({x:v}); }
+  ui(){ const P=this.L[this.k], x=this.tgt.x, y=P.f(x), m=P.d(x), m2=P.d2(x); let s=RT(`<span class="cc">f(x) = ${P.l}</span>`)+RT(`x = ${dec(x,2)} ⇒ f(x) = ${dec(y,3)}`);
+    if(this.mode==='f1'){ s+=RT(`<span class="${m>0?'cs':'cr'}">f′(x) = ${isFinite(m)?dec(m,3):'غير معرفة'}</span>`,!isFinite(m)?'عدد حرج':m>0.01?'موجبة: الدالة متزايدة':m<-0.01?'سالبة: الدالة متناقصة':'صفر: عدد حرج');
+      const ex=[...P.Z,...P.U].map(z=>{ const l=P.d(z-1e-3), r=P.d(z+1e-3); return M(`(${frac(z)} , ${frac(P.f(z))})`)+' '+(l>0&&r<0?'نهاية عظمى محلية':l<0&&r>0?'نهاية صغرى محلية':'ليست نهاية'); });
+      if(ex.length) s+=row(`<span class="k">${ex.join(' · ')}</span>`); }
+    else { s+=RT(`<span class="${m2>0?'cg':'cr'}">f″(x) = ${isFinite(m2)?dec(m2,3):'غير معرفة'}</span>`,!isFinite(m2)?'':m2>0.01?'موجبة: مقعرة، المنحني فوق المماس':m2<-0.01?'سالبة: محدبة، المنحني تحت المماس':'صفر');
+      const ip=P.Z.filter(z=>Math.sign(P.d2(z-1e-3))!==Math.sign(P.d2(z+1e-3))&&isFinite(P.f(z)));
+      s+=row(`<span class="k">${ip.length?'نقط الانقلاب: '+ip.map(z=>M(`(${frac(z)} , ${frac(P.f(z))})`)).join(' , '):'لا توجد نقطة انقلاب'}</span>`); }
+    this.ro(s); }
+  draw(){ if(!this.W) return; this.clear(); const P=this.L[this.k], x=this.cur.x, pen=this.pen;
+    const G=drawSign(this,P,this.mode,{x}); const y=P.f(x), m=P.d(x);
+    if(isFinite(y)&&isFinite(m)) lineM(this,G,m,x,y,{color:COL['c-point'],w:1.8});
+    if(isFinite(y)) pen.dot(G.X(x),G.Y(y),5,COL['c-point']); }
+}
+
+/* ---- optimisation ---- */
+const OPT=[
+ {l:'الصندوق',q:'o2',r:[0,6],best:2,F:x=>x*(12-2*x)**2,yr:[0,150],nm:'x',lab:'V'},
+ {l:'المستطيل في المثلث',q:'o4',r:[0,18],best:9,F:x=>4/3*(18*x-x*x),yr:[0,120],nm:'x',lab:'A'},
+ {l:'الدائرة والمربع',q:'o5',r:[0,15],best:60/(Math.PI+4),F:x=>x*x+(30-2*x)**2/Math.PI,yr:[0,300],nm:'x',lab:'A',min:1},
+ {l:'العدد ومربعه',q:'o1',r:[-2,1],best:-.5,F:x=>x+x*x,yr:[-.5,2.2],nm:'x',lab:'f',min:1}];
+class OptLab extends Lab{
+  constructor(p){ super(p); this.k=0; this.inp=$('input[data-k="x"]',p);
+    $('.osel',p).innerHTML='<span class="lbl">مثال:</span>'+OPT.map((P,i)=>`<button type="button" class="chip" data-o="${i}" data-q="${P.q}">${P.l}</button>`).join('');
+    $$('[data-o]',p).forEach(b=>b.onclick=()=>this.pick(+b.dataset.o)); $('[data-best]',p).onclick=()=>{ const P=OPT[this.k]; this.setVal('x',P.best,dec(P.best,3)); this.set({x:P.best}); }; this.pick(0); }
+  pick(k){ this.k=k; const P=OPT[k]; this.inp.min=P.r[0]; this.inp.max=P.r[1]; this.inp.step=((P.r[1]-P.r[0])/400).toFixed(4); chipOn(this.page,'data-o',k);
+    const x0=P.r[0]+(P.r[1]-P.r[0])*.15; this.setVal('x',x0,dec(x0,2)); this.cur.x=x0; this.set({x:x0}); }
+  onSlide(k,v){ this.hideEx(); this.setVal('x',v,dec(v,2)); this.set({x:v}); }
+  ui(){ const P=OPT[this.k], x=this.tgt.x, v=P.F(x), near=Math.abs(x-P.best)<(P.r[1]-P.r[0])/150; let s='';
+    if(this.k===0) s=RT('V = x(12 − 2x)^2 , 0 < x < 6')+RT(`x = ${dec(x,2)} ⇒ القاعدة ${dec(12-2*x,2)} ⇒ <span class="cc">V = ${dec(v,2)} cm^3</span>`);
+    if(this.k===1) s=RT('y = (4/3)(18 − x) , A = xy')+RT(`x = ${dec(x,2)} , y = ${dec(4/3*(18-x),2)} ⇒ <span class="cc">A = ${dec(v,2)} cm^2</span>`);
+    if(this.k===2){ const r=(30-2*x)/Math.PI; s=RT('60 = 4x + 2πr ⇒ r = (1/π)(30 − 2x)')+RT(`x = ${dec(x,2)} , r = ${dec(r,2)} , 2r = ${dec(2*r,2)}`)+RT(`<span class="cc">A = x^2 + πr^2 = ${dec(v,2)} cm^2</span>`); }
+    if(this.k===3) s=RT('f(x) = x + x^2')+RT(`x = ${dec(x,2)} ⇒ <span class="cc">f(x) = ${dec(v,3)}</span>`);
+    s+=near?row(ok((P.min?'أصغر قيمة: ':'أعظم قيمة: ')+M(P.lab+' = '+dec(P.F(P.best),3))+(this.k===2?' و '+M('x = 2r'):''))):row(`<span class="k">حرّك ${M('x')} حتى تصل الى ${P.min?'أصغر':'أعظم'} قيمة، أو اضغط «الأفضل».</span>`);
+    this.ro(s); }
+  draw(){ if(!this.W) return; this.clear(); const P=OPT[this.k], x=this.cur.x, {pen,W,H,c}=this;
+    if(this.k===0){ const s=Math.min(W*.42/12,H*.42/12), x0=W*.05, y0=H*.04, q=x*s;
+      pen.hatch(cc=>{ cc.rect(x0+q,y0+q,12*s-2*q,12*s-2*q); },COL['c-std'],6,.25); pen.path([[x0,y0],[x0+12*s,y0],[x0+12*s,y0+12*s],[x0,y0+12*s],[x0,y0]],{w:1.4});
+      [[0,0],[1,0],[0,1],[1,1]].forEach(([i,j])=>{ const X=x0+i*(12*s-q), Y=y0+j*(12*s-q); c.save(); c.fillStyle=COL['c-cut']; c.globalAlpha=.35; c.fillRect(X,Y,q,q); c.restore(); });
+      pen.text('12',x0+6*s,y0+12*s+12,{size:11}); pen.text('x',x0+q/2,y0-8,{size:12,wt:700,color:COL['c-cut']});
+      const b=12-2*x, s2=Math.min(W*.4/14,H*.36/12), Pq=obl(W*.6,H*.47,s2); if(b>0) boxW(pen,Pq,b,b,x,{color:COL['c-center']}); }
+    if(this.k===1){ const s=Math.min(W*.8/24,H*.44/18), ox=W*.1, oy=H*.48, X=u=>ox+u*s, Y=v=>oy-v*s;
+      pen.path([[X(0),Y(0)],[X(24),Y(0)],[X(6),Y(18)],[X(0),Y(0)]],{w:1.6}); const xl=x/3, xr=24-x;
+      pen.hatch(cc=>cc.rect(X(xl),Y(x),(xr-xl)*s,x*s),COL['c-center'],6,.3); pen.path([[X(xl),Y(0)],[X(xr),Y(0)],[X(xr),Y(x)],[X(xl),Y(x)],[X(xl),Y(0)]],{color:COL['c-center'],w:2});
+      pen.text('x',X(xr)+8,Y(x/2),{size:12,wt:700,color:COL['c-center'],al:'left'}); pen.text('y',X((xl+xr)/2),Y(x)-10,{size:12,wt:700,color:COL['c-center']}); pen.text('24',X(12),Y(0)+12,{size:11}); }
+    if(this.k===2){ const r=(30-2*x)/Math.PI, s=Math.min(W*.4/15,H*.4/15), cy=H*.25;
+      pen.hatch(cc=>cc.rect(W*.25-x*s/2,cy-x*s/2,x*s,x*s),COL['c-std'],6,.3); pen.path([[W*.25-x*s/2,cy-x*s/2],[W*.25+x*s/2,cy-x*s/2],[W*.25+x*s/2,cy+x*s/2],[W*.25-x*s/2,cy+x*s/2],[W*.25-x*s/2,cy-x*s/2]],{color:COL['c-std'],w:2});
+      if(r>0){ pen.hatch(cc=>{ cc.arc(W*.7,cy,r*s,0,7); },COL['c-radius'],6,.3); pen.circle(W*.7,cy,r*s,{color:COL['c-radius'],w:2}); }
+      pen.text('x',W*.25,cy+x*s/2+12,{size:12,wt:700,color:COL['c-std']}); pen.text('r',W*.7+r*s/2,cy-8,{size:12,wt:700,color:COL['c-radius']}); }
+    if(this.k===3){ const ly=H*.22, X=u=>W*.08+(u+2)/(3.2)*W*.84; pen.line(X(-2),ly,X(1.2),ly,{w:1.4}); pen.arrowHead(X(1.2),ly,0,{w:1.2});
+      for(let u=-2;u<=1;u++){ pen.line(X(u),ly-4,X(u),ly+4,{w:1,passes:1}); pen.text(fmt(u),X(u),ly+14,{size:11,it:false}); }
+      pen.dot(X(x),ly,5,COL['c-center']); pen.text('x',X(x),ly-14,{size:12,wt:700,color:COL['c-center']}); pen.dot(X(Math.min(1.2,x+x*x)),ly,5,COL['c-point']); pen.text('x + x²',X(Math.min(1.2,x+x*x)),ly-14,{size:12,wt:700,color:COL['c-point']}); }
+    const G=axesN(this,P.r[0],P.r[1],P.yr[0],P.yr[1],{top:.52,yl:P.lab}); plotN(this,G,P.F,P.r[0],P.r[1],{color:COL['c-center']});
+    pen.dot(G.X(P.best),G.Y(P.F(P.best)),3.6,COL['ok']); pen.dot(G.X(x),G.Y(P.F(x)),5,COL['c-point']); lineM(this,G,0,P.best,P.F(P.best),{color:COL.ok,w:1.2,dash:[4,4]}); }
+}
+
+/* ---- worked examples, step by step ---- */
+const S_=(m,w)=>({m,w});
+const gf=fn=>(lab,n,last)=>drawG(lab,fn(n,last));
+const sf=(P,mode,from,pts)=>(lab,n)=>drawSign(lab,P,mode,{noLine:n<from,plain:n<from,pts:pts?pts(n):[]});
+const pf=(f,a,b,col,w)=>({f,a,b,col,w});
+const SG=(id)=>[...SGN.f1,...SGN.f2].find(P=>P.q===id);
+const EXD={
+ e1:[
+  {q:'r1',l:'1',st:[S_('dV/dt = −0.4','ليكن V حجم الماء عند أي زمن t (تسرب: الاشارة السالبة تعني نقصان)'),S_('V = Ah = (2)(2)h ⇒ V = 4h','الماء يأخذ شكل متوازي سطوح مستطيلة قاعدته مربعة، A مساحة القاعدة'),S_('dV/dt = 4 dh/dt','نشتق الطرفين بالنسبة للزمن t'),S_('−0.4 = 4 dh/dt ⇒ dh/dt = −0.1','نعوض المعطى'),S_('dh/dt = −0.1 m / h','معدل تغير انخفاض الماء 0.1 لكل ساعة (الكتاب كتب الوحدة m/s)')],
+   fig:lab=>figTank(lab,1.6)},
+  {q:'r2',l:'2',st:[S_('dx/dt = 2 cm / s , dy/dt = ?','x طول المستطيل و y عرضه في أية لحظة'),S_('A = xy ⇒ 96 = xy'),S_('y = 8 ⇒ x = 12'),S_('0 = x dy/dt + y dx/dt','نشتق طرفي العلاقة بالنسبة الى t'),S_('0 = 12 dy/dt + 8(2) ⇒ dy/dt = −16/12 = −4/3 cm / s','∴ العرض يتناقص بمعدل 4/3 cm/s في تلك اللحظة')],fig:lab=>figPlate(lab)},
+  {q:'r3',l:'3',st:[S_('dV/dt = −6 , x = 1 , dx/dt = ?','نفرض سمك الجليد في أية لحظة = x'),S_('V = (8 + 2x)^3 − 8^3','حجم الجليد = حجم المكعب المغطى بالجليد − حجم المكعب الأصلي'),S_('dV/dt = 3(8 + 2x)^2 (2) dx/dt − 0','نشتق بالنسبة للزمن'),S_('−6 = 3(8 + (2)(1))^2 . 2 dx/dt = 600 dx/dt','بالتعويض عن القيم المعطاة'),S_('dx/dt = −0.01 cm / s','∴ معدل نقصان سمك الجليد = 0.01 cm/s')],fig:lab=>figIce(lab,1)},
+  {q:'r4',l:'4',st:[S_('dx/dt = 2 , x^2 + y^2 = 100','x بعد الطرف الاسفل عن الحائط، y بعد الطرف الأعلى عن الأرض (مبرهنة فيثاغورس)'),S_('x = 8 ⇒ y = 6'),S_('2x dx/dt + 2y dy/dt = 0','نشتق الطرفين بالنسبة الى t'),S_('(2)(8)(2) + (2)(6) dy/dt = 0 ⇒ dy/dt = −8/3 m / s','1) معدل انزلاق الطرف العلوي 8/3 m/s'),S_('sin θ = y/10 ⇒ cos θ dθ/dt = (1/10) dy/dt','2) θ قياس الزاوية بين السلم والأرض (نصف قطرية)'),S_('(8/10) dθ/dt = (1/10)(−8/3) ⇒ dθ/dt = −1/3 rad / s','نعوض cos θ = x/10 ثم x = 8 و dy/dt = −8/3')],
+   fig:(lab,n)=>figLadder(lab,8,{xv:n>=1?'8':'',yv:n>=1?'6':'',arrows:n>=3,vx:2,vy:-8/3})},
+  {q:'r5',l:'5',st:[S_('tan θ = r/h = 8/24 ⇒ r = (1/3) h','r نصف قطر سطح السائل و h عمقه عند أية لحظة'),S_('v = (1/3) π r^2 h = (1/3) π ((1/3) h)^2 h = (1/27) π h^3','نعوض r بدلالة h'),S_('dv/dt = (1/9) π h^2 dh/dt ...(1)','نشتق الطرفين بالنسبة للزمن t'),S_('dv/dt = 5 − 1 = 4 cm^3 / s','معدل تغير حجم السائل = معدل الصب − معدل التسرب'),S_('4 = (1/9) π (12)^2 dh/dt ⇒ dh/dt = 1/(4π) cm / s','بالتعويض في (1)')],
+   fig:(lab,n)=>figCone(lab,12,{hv:n>=4?'12':''})},
+  {q:'r6',l:'6',st:[S_('S = √((x − 7)^2 + (y − 0)^2) = √(x^2 − 14x + 49 + y^2)','لتكن M(x , y) و N(7 , 0) والمسافة MN = S'),S_('S = √(x^2 − 10x + 49)','بالتعويض عن y² = 4x'),S_('ds/dt = (2x − 10)/(2√(x^2 − 10x + 49)) . dx/dt','نشتق بالنسبة الى t'),S_('0.2 = (8 − 10)/10 . dx/dt ⇒ dx/dt = −1 unit / s','عند x = 4 : √(16 − 40 + 49) = 5')],
+   fig:(lab,n)=>{ const G=drawG(lab,{x0:-1,x1:9,y0:-6,y1:6,eq:1,I:[{F:(x,y)=>y*y-4*x}],G:[[4,4,n>=3?'M(4 , 4)':'M','c-point'],[7,0,'N(7 , 0)','c-center']]}); lab.pen.line(G.X(4),G.Y(4),G.X(7),G.Y(0),{color:COL['c-radius'],w:2,passes:1}); lab.pen.text('S',G.X(5.7),G.Y(2.3),{size:14,wt:700,color:COL['c-radius']}); }}
+ ],
+ e2:[
+  {q:'e2a',l:'2a',st:[S_('f(x) = (2 − x)^2 , x ∈ [0 , 4]','الشرطان الأول والثاني: مستمرة على [0 , 4] وقابلة للاشتقاق على (0 , 4) لأنها كثيرة الحدود'),S_('f(0) = (2 − 0)^2 = 4 , f(4) = (2 − 4)^2 = 4 ⇒ f(0) = f(4)','الشرط الثالث ∴ الدالة تحقق مبرهنة رول'),S_('f′(x) = −2(2 − x) ⇒ f′(c) = −2(2 − c) = 0'),S_('c = 2 ∈ (0 , 4)')],
+   fig:gf(n=>({x0:-.6,x1:4.6,y0:-.6,y1:5,P:[pf(x=>(2-x)**2,0,4,'c-std')],V:[0,4],G:n>=1?[[0,4,'',`c-radius`],[4,4,'','c-radius']]:[],L:n>=3?[[0,2,0,'ok']]:[] ,C:n>=3?[[2,0]]:[]}))},
+  {q:'e2b',l:'2b',st:[S_('f(x) = 9x + 3x^2 − x^3 , x ∈ [−1 , 1]','الشرطان الأول والثاني متحققان لأنها كثيرة الحدود'),S_('f(−1) = −9 + 3 + 1 = −5 , f(1) = 9 + 3 − 1 = 11','الشرط الثالث'),S_('f(−1) ≠ f(1)','لاتتحقق مبرهنة رول لأن الشرط الثالث لم يتحقق')],
+   fig:gf(n=>({x0:-1.5,x1:1.5,y0:-7,y1:13,P:[pf(x=>9*x+3*x*x-x**3,-1,1,'c-std')],V:[-1,1],G:n>=1?[[-1,-5,'−5','c-radius'],[1,11,'11','c-radius']]:[]}))},
+  {q:'e2c',l:'2c',st:[S_('[−4 , 2]','مجال الدالة'),S_(LIM('x→(−1)<sup>+</sup>','(x^2 + 1)')+' = 2 = L<sub>1</sub>','الشرط الاول: الاستمرارية عند x = −1'),S_(LIM('x→(−1)<sup>−</sup>','(−1)')+' = −1 = L<sub>2</sub>'),S_('L<sub>1</sub> ≠ L<sub>2</sub>','الدالة ليست مستمرة في الفترة [−4 , 2] ∴ لا تحقق مبرهنة رول')],
+   fig:gf(n=>({x0:-4.5,x1:2.5,y0:-2,y1:6,P:[pf(()=>-1,-4,-1.0001,'c-std'),pf(x=>x*x+1,-1,2,'c-std')],O:[[-1,-1]],C:[[-1,2]],G:n>=1?[[-1,2,'L₁ = 2','c-center'],[-1.6,-1,'L₂ = −1','c-radius']]:[]}))},
+  {q:'e2d',l:'2d',st:[S_('f(x) = k','الشرط الاول والثاني: مستمرة على [a , b] وقابلة للاشتقاق على (a , b) لانها دالة ثابتة'),S_('f(a) = f(b) = k','الشرط الثالث ∴ الدالة تحقق مبرهنة رول'),S_('f′(c) = 0 ∀ c ∈ (a , b)','وان قيمة c يمكن ان تكون اي قيمة ضمن الفترة (a , b)')],
+   fig:gf(n=>({x0:-.5,x1:6,y0:-.5,y1:4.5,P:[pf(()=>3,1,5,'c-std')],V:[1,5],G:[[1,3,'a','c-radius'],[5,3,'b','c-radius'],...(n>=2?[[2,3,'c'],[3.4,3,'c'],[4.3,3,'c']]:[])]}))},
+  {q:'e3a',l:'3a',st:[S_('f(x) = x^2 − 6x + 4 , x ∈ [−1 , 7]','الشرطان متحققان: الدالة مستمرة في [−1 , 7] وقابلة للاشتقاق على (−1 , 7) لأنها كثيرة الحدود'),S_('f′(x) = 2x − 6 ⇒ f′(c) = 2c − 6','ميل المماس'),S_('(f(7) − f(−1))/(7 + 1) = (11 − 11)/8 = 0','ميل الوتر'),S_('0 = 2c − 6 ⇒ c = 3 ∈ (−1 , 7)','ميل المماس = ميل الوتر')],
+   fig:gf(n=>({x0:-1.6,x1:7.6,y0:-6.5,y1:13,P:[pf(x=>x*x-6*x+4,-1,7,'c-std')],V:[-1,7],G:n>=2?[[-1,11,'A','c-radius'],[7,11,'B','c-radius']]:[],L:[...(n>=2?[[0,0,11,'c-radius',1]]:[]),...(n>=3?[[0,3,-5,'ok']]:[])],C:n>=3?[[3,-5]]:[]}))},
+  {q:'e3b',l:'3b',st:[S_('25 − x^2 ≥ 0 ⇒ [−5 , 5]','مجال f = مجموعة حل المتباينة'),S_(LIM('x→−4<sup>+</sup>','√(25 − x^2)')+' = 3 = f(−4) , '+LIM('x→0<sup>−</sup>','√(25 − x^2)')+' = 5 = f(0)','f مستمرة في (−4 , 0) وعند طرفي الفترة ⇐ مستمرة على [−4 , 0]'),S_('f′(x) = −x/√(25 − x^2)','مجال f′ = (−5 , 5) ⇐ f قابلة للاشتقاق في (−4 , 0)'),S_('(f(0) − f(−4))/(0 + 4) = (5 − 3)/4 = 1/2','ميل الوتر'),S_('1/2 = −c/√(25 − c^2) ⇒ √(25 − c^2) = −2c','ميل المماس = ميل الوتر'),S_('25 − c^2 = 4c^2 ⇒ c^2 = 5 ⇒ c = ±√5'),S_('c = −√5 ∈ (−4 , 0)','c = √5 ∉ (−4 , 0) تهمل')],
+   fig:gf(n=>({x0:-5.6,x1:5.6,y0:-.5,y1:6,eq:1,P:[pf(x=>Math.sqrt(25-x*x),-5,5,'c-std',1.2),pf(x=>Math.sqrt(25-x*x),-4,0,'c-std')],V:[-4,0],G:n>=3?[[-4,3,'A','c-radius'],[0,5,'B','c-radius']]:[],L:[...(n>=3?[[.5,0,5,'c-radius',1]]:[]),...(n>=6?[[.5,-Math.sqrt(5),Math.sqrt(20),'ok']]:[])],C:n>=6?[[-Math.sqrt(5),Math.sqrt(20)]]:[]}))},
+  {q:'e4m',l:'4',st:[S_('f′(x) = 3x^2 − 8x ⇒ f′(2/3) = 4/3 − 16/3 = −4','ميل المماس عند c = 2/3'),S_('(f(b) − f(0))/(b − 0) = (b^3 − 4b^2 − 0)/b = b^2 − 4b','ميل الوتر'),S_('b^2 − 4b = −4 ⇒ b^2 − 4b + 4 = 0','ميل المماس = ميل الوتر'),S_('(b − 2)^2 = 0 ⇒ b = 2')],
+   fig:gf(n=>({x0:-.5,x1:3,y0:-9,y1:2,P:[pf(x=>x**3-4*x*x,-.5,3,'c-std')],L:[[-4,2/3,8/27-16/9,'c-point'],...(n>=3?[[-4,0,0,'c-radius',1]]:[])],C:[[2/3,8/27-16/9]],G:n>=3?[[0,0,'A','c-radius'],[2,-8,'B','c-radius']]:[]}))}
+ ],
+ e3:[
+  {q:'x5',l:'5',st:[S_('y = f(x) = √x , x ≥ 0','الدالة'),S_('b = 26 , a = 25 , h = b − a = 1','a = 25 أقرب مربع كامل من العدد 26 (القيمة السهلة)'),S_('f(25) = √25 = 5 , f′(x) = 1/(2√x) ⇒ f′(25) = 1/10 = 0.1'),S_('√26 = f(25 + 1) ≅ f(25) + (1) f′(25)','f(a + h) ≅ f(a) + hf′(a)'),S_('√26 ≅ 5 + 1 × (0.1) = 5.1','بالحاسبة √26 = 5.0990...')],k:0},
+  {q:'x6',l:'6',st:[S_('b = 1.001 , a = 1 , h = b − a = 0.001'),S_('f(1) = 1 + 3 + 4 + 5 = 13'),S_('f′(x) = 3x^2 + 6x + 4 ⇒ f′(1) = 3 + 6 + 4 = 13'),S_('f(1.001) = f(1) + (0.001) f′(1) = 13 + (0.001)(13) = 13.013')],k:1},
+  {q:'x7',l:'7',st:[S_('v(x) = x^3 , x ∈ [9.98 , 10]','ليكن V حجم المكعب الذي طول حرفه x'),S_('b = 9.98 , a = 10 , h = b − a = −0.02'),S_('v(10) = 10^3 = 1000 , v′(x) = 3x^2 ⇒ v′(10) = 300'),S_('v(9.98) ≅ 1000 + (−0.02)(300) ≅ 994 cm^3')],k:2},
+  {q:'x8',l:'8',st:[S_('f : [8 , 8.06] → R , f(x) = ∛(x^2)'),S_('b = 8.06 , a = 8 = 2^3 , h = b − a = 0.06'),S_('f′(x) = 2/(3∛x) ⇒ f′(8) = 2/(3∛8) = 1/3 = 0.333'),S_('hf′(8) ≅ (0.06)(1/3) = 0.02','التغير التقريبي')],k:3},
+  {q:'x9',l:'9',st:[S_('b = 10.3 , a = 10 , h = b − a = 0.3','الطلاء بسمك 0.15 من كل جهة فيصبح طول الضلع 10.3'),S_('v(x) = x^3 , v′(x) = 3x^2'),S_('v′(10) = (3)(10)^2 = 300'),S_('hv′(10) ≅ (0.3)(300) = 90 cm^3','حجم الطلاء بصورة تقريبية')],fig:lab=>{ figIce(lab,.6); }},
+  {q:'x10a',l:'10a',st:[S_('f(x) = x<sup>3/5</sup> + x^4 + 3','الدالة'),S_('b = 0.98 , a = 1 , h = −0.02'),S_('f′(x) = (3/5) x<sup>−2/5</sup> + 4x^3','المشتقة'),S_('f(1) = 1 + 1 + 3 = 5 , f′(1) = 3/5 + 4 = 4.6','التعويض بالدالة وبالمشتقة'),S_('f(0.98) = 5 + (−0.02)(4.6) = 5 − 0.092 = 4.908','التعويض بالقانون')],fig:gf(()=>({x0:.6,x1:1.4,y0:3,y1:8,P:[pf(x=>x**.6+x**4+3,.6,1.4,'c-std')],L:[[4.6,1,5,'c-point']],G:[[1,5,'a = 1','c-center']]}))},
+  {q:'x10b',l:'10b',st:[S_('f(x) = ∛x','الدالة'),S_('b = 7.8 , a = 8 = 2^3 , h = −0.2'),S_('f(8) = ∛8 = 2 , f′(x) = 1/(3∛(x^2)) ⇒ f′(8) = 1/12 = 0.083'),S_('f(7.8) = f(8) + (−0.2) f′(8) ≅ 2 − (0.2)(0.083)','وبالتعويض بالقانون'),S_('= 2 − 0.0166 = 1.9834')],k:4},
+  {q:'x10c',l:'10c',st:[S_('f(x) = x<sup>1/2</sup> + x<sup>1/4</sup>','الدالة'),S_('b = 17 , a = 16 , h = 17 − 16 = 1'),S_('f(16) = (2^4)<sup>1/2</sup> + (2^4)<sup>1/4</sup> = 4 + 2 = 6'),S_('f′(x) = (1/2) x<sup>−1/2</sup> + (1/4) x<sup>−3/4</sup>','المشتقة'),S_('f′(16) = (1/2)(2<sup>−2</sup>) + (1/4)(2<sup>−3</sup>) = 0.125 + 0.031 = 0.156'),S_('√17 + ⁴√17 ≅ 6 + (1)(0.156) = 6.156')],fig:gf(()=>({x0:10,x1:22,y0:4.5,y1:7.5,P:[pf(x=>Math.sqrt(x)+Math.sqrt(Math.sqrt(x)),10,22,'c-std')],L:[[.15625,16,6,'c-point']],G:[[16,6,'a = 16','c-center']]}))},
+  {q:'x10d',l:'10d',st:[S_('f(x) = x<sup>1/3</sup>','الدالة'),S_('b = 0.120 , a = 0.125 , h = −0.005'),S_('f(0.125) = ((0.5)^3)<sup>1/3</sup> = 0.5'),S_('f′(x) = (1/3) x<sup>−2/3</sup> ⇒ f′(0.125) = (1/3)(1/2)<sup>−2</sup> = 4/3 = 1.333'),S_('f(0.12) ≅ 0.5 + (−0.005)(1.333) = 0.5 − 0.006665 = 0.493335')],k:5}
+ ],
+ e4:[
+  {q:'s1',l:'1',st:[S_('y = f(x) = x^2 ⇒ y′ = 2x'),S_('y′ = 0 ⇒ x = 0'),S_('f′(x) > 0 , ∀x > 0','∴ f متزايدة في {x : x > 0}'),S_('f′(x) < 0 , ∀x < 0','∴ f متناقصة في {x : x < 0}')],fig:sf(SG('s1'),'f1',2)},
+  {q:'s2a',l:'2a',st:[S_('f′(x) = 9 + 6x − 3x^2'),S_('0 = −3(x^2 − 2x − 3) ⇒ 0 = (x − 3)(x + 1) ⇒ x = 3 , x = −1'),S_('− − − (−1) + + + (3) − − −','نختبر على خط الأعداد إشارة المشتقة الأولى بالتعويض بقيم مجاورة للعددين'),S_('','f متناقصة في {x : x < −1} , {x : x > 3} ، و f متزايدة في الفترة المفتوحة (−1 , 3)')],fig:sf(SG('s2a'),'f1',2)},
+  {q:'s2b',l:'2b',st:[S_('f(x) = ∛(x^2) ⇒ f′(x) = 2/(3∛x)'),S_('','f′(x) غير معرفة اذا كانت x = 0 ، اي x = 0 عدد حرج'),S_('− − − (0) + + +','f متزايدة في {x : x > 0} ، و f متناقصة في {x : x < 0}')],fig:sf(SG('s2b'),'f1',2)},
+  {q:'s3a',l:'3a',st:[S_('f′(x) = 2(x − 2)'),S_('f′(x) = 0 ⇒ x = 2 , f(2) = 1 + (2 − 2)^2 = 1'),S_('− − − (2) + + +','f متزايدة في {x : x > 2} ، متناقصة في {x : x < 2}'),S_('(2 , f(2)) = (2 , 1)','∴ تمثل نقطة نهاية صغرى محلية')],fig:sf(SG('s3a'),'f1',2,n=>n>=3?[[2,1,'(2 , 1)']]:[])},
+  {q:'s3b',l:'3b',st:[S_('f′(x) = −2(x − 2)'),S_('f′(x) = 0 ⇒ x = 2 , f(2) = 1 − (2 − 2)^2 = 1'),S_('+ + + (2) − − −','f متزايدة في {x : x < 2} ، متناقصة في {x : x > 2}'),S_('(2 , 1)','∴ تمثل نقطة نهاية عظمى محلية')],fig:sf(SG('s3b'),'f1',2,n=>n>=3?[[2,1,'(2 , 1)']]:[])},
+  {q:'s3c',l:'3c',st:[S_('f′(x) = 3x^2 − 18x + 24'),S_('3(x^2 − 6x + 8) = 0 ⇒ 3(x − 4)(x − 2) = 0 ⇒ x = 4 , x = 2'),S_('f(4) = 16 , f(2) = 20'),S_('+ + + (2) − − − (4) + + +','f متزايدة في {x : x < 2} , {x : x > 4} ، ومتناقصة في الفترة المفتوحة (2 , 4)'),S_('(2 , 20) , (4 , 16)','نقطة النهاية العظمى المحلية (2 , 20) ، ونقطة النهاية الصغرى المحلية (4 , 16)')],fig:sf(SG('s3c'),'f1',3,n=>n>=4?[[2,20,'(2 , 20)'],[4,16,'(4 , 16)']]:[])}
+ ],
+ e5:[
+  {q:'c1a',l:'1a',st:[S_('f′(x) = 2x , f″(x) = 2'),S_('f″(x) > 0 , ∀x ∈ R','∴ الدالة f مقعرة على R')],fig:sf(SG('s1'),'f2',1)},
+  {q:'c1b',l:'1b',st:[S_('f′(x) = 3x^2 , f″(x) = 6x'),S_('f″(x) = 0 ⇒ 6x = 0 ⇒ x = 0 , f(0) = 0'),S_('− − − (0) + + +','f محدبة في {x : x < 0} ، و f مقعرة في {x : x > 0}'),S_('(0 , f(0)) = (0 , 0)','قبل هذه النقطة المنحني محدب وبعدها مقعر: تسمى نقطة انقلاب (Point of Inflection)')],fig:sf(SG('c1b'),'f2',2,n=>n>=3?[[0,0,'(0 , 0)']]:[])},
+  {q:'c2',l:'2',st:[S_('f′(x) = 6x^2 − 6x − 12 , f″(x) = 12x − 6'),S_('f″(x) = 0 ⇒ 12x − 6 = 0 ⇒ x = 1/2'),S_('f(1/2) = −11/2'),S_('− − − (1/2) + + +','نلاحظ عن يمين 1/2 تكون f″(x) موجبة وعن يسار 1/2 تكون f″(x) سالبة'),S_('(1/2 , −11/2)','∴ هي نقطة انقلاب')],fig:sf(SG('c2'),'f2',3,n=>n>=4?[[.5,-5.5,'(1/2 , −11/2)']]:[])},
+  {q:'c3a',l:'3a',st:[S_('f′(x) = 12x^2 − 4x^3 , f″(x) = 24x − 12x^2'),S_('f″(x) = 0 ⇒ 0 = 12x(2 − x) ⇒ x = 0 , x = 2'),S_('f(0) = 0 , f(2) = 16'),S_('− − − (0) + + + (2) − − −','f محدبة في {x : x < 0} و {x : x > 2} ، و f مقعرة في الفترة المفتوحة (0 , 2)'),S_('(0 , 0) , (2 , 16)','∴ نقطتا الانقلاب')],fig:sf(SG('c3a'),'f2',3,n=>n>=4?[[0,0,'(0 , 0)'],[2,16,'(2 , 16)'],[3,27,'(3 , 27)','c-point']]:[])},
+  {q:'c3b',l:'3b',st:[S_('f′(x) = 1 − 1/x^2 , f″(x) = 2/x^3'),S_('− − − (0) + + +','f″(0) غير معرفة'),S_('','f محدبة في {x : x < 0} ، و f مقعرة في {x : x > 0} ، لاتوجد نقطة انقلاب لأن 0 لاينتمي لمجال الدالة')],fig:sf(SG('c3b'),'f2',1)},
+  {q:'c3c',l:'3c',st:[S_('h′(x) = −4(x + 2)^3 , h″(x) = −12(x + 2)^2'),S_('h″(x) = 0 ⇒ 0 = −12(x + 2)^2 ⇒ x = −2'),S_('− − − (−2) − − −','الدالة h محدبة في {x : x < −2} و {x : x > −2}'),S_('','لاتوجد نقطة انقلاب عند x = −2 لأن الدالة محدبة على جهتيها (وللدالة نقطة نهاية عظمى محلية عند (−2 , 4))')],fig:sf(SG('c3c'),'f2',2,n=>n>=3?[[-2,4,'(−2 , 4)']]:[])},
+  {q:'c3d',l:'3d',st:[S_('f′(x) = −2 − 2x , f″(x) = −2 < 0'),S_('','∴ الدالة f محدبة في R لذا لاتوجد نقطة انقلاب')],fig:sf({l:'',f:x=>3-2*x-x*x,d:x=>-2-2*x,d2:()=>-2,r:[-4,2],y:[-6,5],Z:[],U:[]},'f2',1)},
+  {q:'c3e',l:'3e',st:[S_('f′(x) = 4x^3 + 6x ⇒ f″(x) = 12x^2 + 6 > 0 , ∀x ∈ R'),S_('','الدالة f مقعرة في R . لذا لاتوجد نقطة انقلاب')],fig:sf(SG('c3e'),'f2',1)}
+ ],
+ e6:[
+  {q:'t1a',l:'a',st:[S_('f′(x) = 6 − 6x'),S_('f′(x) = 0 ⇒ 0 = 6 − 6x ⇒ x = 1'),S_('f″(x) = −6 ⇒ f″(1) = −6 < 0','بما أن f′(1) = 0 و f″(1) < 0 ، اذاً توجد نهاية عظمى محلية عند x = 1'),S_('f(1) = 6 − 3 − 1 = 2','∴ النهاية العظمى المحلية هي 2')],fig:gf(n=>({x0:-1,x1:3,y0:-4,y1:3,P:[pf(x=>6*x-3*x*x-1)],L:n>=2?[[0,1,2,'ok']]:[],G:n>=3?[[1,2,'(1 , 2) عظمى','c-center']]:[]}))},
+  {q:'t1b',l:'b',st:[S_('f′(x) = 1 + 8/x^3'),S_('0 = 1 + 8/x^3 ⇒ x^3 + 8 = 0 ⇒ x = −2'),S_('f″(x) = −24/x^4 ⇒ f″(−2) = −24/16 < 0','بما أن f′(−2) = 0 و f″(−2) < 0 ⇐ توجد نهاية عظمى محلية عند x = −2'),S_('f(−2) = −2 − 1 = −3','∴ النهاية العظمى المحلية هي −3')],fig:gf(n=>({x0:-5,x1:3,y0:-9,y1:3,P:[pf(x=>x-4/(x*x))],V:[0],L:n>=2?[[0,-2,-3,'ok']]:[],G:n>=3?[[-2,-3,'(−2 , −3)','c-center']]:[]}))},
+  {q:'t1c',l:'c',st:[S_('f′(x) = 3x^2 − 6x − 9'),S_('0 = 3(x^2 − 2x − 3) ⇔ 0 = 3(x − 3)(x + 1) ⇒ x = 3 , x = −1'),S_('f″(x) = 6x − 6'),S_('f″(3) = 18 − 6 = 12 > 0 ⇒ f(3) = 27 − 27 − 27 = −27','∴ توجد نهاية صغرى محلية هي −27'),S_('f″(−1) = −6 − 6 = −12 < 0 ⇒ f(−1) = 5','∴ توجد نهاية عظمى محلية هي 5')],fig:gf(n=>({x0:-3,x1:5,y0:-32,y1:12,P:[pf(x=>x**3-3*x*x-9*x)],G:[...(n>=3?[[3,-27,'(3 , −27)','c-center']]:[]),...(n>=4?[[-1,5,'(−1 , 5)','c-center']]:[])]}))},
+  {q:'t1d',l:'d',st:[S_('f′(x) = −4(x + 1)^3'),S_('f′(x) = 0 ⇒ 0 = −4(x + 1)^3 ⇒ x = −1'),S_('f″(x) = −12(x + 1)^2 ⇒ f″(−1) = 0','هذه الطريقة لا تصح نعود الى ملاحظة تغير اشارة f′ بجوار x = −1'),S_('+ + + (−1) − − −','f متزايدة في {x : x < −1} ومتناقصة في {x : x > −1}'),S_('f(−1) = 4 − (−1 + 1)^4 = 4','∴ توجد نهاية عظمى محلية هي 4')],fig:sf({l:'',f:x=>4-(x+1)**4,d:x=>-4*(x+1)**3,d2:x=>-12*(x+1)**2,r:[-3,1],y:[-8,6],Z:[-1],U:[]},'f1',3,n=>n>=4?[[-1,4,'(−1 , 4)']]:[])}
+ ],
+ e7:[
+  {q:'t2',l:'2',st:[S_('f′(x) = 2x − a/x^2 ⇒ f″(x) = 2 + 2a/x^3'),S_('f″(1) = 2 + 2a/(1)^3 = 0 ⇒ 2 + 2a = 0 ⇒ a = −1','نقطة انقلاب عند x = 1'),S_('f(x) = x^2 − 1/x ⇒ f′(x) = 2x + 1/x^2'),S_('f′(x) = 0 ⇒ 2x + 1/x^2 = 0 ⇒ 2x^3 = −1 ⇒ x = −∛(1/2)'),S_('f″(x) = 2 − 2/x^3 ⇒ f″(−∛(1/2)) = 2 − 2/(−1/2) = 6 > 0','∴ توجد نهاية صغرى محلية عند x = −∛½ (وهي النقطة الحرجة الوحيدة) ∴ لاتملك f نهاية عظمى محلية')],
+   fig:gf(n=>({x0:-3,x1:3,y0:-4,y1:8,P:[pf(x=>x*x-1/x)],V:[0],G:[...(n>=1?[[1,0,'انقلاب (1 , 0)','c-gen']]:[]),...(n>=4?[[-Math.cbrt(.5),Math.cbrt(.25)+Math.cbrt(2),'صغرى','c-center']]:[])]}))},
+  {q:'t3',l:'3',st:[S_('dy/dx = 3x^2 + 2ax + b'),S_('0 = 3(−1)^2 + 2a(−1) + b ⇒ 0 = 3 − 2a + b ...(1)','للدالة نهاية عظمى محلية عند x = −1 ∴ dy/dx = 0'),S_('0 = 3(2)^2 + 2a(2) + b ⇒ 0 = 12 + 4a + b ...(2)','للدالة نهاية صغرى محلية عند x = 2'),S_('a = −3/2 , b = −6','بحل المعادلتين (1) و (2) آنياً'),S_('y = x^3 − (3/2) x^2 − 6x ⇒ d^2y/dx^2 = 6x − 3 = 0 ⇒ x = 1/2'),S_('f(1/2) = −26/8 = −13/4 ⇒ (1/2 , −13/4)','f مقعرة في {x : x > 1/2} ومحدبة في {x : x < 1/2} ∴ نقطة انقلاب')],
+   fig:gf(n=>({x0:-3,x1:4,y0:-14,y1:8,P:n>=3?[pf(x=>x**3-1.5*x*x-6*x)]:[],G:[...(n>=3?[[-1,3.5,'عظمى','c-center'],[2,-10,'صغرى','c-center']]:[]),...(n>=5?[[.5,-3.25,'انقلاب','c-gen']]:[])],V:[-1,2]}))},
+  {q:'t4',l:'4',st:[S_('f′(x) = 3ax^2 + 2bx , f″(x) = 6ax + 2b','الدالة كثيرة الحدود يتغير تقعرها عند x = 1 فهي تمتلك نقطة انقلاب عند x = 1'),S_('f″(1) = 0 ⇒ 6a + 2b = 0 ⇒ b = −3a ...(1)'),S_('f′(3) = 27a + 6b = −9 ⇒ −3 = 9a + 2b ...(2)','ميل المماس y + 9x = 28 هو −9'),S_('1 = 27a + 9b + c ...(3)','النقطة (3 , 1) تحقق معادلة منحني الدالة'),S_('−3 = 9a + 2(−3a) ⇒ a = −1 ⇒ b = 3','بالتعويض من (1) في (2)'),S_('1 = −27 + 27 + c ⇒ c = 1','f″(x) = −6x + 6: المنحني مقعر في {x : x < 1} ومحدب في {x : x > 1} كما في حل الكتاب')],
+   fig:gf(n=>({x0:-2,x1:4.5,y0:-12,y1:14,P:n>=5?[pf(x=>-(x**3)+3*x*x+1)]:[],L:[[-9,3,1,'c-radius']],G:[[3,1,'(3 , 1)','c-center'],...(n>=5?[[1,3,'انقلاب','c-gen']]:[])]}))},
+  {q:'t5',l:'5',st:[S_('f′(x) = 3ax^2 + 6x , f″(x) = 6ax + 6'),S_('f″(1) = 0 ⇒ 0 = 6a + 6 ⇒ a = −1','عند x = 1 توجد نقطة انقلاب'),S_('f′(x) = −3x^2 + 6x = −3x(x − 2) = 0 ⇒ x = 0 , x = 2','حرجتان'),S_('− − − (0) + + + (2) − − −','∴ f تمتلك نهاية عظمى محلية عند x = 2'),S_('8 = −8 + 12 + c ⇒ c = 4','النقطة (2 , 8) نهاية عظمى محلية وتحقق معادلة منحني الدالة')],
+   fig:gf(n=>({x0:-1.5,x1:3.5,y0:-2,y1:10,P:n>=4?[pf(x=>-(x**3)+3*x*x+4)]:[],G:n>=4?[[2,8,'(2 , 8)','c-center'],[1,6,'انقلاب','c-gen']]:[]}))}
+ ],
+ e8:[
+  {q:'g1',l:'1',st:[S_('R','1) اوسع مجال'),S_('(0 , 0)','2) نقطة التقاطع مع المحورين الإحداثيين'),S_('f(−x) = (−x)^5 = −x^5 = −f(x)','3) المنحني متناظر حول نقطة الاصل'),S_('','4) المحاذيات: لا توجد لأن الدالة ليست نسبية'),S_('f′(x) = 5x^4 ⇒ x = 0','5) f متزايدة في كل من {x : x > 0} , {x : x < 0} و (0 , 0) نقطة حرجة لا تمثل نقطة نهاية'),S_('f″(x) = 20x^3','f محدبة في {x : x < 0} ومقعرة في {x : x > 0} ∴ (0 , 0) نقطة الانقلاب'),S_('(1 , 1) , (−1 , −1) , (2 , 32) , (−2 , −32)','6) الجدول ثم نرسم المنحني')],
+   fig:gf((n,last)=>({x0:-2.2,x1:2.2,y0:-34,y1:34,P:n>=6?[pf(x=>x**5)]:[],G:[...(n>=1?[[0,0,'(0 , 0)','c-center']]:[]),...(n>=6?[[1,1,'',`c-point`],[-1,-1,'','c-point'],[2,32,'(2 , 32)','c-point'],[-2,-32,'(−2 , −32)','c-point']]:[])]}))},
+  {q:'g2',l:'2',st:[S_('R','1) اوسع مجال'),S_('x = 0 ⇒ y = 4 ⇒ (0 , 4)','2) التقاطع مع محور الصادات'),S_('f(−x) = −x^3 − 3x^2 + 4','3) f(x) ≠ f(−x) , f(−x) ≠ −f(x): لا يوجد تناظر مع محور الصادات او نقطة الاصل'),S_('','4) المحاذيات لا توجد لأن الدالة ليست نسبية'),S_('f′(x) = 3x^2 − 6x = 0 ⇒ x = 0 , x = 2','5) + + (0) − − (2) + + : (0 , 4) نقطة نهاية عظمى محلية ، (2 , 0) نقطة نهاية صغرى محلية'),S_('f″(x) = 6x − 6 = 0 ⇒ x = 1 ⇒ (1 , 2)','f محدبة في {x : x < 1} ومقعرة في {x : x > 1} ∴ (1 , 2) نقطة انقلاب'),S_('(3 , 4) , (−1 , 0)','6) الجدول ثم نرسم المنحني')],
+   fig:gf(n=>({x0:-1.8,x1:3.6,y0:-3,y1:6.5,P:n>=6?[pf(x=>x**3-3*x*x+4)]:[],G:[...(n>=1?[[0,4,'(0 , 4)','c-center']]:[]),...(n>=4?[[2,0,'(2 , 0)','c-center']]:[]),...(n>=5?[[1,2,'(1 , 2)','c-gen']]:[]),...(n>=6?[[3,4,'','c-point'],[-1,0,'(−1 , 0)','c-point']]:[])]}))},
+  {q:'g3',l:'3',st:[S_('x + 1 = 0 ⇒ x = −1 ⇒ R − {−1}','1) اوسع مجال للدالة'),S_('','2) بما أن 1 ينتمي الى مجال الدالة لكن (−1) لاينتمي، فالمنحني غير متناظر مع محور الصادات وغير متناظر مع نقطة الاصل'),S_('(0 , −1) , (1/3 , 0)','3) نقطتا التقاطع مع المحورين'),S_('x = −1 , x = (−1 − y)/(y − 3) ⇒ y = 3','4) المستقيم المحاذي الشاقولي x = −1 والمستقيم المحاذي الافقي y = 3'),S_('f′(x) = 4/(x + 1)^2 > 0','5) الدالة متزايدة في {x : x < −1} , {x : x > −1} ولاتوجد نقاط حرجة'),S_('f″(x) = −8/(x + 1)^3','مقعرة في {x : x < −1} ، محدبة في {x : x > −1} ، ولاتمتلك نقطة انقلاب لان (−1) لا ينتمي الى المجال'),S_('','6) نرسم المنحني')],
+   fig:gf(n=>({x0:-7,x1:6,y0:-6,y1:11,V:n>=3?[-1]:[],L:n>=3?[[0,0,3,'c-radius',1]]:[],P:n>=6?[pf(x=>(3*x-1)/(x+1),-7,-1.001),pf(x=>(3*x-1)/(x+1),-.999,6)]:[],G:n>=2?[[0,-1,'(0 , −1)','c-center'],[1/3,0,'(1/3 , 0)','c-center']]:[]}))},
+  {q:'g4',l:'4',st:[S_('R','1) اوسع مجال للدالة'),S_('(0 , 0)','2) عندما x = 0 فإن y = 0 وبالعكس: نقطة التقاطع مع المحورين'),S_('f(−x) = (−x)^2/((−x)^2 + 1) = x^2/(x^2 + 1) = f(x)','3) ∴ المنحني متناظر حول محور الصادات'),S_('x^2 = −y/(y − 1) ⇒ y = 1','4) x² + 1 ≠ 0 لذلك لايوجد محاذي عمودي، والمستقيم المحاذي الافقي y = 1'),S_('f′(x) = 2x/(x^2 + 1)^2','5) متناقصة في {x : x < 0} ، متزايدة في {x : x > 0} ، (0 , 0) نقطة نهاية صغرى محلية'),S_('f″(x) = (2 − 6x^2)/(x^2 + 1)^3 = 0 ⇒ x = ±1/√3','محدبة في {x : x < −1/√3} , {x : x > 1/√3} ، مقعرة في (−1/√3 , 1/√3)'),S_('(1/√3 , 1/4) , (−1/√3 , 1/4)','نقطتا الانقلاب، ثم نرسم المنحني')],
+   fig:gf(n=>({x0:-4,x1:4,y0:-.4,y1:1.4,L:n>=3?[[0,0,1,'c-radius',1]]:[],P:n>=6?[pf(x=>x*x/(x*x+1))]:[],G:[...(n>=1?[[0,0,'(0 , 0)','c-center']]:[]),...(n>=6?[[1/Math.sqrt(3),.25,'','c-gen'],[-1/Math.sqrt(3),.25,'','c-gen']]:[])]}))}
+ ],
+ e9:[
+  {q:'o1',l:'1',st:[S_('f(x) = x + x^2','ليكن العدد = x ، ∴ مربع العدد = x²'),S_('f′(x) = 1 + 2x , f″(x) = 2 > 0'),S_('f′(x) = 0 ⇒ x = −1/2'),S_('f″(−1/2) = 2 > 0','∴ توجد نهاية صغرى محلية عند x = −1/2 ∴ العدد هو (−1/2)')],fig:gf(n=>({x0:-2,x1:1,y0:-.5,y1:2.2,P:[pf(x=>x+x*x)],G:n>=2?[[-.5,-.25,'(−1/2 , −1/4)','c-center']]:[]}))},
+  {q:'o2',l:'2',st:[S_('12 − 2x , 12 − 2x , x','نفرض طول ضلع المربع المقطوع x cm ∴ أبعاد الصندوق (حيث 0 < x < 6)'),S_('v = (12 − 2x)(12 − 2x)(x) = x(144 − 48x + 4x^2)','الحجم = حاصل ضرب أبعاده الثلاثة'),S_('V = 144x − 48x^2 + 4x^3'),S_('dv/dx = 144 − 96x + 12x^2 = 12(6 − x)(2 − x) = 0'),S_('x = 2 , x = 6','النقط الحرجة، لاحظ من الشكل أن 6 يهمل لانه غير معقول'),S_('v = f(2) = 2(12 − 4)^2 = 128 cm^3','عند 2 توجد نهاية عظمى للحجم')],fig:gf(n=>({x0:0,x1:6.2,y0:-10,y1:150,P:[pf(x=>x*(12-2*x)**2,0,6)],G:n>=5?[[2,128,'(2 , 128)','c-center']]:[]}))},
+  {q:'o3',l:'3',st:[S_('x^2 + (h − 12)^2 = 144 ⇒ x^2 = 24h − h^2 ⇒ x = √(24h − h^2)','b = 2x قاعدة المثلث و h ارتفاعه (مبرهنة فيثاغورس)'),S_('A = (1/2)(2x)(h) = hx = h√(24h − h^2)','مساحة المثلث'),S_('A = √(h^2 (24h − h^2)) = √(24h^3 − h^4)','لاحظ المجال 0 ≤ h ≤ 24 ، h موجبة فيمكن توحيد الجذر'),S_('dA/dh = (72h^2 − 4h^3)/(2√(24h^3 − h^4))','المشتقة'),S_('72h^2 − 4h^3 = 0 ⇒ 4h^2 (18 − h) = 0 ⇒ h = 18 cm'),S_('x = √(18(24 − 18)) = 6√3 ⇒ b = 2x = 12√3 cm','طول القاعدة'),S_('A<sub>2</sub>/A<sub>1</sub> = 108√3/(144π) = 3√3/(4π)','مساحة الدائرة 144π ومساحة المثلث 108√3')],
+   fig:(lab,n)=>{ const G=drawG(lab,{x0:-14,x1:14,y0:-13,y1:13,eq:1,I:[{F:(x,y)=>x*x+y*y-144,col:'c-radius'}]}), pen=lab.pen, hh=n>=4?18:14, xx=Math.sqrt(24*hh-hh*hh), yb=12-hh;
+     pen.path([[G.X(0),G.Y(12)],[G.X(-xx),G.Y(yb)],[G.X(xx),G.Y(yb)],[G.X(0),G.Y(12)]],{color:COL['c-center'],w:2}); pen.line(G.X(0),G.Y(12),G.X(0),G.Y(yb),{color:COL['c-std'],w:1.4,dash:[5,4],passes:1}); pen.text('h',G.X(0)+8,G.Y((12+yb)/2),{size:13,wt:700,color:COL['c-std'],al:'left'}); pen.text('x',G.X(xx/2),G.Y(yb)+12,{size:13,wt:700,color:COL['c-center']}); }},
+  {q:'o4',l:'4',st:[S_('tr/cq = ba/bp ⇒ y/24 = (18 − x)/18','نفرض بعدي المستطيل x , y cm ، والمثلثان btr , bcq متشابهان'),S_('y = (24/18)(18 − x) ⇒ y = (4/3)(18 − x)'),S_('A = xy = x (4/3)(18 − x) = (4/3)(18x − x^2)','الدالة: مساحة المستطيل بدلالة متغير واحد'),S_('f′(x) = (4/3)(18 − 2x) = 0 ⇒ x = 9','نجد النقط الحرجة'),S_('f″(x) = (4/3)(−2) = −8/3 ⇒ f″(9) < 0','لدالة المساحة نهاية عظمى محلية عند x = 9 cm'),S_('y = (4/3)(18 − 9) = 12 cm','البعد الآخر')],fig:(lab,n)=>{ const {pen,W,H}=lab, s=Math.min(W*.85/24,H*.8/18), ox=W*.07, oy=H*.9, X=u=>ox+u*s, Y=v=>oy-v*s, x=n>=4?9:6, xl=x/3, xr=24-x;
+     pen.path([[X(0),Y(0)],[X(24),Y(0)],[X(6),Y(18)],[X(0),Y(0)]],{w:1.6}); pen.hatch(c=>c.rect(X(xl),Y(x),(xr-xl)*s,x*s),COL['c-center'],6,.3); pen.path([[X(xl),Y(0)],[X(xr),Y(0)],[X(xr),Y(x)],[X(xl),Y(x)],[X(xl),Y(0)]],{color:COL['c-center'],w:2});
+     [['b',6,18,0,-12],['c',0,0,-8,10],['q',24,0,8,10],['t',xl,x,-10,0],['r',xr,x,10,0],['p',6,0,0,12],['a',6,x,6,-10]].forEach(([l,u,v,dx,dy])=>pen.text(l,X(u)+dx,Y(v)+dy,{size:13,wt:700}));
+     pen.line(X(6),Y(18),X(6),Y(0),{w:1,dash:[4,4],passes:1,color:COL.muted}); pen.text('x',X(xr)+8,Y(x/2),{size:13,wt:700,color:COL['c-center'],al:'left'}); pen.text('y',X((xl+xr)/2),Y(0)+14,{size:13,wt:700,color:COL['c-center']}); }},
+  {q:'o5',l:'5',st:[S_('60 = 4x + 2πr ⇒ r = (1/π)(30 − 2x)','r نصف قطر الدائرة و x طول ضلع المربع؛ محيط المربع + محيط الدائرة = 60'),S_('A = x^2 + π[(1/π)(30 − 2x)]^2 = x^2 + (1/π)(900 − 120x + 4x^2)','الدالة: مساحة الدائرة + مساحة المربع'),S_('f′(x) = 2x + (1/π)(−120 + 8x) = 0','نشتق ونساوي بالصفر'),S_('0 = πx + 4x − 60 ⇒ x(π + 4) = 60 ⇒ x = 60/(π + 4) cm'),S_('r = (1/π)(30 − 120/(π + 4)) = 30/(π + 4) cm ⇒ x = 2r','طول قطر الدائرة يساوي طول ضلع المربع'),S_('f″(x) = 2 + (1/π)(8) > 0','الدالة تمتلك نهاية صغرى محلية (و.هـ.م)')],fig:gf(n=>({x0:0,x1:15.5,y0:0,y1:300,P:[pf(x=>x*x+(30-2*x)**2/Math.PI,0,15)],G:n>=3?[[60/(Math.PI+4),(60/(Math.PI+4))**2+(30-120/(Math.PI+4))**2/Math.PI,'x = 60/(π + 4)','c-center']]:[]}))},
+  {q:'o6',l:'6',st:[S_('x^2 = y^2 − 3 ...(1)','نفرض p(x , y) من نقط المنحني فتحقق معادلته'),S_('s = √((x − 0)^2 + (y − 4)^2) = √(x^2 + y^2 − 8y + 16) ...(2)'),S_('s = f(y) = √(2y^2 − 8y + 13)','بالتعويض من المعادلة 1 في 2'),S_('f′(y) = (4y − 8)/(2√(2y^2 − 8y + 13)) = 0 ⇒ y = 2'),S_('x^2 = 4 − 3 = 1 ⇒ x = ±1 ⇒ (1 , 2) , (−1 , 2)')],
+   fig:(lab,n)=>{ const G=drawG(lab,{x0:-5,x1:5,y0:-4.5,y1:5.5,eq:1,I:[{F:(x,y)=>y*y-x*x-3}],G:[[0,4,'(0 , 4)','c-radius'],...(n>=4?[[1,2,'(1 , 2)','c-center'],[-1,2,'(−1 , 2)','c-center']]:[])]}); if(n>=4){ lab.pen.line(G.X(0),G.Y(4),G.X(1),G.Y(2),{color:COL['c-point'],w:1.6,dash:[5,4],passes:1}); lab.pen.line(G.X(0),G.Y(4),G.X(-1),G.Y(2),{color:COL['c-point'],w:1.6,dash:[5,4],passes:1}); } }}
+ ]};
+/* approximation examples reuse the approximation drawing */
+function apxFig(lab,k){ const P=APX[k], a=P.a, h=P.h, pen=lab.pen, w=Math.max(Math.abs(h)*8,P.hm*.5); const x0=Math.max(0,a-w), x1=a+w; let lo=1e9, hi=-1e9;
+  for(let i=0;i<=60;i++){ const y=P.f(x0+(x1-x0)*i/60); lo=Math.min(lo,y); hi=Math.max(hi,y); } const pad=(hi-lo)*.15||1, G=axesN(lab,x0,x1,lo-pad,hi+pad);
+  plotN(lab,G,P.f,x0,x1,{color:COL['c-std']}); lineM(lab,G,P.d(a),a,P.f(a),{color:COL['c-point'],w:1.8}); pen.dot(G.X(a),G.Y(P.f(a)),5,COL['c-center']); pen.text('a = '+P.A,G.X(a),G.Y(P.f(a))-16,{size:12,wt:700,color:COL['c-center']});
+  pen.dot(G.X(a+h),G.Y(P.f(a)+h*P.d(a)),4,COL['c-point']); }
+class ExLab extends Lab{
+  constructor(p){ super(p); this.L=EXD[p.dataset.set]; this.k=0; this.n=0;
+    $('.esel',p).innerHTML='<span class="lbl">مثال:</span>'+this.L.map((E,i)=>`<button type="button" class="chip" data-e="${i}" data-q="${E.q}"><bdi dir="ltr">${E.l}</bdi></button>`).join('');
+    $$('[data-e]',p).forEach(b=>b.onclick=()=>this.pick(+b.dataset.e));
+    $('[data-nx]',p).onclick=()=>{ this.n=Math.min(this.L[this.k].st.length-1,this.n+1); this.upd(); };
+    $('[data-pv]',p).onclick=()=>{ this.n=Math.max(0,this.n-1); this.upd(); };
+    $('[data-all]',p).onclick=()=>{ this.n=this.L[this.k].st.length-1; this.upd(); };
+    this.pick(0); }
+  pick(k){ this.k=k; this.n=0; chipOn(this.page,'data-e',k); this.showEx(this.L[k].q); this.upd(); }
+  upd(){ const E=this.L[this.k], last=this.n===E.st.length-1;
+    let s=E.st.slice(0,this.n+1).map((S,i)=>`<div class="row st${i===this.n?' cur':''}"><span class="sn">${N(i+1)}</span><div>${S.m?M(S.m,'blk'):''}${S.w?`<small>${S.w}</small>`:''}</div></div>`).join('');
+    s+=row(`<span class="k">الخطوة ${N(this.n+1)} من ${N(E.st.length)}</span>${last?' '+ok('اكتمل الحل'):''}`);
+    this.ro(s); const ro=$('.ro',this.page); ro.scrollTop=ro.scrollHeight; this.kick(); }
+  draw(){ if(!this.W) return; this.clear(); const E=this.L[this.k], last=this.n===E.st.length-1;
+    if(E.fig) E.fig(this,this.n,last); else if(E.k!==undefined) apxFig(this,E.k); }
+}
+
+/* ---- exercises: check your solution ---- */
+const R_=(...t)=>t.map(s=>row(M(s,'blk'))).join('');
+const OK=s=>row(ok(M(s)));
+const OKT=(s,t)=>row(ok(M(s)+(t?' '+t:'')));
+const fD=(f,a,b,col)=>({f,a,b,col});
+const tick=lab=>lab.pen.text('✓',lab.W/2,lab.H/2,{size:Math.min(lab.W,lab.H)*.3,color:COL.ok,halo:false,it:false});
+/* graph exercise: rows of features + drawing */
+const GX=(f,o)=>()=>({rows:o.rows,g:{x0:o.r[0],x1:o.r[1],y0:o.y[0],y1:o.y[1],P:(o.br||[[o.r[0],o.r[1]]]).map(([a,b])=>fD(f,a,b,'c-center')),V:o.V||[],L:(o.H||[]).map(h=>[0,0,h,'c-radius',1]),G:o.pts||[]}});
+const EX3={
+ A:[
+  ['1','1','eA1',()=>({rows:R_('x^2 + y^2 = L^2 ⇒ 2x dx/dt + 2y dy/dt = 0','dy/dt = −(x/y) dx/dt = −cot θ . dx/dt','θ = π/3 ⇒ dy/dt = −(1/√3)(2)')+OKT('dy/dt = −2/√3 m / s ≈ −1.155','(لا يعتمد على طول السلم)'),fig:lab=>figLadder(lab,5,{xv:'',yv:'',arrows:true,vx:2,vy:-2/Math.sqrt(3)})})],
+  ['2','2','eA2',()=>({rows:R_('s/(x + s) = 1.8/7.2','7.2s = 1.8s + 1.8x ⇒ 5.4s = 1.8x ⇒ s = x/3','ds/dt = (1/3) dx/dt = (1/3)(30)')+OK('ds/dt = 10 m / min'),fig:lab=>figLamp(lab,{x:12})})],
+  ['3','3','eA3',()=>({rows:R_('S^2 = x^2 + (y − 3/2)^2 = y + (y − 3/2)^2','2S dS/dt = (2y − 2) dy/dt ⇒ dS/dt = ((y − 1)/S) dy/dt','(y − 1)/S = 2/3 ⇒ 9(y − 1)^2 = 4S^2 ⇒ 5y^2 − 10y = 0')+TX(`${M('y = 0')} تعطي ${M('−2/3')} فتهمل، اذن ${M('y = 2 , x^2 = 2')}`)+OK('M(√2 , 2) , M(−√2 , 2)'),g:{x0:-3,x1:3,y0:-.5,y1:4,eq:1,P:[fD(x=>x*x)],G:[[0,1.5,'(0 , 3/2)','c-radius'],[Math.SQRT2,2,'(√2 , 2)','c-center'],[-Math.SQRT2,2,'(−√2 , 2)','c-center']]}})],
+  ['4','4','eA4',()=>({rows:R_('2x dx/dt + 2y dy/dt + 4 dx/dt − 8 dy/dt = 0','dx/dt = dy/dt ⇒ 2x + 2y + 4 − 8 = 0 ⇒ y = 2 − x','x^2 + (2 − x)^2 + 4x − 8(2 − x) = 108 ⇒ x^2 + 4x − 60 = 0')+OK('(6 , −4) , (−10 , 12)'),g:{x0:-15,x1:11,y0:-9,y1:17,eq:1,I:[{F:(x,y)=>x*x+y*y+4*x-8*y-108}],L:[[-1,0,2,'c-radius',1]],G:[[6,-4,'(6 , −4)','c-center'],[-10,12,'(−10 , 12)','c-center']]}})],
+  ['5','5','eA5',()=>({rows:R_('V = x^2 h ⇒ dV/dt = 2xh dx/dt + x^2 dh/dt','= 2(4)(3)(0.3) + (16)(−0.5) = 7.2 − 8')+OKT('dV/dt = −0.8 cm^3 / s','(الحجم يتناقص)'),fig:lab=>{ const {pen,W,H}=lab, s=Math.min(W*.5/6,H*.6/5); boxW(pen,obl(W*.3,H*.8,s),4,4,3,{color:COL['c-center']}); pen.text('4',W*.3+2*s,H*.8+14,{size:13,wt:700}); pen.text('3',W*.3-12,H*.8-1.5*s,{size:13,wt:700}); }})]
+ ],
+ B:[
+  ['1a','1a','eB1',()=>({rows:R_('f(−3) = 0 = f(3)','f′(c) = 3c^2 − 9 = 0')+OK('c = ±√3'),g:{x0:-3.5,x1:3.5,y0:-12,y1:12,P:[fD(x=>x**3-9*x,-3,3)],L:[[0,Math.sqrt(3),-6*Math.sqrt(3),'ok'],[0,-Math.sqrt(3),6*Math.sqrt(3),'ok']],C:[[Math.sqrt(3),-6*Math.sqrt(3)],[-Math.sqrt(3),6*Math.sqrt(3)]]}})],
+  ['1b','1b','eB1',()=>({rows:R_('f(1/2) = 1 + 4 = 5 = f(2)','f′(c) = 2 − 2/c^2 = 0 ⇒ c = ±1')+OKT('c = 1','(−1 ∉ (1/2 , 2))'),g:{x0:0,x1:2.5,y0:3,y1:6,P:[fD(x=>2*x+2/x,.5,2)],L:[[0,1,4,'ok']],C:[[1,4]]}})],
+  ['1c','1c','eB1',()=>({rows:R_('f(−1) = 4 = f(1)','f′(c) = 4c(c^2 − 3) = 0 ⇒ c = 0 , ±√3')+OKT('c = 0','(±√3 ∉ (−1 , 1))'),g:{x0:-1.5,x1:1.5,y0:3,y1:10,P:[fD(x=>(x*x-3)**2,-1,1)],L:[[0,0,9,'ok']],C:[[0,9]]}})],
+  ['2a','2a','eB2',()=>({rows:R_('f(x) = √x + ∛x , a = 64 , h = −1','f(64) = 8 + 4 = 12','f′(x) = 1/(2√x) + 1/(3∛(x^2)) ⇒ f′(64) = 1/16 + 1/48 = 1/12')+OK('√63 + ∛63 ≅ 12 − 1/12 ≈ 11.917'),fig:lab=>tick(lab)})],
+  ['2b','2b','eB2',()=>({rows:R_('f(x) = x^3 + 3x^4 , a = 1 , h = 0.04','f(1) = 4 , f′(x) = 3x^2 + 12x^3 ⇒ f′(1) = 15')+OK('≅ 4 + (0.04)(15) = 4.6'),fig:lab=>tick(lab)})],
+  ['2c','2c','eB2',()=>({rows:R_('f(x) = x<sup>−1/3</sup> , a = 8 , h = 1','f(8) = 1/2 , f′(x) = −(1/3) x<sup>−4/3</sup> ⇒ f′(8) = −1/48')+OK('1/∛9 ≅ 1/2 − 1/48 ≈ 0.479'),fig:lab=>tick(lab)})],
+  ['2d','2d','eB2',()=>({rows:R_('f(x) = 1/x , a = 100 , h = 1','f(100) = 0.01 , f′(x) = −1/x^2 ⇒ f′(100) = −0.0001')+OK('1/101 ≅ 0.01 − 0.0001 = 0.0099'),fig:lab=>tick(lab)})],
+  ['2e','2e','eB2',()=>({rows:R_('f(x) = √x , a = 0.49 , h = 0.01','f(0.49) = 0.7 , f′(0.49) = 1/(2(0.7)) = 1/1.4')+OK('√(1/2) ≅ 0.7 + (0.01)/1.4 ≈ 0.7071'),fig:lab=>tick(lab)})],
+  ['3','3','eB3',()=>({rows:R_('V(r) = (4/3) π r^3 , a = 6 , h = 0.1','V′(r) = 4π r^2 ⇒ V′(6) = 144π')+OK('hV′(6) = 14.4π ≈ 45.24 cm^3'),fig:lab=>tick(lab)})],
+  ['4','4','eB4',()=>({rows:R_('(4/3) π r^3 = 84π ⇒ r^3 = 63 ⇒ r = ∛63','f(x) = ∛x , a = 64 , h = −1 , f(64) = 4 , f′(64) = 1/48')+OK('r ≅ 4 − 1/48 ≈ 3.979 cm'),fig:lab=>tick(lab)})],
+  ['5','5','eB5',()=>({rows:R_('r = h/2 ⇒ V = (1/3) π (h/2)^2 h = (π/12) h^3','b = 2.98 , a = 3 , V(3) = 9π/4 , V′(h) = (π/4) h^2 ⇒ V′(3) = 9π/4','V ≅ 9π/4 + (−0.02)(9π/4)')+OK('V ≅ 2.205π ≈ 6.93 cm^3'),fig:lab=>tick(lab)})]
+ ],
+ B2:[
+  ['6a','6a','eB6',()=>({rows:TX('كثيرة الحدود: مستمرة وقابلة للاشتقاق')+R_('f(−1) = 16 = f(3)','f′(c) = 4(c − 1)^3 = 0')+OK('c = 1'),g:{x0:-1.5,x1:3.5,y0:-1,y1:18,P:[fD(x=>(x-1)**4,-1,3)],L:[[0,1,0,'ok']],C:[[1,0]]}})],
+  ['6b','6b','eB6',()=>({rows:R_('h(−1) = 0 = h(1)','h′(c) = 3c^2 − 1 = 0')+OK('c = ±1/√3'),g:{x0:-1.4,x1:1.4,y0:-.6,y1:.6,P:[fD(x=>x**3-x,-1,1)],L:[[0,1/Math.sqrt(3),-2/(3*Math.sqrt(3)),'ok'],[0,-1/Math.sqrt(3),2/(3*Math.sqrt(3)),'ok']]}})],
+  ['6c','6c','eB6',()=>({rows:R_('g(−1) = 4 = g(4)','g′(c) = 2c − 3 = 0')+OK('c = 3/2'),g:{x0:-1.5,x1:4.5,y0:-3,y1:5,P:[fD(x=>x*x-3*x,-1,4)],L:[[0,1.5,-2.25,'ok']],C:[[1.5,-2.25]]}})],
+  ['6d','6d','eB6',()=>({rows:R_('f(0) = 1 + 2 = 3 = f(2π)','f′(c) = −2 sin 2c − 2 sin c = −2 sin c (2 cos c + 1) = 0','sin c = 0 ⇒ c = π , cos c = −1/2 ⇒ c = 2π/3 , 4π/3')+OK('c = 2π/3 , π , 4π/3'),g:{x0:-.3,x1:6.6,y0:-2,y1:3.5,P:[fD(x=>Math.cos(2*x)+2*Math.cos(x),0,2*Math.PI)],L:[[0,Math.PI,-1,'ok'],[0,2*Math.PI/3,-1.5,'ok']],C:[[2*Math.PI/3,-1.5],[Math.PI,-1],[4*Math.PI/3,-1.5]]}})],
+  ['7a','7a','eB7',()=>({rows:TX('مستمرة وقابلة للاشتقاق لأنها كثيرة الحدود')+R_('(f(2) − f(−1))/(2 + 1) = (5 − (−1))/3 = 2','3c^2 − 1 = 2 ⇒ c = ±1')+OKT('c = 1','(−1 ∉ (−1 , 2))'),g:{x0:-1.5,x1:2.5,y0:-2.5,y1:6,P:[fD(x=>x**3-x-1,-1,2)],L:[[2,-1,-1,'c-radius',1],[2,1,-1,'ok']],C:[[1,-1]]}})],
+  ['7b','7b','eB7',()=>({rows:TX('مستمرة وقابلة للاشتقاق لأنها كثيرة الحدود')+R_('(h(5) − h(−1))/(5 + 1) = (10 − 10)/6 = 0','2c − 4 = 0')+OK('c = 2'),g:{x0:-1.5,x1:5.5,y0:-1,y1:11,P:[fD(x=>x*x-4*x+5,-1,5)],L:[[0,0,10,'c-radius',1],[0,2,1,'ok']],C:[[2,1]]}})],
+  ['7c','7c','eB7',()=>({rows:TX(`مستمرة وقابلة للاشتقاق لأن ${M('−2 ∉ [−1 , 2]')}`)+R_('(g(2) − g(−1))/(2 + 1) = (1 − 4)/3 = −1','−4/(c + 2)^2 = −1 ⇒ (c + 2)^2 = 4')+OKT('c = 0','(c = −4 تهمل)'),g:{x0:-1.5,x1:2.5,y0:0,y1:5,P:[fD(x=>4/(x+2),-1,2)],L:[[-1,-1,4,'c-radius',1],[-1,0,2,'ok']],C:[[0,2]]}})],
+  ['7d','7d','eB7',()=>({rows:R_('B′(x) = (2/3)(x + 1)<sup>−1/3</sup> = 2/(3∛(x + 1))')+row(bad(`${M('B′(−1)')} غير معرفة و ${M('−1 ∈ (−2 , 7)')} ⇒ لا تتحقق المبرهنة`)),g:{x0:-2.5,x1:7.5,y0:-.5,y1:4.5,P:[fD(x=>Math.cbrt((x+1)**2),-2,7)],C:[[-1,0]]}})]
+ ],
+ C:[
+  ['1','1','eC1',()=>({rows:R_('f′(x) = 2ax − 6 , f″(x) = 2a')+TX(`محدبة ⇔ ${M('2a < 0')} ، مقعرة ⇔ ${M('2a > 0')}`)+OKT('a = −4','(محدبة)')+OKT('a = 8','(مقعرة)'),g:{x0:-2,x1:2,y0:-10,y1:10,P:[fD(x=>-4*x*x-6*x),fD(x=>8*x*x-6*x,undefined,undefined,'c-gen')]}})],
+  ['2','2','eC2',()=>({rows:R_('f′(x) = −4(x − b)^3 , f′(2) = 0 ⇒ b = 2','f(2) = a − 0 = 6 ⇒ a = 6','+ + + (2) − − −')+OKT('a = 6 , b = 2','نهاية عظمى محلية'),g:{x0:0,x1:4,y0:0,y1:7,P:[fD(x=>6-(x-2)**4)],L:[[0,2,6,'ok']],G:[[2,6,'(2 , 6)']]}})],
+  ['3','3','eC3',()=>({rows:R_('f(1) = a + b + c = −11','f′(1) = 3a + 2b + c = g′(1) = −12','f″(1) = 6a + 2b = 0 ⇒ b = −3a')+OK('a = 1 , b = −3 , c = −9'),g:{x0:-2,x1:4,y0:-30,y1:10,P:[fD(x=>x**3-3*x*x-9*x)],L:[[-12,1,-11,'c-radius']],G:[[1,-11,'(1 , −11)','c-gen']]}})],
+  ['4','4','eC4',()=>({rows:R_('f′(x) = 6x − 3x^2 = 3x(2 − x) , f″(x) = 6 − 6x','f″(0) = 6 > 0 ⇒ f(0) = c = 6','f″(x) = 0 ⇒ x = 1 , f(1) = 8 , f′(1) = 3')+OK('c = 6 , y − 8 = 3(x − 1) ⇒ y = 3x + 5'),g:{x0:-1.5,x1:3.5,y0:2,y1:13,P:[fD(x=>3*x*x-x**3+6)],L:[[3,1,8,'c-radius']],G:[[0,6,'(0 , 6)'],[1,8,'(1 , 8)','c-gen']]}})],
+  ['5','5','eC5',()=>({rows:R_('f″(1) = 6a + 2b = 0 ⇒ b = −3a','f′(−1) = 3a − 2b + c = 0 ⇒ c = −9a','f(−1) = −a + b − c = 5 ⇒ 5a = 5')+OK('a = 1 , b = −3 , c = −9'),g:{x0:-2.5,x1:4,y0:-30,y1:10,P:[fD(x=>x**3-3*x*x-9*x)],G:[[-1,5,'(−1 , 5)'],[1,-11,'انقلاب','c-gen']]}})],
+  ['6','6','eC6',()=>({rows:R_('f′(x) = 2x + a/x^2 = 0 ⇒ x^3 = −a/2','f″(x) = 2 − 2a/x^3 = 2 − 2a/(−a/2) = 2 + 4 = 6 > 0')+row(ok('النقطة الحرجة الوحيدة نهاية صغرى محلية ⇐ لا توجد نهاية عظمى محلية')),g:{x0:-3,x1:3,y0:-4,y1:8,P:[fD(x=>x*x-2/x),fD(x=>x*x+2/x,undefined,undefined,'c-gen')],V:[0]}})],
+  ['7','7','eC7',()=>({rows:R_('3x − y = 7 ⇒ m = 3 ⇒ f′(2) = 4a + b = 3','f′(1/2) = a + b = 0 ⇒ a = 1 , b = −1','f(2) = 4 − 2 + c = −1 ⇒ c = −3','f″ = 2a = 2 > 0')+OKT('a = 1 , b = −1 , c = −3','نهاية صغرى محلية عند (1/2 , −13/4)'),g:{x0:-2,x1:3.5,y0:-4,y1:6,P:[fD(x=>x*x-x-3)],L:[[3,2,-1,'c-radius']],G:[[2,-1,'(2 , −1)','c-radius'],[.5,-3.25,'صغرى','c-center']]}})]
+ ],
+ D:[
+  ['1','1','eD1',GX(x=>10-3*x-x*x,{r:[-6,3],y:[-6,14],pts:[[0,10,'(0 , 10)'],[-5,0,'(−5 , 0)'],[2,0,'(2 , 0)'],[-1.5,12.25,'(−3/2 , 49/4)','c-point']],rows:R_('f′(x) = −3 − 2x = 0 ⇒ x = −3/2','f″(x) = −2 < 0 : محدبة')+OK('عظمى (−3/2 , 49/4) , (−5 , 0) , (2 , 0) , (0 , 10)')})],
+  ['2','2','eD2',GX(x=>x*x+4*x+3,{r:[-5,1],y:[-2,8],pts:[[0,3,'(0 , 3)'],[-3,0,'(−3 , 0)'],[-1,0,'(−1 , 0)'],[-2,-1,'(−2 , −1)','c-point']],rows:R_('f′(x) = 2x + 4 = 0 ⇒ x = −2','f″(x) = 2 > 0 : مقعرة')+OK('صغرى (−2 , −1) , (−3 , 0) , (−1 , 0) , (0 , 3)')})],
+  ['3','3','eD3',GX(x=>(1-x)**3+1,{r:[-1,3],y:[-6,9],pts:[[0,2,'(0 , 2)'],[2,0,'(2 , 0)'],[1,1,'(1 , 1)','c-gen']],rows:R_('f′(x) = −3(1 − x)^2 ≤ 0 : متناقصة','f″(x) = 6(1 − x) : مقعرة x < 1 , محدبة x > 1')+OK('انقلاب (1 , 1) , (0 , 2) , (2 , 0)')})],
+  ['4','4','eD4',GX(x=>6*x-x**3,{r:[-3.2,3.2],y:[-9,9],pts:[[0,0,'(0 , 0)','c-gen'],[Math.SQRT2,4*Math.SQRT2,'(√2 , 4√2)','c-point'],[-Math.SQRT2,-4*Math.SQRT2,'(−√2 , −4√2)','c-point'],[Math.sqrt(6),0,'√6'],[-Math.sqrt(6),0,'−√6']],rows:R_('f(−x) = −f(x) : متناظر حول نقطة الاصل','f′(x) = 6 − 3x^2 = 0 ⇒ x = ±√2','f″(x) = −6x')+OK('عظمى (√2 , 4√2) , صغرى (−√2 , −4√2) , انقلاب (0 , 0)')})],
+  ['5','5','eD5',GX(x=>1/x,{r:[-4,4],y:[-4,4],br:[[-4,-.01],[.01,4]],V:[0],H:[0],rows:R_('D = R − {0} , f(−x) = −f(x)','x = 0 محاذي عمودي , y = 0 محاذي افقي','f′(x) = −1/x^2 < 0 , f″(x) = 2/x^3')+OK('متناقصة , محدبة x < 0 , مقعرة x > 0 , لا نهايات ولا انقلاب')})],
+  ['6','6','eD6',GX(x=>(x-1)/(x+1),{r:[-6,5],y:[-5,7],br:[[-6,-1.01],[-.99,5]],V:[-1],H:[1],pts:[[0,-1,'(0 , −1)'],[1,0,'(1 , 0)']],rows:R_('D = R − {−1} , x = −1 , y = 1','f′(x) = 2/(x + 1)^2 > 0 : متزايدة','f″(x) = −4/(x + 1)^3')+OK('مقعرة x < −1 , محدبة x > −1 , (0 , −1) , (1 , 0)')})],
+  ['7','7','eD7',GX(x=>(x+2)*(x-1)**2,{r:[-3,2.5],y:[-3,7],pts:[[-1,4,'(−1 , 4)','c-point'],[1,0,'(1 , 0)','c-point'],[0,2,'(0 , 2)','c-gen'],[-2,0,'(−2 , 0)']],rows:R_('f′(x) = 3(x − 1)(x + 1) = 0 ⇒ x = ±1','f″(x) = 6x = 0 ⇒ x = 0')+OK('عظمى (−1 , 4) , صغرى (1 , 0) , انقلاب (0 , 2)')})],
+  ['8','8','eD8',GX(x=>(x*x-1)/(x*x+1),{r:[-5,5],y:[-1.4,1.4],H:[1],pts:[[0,-1,'(0 , −1)','c-point'],[1,0,'(1 , 0)'],[-1,0,'(−1 , 0)'],[1/Math.sqrt(3),-.5,'','c-gen'],[-1/Math.sqrt(3),-.5,'','c-gen']],rows:R_('f(−x) = f(x) , y = 1 محاذي افقي','f′(x) = 4x/(x^2 + 1)^2 , f″(x) = −4(3x^2 − 1)/(x^2 + 1)^3')+OK('صغرى (0 , −1) , انقلاب (±1/√3 , −1/2)')})],
+  ['9','9','eD9',GX(x=>2*x*x-x**4,{r:[-1.8,1.8],y:[-2,1.6],pts:[[1,1,'(1 , 1)','c-point'],[-1,1,'(−1 , 1)','c-point'],[0,0,'(0 , 0)','c-point'],[1/Math.sqrt(3),5/9,'','c-gen'],[-1/Math.sqrt(3),5/9,'','c-gen']],rows:R_('f(−x) = f(x) , f′(x) = 4x − 4x^3 = 4x(1 − x)(1 + x)','f″(x) = 4 − 12x^2 = 0 ⇒ x = ±1/√3')+OK('عظمى (±1 , 1) , صغرى (0 , 0) , انقلاب (±1/√3 , 5/9)')})],
+  ['10','10','eD10',GX(x=>6/(x*x+3),{r:[-5,5],y:[-.4,2.6],H:[0],pts:[[0,2,'(0 , 2)','c-point'],[1,1.5,'(1 , 3/2)','c-gen'],[-1,1.5,'(−1 , 3/2)','c-gen']],rows:R_('f(−x) = f(x) , y = 0 محاذي افقي','f′(x) = −12x/(x^2 + 3)^2 , f″(x) = 36(x^2 − 1)/(x^2 + 3)^3')+OK('عظمى (0 , 2) , انقلاب (±1 , 3/2)')})]
+ ],
+ E:[
+  ['1','1','eE1',()=>({rows:R_('x + y = 75 , P = x y^2 = (75 − y) y^2','P′ = 150y − 3y^2 = 0 ⇒ y = 50','P″(50) = 150 − 300 < 0')+OK('25 , 50'),g:{x0:0,x1:75,y0:-5000,y1:70000,P:[fD(y=>(75-y)*y*y,0,75)],G:[[50,62500,'y = 50']]}})],
+  ['2','2','eE2',()=>({rows:R_('r^2 + (h/2)^2 = (4√3)^2 = 48','V = π (48 − h^2/4) h ⇒ V′ = π (48 − 3h^2/4) = 0 ⇒ h^2 = 64')+OK('h = 8 cm'),g:{x0:0,x1:14,y0:-40,y1:900,P:[fD(h=>Math.PI*(48-h*h/4)*h,0,8*Math.sqrt(3))],G:[[8,256*Math.PI,'h = 8']]}})],
+  ['3','3','eE3',()=>({rows:R_('x^2 + y^2 = 32 , A = 2xy = 2x √(32 − x^2)','A′ = 0 ⇒ 32 − 2x^2 = 0 ⇒ x = 4 , y = 4')+OK('8 cm , 4 cm'),g:{x0:-6.5,x1:6.5,y0:-.8,y1:6.5,eq:1,P:[fD(x=>Math.sqrt(32-x*x),-Math.sqrt(32),Math.sqrt(32))],G:[[4,4,'(4 , 4)'],[-4,4,'']]}})],
+  ['4','4','eE4',()=>({rows:TX(`القاعدة ${M('2x')} والارتفاع ${M('h = √(128 − x^2)')}`)+R_('A = x √(128 − x^2) = √(128x^2 − x^4)','A′ = 0 ⇒ 256x − 4x^3 = 0 ⇒ x = 8 , h = 8')+OK('A = 64 cm^2'),fig:lab=>tick(lab)})],
+  ['5','5','eE5',()=>({rows:R_('xy = 16 , P = 2x + 2(16/x)','P′ = 2 − 32/x^2 = 0 ⇒ x = 4 , P″ > 0')+OKT('P = 16 cm','(مربع طول ضلعه 4)'),g:{x0:0,x1:12,y0:0,y1:40,P:[fD(x=>2*x+32/x,.5,12)],G:[[4,16,'(4 , 16)']]}})],
+  ['6','6','eE6',()=>({rows:R_('r^2 = 3^2 − (h − 3)^2 = 6h − h^2','V = (1/3) π (6h − h^2) h ⇒ V′ = (1/3) π (12h − 3h^2) = 0 ⇒ h = 4','r^2 = 8')+OK('V = (1/3) π (8)(4) = 32π/3 cm^3'),g:{x0:0,x1:6.3,y0:-2,y1:36,P:[fD(h=>Math.PI/3*(6*h-h*h)*h,0,6)],G:[[4,32*Math.PI/3,'h = 4']]}})]
+ ],
+ E2:[
+  ['7','7','eE7',()=>({rows:R_('x/a + y/b = 1 , 6/a + 8/b = 1 ⇒ b = 8a/(a − 6)','A = (1/2) ab = 4a^2/(a − 6) ⇒ A′ = 0 ⇒ a = 12 , b = 16')+OK('x/12 + y/16 = 1 ⇒ 4x + 3y = 48'),g:{x0:-1,x1:14,y0:-1,y1:18,eq:1,L:[[-4/3,0,16,'c-center']],G:[[6,8,'(6 , 8)','c-point'],[12,0,'12'],[0,16,'16']]}})],
+  ['8','8','eE8',()=>({rows:R_('A = 2x (12 − x^2) = 24x − 2x^3','A′ = 24 − 6x^2 = 0 ⇒ x = 2 ⇒ 2x = 4 , y = 8')+OK('4 , 8 ; المحيط = 2(4 + 8) = 24'),fig:lab=>{ const G=drawG(lab,{x0:-4,x1:4,y0:-1,y1:13,P:[fD(x=>12-x*x,-Math.sqrt(12),Math.sqrt(12))]}); lab.pen.path([[G.X(-2),G.Y(0)],[G.X(2),G.Y(0)],[G.X(2),G.Y(8)],[G.X(-2),G.Y(8)],[G.X(-2),G.Y(0)]],{color:COL['c-point'],w:2}); }})],
+  ['9','9','eE9',()=>({rows:R_('H = 8 − (8/6) r = (4/3)(6 − r)','V = π r^2 (4/3)(6 − r) ⇒ V′ = (4/3) π (12r − 3r^2) = 0 ⇒ r = 4')+OK('r = 4 cm , H = 8/3 cm'),g:{x0:0,x1:6.3,y0:-5,y1:150,P:[fD(r=>Math.PI*r*r*4/3*(6-r),0,6)],G:[[4,Math.PI*16*8/3,'r = 4']]}})],
+  ['10','10','eE10',()=>({rows:R_('r^2 + h^2 = (6√3)^2 = 108','V = (1/3) π (108 − h^2) h ⇒ V′ = (1/3) π (108 − 3h^2) = 0 ⇒ h = 6','r^2 = 72')+OK('V = (1/3) π (72)(6) = 144π cm^3'),g:{x0:0,x1:10.6,y0:-20,y1:500,P:[fD(h=>Math.PI/3*(108-h*h)*h,0,Math.sqrt(108))],G:[[6,144*Math.PI,'h = 6']]}})],
+  ['11','11','eE11',()=>({rows:R_('π r^2 h = 125π ⇒ h = 125/r^2','S = π r^2 + 2π r h = π r^2 + 250π/r','S′ = 2π r − 250π/r^2 = 0 ⇒ r^3 = 125')+OK('r = 5 cm , h = 5 cm'),g:{x0:0,x1:12,y0:0,y1:600,P:[fD(r=>Math.PI*r*r+250*Math.PI/r,1.2,12)],G:[[5,75*Math.PI,'r = 5']]}})],
+  ['12','12','eE12',()=>({rows:R_('S = 2(2x^2 + xh + 2xh) = 4x^2 + 6xh = 108 ⇒ h = (108 − 4x^2)/(6x)','V = 2x^2 h = (108x − 4x^3)/3 ⇒ V′ = (108 − 12x^2)/3 = 0 ⇒ x = 3','h = (108 − 36)/18 = 4')+OK('3 m , 6 m , 4 m (V = 72 m^3)'),fig:lab=>{ const {pen,W,H}=lab, s=Math.min(W*.5/8,H*.6/7); boxW(pen,obl(W*.25,H*.82,s),6,3,4,{color:COL['c-center']}); pen.text('6',W*.25+3*s,H*.82+14,{size:13,wt:700}); pen.text('4',W*.25-12,H*.82-2*s,{size:13,wt:700}); pen.text('3',W*.25+6*s+18,H*.82-10,{size:13,wt:700}); }})]
+ ]};
+(function(){ const fs=['10 − 3x − x^2','x^2 + 4x + 3','(1 − x)^3 + 1','6x − x^3','1/x','(x − 1)/(x + 1)','(x + 2)(x − 1)^2','(x^2 − 1)/(x^2 + 1)','2x^2 − x^4','6/(x^2 + 3)'];
+  fs.forEach((f,i)=>EXQ['eD'+(i+1)]=['تمارين (3−7) · '+(i+1),'أرسم بأستخدام معلوماتك في التفاضل الدالة: '+M('f(x) = '+f)]); })();
+class Chk3Lab extends Lab{
+  constructor(p){ super(p); this.items=EX3[p.dataset.set]; this.open=false; const sel=$('.xsel',p);
+    sel.innerHTML='<span class="lbl">التمرين:</span>'+this.items.map(([id,l],i)=>`<button type="button" class="chip" data-x="${i}"><bdi dir="ltr">${l}</bdi></button>`).join('');
+    $$('[data-x]',p).forEach(b=>b.onclick=()=>this.show(+b.dataset.x)); this.box=$('.lab-flap',p);
+    setupFlap(this.box,o=>{ this.open=o; this.kick(); }); this.show(0); }
+  show(i){ this.i=i; this.showEx(this.items[i][2]); this.S=this.items[i][3](); this.box.classList.remove('open'); this.open=false;
+    $$('[data-x]',this.page).forEach(b=>b.classList.toggle('on',+b.dataset.x===i)); this.ro(this.S.rows); this.kick(); }
+  draw(){ if(!this.W||!this.S) return; this.clear(); if(!this.open){ qMark(this); return; }
+    if(this.S.fig) this.S.fig(this); else if(this.S.g) drawG(this,this.S.g); else tick(this); }
+}
+
+/* ---- challenge ---- */
+const ROUNDS3=[
+ {q:`سلم طوله ${M('10m')}، طرفه الأسفل على بعد ${M('8m')} من الحائط ويبتعد بمعدل ${M('2 m / s')}. ${M('dy/dt')} = `,o:[M('−8/3 m / s'),M('8/3 m / s'),M('−3/8 m / s')],a:0,why:`${M('2(8)(2) + 2(6) dy/dt = 0 ⇒ dy/dt = −8/3')} (مثال ${N('4')}، ص ${N('94')})`,fig:lab=>figLadder(lab,8,{xv:'8',yv:'6'})},
+ {q:`قيمة ${M('c')} التي تعينها مبرهنة رول للدالة ${M('f(x) = (2 − x)^2')} على ${M('[0 , 4]')} = `,o:[M('0'),M('2'),M('4')],a:1,why:`${M('f′(c) = −2(2 − c) = 0 ⇒ c = 2')}`,g:{x0:-.6,x1:4.6,y0:-.6,y1:5,P:[{f:x=>(2-x)**2,a:0,b:4}],L:[[0,2,0,'ok']]}},
+ {q:`هل تتحقق مبرهنة رول للدالة ${M('f(x) = 9x + 3x^2 − x^3')} على ${M('[−1 , 1]')} ؟`,o:['نعم','لا'],a:1,why:`${M('f(−1) = −5 ≠ f(1) = 11')}`,g:{x0:-1.5,x1:1.5,y0:-7,y1:13,P:[{f:x=>9*x+3*x*x-x**3,a:-1,b:1}],G:[[-1,-5,''],[1,11,'']]}},
+ {q:`باستخدام نتيجة مبرهنة القيمة المتوسطة: ${M('√26 ≅')}`,o:[M('5.1'),M('5.2'),M('5.01')],a:0,why:`${M('5 + (1)(1/10) = 5.1')}`},
+ {q:`إشارة ${M('f′')} حول ${M('x = 4')} هي ${M('− − − | + + +')}. النقطة ${M('(4 , f(4))')}:`,o:['نهاية عظمى محلية','نهاية صغرى محلية','نقطة انقلاب'],a:1,why:'من التناقص الى التزايد: نهاية صغرى محلية.',g:{x0:-.5,x1:6,y0:-5,y1:40,P:[{f:x=>x**3-9*x*x+24*x}],G:[[4,16,'(4 , 16)']]}},
+ {q:`نقطة الانقلاب للمنحني ${M('f(x) = 2x^3 − 3x^2 − 12x + 1')} عند ${M('x')} = `,o:[M('1/2'),M('2'),M('−1')],a:0,why:`${M('f″(x) = 12x − 6 = 0 ⇒ x = 1/2')}`,g:{x0:-3,x1:4,y0:-25,y1:25,P:[{f:x=>2*x**3-3*x*x-12*x+1}],G:[[.5,-5.5,'(1/2 , −11/2)','c-gen']]}},
+ {q:`اذا كان ${M('f′(c) = 0')} و ${M('f″(c) < 0')} فإن ${M('f')} تمتلك عند ${M('x = c')}:`,o:['نهاية عظمى محلية','نهاية صغرى محلية','نقطة انقلاب'],a:0,why:`اختبار المشتقة الثانية [${N('3−6')}]، ص ${N('124')}.`},
+ {q:`صندوق مفتوح من قطعة مربعة طول ضلعها ${M('12cm')}. الحجم الأعظم = `,o:[M('128 cm^3'),M('144 cm^3'),M('96 cm^3')],a:0,why:`${M('x = 2 ⇒ V = 2(12 − 4)^2 = 128')}`,g:{x0:0,x1:6.2,y0:-10,y1:150,P:[{f:x=>x*(12-2*x)**2,a:0,b:6}],G:[[2,128,'(2 , 128)']]}}
+];
+class GameLab extends Lab{
+  constructor(p){ super(p); this.list=null; $('.gnext',p).onclick=()=>{ this.i++; this.render(); }; $('.gagain',p).onclick=()=>this.reset(); this.reset(); }
+  reset(){ this.i=0; this.res=ROUNDS3.map(()=>null); this.render(); }
+  stars(){ const sc=this.res.filter(Boolean).length; return sc>=7?3:sc>=5?2:sc>=3?1:0; }
+  render(){ const p=this.page, R=ROUNDS3[this.i], fin=this.i>=ROUNDS3.length; this.done=false;
+    $('.gtitle',p).textContent=fin?'النتيجة':`السؤال ${this.i+1} من ${ROUNDS3.length}`; $('.gagain',p).classList.toggle('hide',!fin); $('.gnext',p).classList.add('hide');
+    const go=$('.gopts',p); go.innerHTML=''; go.classList.toggle('hide',fin);
+    if(fin){ const sc=this.res.filter(Boolean).length, st=this.stars(); $('.gq',p).innerHTML=`نتيجتك ${N(sc+' / '+ROUNDS3.length)}`; this.ro(st===3?'ممتاز! أتقنت تطبيقات التفاضل.':st===2?'جيد جداً. راجع الأسئلة التي أخطأت فيها.':'راجع مبرهنتي رول والقيمة المتوسطة واختبار المشتقتين ثم أعد التحدّي.'); }
+    else { $('.gq',p).innerHTML=R.q; R.o.forEach((o,j)=>{ const b=document.createElement('button'); b.type='button'; b.className='chip'; b.innerHTML=o; b.onclick=()=>this.choose(j); go.appendChild(b); }); this.ro('اختر إجابة واحدة.'); }
+    this.side(); this.kick(); }
+  side(){ if(!this.list) return; this.list.innerHTML=ROUNDS3.map((R,j)=>`<li class="${j===this.i?'cur':''}"><span class="st" style="color:${this.res[j]===true?'var(--ok)':this.res[j]===false?'var(--bad)':'var(--muted)'}">${this.res[j]===true?'✓':this.res[j]===false?'✗':N(j+1)}</span><span>${R.q}</span></li>`).join('');
+    const st=this.stars(), fin=this.i>=ROUNDS3.length; this.starEl.innerHTML=fin?'★'.repeat(st)+'<span style="opacity:.25">'+'★'.repeat(3-st)+'</span>':''; }
+  choose(j){ if(this.done) return; const R=ROUNDS3[this.i], okk=j===R.a; this.done=true; this.res[this.i]=okk;
+    $$('.gopts .chip',this.page).forEach((x,q)=>{ x.disabled=true; if(q===R.a) x.classList.add('right'); else if(q===j) x.classList.add('wrong'); });
+    this.ro(`${okk?'<b style="color:var(--ok)">✓ صحيح!</b>':'<b style="color:var(--bad)">✗ ليس تماماً.</b>'} ${R.why}`); $('.gnext',this.page).classList.remove('hide'); this.side(); this.kick(); }
+  draw(){ if(!this.W) return; this.clear(); const {W,H,pen}=this;
+    if(this.i>=ROUNDS3.length){ const st=this.stars(), cx=W/2, cy=H/2, R0=Math.min(W/7,H/3);
+      for(let j=0;j<3;j++){ const x=cx+(j-1)*R0*2.2, y=cy+(j===1?-R0*.25:R0*.1), pts=[]; for(let q=0;q<=10;q++){ const a=-Math.PI/2+q*Math.PI/5, rr=q%2?R0*.45:R0; pts.push([x+rr*Math.cos(a),y+rr*Math.sin(a)]); }
+        if(j<st) pen.hatch(c=>{ pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1])); c.closePath(); },'#d4a017',3.5,.85); pen.path(pts,{w:2,a:j<st?.95:.35}); } return; }
+    const R=ROUNDS3[this.i];
+    if(!this.done){ if(R.g) axesN(this,R.g.x0,R.g.x1,R.g.y0,R.g.y1,{eq:R.g.eq}); qMark(this); return; }
+    if(R.fig) R.fig(this); else if(R.g) drawG(this,R.g); else pen.text('✓',W/2,H/2,{size:Math.min(W,H)*.3,color:COL.ok,halo:false,it:false}); }
+}
+
+/* ================= build pages ================= */
+const store=$('#store'), book=$('#book'), slotL=$('.slot.L',book), slotR=$('.slot.R',book);
+const SP=PAGES.map(([r,l])=>{ const t=document.createElement('div'); t.innerHTML=r.trim(); const R=t.firstElementChild; t.innerHTML=l.trim(); const L=t.firstElementChild; store.append(R,L); return {R,L}; });
+readCols();
+const LABMAP={intro:IntroLab,rate:RateLab,thm:ThmLab,apx:ApxLab,sign:SignLab,opt:OptLab,ex3:ExLab,chk3:Chk3Lab,game:GameLab};
+SP.forEach(sp=>{ const L=new LABMAP[sp.L.dataset.lab](sp.L); sp.lab=L; });
+const GSP=SP.find(sp=>sp.L.dataset.lab==='game'); const game=GSP.lab; game.list=$('.rounds',GSP.R); game.starEl=$('.stars',GSP.R); game.side();
+/* numbering, lab headers and table of contents are generated so they always match the page order */
+SP.forEach((sp,i)=>{ $('.pno',sp.R).innerHTML=N(2*i+1); $('.pno',sp.L).innerHTML=N(2*i+2);
+  if(i){ const nm=$('h2 .num',sp.R); if(nm) nm.textContent=i; const rs=$('.run span',sp.L); if(rs) rs.textContent='مختبر '+i; } });
+$('.toc',SP[0].R).innerHTML=SP.slice(1).map((sp,j)=>{ const h=$('h2',sp.R).cloneNode(true); h.querySelector('.num')?.remove(); const pg=$('.run span:last-child',sp.R).innerHTML.split('·').pop();
+  return `<li><button type="button" data-go="${j+1}"><span class="i">${j+1}</span><span>${h.textContent.trim()}</span><em>${pg.includes('ص')?pg:''}</em></button></li>`; }).join('');
+
+/* paper flaps (predict boxes and exercise answers) */
+function setupFlap(box,onState){
+  const flap=$('.flap',box); let sy=null, moved=false, h=1;
+  let tOpen=0;
+  const setOpen=o=>{ tOpen=Date.now(); flap.style.transform=''; box.classList.toggle('open',o); flap.setAttribute('aria-label',o?'أنزل اللسان':'ارفع اللسان لكشف الإجابة'); onState&&onState(o); };
+  flap.addEventListener('pointerdown',e=>{ e.stopPropagation(); sy=e.clientY; moved=false; h=flap.offsetHeight||40; flap.setPointerCapture(e.pointerId); flap.style.transition='none'; });
+  flap.addEventListener('pointermove',e=>{ if(sy===null) return; const dy=sy-e.clientY; if(Math.abs(dy)>4) moved=true; const base=box.classList.contains('open')?102:0; const a=Math.max(0,Math.min(110,base+dy/h*90)); flap.style.transform=`perspective(700px) rotateX(${a}deg)`; });
+  const up=e=>{ if(sy===null) return; const dy=sy-e.clientY; sy=null; flap.style.transition='';
+    const open=box.classList.contains('open'); if(!moved) setOpen(!open); else setOpen(open?dy>-h*.4:dy>h*.35); };
+  flap.addEventListener('pointerup',up); flap.addEventListener('pointercancel',up);
+  flap.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); setOpen(!box.classList.contains('open')); } });
+  /* on touch screens the tap that opens the flap is followed by a click on the answer underneath: ignore it */
+  $('.ans',box).addEventListener('click',()=>{ if(box.classList.contains('open')&&Date.now()-tOpen>600) setOpen(false); });
+  flap.addEventListener('click',e=>e.stopPropagation());
+}
+$$('.predict').forEach(pd=>{
+  const ans=+pd.dataset.ans, box=$('.flapbox',pd), opts=$$('.popts .chip',pd); let picked=null;
+  const mark=()=>{ if(!box.classList.contains('open')) return; opts.forEach((b,i)=>{ b.classList.toggle('right',i===ans); b.classList.toggle('wrong',i===picked&&i!==ans); }); };
+  opts.forEach((b,i)=>b.onclick=()=>{ picked=i; opts.forEach(x=>x.classList.toggle('on',x===b)); mark(); });
+  setupFlap(box,o=>{ if(o) mark(); else opts.forEach(b=>b.classList.remove('right','wrong')); });
+});
+$$('.flapbox.mini').forEach(b=>setupFlap(b));
+$$('[data-go]').forEach(b=>b.addEventListener('click',()=>goSpread(+b.dataset.go)));
+
+/* ================= layout ================= */
+let single=false, pos=0; /* pos = spread index */
+let sub=0; /* in single mode: 0=text page,1=lab page */
+function layout(){
+  const W=innerWidth, Hs=innerHeight, TB=60, H=Hs-TB-20;
+  const was=single; single = (W/H<1.12) || W<640;
+  let pw,ph,fs;
+  if(!single){ ph=Math.min(H*.93,((W-40)/2)/.74); ph=Math.max(ph,11*42); pw=ph*.74; fs=ph/42; }
+  else { pw=Math.min(W-28,H*.95*.8); ph=Math.min(H*.95,pw/.5); ph=Math.max(ph,560); pw=Math.min(pw,ph*.8); fs=Math.max(11.5,Math.min(ph/49,pw/26.5)); }
+  const rs=document.documentElement.style;
+  rs.setProperty('--pw',pw.toFixed(1)+'px'); rs.setProperty('--ph',ph.toFixed(1)+'px'); rs.setProperty('--fs',fs.toFixed(2)+'px');
+  rs.setProperty('--cv',Math.max(7,ph*.02).toFixed(1)+'px'); rs.setProperty('--tilt',single?'7deg':'18deg');
+  book.classList.toggle('single',single);
+  if(was!==single||!book.dataset.ready){ book.dataset.ready=1; place(); LABS.forEach(l=>l.fit()); }
+}
+function sideOf(pg,s){ pg.classList.remove('sR','sL'); pg.classList.add(s); }
+function place(){
+  SP.forEach(sp=>{ if(sp.R.parentNode!==store) store.append(sp.R); if(sp.L.parentNode!==store) store.append(sp.L); sp.L.classList.remove('risen'); });
+  const sp=SP[pos];
+  if(!single){ sideOf(sp.R,'sR'); sideOf(sp.L,'sL'); slotR.replaceChildren(sp.R); slotL.replaceChildren(sp.L); }
+  else { const pg=sub?sp.L:sp.R; sideOf(pg,'sL'); slotL.replaceChildren(pg); slotR.replaceChildren(); }
+  nav(); riseSoon();
+}
+function visibleLabs(){ return $$('.page.lab',book); }
+function riseSoon(){ setTimeout(()=>{ visibleLabs().forEach(p=>p.classList.add('risen')); SP[0].lab[slotHas(SP[0].L)?'start':'stop'](); },60); }
+function slotHas(pg){ return pg.parentNode===slotL||pg.parentNode===slotR; }
+
+/* ================= navigation & flip ================= */
+const dotsEl=$('#dots');
+SP.forEach((_,i)=>{ const b=document.createElement('button'); b.type='button'; b.setAttribute('aria-label',i?`الفصل ${i}`:'الغلاف والقاموس'); b.onclick=()=>goSpread(i); dotsEl.append(b); });
+function nav(){
+  $$('button',dotsEl).forEach((b,i)=>b.classList.toggle('on',i===pos)); $('#cnt').innerHTML=N(`${pos+1} / ${SP.length}`);
+  const atStart=pos===0&&(!single||sub===0), atEnd=pos===SP.length-1&&(!single||sub===1);
+  $('#bPrev').disabled=atStart; $('#bNext').disabled=atEnd;
+  try{ localStorage.setItem('lb-g12c3-pos',JSON.stringify({pos,sub,total:SP.length})); }catch(e){}
+}
+let busy=false;
+function snap(pg,off){
+  const c=pg.cloneNode(true); c.classList.remove('risen'); c.style.left=off+'px';
+  const a=$$('canvas',pg), b=$$('canvas',c); a.forEach((cv,i)=>{ b[i].width=cv.width; b[i].height=cv.height; try{ b[i].getContext('2d').drawImage(cv,0,0); }catch(e){} });
+  const ia=$$('input',pg), ib=$$('input',c); ia.forEach((x,i)=>ib[i].value=x.value);
+  return c;
+}
+function blank(off){ const d=document.createElement('div'); d.className='page blank'; d.style.left=off+'px'; return d; }
+function face(cls,content){ const f=document.createElement('div'); f.className='face '+cls; f.append(content); return f; }
+function mkSeg(left,origin,fr,bk){ const s=document.createElement('div'); s.className='seg'; s.style.left=left; s.style.width='50%'; s.style.transformOrigin=origin; s.append(face('front',fr),face('back',bk)); return s; }
+const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+function animate(seg1,seg2,th0,th1,bendSign,wrap){
+  return new Promise(res=>{
+    const dur=RM?1:820, t0=performance.now();
+    const fr=now=>{ const t=Math.min(1,(now-t0)/dur), e=ease(t), th=th0+(th1-th0)*e, b=bendSign*34*Math.sin(Math.PI*e);
+      seg1.style.transform=`rotateY(${th}deg)`; seg2.style.transform=`rotateY(${b}deg)`; wrap.style.setProperty('--sh',(Math.sin(Math.PI*e)*.9).toFixed(3));
+      if(t<1) requestAnimationFrame(fr); else res(); };
+    requestAnimationFrame(fr);
+  });
+}
+async function flip(dir,target){ /* dir 1 = forward, -1 = back; target = {pos,sub} */
+  if(busy) return; busy=true; sound();
+  const labs=visibleLabs(); if(labs.some(p=>p.classList.contains('risen'))){ labs.forEach(p=>p.classList.remove('risen')); await wait(RM?0:240); }
+  const pw=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--pw'));
+  const wrap=document.createElement('div'); wrap.className='flip';
+  const cur=SP[pos], nx=SP[target.pos];
+  let seg1,seg2,th0,th1,bs,finish;
+  if(!single){
+    if(dir>0){
+      const f1=snap(cur.L,-pw/2), f2=snap(cur.L,0); sideOf(nx.R,'sR'); sideOf(nx.L,'sL'); const b1=snap(nx.R,0), b2=snap(nx.R,-pw/2);
+      seg1=mkSeg(`${pw/2}px`,'100% 50%',f1,b1); seg2=mkSeg('-100%','100% 50%',f2,b2); seg1.style.width=pw/2+'px'; seg2.style.width='100%';
+      slotL.replaceChildren(nx.L); th0=0; th1=180; bs=1; finish=()=>slotR.replaceChildren(nx.R);
+    } else {
+      const f1=snap(cur.R,0), f2=snap(cur.R,-pw/2); sideOf(nx.R,'sR'); sideOf(nx.L,'sL'); const b1=snap(nx.L,-pw/2), b2=snap(nx.L,0);
+      seg1=mkSeg(`${pw}px`,'0% 50%',f1,b1); seg2=mkSeg('100%','0% 50%',f2,b2); seg1.style.width=pw/2+'px'; seg2.style.width='100%';
+      slotR.replaceChildren(nx.R); th0=0; th1=-180; bs=-1; finish=()=>slotL.replaceChildren(nx.L);
+    }
+  } else {
+    const curPg=sub?cur.L:cur.R, nxPg=target.sub?nx.L:nx.R; sideOf(nxPg,'sL');
+    if(dir>0){ seg1=mkSeg(`${pw/2}px`,'100% 50%',snap(curPg,-pw/2),blank(0)); seg2=mkSeg('-100%','100% 50%',snap(curPg,0),blank(-pw/2));
+      slotL.replaceChildren(nxPg); th0=0; th1=180; bs=1; finish=()=>{}; }
+    else { seg1=mkSeg(`${pw/2}px`,'100% 50%',snap(nxPg,-pw/2),blank(0)); seg2=mkSeg('-100%','100% 50%',snap(nxPg,0),blank(-pw/2));
+      th0=180; th1=0; bs=1; finish=()=>slotL.replaceChildren(nxPg); }
+    seg1.style.width=pw/2+'px'; seg2.style.width='100%';
+  }
+  seg1.style.transform=`rotateY(${th0}deg)`; seg1.querySelector('.face.back').after(seg2);
+  wrap.append(seg1); book.append(wrap);
+  SP.forEach(sp=>{ [sp.R,sp.L].forEach(pg=>{ if(!slotHas(pg)&&pg.parentNode!==store) store.append(pg); }); });
+  await animate(seg1,seg2,th0,th1,bs,wrap);
+  finish(); wrap.remove();
+  SP.forEach(sp=>{ [sp.R,sp.L].forEach(pg=>{ if(!slotHas(pg)) store.append(pg); }); });
+  pos=target.pos; sub=target.sub; nav(); riseSoon(); busy=false;
+}
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function next(){ if(teachOn) return teachMove(1); if(!single){ if(pos<SP.length-1) flip(1,{pos:pos+1,sub:0}); } else { if(sub===0) flip(1,{pos,sub:1}); else if(pos<SP.length-1) flip(1,{pos:pos+1,sub:0}); } }
+function prev(){ if(teachOn) return teachMove(-1); if(!single){ if(pos>0) flip(-1,{pos:pos-1,sub:0}); } else { if(sub===1) flip(-1,{pos,sub:0}); else if(pos>0) flip(-1,{pos:pos-1,sub:1}); } }
+function goSpread(i){ if(teachOn){ pos=i; teachShow(); return; } if(i===pos&&(!single||sub===0)) return; flip(i>pos||(i===pos)?1:-1,{pos:i,sub:0}); }
+$('#bNext').onclick=next; $('#bPrev').onclick=prev;
+addEventListener('keydown',e=>{ if(e.target.matches('input,textarea')) return;
+  if(e.key==='ArrowLeft'||e.key==='PageDown'){ e.preventDefault(); next(); } else if(e.key==='ArrowRight'||e.key==='PageUp'){ e.preventDefault(); prev(); } else if(e.key==='Escape'&&teachOn) teachExit(); });
+/* swipe */
+let sw=null;
+const swEnd=(x,y)=>{ if(!sw) return; const dx=x-sw.x, dy=y-sw.y; sw=null; if(Math.abs(dx)>45&&Math.abs(dx)>1.3*Math.abs(dy)){ dx>0?next():prev(); } };
+const swOk=t=>!t.closest('input,button,.flap,a,.toc');
+$('#scene').addEventListener('pointerdown',e=>{ if(e.pointerType==='touch'||!swOk(e.target)) return; sw={x:e.clientX,y:e.clientY}; });
+addEventListener('pointerup',e=>{ if(e.pointerType!=='touch') swEnd(e.clientX,e.clientY); });
+$('#scene').addEventListener('touchstart',e=>{ if(e.touches.length!==1||!swOk(e.target)){ sw=null; return; } sw={x:e.touches[0].clientX,y:e.touches[0].clientY}; },{passive:true});
+$('#scene').addEventListener('touchend',e=>{ const t=e.changedTouches[0]; if(t) swEnd(t.clientX,t.clientY); },{passive:true});
+$('#scene').addEventListener('touchcancel',()=>sw=null);
+
+/* ================= sound ================= */
+let muted=false, actx=null;
+try{ muted=localStorage.getItem('lb-mute')==='1'; }catch(e){}
+function muteUI(){ const b=$('#bMute'); b.setAttribute('aria-pressed',muted); b.setAttribute('aria-label',muted?'تشغيل الصوت':'كتم الصوت'); $('.w',b).style.display=muted?'none':''; $('.x',b).style.display=muted?'':'none'; }
+$('#bMute').onclick=()=>{ muted=!muted; try{localStorage.setItem('lb-mute',muted?'1':'0');}catch(e){} muteUI(); };
+muteUI();
+function sound(){ if(muted) return; try{
+  actx=actx||new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume();
+  const t=actx.currentTime, len=.42, sr=actx.sampleRate, buf=actx.createBuffer(1,Math.floor(sr*len),sr), d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++){ const x=i/d.length; d[i]=(Math.random()*2-1)*Math.pow(1-x,1.6)*(0.6+0.4*Math.sin(x*40)); }
+  const src=actx.createBufferSource(); src.buffer=buf; const bp=actx.createBiquadFilter(); bp.type='bandpass'; bp.Q.value=.7;
+  bp.frequency.setValueAtTime(700,t); bp.frequency.exponentialRampToValueAtTime(3200,t+.3);
+  const g=actx.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.12,t+.06); g.gain.exponentialRampToValueAtTime(.001,t+len);
+  src.connect(bp).connect(g).connect(actx.destination); src.start(t);
+}catch(e){} }
+
+/* ================= theme ================= */
+function themeNow(){ const a=document.documentElement.dataset.theme; return a||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'); }
+try{ const t=localStorage.getItem('lb-theme'); if(t) document.documentElement.dataset.theme=t; }catch(e){}
+function themeChanged(){ readCols(); LABS.forEach(l=>l.draw()); $('#bTheme').setAttribute('aria-label',themeNow()==='dark'?'الوضع الفاتح':'الوضع الداكن'); }
+$('#bTheme').onclick=()=>{ const t=themeNow()==='dark'?'light':'dark'; document.documentElement.dataset.theme=t; try{localStorage.setItem('lb-theme',t);}catch(e){} themeChanged(); };
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',themeChanged);
+
+/* ================= teacher mode ================= */
+let teachOn=false; const teach=$('#teach'), board=$('#tBoard');
+function teachSize(pg){ const W=innerWidth, H=innerHeight; let w,h; if(W/H<1.05){ w=W*.95; h=H*.84; } else { w=Math.min(W*.94,(H*.86)*1.6); h=Math.min(H*.86,w/1.25); w=Math.min(w,h*1.75); }
+  const wide=w/h>1.15; pg.classList.toggle('wide',wide); pg.style.width=w+'px'; pg.style.height=h+'px'; pg.style.fontSize=Math.max(13,Math.min(h/(wide?30:40),w/(wide?52:24)))+'px'; }
+function teachShow(){ const pg=SP[pos].L; board.querySelectorAll('.page').forEach(p=>{ p.classList.remove('wide','risen'); p.style.cssText=''; store.append(p); });
+  pg.classList.remove('risen'); sideOf(pg,'sL'); teachSize(pg); board.replaceChildren(pg); SP[pos].lab.fit(); SP[0].lab[pos===0?'start':'stop']();
+  $('#tPrev').disabled=pos===0; $('#tNext').disabled=pos===SP.length-1; setTimeout(()=>pg.classList.add('risen'),80); }
+function teachEnter(){ teachOn=true; teach.classList.add('on'); $('#bTeach').classList.add('on'); $('#bTeach').setAttribute('aria-pressed','true'); teachShow(); $('#tExit').focus(); }
+function teachExit(){ teachOn=false; teach.classList.remove('on'); $('#bTeach').classList.remove('on'); $('#bTeach').setAttribute('aria-pressed','false');
+  board.querySelectorAll('.page').forEach(p=>{ p.classList.remove('wide','risen'); p.style.cssText=''; }); place(); LABS.forEach(l=>l.fit()); }
+function teachMove(d){ const n=pos+d; if(n<0||n>=SP.length) return; pos=n; sub=0; sound(); teachShow(); }
+$('#bTeach').onclick=()=>teachOn?teachExit():teachEnter(); $('#tExit').onclick=teachExit;
+$('#tNext').onclick=()=>teachMove(1); $('#tPrev').onclick=()=>teachMove(-1);
+
+/* ================= init ================= */
+let rz; addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ layout(); if(teachOn) teachSize(SP[pos].L); },120); });
+/* resume where the student stopped */
+try{ const o=JSON.parse(localStorage.getItem('lb-g12c3-pos')||'null'); if(o&&o.pos>=0&&o.pos<SP.length){ pos=o.pos|0; sub=o.sub?1:0; } }catch(e){}
+layout();
+if('serviceWorker' in navigator && location.protocol!=='file:') navigator.serviceWorker.register('sw.js', {updateViaCache:'none'}).then(reg=>{ if(navigator.onLine) reg.update().catch(()=>{}); }).catch(()=>{});
+</script>
+<script src="classroom.js" defer></script>
+<script src="classroom-enhancements.js" defer></script>
+<script src="board-v1.4.js" defer></script>
+<script src="guided-explanation.js" defer></script>
+<script src="teacher-tools-v1.6.js" defer></script>
+<script src="board-v1.7.js" defer></script>
+<script src="board-v1.7.2.js" defer></script>
+<script src="board-controls-v1.7.5.js" defer></script>
+</body>
+</html>

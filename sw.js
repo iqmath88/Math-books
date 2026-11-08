@@ -15,7 +15,7 @@ const CORE = [
   
   
   './ch3.html', './ch4.html', './ch5.html', './ch6.html',
-  './g9c1.html', './g9c5.html',
+  './g9c1.html', './g9c5.html', './g12c3.html',
   './icon-192.png', './icon-512.png', './maskable-512.png',
   './apple-touch-icon.png', './favicon.png'
 ];
