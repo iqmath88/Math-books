@@ -289,6 +289,16 @@ input[type=range]::-moz-range-thumb{width:max(1.35em,20px);height:max(1.35em,20p
 @media (prefers-reduced-motion: reduce){
   .risen .card,.card,.flap,#book{transition-duration:.01s!important}
 }
+/* worked examples (v1.10) */
+.steps-ro{overflow:auto;max-height:calc(var(--ph)*.34);scroll-behavior:smooth}
+.row.st{display:flex;gap:.45em;align-items:flex-start;opacity:.62;border-bottom:1px dotted var(--rule);padding:.12em 0}
+.row.st.cur{opacity:1}
+.row.st .sn{flex:none;display:inline-grid;place-items:center;width:1.45em;height:1.45em;border-radius:50%;background:var(--c-radius);color:#fff;font-size:.72em;margin-top:.15em}
+.row.st.cur .sn{background:var(--c-point)}
+.row.st small{display:block;color:var(--c-radius);font-size:.84em}
+.row.st .m.blk{text-align:right}
+.chip.gold{background:var(--c-point);color:#fff;border-color:var(--c-point)}
+.exl.wx{gap:.25em}.exl.wx li{font-size:.82em;line-height:1.5}
 </style>
 <script src="app-version.js"></script>
 <link rel="stylesheet" href="classroom-v2.css">
@@ -1351,11 +1361,148 @@ class GameLab extends Lab{
   }
 }
 
+/* ================= worked examples, step by step (v1.10) ================= */
+/* self-contained: uses only Lab, $, $$, M, N, COL from the chapter engine */
+const WX=(()=>{
+ const row=h=>`<div class="row">${h}</div>`, okk=h=>`<b style="color:var(--ok)">✓ ${h}</b>`;
+ const f2=x=>{ if(!isFinite(x)) return '?'; let v=Math.round(x*100)/100; if(Math.abs(v)<1e-9) v=0; return (v<0?'−':'')+String(Math.abs(v)); };
+ const step=(r,px,min=34)=>{ for(const s of [0.05,0.1,0.2,0.25,0.5,1,2,5,10,20,25,50,100,200,500]) if(px*s/r>=min) return s; return 1000; };
+ function axes(lab,S){ const {pen,W,H}=lab, c=pen.c, pl=26, pr=10, T=10, B=H-18; let {x0,x1,y0,y1}=S;
+  if(S.eq){ const span=(x1-x0)*(B-T)/(W-pl-pr), yc=(y0+y1)/2; if(span>=y1-y0){ y0=yc-span/2; y1=yc+span/2; } else { const sx=(y1-y0)*(W-pl-pr)/(B-T), xc=(x0+x1)/2; x0=xc-sx/2; x1=xc+sx/2; } }
+  const X=x=>pl+(x-x0)/(x1-x0)*(W-pl-pr), Y=y=>T+(y1-y)/(y1-y0)*(B-T), sx=step(x1-x0,W-pl-pr), sy=step(y1-y0,B-T,24);
+  c.save(); c.strokeStyle=COL.grid; c.lineWidth=1; c.beginPath();
+  for(let g=Math.ceil(x0/sx)*sx;g<=x1+1e-9;g+=sx){ c.moveTo(X(g),T); c.lineTo(X(g),B); } for(let g=Math.ceil(y0/sy)*sy;g<=y1+1e-9;g+=sy){ c.moveTo(pl,Y(g)); c.lineTo(W-pr,Y(g)); } c.stroke(); c.restore();
+  const yA=Math.min(Math.max(0,y0),y1), xA=Math.min(Math.max(0,x0),x1);
+  pen.line(pl-4,Y(yA),W-pr,Y(yA),{w:1.3}); pen.arrowHead(W-pr,Y(yA),0,{w:1.2}); pen.line(X(xA),B+4,X(xA),T-2,{w:1.3}); pen.arrowHead(X(xA),T-2,-Math.PI/2,{w:1.2});
+  for(let g=Math.ceil(x0/sx)*sx;g<=x1+1e-9;g+=sx){ if(Math.abs(g)<1e-9) continue; const x=X(g); if(x>W-pr-8) continue; pen.text(f2(g),x,Math.min(B+11,Y(yA)+12),{size:10,it:false,wt:500,color:COL.muted}); }
+  for(let g=Math.ceil(y0/sy)*sy;g<=y1+1e-9;g+=sy){ if(Math.abs(g)<1e-9) continue; const y=Y(g); if(y<T+4||y>B-4) continue; pen.text(f2(g),Math.max(pl-2,X(xA)-5),y,{size:10,it:false,wt:500,color:COL.muted,al:'right'}); }
+  return {X,Y,x0,x1,y0,y1,T,B,pl,pr}; }
+ function clip(lab,G,fn){ const c=lab.c; c.save(); c.beginPath(); c.rect(G.pl-2,G.T-2,lab.W-G.pl-G.pr+4,G.B-G.T+4); c.clip(); fn(); c.restore(); }
+ function plot(lab,G,f,a,b,col,o={}){ const pts=[], n=400; let seg=[]; const out=()=>{ if(seg.length>1) lab.pen.path(seg,{color:col,w:o.w||2.2,dash:o.dash}); seg=[]; };
+  clip(lab,G,()=>{ for(let i=0;i<=n;i++){ const x=a+(b-a)*i/n, y=f(x); if(!isFinite(y)||Math.abs(y)>1e6){ out(); continue; } seg.push([G.X(x),G.Y(y)]); } out(); }); }
+ function implicit(lab,G,F,col){ const c=lab.c, nx=150, ny=120, dx=(G.x1-G.x0)/nx, dy=(G.y1-G.y0)/ny, v=[];
+  for(let j=0;j<=ny;j++){ v[j]=[]; for(let i=0;i<=nx;i++) v[j][i]=F(G.x0+i*dx,G.y0+j*dy); }
+  c.save(); c.strokeStyle=col; c.lineWidth=2.2; c.lineCap='round'; c.globalAlpha=.9; c.beginPath();
+  const P=(i,j)=>[G.X(G.x0+i*dx),G.Y(G.y0+j*dy)], L=(a,b,va,vb)=>{ const t=va/(va-vb); return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]; };
+  for(let j=0;j<ny;j++) for(let i=0;i<nx;i++){ const q=[[i,j],[i+1,j],[i+1,j+1],[i,j+1]], vals=q.map(([a,b])=>v[b][a]); if(vals.some(z=>!isFinite(z))) continue; const pts=[];
+   for(let k=0;k<4;k++){ const a=vals[k], b=vals[(k+1)%4]; if((a<0)!==(b<0)) pts.push(L(P(...q[k]),P(...q[(k+1)%4]),a,b)); }
+   if(pts.length>=2){ c.moveTo(...pts[0]); c.lineTo(...pts[1]); } if(pts.length===4){ c.moveTo(...pts[2]); c.lineTo(...pts[3]); } }
+  c.stroke(); c.restore(); }
+ /* figure spec: {x0,x1,y0,y1,eq, C:[[h,k,r,col,dash]], I:[[F,col]], P:[[f,a,b,col,dash]], L:[[A,B,C,col,dash]] (Ax+By+C=0), S:[[x1,y1,x2,y2,col,dash,label]], V:[x], Pt:[[x,y,label,col]], R:[[x0,y0,x1,y1,col]] shading} */
+ function draw(lab,F){ if(!F) return; const G=axes(lab,F), pen=lab.pen, cc=k=>COL[k||'c-point']||k;
+  (F.V||[]).forEach(x=>pen.line(G.X(x),G.T,G.X(x),G.B,{color:COL.muted,w:1,dash:[5,5],passes:1}));
+  (F.L||[]).forEach(([A,B,C,col,dash])=>clip(lab,G,()=>{ if(Math.abs(B)<1e-12){ const x=-C/A; pen.line(G.X(x),G.T,G.X(x),G.B,{color:cc(col||'c-radius'),w:1.9,dash:dash?[6,4]:undefined,passes:1}); } else { const y=x=>(-C-A*x)/B; pen.line(G.X(G.x0),G.Y(y(G.x0)),G.X(G.x1),G.Y(y(G.x1)),{color:cc(col||'c-radius'),w:1.9,dash:dash?[6,4]:undefined,passes:1}); } }));
+  (F.C||[]).forEach(([h,k,r,col,dash])=>clip(lab,G,()=>{ const pts=[]; for(let i=0;i<=120;i++){ const a=i/120*Math.PI*2; pts.push([G.X(h+r*Math.cos(a)),G.Y(k+r*Math.sin(a))]); } lab.c.save(); lab.c.globalAlpha=.12; lab.c.fillStyle=cc(col||'c-std'); lab.c.beginPath(); pts.forEach((p,i)=>i?lab.c.lineTo(...p):lab.c.moveTo(...p)); lab.c.fill(); lab.c.restore(); pen.path(pts,{color:cc(col||'c-std'),w:2.3,dash:dash?[6,4]:undefined}); }));
+  (F.I||[]).forEach(([Fn,col])=>implicit(lab,G,Fn,cc(col||'c-std')));
+  (F.P||[]).forEach(([f,a,b,col,dash])=>plot(lab,G,f,a??G.x0,b??G.x1,cc(col||'c-std'),{dash:dash?[6,4]:undefined}));
+  (F.S||[]).forEach(([x1,y1,x2,y2,col,dash,l])=>{ pen.line(G.X(x1),G.Y(y1),G.X(x2),G.Y(y2),{color:cc(col||'c-radius'),w:2,dash:dash?[5,4]:undefined,passes:1}); if(l) pen.text(l,(G.X(x1)+G.X(x2))/2+8,(G.Y(y1)+G.Y(y2))/2-9,{color:cc(col||'c-radius'),size:13,wt:700,al:'left'}); });
+  (F.Pt||[]).forEach(([x,y,l,col])=>{ const X=G.X(x), Y=G.Y(y); pen.dot(X,Y,4.4,cc(col||'c-center')); if(l) pen.text(l,X+(X>lab.W*.7?-8:8),Y-13,{color:cc(col||'c-center'),size:12,wt:700,al:X>lab.W*.7?'right':'left'}); });
+  return G; }
+ class ExLab extends Lab{
+  constructor(p){ super(p); this.L=WXD[p.dataset.set]; this.k=0; this.n=0;
+   $('.esel',p).innerHTML='<span class="lbl">مثال:</span>'+this.L.map((E,i)=>`<button type="button" class="chip" data-e="${i}"><bdi dir="ltr">${E.l}</bdi></button>`).join('');
+   $$('[data-e]',p).forEach(b=>b.onclick=()=>this.pick(+b.dataset.e));
+   $('[data-nx]',p).onclick=()=>{ this.n=Math.min(this.L[this.k].st.length-1,this.n+1); this.upd(); };
+   $('[data-pv]',p).onclick=()=>{ this.n=Math.max(0,this.n-1); this.upd(); };
+   $('[data-all]',p).onclick=()=>{ this.n=this.L[this.k].st.length-1; this.upd(); };
+   this.pick(0); }
+  pick(k){ this.k=k; this.n=0; $$('[data-e]',this.page).forEach(b=>b.classList.toggle('on',+b.dataset.e===k)); this.showEx(this.L[k].q); this.upd(); }
+  upd(){ const E=this.L[this.k], last=this.n===E.st.length-1;
+   let s=E.st.slice(0,this.n+1).map(([m,w],i)=>`<div class="row st${i===this.n?' cur':''}"><span class="sn">${N(i+1)}</span><div>${m?M(m,'blk'):''}${w?`<small>${w}</small>`:''}</div></div>`).join('');
+   s+=row(`<span class="k">الخطوة ${N(this.n+1)} من ${N(E.st.length)}</span>${last?' '+okk('اكتمل الحل'):''}`);
+   this.ro(s); const ro=$('.ro',this.page); ro.scrollTop=ro.scrollHeight; this.kick(); }
+  draw(){ if(!this.W) return; this.clear(); const E=this.L[this.k]; draw(this,typeof E.f==='function'?E.f(this.n):E.f); }
+ }
+ const page=(set,title)=>`<section class="page lab" data-lab="ex" data-set="${set}">
+ ${RUN('مختبر','حل مفصّل خطوة بخطوة')}
+ <h3 class="lt"><span class="lab-ic">أمثلة</span>${title}</h3>
+ ${stage}
+ <div class="side"><div class="exq hide"></div><div class="ro steps-ro"></div>
+  <div class="ctl"><div class="btns esel"></div>
+   <div class="btns"><button type="button" class="chip" data-pv>▸ السابقة</button><button type="button" class="chip gold" data-nx>الخطوة التالية ◂</button><button type="button" class="chip" data-all>كل الخطوات</button></div>
+  </div></div>
+ ${FOOT(0)}
+</section>`;
+ const HINT='<p class="exhint">اضغط اسم المثال في المختبر المقابل، ثم «الخطوة التالية» لترى حل الكتاب خطوة بخطوة مع الرسم.</p>';
+ /* add a spread right after the spread whose lab is `afterLab` (or at index) */
+ function insert(afterLab,text,lab){ let i=PAGES.findIndex(([r,l])=>l.includes(`data-lab="${afterLab}"`)); if(i<0) i=PAGES.length-2; PAGES.splice(i+1,0,[text,lab]); }
+ return {ExLab,page,HINT,insert};
+})();
+
+/* ---- chapter 3 (grade 5): worked examples data, steps as solved in the book pp. 42–52 ---- */
+EXQ.d1=['مثال 1 · ص 44',`جد معادلة الدائرة التي مركزها ${M('c(4 , 3)')} وتمر بالنقطة ${M('p(2 , 1)')}`];
+EXQ.g1=['مثال 1 · ص 49',`اي المعادلات الآتية يمثل معادلة دائرة: ${M('a. x^3 + y^3 − 2x + 6y − 9 = 0')} ${M('b. 3x^2 − 3y^2 − 2x + 6y − 19 = 0')} ${M('c. x^2 + y^2 − 5xy − 2x + 6y − 19 = 0')} ${M('d. x^2 + y^2 − 2x + 6y + 19 = 0')} ${M('e. x^2 + y^2 − 2x + 6y − 19 = 0')}`];
+const cq=(x,y)=>(x*x+y*y);
+const WXD={
+ s1:[
+  {q:'c1',l:'1',st:[['(x − h)^2 + (y − k)^2 = r^2','من الصيغة القياسية لمعادلة الدائرة'],['(x − 5)^2 + (y − 3)^2 = 4^2','نعوض المركز (5 , 3) ونصف القطر 4'],['(x − 5)^2 + (y − 3)^2 = 16']],
+   f:n=>({x0:-1,x1:11,y0:-2,y1:8,eq:1,Pt:[[5,3,'C(5 , 3)']],C:n>=1?[[5,3,4]]:[],S:n>=1?[[5,3,9,3,'c-radius',0,'r = 4']]:[]})},
+  {q:'c2',l:'2',st:[['C(h , k) = C(0 , 0) , r = 6','وحدات'],['(x − h)^2 + (y − k)^2 = r^2'],['(x + 0)^2 + (y − 0)^2 = 36 ⇒ x^2 + y^2 = 36']],
+   f:n=>({x0:-8,x1:8,y0:-7,y1:7,eq:1,Pt:[[0,0,'C(0 , 0)']],C:n>=2?[[0,0,6]]:[],S:[[0,0,6,0,'c-radius',0,'r = 6']]})},
+  {q:'c3',l:'3',st:[['(x − h)^2 + (y − k)^2 = r^2','بالمقارنة مع المعادلة القياسية'],['c(h , k) = c(5 , −3)','المركز'],['r^2 = 49 ⇒ r = √49 = 7','وحدات']],
+   f:n=>({x0:-4,x1:14,y0:-11,y1:5,eq:1,C:[[5,-3,7]],Pt:n>=1?[[5,-3,'c(5 , −3)']]:[],S:n>=2?[[5,-3,12,-3,'c-radius',0,'r = 7']]:[]})},
+  {q:'d1',l:'4',st:[['pc = √((x<sub>2</sub> − x<sub>1</sub>)^2 + (y<sub>2</sub> − y<sub>1</sub>)^2)','قانون البعد بين نقطتين'],['pc = √((4 − 2)^2 + (3 − 1)^2) = √(2^2 + 2^2) = √(4 + 4) = √8'],['r = pc = √8','نصف القطر هو البعد بين المركز ونقطة على الدائرة'],['(x − 4)^2 + (y − 3)^2 = 8','المعادلة القياسية للدائرة']],
+   f:n=>({x0:-1,x1:8,y0:-1,y1:7,eq:1,Pt:[[4,3,'c(4 , 3)'],[2,1,'p(2 , 1)','c-point']],S:n>=1?[[4,3,2,1,'c-radius',0,'√8']]:[],C:n>=3?[[4,3,Math.sqrt(8)]]:[]})},
+  {q:'d2',l:'5',st:[['c(x , y) منتصف p<sub>1</sub>p<sub>2</sub>','المركز منتصف القطر'],['x = (x<sub>1</sub> + x<sub>2</sub>)/2 = (4 + (−2))/2 = 1'],['y = (y<sub>1</sub> + y<sub>2</sub>)/2 = (5 + 3)/2 = 8/2 = 4 ⇒ c(1 , 4)'],['r = p<sub>1</sub>c = √((4 − 1)^2 + (5 − 4)^2) = √(9 + 1) = √10','units'],['(x − 1)^2 + (y − 4)^2 = 10','المعادلة القياسية'],['x^2 + y^2 − x(x<sub>1</sub> + x<sub>2</sub>) − y(y<sub>1</sub> + y<sub>2</sub>) + x<sub>1</sub>x<sub>2</sub> + y<sub>1</sub>y<sub>2</sub> = 0','طريقة ثانية (ملاحظة ص 44): معادلة الدائرة بدلالة نهايتي قطر فيها'],['x^2 + y^2 − x(4 + (−2)) − y(5 + 3) + 4(−2) + (5)(3) = 0'],['x^2 + y^2 − x(2) − 8y − 8 + 15 = 0 ⇒ x^2 + y^2 − 2x − 8y + 7 = 0','لاحظ: تبسيط المعادلة القياسية (x − 1)² + (y − 4)² = 10 يعطي المعادلة نفسها']],
+   f:n=>({x0:-4,x1:6,y0:0,y1:8,eq:1,Pt:[[4,5,'p₁(4 , 5)','c-point'],[-2,3,'p₂(−2 , 3)','c-point'],...(n>=2?[[1,4,'c(1 , 4)']]:[])],S:[[4,5,-2,3,'c-cut',1]],C:n>=4?[[1,4,Math.sqrt(10)]]:[]})},
+  {q:'d3',l:'6',st:[['d = |3x<sub>1</sub> − 4y<sub>1</sub> − 15|/√(3^2 + (−4)^2)','نصف القطر = بعد المركز عن المستقيم المماس'],['d = |(3)(0) − (4)(0) − 15|/√(9 + 16) = |−15|/5'],['d = 15/5 = 3','units'],['d = r = 3 ⇒ x^2 + y^2 = 9']],
+   f:n=>({x0:-5,x1:8,y0:-6,y1:5,eq:1,L:[[3,-4,-15,'c-radius']],Pt:[[0,0,'C(0 , 0)'],...(n>=2?[[1.8,-2.4,'','c-point']]:[])],S:n>=1?[[0,0,1.8,-2.4,'c-cut',1,'d']]:[],C:n>=3?[[0,0,3]]:[]})}
+ ],
+ s2:[
+  {q:'a1',l:'1',st:[['r = |k| = |2| = 2','بما أن الدائرة تمس المحور السيني'],['(x − h)^2 + (y − k)^2 = r^2 ⇒ (x − 3)^2 + (y − 2)^2 = 4'],['x^2 + y^2 − 6x − 4y + 9 = 0','وبتبسيط المعادلة نحصل على المعادلة العامة'],['x^2 + y^2 − 2(3x) − 2(2y) + (3)^2 = 0','ملاحظة: بالقاعدة x² + y² − 2hx − 2ky + h² = 0 للدائرة التي تمس المحور السيني']],
+   f:n=>({x0:-1,x1:7,y0:-1,y1:5,eq:1,Pt:[[3,2,'(3 , 2)'],[3,0,'(3 , 0)','c-point']],S:[[3,2,3,0,'c-radius',0,'|k|']],C:n>=1?[[3,2,2]]:[]})},
+  {q:'a2',l:'2',st:[['r = |h| = |4| = 4','بما أن الدائرة تمس المحور الصادي'],['(x − 4)^2 + (y + 1)^2 = 16','المعادلة القياسية'],['x^2 + y^2 − 8x + 2y + 1 = 0','بالتبسيط'],['x^2 + y^2 − 2(4)x − 2(−1)y + (−1)^2 = 0','ملاحظة: بالقاعدة x² + y² − 2hx − 2ky + k² = 0']],
+   f:n=>({x0:-2,x1:10,y0:-6,y1:4,eq:1,Pt:[[4,-1,'(4 , −1)'],[0,-1,'(0 , −1)','c-point']],S:[[4,-1,0,-1,'c-radius',0,'|h|']],C:n>=1?[[4,-1,4]]:[]})},
+  {q:'a3',l:'3',st:[['r = |h| = |k|','بما أن الدائرة تمس المحورين'],['r = |4| = |−4| = 4','units'],['(x − 4)^2 + (y + 4)^2 = 16','المعادلة القياسية'],['x^2 + y^2 − 8x + 8y + 16 = 0','المعادلة العامة']],
+   f:n=>({x0:-2,x1:10,y0:-10,y1:2,eq:1,Pt:[[4,-4,'(4 , −4)'],[4,0,'','c-point'],[0,-4,'','c-point']],S:[[4,-4,4,0,'c-radius',1],[4,-4,0,-4,'c-radius',1]],C:n>=2?[[4,-4,4]]:[]})},
+  {q:'a4',l:'4',st:[['C(−r , −r) = C(−5 , −5)','بما أن الدائرة تمس المحورين وتقع في الربع الثالث'],['(x + 5)^2 + (y + 5)^2 = 25','المعادلة القياسية'],['x^2 + y^2 + 10x + 10y + 25 = 0','وبالتبسيط']],
+   f:n=>({x0:-12,x1:2,y0:-12,y1:2,eq:1,Pt:[[-5,-5,'C(−5 , −5)']],C:n>=1?[[-5,-5,5]]:[]})},
+  {q:'k5',l:'5',st:[['r = |h| = |k| ⇒ (x − h)^2 + (y − k)^2 = r^2 ...(1)','بما أن الدائرة تمس المحورين الأحداثيين'],['(x − r)^2 + (y − r)^2 = r^2','نعوض h = r , k = r في معادلة (1)'],['(2 − r)^2 + (1 − r)^2 = r^2','p(2 , 1) تحقق معادلة الدائرة'],['4 − 4r + r^2 + 1 − 2r + r^2 = r^2 ⇒ r^2 − 6r + 5 = 0'],['(r − 5)(r − 1) = 0 ⇒ r = 5 or r = 1'],['r = 5 ⇒ C(5 , 5) ⇒ (x − 5)^2 + (y − 5)^2 = 25','المعادلة (1)'],['r = 1 ⇒ C(1 , 1) ⇒ (x − 1)^2 + (y − 1)^2 = 1','المعادلة (2): للمسألة حلان']],
+   f:n=>({x0:-1,x1:11,y0:-1,y1:11,eq:1,Pt:[[2,1,'p(2 , 1)','c-point'],...(n>=5?[[5,5,'C(5 , 5)']]:[]),...(n>=6?[[1,1,'','c-gen']]:[])],C:[...(n>=5?[[5,5,5]]:[]),...(n>=6?[[1,1,1,'c-gen']]:[])],L:n>=1&&n<5?[[1,-1,0,'c-cut',1]]:[]})}
+ ],
+ s3:[
+  {q:'g1',l:'1',st:[['a. x^3 + y^3 − 2x + 6y − 9 = 0','لا تمثل معادلة دائرة لأنها معادلة من الدرجة الثالثة'],['b. 3x^2 − 3y^2 − 2x + 6y − 19 = 0','لا تمثل معادلة الدائرة لان معامل x² ≠ معامل y²'],['c. x^2 + y^2 − 5xy − 2x + 6y − 19 = 0','لا تمثل معادلة الدائرة لانها تحتوي على الحد xy'],['d. h = −(−2)/2 = 1 , k = −6/2 = −3 , C = 19 ⇒ r = √(1 + 9 − 19) = √(−9) ∉ R','لا تمثل معادلة الدائرة'],['e. h = 1 , k = −3 , c = −19 ⇒ r = √(1 + 9 + 19) = √29 > 0','تمثل معادلة دائرة']],
+   f:n=>n>=4?{x0:-6,x1:8,y0:-9,y1:3,eq:1,Pt:[[1,-3,'(1 , −3)']],C:[[1,-3,Math.sqrt(29)]]}:{x0:-6,x1:8,y0:-9,y1:3,eq:1,Pt:n>=3?[[1,-3,'(1 , −3) لا دائرة','c-cut']]:[]}},
+  {q:'g2',l:'2',st:[['[2x^2 + 2y^2 + 12x − 8y + 6 = 0] ÷ 2','نجعل معامل x² = معامل y² = 1'],['x^2 + y^2 + 6x − 4y + 3 = 0'],['C(−A/2 , −B/2) = C(−6/2 , 4/2) = C(−3 , 2)','المركز'],['r = √(h^2 + k^2 − c) = √((−3)^2 + (2)^2 − 3) = √(9 + 4 − 3) = √10','units']],
+   f:n=>({x0:-8,x1:2,y0:-3,y1:6,eq:1,Pt:n>=2?[[-3,2,'C(−3 , 2)']]:[],C:n>=3?[[-3,2,Math.sqrt(10)]]:[]})},
+  {q:'g3',l:'3',st:[['(x − h)^2 + (y − k)^2 = r^2'],['(x − 1)^2 + (y + 3)^2 = 4'],['x^2 − 2x + 1 + y^2 + 6y + 9 = 4','تبسيط المعادلة'],['x^2 + y^2 − 2x + 6y + 6 = 0','المعادلة العامة']],
+   f:()=>({x0:-3,x1:5,y0:-6,y1:1,eq:1,Pt:[[1,-3,'C(1 , −3)']],C:[[1,-3,2]]})},
+  {q:'k4',l:'4',st:[['C(0 , k)','بما ان الدائرة يقع مركزها على محور الصادات'],['r = p<sub>1</sub>c = √((0 − 1)^2 + (k + 2)^2) = √(1 + (k + 2)^2)'],['r = p<sub>2</sub>c = √((0 − 4)^2 + (k + 3)^2) = √(16 + (k + 3)^2)'],['1 + (k + 2)^2 = 16 + (k + 3)^2','وبتربيع الطرفين'],['1 + k^2 + 4k + 4 = 16 + k^2 + 6k + 9 ⇒ 2k = −20 ⇒ k = −10','بالتبسيط'],['C(0 , −10) ⇒ r = √(1 + (−10 + 2)^2) = √65','units'],['x^2 + (y + 10)^2 = 65']],
+   f:n=>({x0:-10,x1:10,y0:-19,y1:0,eq:1,Pt:[[1,-2,'p₁(1 , −2)','c-point'],[4,-3,'p₂(4 , −3)','c-point'],...(n>=4?[[0,-10,'C(0 , −10)']]:[])],S:n>=4?[[0,-10,1,-2,'c-radius',1],[0,-10,4,-3,'c-radius',1]]:[],C:n>=6?[[0,-10,Math.sqrt(65)]]:[]})},
+  {q:'k51',l:'5',st:[['x^2 + y^2 + Ax + By + c = 0 ...(1)','معادلة الدائرة العامة'],['p<sub>1</sub>(0 , 0) ⇒ 0^2 + 0^2 + A(0) + B(0) + c = 0 ⇒ c = 0 ...(2)','تحقق المعادلة (1)'],['p<sub>2</sub>(2 , 0) ⇒ 4 + (0)^2 + 2A + B(0) + 0 = 0 ⇒ 2A = −4 ⇒ A = −2 ...(3)','تحقق المعادلة (1)، c = 0 من معادلة (2)'],['p<sub>3</sub>(3 , −1) ⇒ 3^2 + (−1)^2 + 3A + B(−1) + c = 0 ...(4)','تحقق المعادلة (1)'],['10 + 3(−2) − B + 0 = 0 ⇒ 4 − B = 0 ⇒ B = 4','نعوض c = 0 , A = −2 في معادلة (4)'],['x^2 + y^2 − 2x + 4y = 0','المعادلة']],
+   f:n=>({x0:-3,x1:5,y0:-5,y1:1.5,eq:1,Pt:[[0,0,'p₁','c-point'],[2,0,'p₂','c-point'],[3,-1,'p₃','c-point'],...(n>=5?[[1,-2,'(1 , −2)']]:[])],C:n>=5?[[1,-2,Math.sqrt(5)]]:[]})},
+  {q:'k6',l:'6',st:[['x^2 + y^2 + Ax + By + c = 0','المعادلة العامة للدائرة'],['p<sub>1</sub>(2 , 1) ⇒ 4 + 1 + 2A + B + c = 0 ⇒ 5 + 2A + B + c = 0 ...(1)','تحقق المعادلة العامة'],['p<sub>2</sub>(−1 , 1) ⇒ 2 − A + B + C = 0 ...(2)','تحقق المعادلة العامة'],['3 + 3A = 0 ⇒ 3A = −3 ⇒ A = −1 ...(3)','بالطرح: من معادلة (1) و (2)'],['C(−A/2 , −B/2) ⇒ −A + 2B − 5 = 0 ...(4)','مركز الدائرة يحقق معادلة المستقيم 2x − 4y − 5 = 0'],['1 + 2B − 5 = 0 ⇒ 2B = 4 ⇒ B = 2','نعوض A = −1'],['5 + 2(−1) + 2 + c = 0 ⇒ c = −5','نعوض A = −1 , B = 2 في معادلة (1)'],['x^2 + y^2 − x + 2y − 5 = 0','المعادلة']],
+   f:n=>({x0:-3.5,x1:4.5,y0:-4.5,y1:2.5,eq:1,L:[[2,-4,-5,'c-radius']],Pt:[[2,1,'p₁(2 , 1)','c-point'],[-1,1,'p₂(−1 , 1)','c-point'],...(n>=5?[[.5,-1,'(1/2 , −1)']]:[])],C:n>=7?[[.5,-1,Math.sqrt(6.25)]]:[]})},
+  {q:'t7',l:'7',st:[['c = (0 , 0)','x² + y² = 5'],['m<sub>1</sub> = (y<sub>2</sub> − y<sub>1</sub>)/(x<sub>2</sub> − x<sub>1</sub>) = (2 − 0)/(1 − 0) = 2','ميل نصف القطر'],['m<sub>2</sub> = −1/2','وبما ان المماس ⊥ على نصف القطرفي نقطة التماس'],['(y − y<sub>1</sub>) = m<sub>2</sub>(x − x<sub>1</sub>) ⇒ (y − 2) = (−1/2)(x − 1)'],['2y − 4 = −x + 1','بضرب طرفي المعادلة بـ 2'],['x + 2y − 5 = 0','معادلة المماس']],
+   f:n=>({x0:-4,x1:5,y0:-3.5,y1:4,eq:1,C:[[0,0,Math.sqrt(5)]],Pt:[[0,0,'c'],[1,2,'p(1 , 2)','c-point']],S:n>=1?[[0,0,1,2,'c-radius',0,'m₁ = 2']]:[],L:n>=3?[[1,2,-5,'c-cut']]:[]})}
+ ]};
+WX.insert('diam',`<section class="page text">
+ ${RUN(CH,'[3−2] · ص '+N('42–45'))}
+ <h2><span class="num"></span>أمثلة الصيغة القياسية خطوة بخطوة</h2>
+ ${WX.HINT}
+ <ol class="exl tight wx">${WXD.s1.map(E=>`<li><b class="exn">${E.l}</b><div>${EXQ[E.q][1]}</div></li>`).join('')}</ol>
+ ${FOOT(0)}
+</section>`,WX.page('s1','الصيغة القياسية · ص 42–45'));
+WX.insert('touch',`<section class="page text">
+ ${RUN(CH,'[3−2−1] · ص '+N('46–48'))}
+ <h2><span class="num"></span>أمثلة الدائرة التي تمس المحورين خطوة بخطوة</h2>
+ ${WX.HINT}
+ <ol class="exl tight wx">${WXD.s2.map(E=>`<li><b class="exn">${E.l}</b><div>${EXQ[E.q][1]}</div></li>`).join('')}</ol>
+ ${FOOT(0)}
+</section>`,WX.page('s2','تماس المحورين · ص 46–48'));
+WX.insert('tan',`<section class="page text">
+ ${RUN(CH,'[3−2−2] · ص '+N('49–52'))}
+ <h2><span class="num"></span>أمثلة المعادلة العامة خطوة بخطوة</h2>
+ ${WX.HINT}
+ <ol class="exl tight wx">${WXD.s3.map(E=>`<li><b class="exn">${E.l}</b><div>${E.q==='g1'?'اي المعادلات الآتية يمثل معادلة دائرة ( a – e )':EXQ[E.q][1]}</div></li>`).join('')}</ol>
+ ${FOOT(0)}
+</section>`,WX.page('s3','المعادلة العامة والمماس · ص 49–52'));
+
 /* ================= build pages ================= */
 const store=$('#store'), book=$('#book'), slotL=$('.slot.L',book), slotR=$('.slot.R',book);
 const SP=PAGES.map(([r,l])=>{ const t=document.createElement('div'); t.innerHTML=r.trim(); const R=t.firstElementChild; t.innerHTML=l.trim(); const L=t.firstElementChild; store.append(R,L); return {R,L}; });
 readCols();
-const LABMAP={intro:IntroLab,cone:ConeLab,circle:CircleLab,touch:TouchLab,general:GenLab,game:GameLab,diam:DiamLab,cond:CondLab,tan:TanLab,check:CheckLab};
+const LABMAP={ex:WX.ExLab,intro:IntroLab,cone:ConeLab,circle:CircleLab,touch:TouchLab,general:GenLab,game:GameLab,diam:DiamLab,cond:CondLab,tan:TanLab,check:CheckLab};
 SP.forEach(sp=>{ const L=new LABMAP[sp.L.dataset.lab](sp.L); sp.lab=L; });
 const GSP=SP.find(sp=>sp.L.dataset.lab==='game'); const game=GSP.lab; game.list=$('.rounds',GSP.R); game.starEl=$('.stars',GSP.R); game.side();
 /* numbering, lab headers and table of contents are generated so they always match the page order */
