@@ -1,7 +1,0 @@
-/* Board buttons have one owner and stay above the presentation overlay. */
-#mb171-entry{position:fixed;bottom:14px;right:14px;z-index:100100;border:1px solid #d9bf87;background:#142b44;color:#fff;border-radius:12px;padding:13px 16px;min-height:50px;font:700 15px system-ui,Tahoma;touch-action:manipulation;cursor:pointer}
-#mbBoardToggle{display:none;position:fixed;bottom:14px;left:14px;z-index:100101;border:1px solid #d9bf87;background:#16415a;color:white;border-radius:12px;padding:13px 16px;min-height:50px;font:700 15px system-ui,Tahoma;touch-action:manipulation;cursor:pointer}
-body.mb171-board #mbBoardToggle{display:block!important}
-body.mb171-board.mb-tools-collapsed #mbTools{display:none!important}
-body.mb171-board:not(.mb-tools-collapsed) #mbTools{display:flex!important;z-index:100099!important}
-@media print{#mb171-entry,#mbBoardToggle{display:none!important}}

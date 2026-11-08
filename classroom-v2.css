@@ -1,0 +1,113 @@
+/* Math-books v1.9 — classroom & board tools (one stylesheet; replaces the eight v1.2–v1.7.5 stylesheets) */
+:root{--mbn:#142b44;--mbn2:#1d3d5c;--mbg:#e6c184;--mbbg:#edf2f6}
+/* ---------- drawing layer ---------- */
+#mbCanvas{position:fixed;inset:0;width:100vw;height:100dvh;z-index:99980;pointer-events:none;touch-action:none}
+#mbCanvas.on{pointer-events:auto;cursor:crosshair}
+/* ---------- toolbar (closed by default; opened from the navigation bar) ---------- */
+#mbToolsBtn.on{background:var(--mbg)!important;color:var(--mbn)!important}
+#mbBar{position:fixed;z-index:99990;left:50%;transform:translateX(-50%);bottom:calc(var(--tb,60px) + 8px + env(safe-area-inset-bottom));
+  display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:6px;width:max-content;max-width:calc(100vw - 16px);box-sizing:border-box;
+  padding:7px 8px;border-radius:16px;background:#142b44f2;color:#fff;box-shadow:0 10px 30px #0006;direction:rtl;backdrop-filter:blur(12px);font:600 13px/1.2 system-ui,Tahoma,sans-serif}
+#mbBar[hidden]{display:none!important}
+#mbBar .mbg{display:flex;align-items:center;gap:4px;padding:2px 6px 2px 4px;border-radius:12px;background:#ffffff0d}
+#mbBar .mbgt{font-size:11px;opacity:.7;padding-inline:2px 4px;white-space:nowrap}
+#mbBar button{font:inherit;min-height:42px;min-width:42px;padding:6px 10px;border:1px solid #ffffff38;border-radius:10px;background:#ffffff14;color:#fff;cursor:pointer;touch-action:manipulation;white-space:nowrap}
+#mbBar button:hover{background:#ffffff26}
+#mbBar button:focus-visible,#mbHandle:focus-visible,#mbIdea button:focus-visible{outline:3px solid var(--mbg);outline-offset:2px}
+#mbBar button[aria-pressed="true"]{background:var(--mbg);color:var(--mbn);border-color:var(--mbg)}
+#mbBar button.sw{width:32px;min-width:32px;padding:0;border:2px solid #fff}
+#mbBar button.sw[aria-pressed="true"]{outline:3px solid var(--mbg);outline-offset:1px}
+#mbBar button.x{align-self:center;background:transparent;border-color:transparent;font-size:16px}
+#mbVer{align-self:center;font-size:10px;opacity:.5;direction:ltr}
+body:not(.mb-board) #mbBar .bo{display:none}            /* hide-a-part tools act on the board page only */
+body.mb-board #mbBar .rd{display:none}                   /* focus (fade nav) is for reading mode */
+@media (max-width:640px){
+  #mbBar{width:calc(100vw - 12px);gap:4px;padding:6px}
+  #mbBar .mbg{flex-wrap:wrap;justify-content:center}
+  #mbBar .mbgt{width:100%;text-align:center;padding:0}
+  #mbBar button{min-height:40px;min-width:40px;padding:5px 8px;font-size:12px}
+  #mbVer{display:none}
+}
+/* reading-mode helpers */
+body.mb-big .page{font-size:115%!important}
+body.mb-focus #tb{opacity:.12;transition:opacity .2s}
+body.mb-focus #tb:hover,body.mb-focus #tb:focus-within{opacity:1}
+/* status toast */
+#mbMsg{position:fixed;z-index:100005;top:12px;left:50%;transform:translateX(-50%);background:var(--mbn);color:#fff;padding:9px 16px;border-radius:12px;box-shadow:0 4px 20px #0004;font:600 14px system-ui,Tahoma;pointer-events:none;opacity:0;transition:opacity .2s;max-width:85vw;text-align:center}
+#mbMsg.on{opacity:1}
+/* ---------- progressive cover ---------- */
+#mbCover{position:fixed;z-index:99970;--r:0%;background:linear-gradient(180deg,transparent var(--r),#f5f1e6 var(--r));border:2px solid #1c5b87;border-radius:10px;touch-action:none;cursor:ns-resize}
+#mbCover[hidden]{display:none!important}
+#mbCover .h{position:absolute;top:var(--r);right:0;left:0;transform:translateY(-50%);background:#174365;color:#fff;text-align:center;padding:10px;font:700 15px system-ui,Tahoma;border-radius:8px;user-select:none}
+/* ---------- hide a part / spotlight ---------- */
+body.mb-picking .page{cursor:crosshair!important}
+.mb-hid{position:relative!important;border-radius:8px}
+.mb-hid>*{visibility:hidden!important}
+.mb-hid::after{content:"مخفي — «كشف التالي»";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#dfe9f2;border:2px dashed #497aa2;border-radius:8px;color:#24435e;font:600 .85em system-ui,Tahoma;visibility:visible;z-index:3}
+.mb-hid:is(.stage)::after{font-size:1.1em}
+.mb-spot{outline:4px solid #efad3d!important;outline-offset:3px!important;box-shadow:0 0 0 9px #f5bd4d40!important;border-radius:6px;position:relative;z-index:2}
+
+/* ---------- board mode: lesson page (live lab) + idea panel ---------- */
+#mbHead,#mbIdea,#mbHandle{display:none}
+body.mb-board #teach.on{display:block!important;background:var(--mbbg)!important;perspective:none!important;color:var(--mbn)}
+body.mb-board #teach.on .tbtn{background:var(--mbn)!important;color:#fff!important;min-width:48px;min-height:46px;border-radius:12px}
+body.mb-board #mbHead{display:flex;position:absolute;top:10px;left:236px;right:128px;height:52px;align-items:center;gap:14px;padding:0 20px;box-sizing:border-box;border-radius:14px;background:var(--mbn);color:#fff;direction:rtl;overflow:hidden;white-space:nowrap;font:700 clamp(16px,1.5vw,24px) system-ui,Tahoma}
+body.mb-board #mbHead .t1{overflow:hidden;text-overflow:ellipsis}
+body.mb-board #mbHead .t2{color:var(--mbg);font-size:.75em;font-weight:600;overflow:hidden;text-overflow:ellipsis}
+body.mb-board #mbHead .t2:not(:empty)::before{content:"· ";opacity:.6}
+body.mb-board #teach.on .board{position:absolute!important;top:72px;bottom:12px;left:12px;right:12px;width:auto!important;height:auto!important;max-width:none!important;
+  display:flex!important;gap:12px;direction:ltr;transform:none!important;transform-style:flat!important;margin:0!important}
+body.mb-board.mb-bar #teach.on .board{bottom:70px}
+body.mb-board #teach.on .board::before{display:none!important}
+body.mb-board #teach.on .board>.page{position:relative!important;order:1;flex:1 1 68%;min-width:0;width:auto!important;height:auto!important;margin:0!important;transform:none!important;
+  direction:rtl;background:#fff!important;border-radius:14px;box-shadow:0 2px 14px #142b4418;font-size:clamp(15px,1.22vw,24px)!important;overflow:auto;box-sizing:border-box}
+body.mb-board #teach.on .board>.page .stage{perspective:none;min-height:12em}
+body.mb-board #teach.on .board>.page .card,body.mb-board #teach.on .board>.page.risen .card{transform:none!important;left:1%;right:1%;top:1%;bottom:1%;box-shadow:0 0 0 1px #dce5ed!important;border-radius:10px}
+body.mb-board #teach.on .board>.page .card .edge,body.mb-board #teach.on .board>.page .crease,body.mb-board #teach.on .board>.page .stage::after{display:none!important}
+body.mb-board #teach.on .board>.page .pno{display:none}
+/* idea panel */
+body.mb-board #mbIdea{display:flex;order:2;flex:0 0 30%;min-width:0;flex-direction:column;gap:12px;box-sizing:border-box;padding:clamp(12px,1.4vw,24px);border-radius:14px;background:#fff;box-shadow:0 2px 14px #142b4418;overflow:auto;direction:rtl;
+  font:400 clamp(14px,1.1vw,20px)/1.7 "Segoe UI","Noto Sans Arabic","Noto Naskh Arabic",Tahoma,sans-serif;color:#142b44}
+#mbIdea h2{margin:0;font-size:1.15em;color:var(--mbn)}
+#mbIdea .ilaw{display:flex;flex-direction:column;gap:8px}
+#mbIdea .ilaw>*{margin:0!important;font-size:1em}
+#mbIdea .ilaw .law{background:#f7f9fb}
+#mbIdea #mbLive{text-align:center;color:#254d70;font-weight:600;padding:8px;background:#edf4f9;border-radius:10px}
+#mbIdea #mbLive bdi{display:block;font-size:1.15em}
+#mbIdea #mbLive small{display:block;font-size:.8em}
+#mbIdea .iq{border-top:1px solid #e3e9ee;padding-top:10px}
+#mbIdea .iq>b{display:inline-block;background:var(--mbn);color:#fff;border-radius:6px;padding:0 8px;font-size:.8em;margin-bottom:4px}
+#mbIdea .iq .pq .tag{display:none}
+#mbIdea .iopts{margin:.3em 0;padding-inline-start:1.4em}
+#mbIdea .ishow{font:600 .9em system-ui,Tahoma;min-height:42px;padding:6px 14px;border-radius:10px;border:1px solid #c9d6e2;background:#f1f5f9;color:var(--mbn);cursor:pointer}
+#mbIdea .ians{margin-top:8px;padding:8px 10px;background:#eef7ee;border-radius:10px}
+#mbIdea .ians>*{display:block!important;position:static!important;transform:none!important;opacity:1!important}
+#mbIdea .iguide{margin-top:auto;border:1px solid #e3e9ee;border-radius:12px;padding:6px 10px;font-size:.9em}
+#mbIdea .iguide summary{cursor:pointer;font-weight:700;color:var(--mbn2);min-height:36px;display:flex;align-items:center}
+#mbIdea .iguide .gs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px}
+#mbIdea .iguide button{font:600 .85em system-ui,Tahoma;min-height:40px;border-radius:9px;border:1px solid #cbd5e1;background:#f1f5f9;color:var(--mbn);cursor:pointer;padding:4px 8px}
+#mbIdea .iguide button.on,#mbIdea .iguide button[aria-pressed="true"]{background:var(--mbn);color:#fff;border-color:var(--mbn)}
+#mbIdea .iguide button:disabled{opacity:.4}
+#mbIdea .iguide .gh{margin:8px 0;line-height:1.7}
+#mbIdea .iguide .ga{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+/* toolbar as a bottom strip in board mode */
+body.mb-board #mbHandle{display:block;position:fixed;z-index:100100;left:118px;top:10px;width:108px;min-height:46px;padding:10px 14px;border:1px solid var(--mbg);border-radius:12px;background:var(--mbn);color:#fff;font:700 14px system-ui,Tahoma;cursor:pointer;box-shadow:0 4px 16px #0004}
+body.mb-board #mbBar{left:0;right:0;bottom:0;transform:none;width:auto;max-width:none;border-radius:14px 14px 0 0;flex-wrap:nowrap;overflow-x:auto;justify-content:center;padding:6px 12px;min-height:58px}
+body.mb-board #mbBar .mbg{flex:0 0 auto}
+body.mb-board #mbBar .mbgt{width:auto}
+/* narrow / portrait boards: stack the panel under the page */
+@media (max-width:900px),(orientation:portrait){
+  body.mb-board #teach.on .board{flex-direction:column;overflow:auto}
+  body.mb-board #teach.on .board>.page{flex:0 0 auto;min-height:72dvh}
+  body.mb-board #mbIdea{flex:0 0 auto}
+  body.mb-board #mbHead{left:64px;right:118px;padding:0 12px;top:66px;height:40px;font-size:15px}
+  body.mb-board #teach.on .board{top:116px}
+  body.mb-board #mbHandle{left:auto;right:12px;top:auto;bottom:12px;width:auto}
+  body.mb-board.mb-bar #mbHandle{bottom:70px}
+  body.mb-board #mbBar{justify-content:flex-start}
+}
+@media (max-width:640px){ body.mb-board #mbBar{padding-left:12px} body.mb-board #mbBar .mbg{flex-wrap:nowrap} body.mb-board #mbBar .mbgt{display:none} }
+@media (prefers-reduced-motion:reduce){ #mbMsg{transition:none} }
+@media print{ #mbBar,#mbCanvas,#mbCover,#mbMsg,#mbHandle,#mbIdea,#mbHead{display:none!important} }
+/* navigation bar fits the extra «أدوات» button on small phones */
+@media (max-width:440px){ #tb{gap:.15rem!important;padding-inline:.25rem!important} #tb .sep{display:none} #tb .tbtn{padding:0 .42rem!important;min-width:0} }

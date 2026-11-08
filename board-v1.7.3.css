@@ -1,7 +1,0 @@
-/* v1.7.3: reliable visible entry/toolbar hit targets */
-body.mb171-board.mb-tools-collapsed #mbTools,
-body.mb171-board.mb-tools-collapsed #mbGuide {display:none!important}
-body.mb171-board #mbBoardToggle {display:block!important;position:fixed!important;left:12px!important;right:auto!important;bottom:12px!important;z-index:100002!important;min-height:48px!important;padding:10px 16px!important;pointer-events:auto!important;touch-action:manipulation}
-body.mb171-board #mb171-entry {z-index:100003!important;pointer-events:auto!important;touch-action:manipulation}
-body.mb171-board:not(.mb-tools-collapsed) #mbTools {display:flex!important;z-index:100001!important}
-@media(max-width:700px){body.mb171-board #mb171-entry{max-width:45vw;font-size:13px!important;padding:10px!important}}

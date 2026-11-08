@@ -1,12 +1,13 @@
-const assert=require('node:assert/strict');
-const fs=require('node:fs');const path=require('node:path');
-const root=path.resolve(__dirname,'..');const read=n=>fs.readFileSync(path.join(root,n),'utf8');
-const pages=['ch3.html','ch4.html','ch5.html','ch6.html','g9c1.html','g9c5.html'];
-assert.match(read('app-version.js'),/version: '1\.3\.0'/);
-assert.match(read('sw.js'),/classroom\.js/);
-assert.match(read('sw.js'),/classroom\.css/);
-for(const name of pages){const page=read(name);assert.match(page,/href="classroom\.css"/);assert.match(page,/src="classroom\.js"/);assert.match(page,/id="bTeach"/);assert.match(page,/const SP/)}
-for(const id of ['mbPen','mbErase','mbRed','mbBlue','mbClear','mbFocus','mbZoom','mbFull','mbHide'])assert.ok(read('classroom.js').includes(id));
-assert.match(read('index.html'),/id="librarySearch"/);
-assert.match(read('index.html'),/library-hero/);
-console.log('PASS: six chapters, shared controls, library search, release metadata and precache');
+/* Math-books release check: run with `node release.test.cjs` from the repository folder. */
+const assert=require('node:assert/strict'); const fs=require('node:fs'); const path=require('node:path'); const vm=require('node:vm');
+const root=__dirname, read=n=>fs.readFileSync(path.join(root,n),'utf8');
+const sw=read('sw.js'), ctx={self:{}}; ctx.globalThis=ctx; vm.runInNewContext(read('app-version.js'),ctx); const ver=ctx.MATH_BOOKS_RELEASE?.version;
+const core=[...sw.matchAll(/'\.\/([^']*)'/g)].map(m=>m[1]).filter(Boolean);
+for(const f of core) assert.ok(fs.existsSync(path.join(root,f)),`sw.js precaches a missing file: ${f}`);
+const chapters=core.filter(f=>/\.html$/.test(f)&&f!=='index.html');
+for(const f of chapters){ const s=read(f);
+  assert.match(s,/<script src="app-version\.js"><\/script>/,f); assert.match(s,/href="classroom-v2\.css"/,f); assert.match(s,/src="classroom-v2\.js"/,f);
+  assert.match(s,/id="bTeach"/,f); assert.match(s,/id="tBoard"/,f); assert.match(s,/const SP=/,f);
+  for(const m of s.matchAll(/(?:src|href)="([^"#:]+\.(?:js|css))"/g)) assert.ok(fs.existsSync(path.join(root,m[1])),`${f} links a missing file: ${m[1]}`); }
+const idx=read('index.html'); for(const m of idx.matchAll(/file:'([^']+)'/g)) assert.ok(core.includes(m[1]),`library chapter not precached: ${m[1]}`);
+console.log(`PASS v${ver||'?'}: ${chapters.length} chapters, ${core.length} offline files, classroom-v2 linked everywhere`);
