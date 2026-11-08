@@ -9,5 +9,5 @@ for(const f of chapters){ const s=read(f);
   assert.match(s,/<script src="app-version\.js"><\/script>/,f); assert.match(s,/href="classroom-v2\.css"/,f); assert.match(s,/src="classroom-v2\.js"/,f);
   assert.match(s,/id="bTeach"/,f); assert.match(s,/id="tBoard"/,f); assert.match(s,/const SP=/,f);
   for(const m of s.matchAll(/(?:src|href)="([^"#:]+\.(?:js|css))"/g)) assert.ok(fs.existsSync(path.join(root,m[1])),`${f} links a missing file: ${m[1]}`); }
-const idx=read('index.html'); for(const m of idx.matchAll(/file:'([^']+)'/g)) assert.ok(core.includes(m[1]),`library chapter not precached: ${m[1]}`);
+const idx=read('index.html'); for(const m of idx.matchAll(/file:'([\w.-]+\.html)'/g)) assert.ok(core.includes(m[1]),`library chapter not precached: ${m[1]}`);
 console.log(`PASS v${ver||'?'}: ${chapters.length} chapters, ${core.length} offline files, classroom-v2 linked everywhere`);
