@@ -104,6 +104,8 @@ footer{padding:24px 0}
 @media(max-width:550px){body{padding-inline:12px}.library-hero{padding:22px 18px}.shelf{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.book{padding:7px;border-radius:15px}.cv{padding:12px}.cv .ti{font-size:16px}header{gap:10px}header img{width:44px;height:44px}}
 @media(prefers-reduced-motion:reduce){.ib,.book{transition:none}}
 
+.cv .exs{font-size:11.5px;font-weight:700;margin-bottom:5px;opacity:.95}
+.cv .exs .st{color:#ffd56b;letter-spacing:1px}
 .soon{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:-14px 0 26px;font-size:13px;color:var(--muted)}
 .soon b{font-weight:600;margin-inline-end:2px}
 .book.mini{all:unset;display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font-size:13px;cursor:default}
@@ -174,7 +176,8 @@ const card=ch=>{ const p=prog(ch), lock=!ch.file;
   return `<a class="book ${lock?'lock':''}" ${lock?'aria-disabled="true"':`href="${ch.file}" onclick="ls.set('lb-last-${ch.uid}',Date.now())"`} style="--c1:${ch.c[0]};--c2:${ch.c[1]}">
    <div class="cv"><span class="badge ${lock?'':'on'}">${lock?'قريباً':'متاح'}</span>
     <div class="n">الفصل <bdi>${ch.n}</bdi></div><div class="ti">${ch.t}</div>
-    <div>${p?`<div class="prog"><i style="width:${p.pct}%"></i></div>`:''}<div class="pg">ص <bdi dir="ltr">${ch.pg}</bdi></div></div></div></a>`; };
+    <div>${(()=>{ const id=(ch.file||'').replace(/\.html$/,''); let e=null,st=0; try{ e=JSON.parse(localStorage.getItem('lb-ex-'+id)||'null'); st=+(localStorage.getItem('lb-stars-'+id)||0); }catch(_){}
+      const done=e&&e.r?Object.values(e.r).filter(v=>v===1).length:0; return (done||st)?`<div class="exs">${done?`✓ <bdi>${done}</bdi>${e.t?` / <bdi>${e.t}</bdi>`:''} تمرين`:''}${st?` <span class="st">${'★'.repeat(st)}</span>`:''}</div>`:''; })()}${p?`<div class="prog"><i style="width:${p.pct}%"></i></div>`:''}<div class="pg">ص <bdi dir="ltr">${ch.pg}</bdi></div></div></div></a>`; };
 const pill=ch=>`<span class="book lock mini" aria-disabled="true" style="--c1:${ch.c[0]}"><bdi>${ch.n}</bdi> ${ch.t}</span>`;
 document.getElementById('shelves').innerHTML=BOOKS.map(B=>{ const on=B.ch.filter(c=>c.file), off=B.ch.filter(c=>!c.file);
   return `<section class="bk"><h2>${B.t} <small>${on.length} من ${B.ch.length} فصول متاحة</small></h2><div class="shelf">${on.map(card).join('')}</div>${off.length?`<div class="soon"><b>قريباً:</b>${off.map(pill).join('')}</div>`:''}</section>`; }).join('');

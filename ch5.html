@@ -323,6 +323,7 @@ input[type=range]::-moz-range-thumb{width:max(1.35em,20px);height:max(1.35em,20p
 </style>
 <script src="app-version.js"></script>
 <link rel="stylesheet" href="classroom-v2.css">
+<link rel="stylesheet" href="practice.css">
 </head>
 <body>
 <div id="scene">
@@ -1402,6 +1403,7 @@ try{ const o=JSON.parse(localStorage.getItem('lb-ch5-pos')||'null'); if(o&&o.pos
 layout();
 if('serviceWorker' in navigator && location.protocol!=='file:') navigator.serviceWorker.register('sw.js', {updateViaCache:'none'}).then(reg=>{ if(navigator.onLine) reg.update().catch(()=>{}); }).catch(()=>{});
 </script>
+<script src="practice.js" defer></script>
 <script src="classroom-v2.js" defer></script>
 </body>
 </html>
