@@ -47,11 +47,14 @@ function parse(src){
 
 /* inline: $tex$, $$tex$$ (display), [[cls:text]], **bold** */
 function T(s){
-  if(s==null) return ''; const keep=[];
-  s=String(s).replace(/\$\$([^$]+)\$\$/g,(_,t)=>{ keep.push(`<span class="big tex" data-tex="${esc(t).replace(/"/g,'&quot;')}"></span>`); return `\u0000${keep.length-1}\u0000`; })
-   .replace(/\$([^$]+)\$/g,(_,t)=>{ keep.push(`<span class="tex" data-tex="${esc(t).replace(/"/g,'&quot;')}"></span>`); return `\u0000${keep.length-1}\u0000`; });
+  if(s==null) return ''; const keep=[], ph=i=>String.fromCharCode(0xE000+i);
+  s=String(s).replace(/\$\$([^$]+)\$\$/g,(_,t)=>{ keep.push(`<span class="big tex" data-tex="${esc(t).replace(/"/g,'&quot;')}"></span>`); return ph(keep.length-1); })
+   .replace(/\$([^$]+)\$/g,(_,t)=>{ keep.push(`<span class="tex" data-tex="${esc(t).replace(/"/g,'&quot;')}"></span>`); return ph(keep.length-1); });
   s=s.replace(/\[\[(\w+):([^\]]+)\]\]/g,'<span class="tag $1">$2</span>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');
-  return s.replace(/\u0000(\d+)\u0000/g,(_,i)=>keep[+i]);
+  /* keep plain Latin/number runs (e.g. "(5 , 3)") in reading order inside Arabic text */
+  if(/[؀-ۿ]/.test(s)) s=s.replace(/(^|>)([^<]*)/g,(m,a,t)=>a+t.replace(/[^؀-ۿ-]+/g,r=>{ if(!/[A-Za-z0-9]/.test(r)) return r;
+    const mm=r.match(/^([^A-Za-z0-9(\[√−+\-|]*)([\s\S]*?)([\s.،:؛]*)$/); return mm[1]+(mm[2]?`<bdi dir="ltr">${mm[2]}</bdi>`:'')+mm[3]; }));
+  return s.replace(/[-]/g,c=>keep[c.charCodeAt(0)-0xE000]);
 }
 const lines=p=>p.lines.map(T).join('<br>');
 const MAC={"\\cf":"\\htmlClass{tk-f}{#1}","\\cch":"\\htmlClass{tk-chord}{#1}","\\ctn":"\\htmlClass{tk-tan}{#1}","\\ccc":"\\htmlClass{tk-c}{#1}","\\cin":"\\htmlClass{tk-int}{#1}","\\cok":"\\htmlClass{tk-ok}{#1}","\\cbad":"\\htmlClass{tk-bad}{#1}","\\R":"R"};
@@ -127,7 +130,7 @@ function renderHome(){
     <small>${esc(B.grade)} · ${esc(B.chapter)}</small><h1>${esc(B.title)}</h1><p>${T(B.desc||'')}</p>
     <div class="bar"><i style="width:${LES.length?Math.round(seen/LES.length*100):0}%"></i></div>
     <div class="meta">أنهيت ${seen} من ${LES.length} دروس${tot?` · حللت ${done} من ${tot} تمريناً`:''}</div></div>
-   <div class="lessons">${LES.map((l,i)=>{ const n=exDone(l); return `<a class="lcard" href="#l=${l.id}"><span class="no"><span>${esc(l.no)}</span><span class="pg">ص ${esc(l.pg)}</span></span><b>${T(l.t)}</b><p>${T(l.d)}</p>
+   <div class="lessons">${LES.map((l,i)=>{ const n=exDone(l); return `<a class="lcard" href="#l=${l.id}"><span class="no"><span>${esc(/^\d/.test(l.no)?'['+l.no+']':l.no)}</span><span class="pg">ص ${esc(l.pg)}</span></span><b>${T(l.t)}</b><p>${T(l.d)}</p>
      <span class="st">${ST.seen[l.id]?'<span class="okb">✓ مكتمل</span>':`الدرس ${i+1}`}${l.nEx?`<span class="mini"><i style="width:${Math.round(n/l.nEx*100)}%"></i></span><span>${n}/${l.nEx}</span>`:''}</span></a>`; }).join('')}</div>
    ${B.classic?`<p class="classic">تفضّل الكتاب بصفحاته؟ <a href="${B.classic}">افتح النسخة الكلاسيكية</a></p>`:''}`;
   typeset($('#home')); scrollTo({top:0,behavior:'instant'}); $('#prog').style.width='0';
@@ -137,7 +140,7 @@ function renderHome(){
 let steps=[], secs=[], active=null, curLes=null;
 function renderLesson(les){
   D.body.classList.remove('is-home'); curLes=les; ST.last=les.id; save(); D.title=`${les.t.replace(/\$[^$]*\$/g,'')} – ${B.title}`;
-  $('#crS').textContent=`${B.grade} · ${B.chapter} · [${les.no}] · ص ${les.pg}`; $('#crB').innerHTML=T(les.t); typeset($('#crB'));
+  $('#crS').textContent=`${B.grade} · ${B.chapter} · ${/^\d/.test(les.no)?'['+les.no+']':les.no} · ص ${les.pg}`; $('#crB').innerHTML=T(les.t); typeset($('#crB'));
   $('#bBack').href='#'; $('#bBackL').textContent='الدروس'; $('#bLessons').hidden=true;
   let prevSc=null, h='';
   les.secs.forEach((sec,si)=>{ h+=`<section class="sec" data-sec="${esc(sec.t)}" id="s${si}">`;
@@ -145,7 +148,7 @@ function renderLesson(les){
       h+=`<div class="step ${st.cls.join(' ')}" data-scene="${esc(sc||'')}">${stepHTML(st,les,si,ki)}</div>`; });
     h+='</section>'; });
   const i=LES.indexOf(les), nx=LES[i+1];
-  h+=`<section class="sec" data-sec="التالي" id="sEnd"><div class="summary step" data-scene="${esc(prevSc||'')}"><h2>أحسنت!</h2><p>أنهيت درس «${T(les.t)}».</p><div class="lnav">${nx?`<a href="#l=${nx.id}"><span><small>الدرس التالي · [${esc(nx.no)}]</small><br>${T(nx.t)}</span><span>←</span></a>`:''}<a href="#"><span>كل دروس الفصل</span><span>←</span></a><a href="#l=${les.id}" data-top><span>إعادة الدرس من أوله</span><span>↑</span></a></div></div></section>`;
+  h+=`<section class="sec" data-sec="التالي" id="sEnd"><div class="summary step" data-scene="${esc(prevSc||'')}"><h2>أحسنت!</h2><p>أنهيت درس «${T(les.t)}».</p><div class="lnav">${nx?`<a href="#l=${nx.id}"><span><small>الدرس التالي · ${esc(/^\d/.test(nx.no)?'['+nx.no+']':nx.no)}</small><br>${T(nx.t)}</span><span>←</span></a>`:''}<a href="#"><span>كل دروس الفصل</span><span>←</span></a><a href="#l=${les.id}" data-top><span>إعادة الدرس من أوله</span><span>↑</span></a></div></div></section>`;
   story.innerHTML=h; typeset(story);
   steps=$$('.step',story); secs=$$('.sec',story); active=null;
   outline.innerHTML=secs.map((s,i)=>`<li><a href="#l=${les.id}" data-s="${i}"><span class="n">${i+1}</span>${esc(s.dataset.sec)}</a></li>`).join('');
@@ -239,7 +242,7 @@ function draw(){
     const X=x=>pad.l+(x-V.x0)/(V.x1-V.x0)*(W-pad.l-pad.r), Y=y=>pad.t+(V.y1-y)/(V.y1-V.y0)*(gb-pad.t), W2X=px=>V.x0+(px-pad.l)/(W-pad.l-pad.r)*(V.x1-V.x0);
     Object.assign(A,{X,Y,V,W2X});
     /* grid & axes */
-    if(!sc.noaxes){ const sx=sc.sx||niceStep(V.x1-V.x0,W,46), sy=sc.sy||niceStep(V.y1-V.y0,gb,34); let g='';
+    if(!sc.noaxes){ const sx=sc.sx||niceStep(V.x1-V.x0,W,56), sy=sc.sy||niceStep(V.y1-V.y0,gb,40); let g='';
       for(let x=Math.ceil(V.x0/sx)*sx;x<=V.x1;x+=sx) g+=`M${X(x)} ${pad.t}V${gb}`; for(let y=Math.ceil(V.y0/sy)*sy;y<=V.y1;y+=sy) g+=`M${pad.l} ${Y(y)}H${W-pad.r}`;
       el('path',{d:g,stroke:COL.grid,'stroke-width':1,fill:'none'});
       const ya=Math.min(Math.max(0,V.y0),V.y1), xa=Math.min(Math.max(0,V.x0),V.x1); A.ya=ya;
@@ -308,6 +311,23 @@ function draw(){
     (typeof sc.pts==='function'?sc.pts(A):sc.pts||[]).forEach(([x,y,s,col,o={}])=>{ col=C2(col||'c'); if(o.open) el('circle',{cx:X(x),cy:Y(y),r:6,fill:COL.surf,stroke:col,'stroke-width':2.4},G); else el('circle',{cx:X(x),cy:Y(y),r:6,fill:col,stroke:COL.surf,'stroke-width':2.2},G);
       if(s) lab(X(x)+(o.dx??0),Y(y)+(o.dy??-15),s,{fill:col,w:700,size:12.5,halo:1},G); });
     (sc.labs||[]).forEach(([x,y,s,col,o={}])=>lab(X(x),Y(y),s,{fill:C2(col||'ink2'),w:700,size:o.size||12.5,halo:1,anchor:o.anchor},G));
+    /* v1 figure spec (worked examples): C circles, I implicit, P plots, L lines, S segments, V verticals, Pt points, R shading */
+    if(sc.spec){ const F=sc.spec, CM={'c-std':'f','c-center':'c','c-radius':'chord','c-point':'c','c-gen':'int','c-cut':'tan'}, cc=(k,d)=>COL[CM[k]||k]||k||COL[d];
+      (F.R||[]).forEach(([x0,y0,x1,y1,col])=>el('rect',{x:X(Math.min(x0,x1)),y:Y(Math.max(y0,y1)),width:Math.abs(X(x1)-X(x0)),height:Math.abs(Y(y1)-Y(y0)),fill:cc(col,'int'),opacity:.12},G));
+      (F.V||[]).forEach(x=>el('path',{d:`M${X(x)} ${pad.t}V${gb}`,stroke:COL.muted,'stroke-width':1.2,'stroke-dasharray':'5 5'},G));
+      (F.L||[]).forEach(([a2,b2,c2,col,dash])=>{ const st={stroke:cc(col,'chord'),'stroke-width':2,'stroke-dasharray':dash?'6 4':undefined};
+        if(Math.abs(b2)<1e-12){ const x=-c2/a2; el('path',{d:`M${X(x)} ${pad.t}V${gb}`,...st},G); } else { const y=x=>(-c2-a2*x)/b2; el('path',{d:`M${X(V.x0)} ${Y(y(V.x0))}L${X(V.x1)} ${Y(y(V.x1))}`,...st},G); } });
+      (F.C||[]).forEach(([h,k2,r,col,dash])=>el('ellipse',{cx:X(h),cy:Y(k2),rx:Math.abs(X(h+r)-X(h)),ry:Math.abs(Y(k2+r)-Y(k2)),fill:'none',stroke:cc(col,'f'),'stroke-width':2.8,'stroke-dasharray':dash?'6 4':undefined},G));
+      (F.I||[]).forEach(([Fn,col])=>{ const nx=160, ny=120, dx=(V.x1-V.x0)/nx, dy=(V.y1-V.y0)/ny; let d='';
+        const val=(i,j)=>Fn(V.x0+i*dx,V.y0+j*dy);
+        for(let i=0;i<nx;i++) for(let j=0;j<ny;j++){ const a=val(i,j), b=val(i+1,j), c=val(i+1,j+1), e=val(i,j+1), P2=[];
+          const ed=(v1,v2,x1,y1,x2,y2)=>{ if((v1<0)!==(v2<0)){ const t=v1/(v1-v2); P2.push([x1+(x2-x1)*t,y1+(y2-y1)*t]); } };
+          ed(a,b,i,j,i+1,j); ed(b,c,i+1,j,i+1,j+1); ed(c,e,i+1,j+1,i,j+1); ed(e,a,i,j+1,i,j);
+          for(let q=0;q+1<P2.length;q+=2) d+=`M${X(V.x0+P2[q][0]*dx).toFixed(1)} ${Y(V.y0+P2[q][1]*dy).toFixed(1)}L${X(V.x0+P2[q+1][0]*dx).toFixed(1)} ${Y(V.y0+P2[q+1][1]*dy).toFixed(1)}`; }
+        el('path',{d,stroke:cc(col,'f'),'stroke-width':2.6,fill:'none','stroke-linecap':'round'},G); });
+      (F.P||[]).forEach(([fn,a2,b2,col,dash])=>el('path',{d:path(fn,Math.max(V.x0,a2??V.x0),Math.min(V.x1,b2??V.x1)),stroke:cc(col,'f'),'stroke-width':2.8,fill:'none','stroke-dasharray':dash?'6 4':undefined,'stroke-linecap':'round'},G));
+      (F.S||[]).forEach(([x1,y1,x2,y2,col,dash,l])=>{ el('path',{d:`M${X(x1)} ${Y(y1)}L${X(x2)} ${Y(y2)}`,stroke:cc(col,'chord'),'stroke-width':2.4,'stroke-dasharray':dash?'5 4':undefined},G); if(l) lab((X(x1)+X(x2))/2+8,(Y(y1)+Y(y2))/2-10,l,{fill:cc(col,'chord'),w:700,size:12.5,anchor:'start',halo:1},G); });
+      (F.Pt||[]).forEach(([x,y,l,col])=>{ const c3=cc(col,'c'); el('circle',{cx:X(x),cy:Y(y),r:5.5,fill:c3,stroke:COL.surf,'stroke-width':2},G); if(l){ const right=X(x)>W*.7; lab(X(x)+(right?-9:9),Y(y)-14,l,{fill:c3,w:700,size:12.5,anchor:right?'end':'start',halo:1},G); } }); }
     /* approximation picture: f(a+h) ≈ f(a) + h f′(a) */
     if(f&&sc.apx){ const [xa,xb]=sc.apx, ya2=f(xa), s=d1(xa), yb=f(xb), yt=ya2+(xb-xa)*s; line(xa,ya2,s,COL.tan,{w:2.2});
       el('path',{d:`M${X(xb)} ${Y(ya)}V${Y(Math.max(yb,yt))}`,stroke:COL.c,'stroke-width':1.2,'stroke-dasharray':'3 4'},G);
