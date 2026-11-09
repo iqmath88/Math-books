@@ -60,6 +60,7 @@ h2 small{font-size:12px;color:var(--muted);font-weight:600;margin-inline-start:8
 .cv .pg{font-size:12px;opacity:.85}
 .cv .badge{position:absolute;top:10px;left:10px;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;background:rgba(0,0,0,.35)}
 .cv .badge.on{background:var(--ok);color:#06280f}
+.cv .badge.new{background:#ffd56b;color:#2b1b0c}
 .book.lock{cursor:default}
 .book.lock .cv{filter:grayscale(.55) brightness(.8)}
 .book.lock:hover .cv{transform:rotateY(-14deg)}
@@ -147,7 +148,7 @@ const BOOKS=[
  {id:'g12',t:'الرياضيات · الصف السادس العلمي',ch:[
   {n:1,t:'الاعداد المركبة',pg:'5–47',c:['#1d4ed8','#1e3a8a']},
   {n:2,t:'القطوع المخروطية',pg:'48–89',c:['#b45309','#7b2d1e']},
-  {n:3,t:'تطبيقات التفاضل',pg:'90–147',c:['#0f766e','#134e4a'],file:'g12c3.html',key:'lb-g12c3-pos'},
+  {n:3,t:'تطبيقات التفاضل',pg:'90–147',c:['#0f766e','#134e4a'],file:'g12c3.html',key:'lb-g12c3-pos',v2:'g12c3'},
   {n:4,t:'التكامل',pg:'148–209',c:['#7e22ce','#4c1d95']},
   {n:5,t:'المعادلات التفاضلية الاعتيادية',pg:'210–223',c:['#be185d','#831843']},
   {n:6,t:'الهندسة الفضائية',pg:'224–240',c:['#475569','#1e293b']}]},
@@ -170,13 +171,15 @@ const BOOKS=[
   {n:6,t:'الإحصاء والاحتمالات',pg:'125–143',c:['#15803d','#14532d']}]}
 ];
 const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
-const prog=ch=>{ if(!ch.key) return null; try{ const o=JSON.parse(ls.get(ch.key)||'null'); if(!o||!o.total) return null; const page=o.pos*2+o.sub+1; return {page,total:o.total*2,pct:Math.round(page/(o.total*2)*100)}; }catch(e){ return null; } };
+const v2s=ch=>{ if(!ch.v2) return null; try{ return JSON.parse(ls.get('lb-v2-'+ch.v2)||'null'); }catch(e){ return null; } };
+const prog=ch=>{ const v=v2s(ch); if(v&&v.n){ const seen=Object.keys(v.seen||{}).length; if(!v.last&&!seen) return null; return {v2:1,seen,n:v.n,pct:Math.round(seen/v.n*100),last:v.last}; }
+  if(!ch.key) return null; try{ const o=JSON.parse(ls.get(ch.key)||'null'); if(!o||!o.total) return null; const page=o.pos*2+o.sub+1; return {page,total:o.total*2,pct:Math.round(page/(o.total*2)*100)}; }catch(e){ return null; } };
 const all=[]; BOOKS.forEach(B=>B.ch.forEach(ch=>{ ch.b=B; ch.uid=B.id+'-'+ch.n; all.push(ch); }));
 const card=ch=>{ const p=prog(ch), lock=!ch.file;
-  return `<a class="book ${lock?'lock':''}" ${lock?'aria-disabled="true"':`href="${ch.file}" onclick="ls.set('lb-last-${ch.uid}',Date.now())"`} style="--c1:${ch.c[0]};--c2:${ch.c[1]}">
-   <div class="cv"><span class="badge ${lock?'':'on'}">${lock?'قريباً':'متاح'}</span>
+  return `<a class="book ${lock?'lock':''}" ${lock?'aria-disabled="true"':`href="${ch.v2?'v2/'+ch.v2+'.html':ch.file}" onclick="ls.set('lb-last-${ch.uid}',Date.now())"`} style="--c1:${ch.c[0]};--c2:${ch.c[1]}">
+   <div class="cv"><span class="badge ${lock?'':'on'} ${ch.v2?'new':''}">${lock?'قريباً':ch.v2?'تصميم جديد':'متاح'}</span>
     <div class="n">الفصل <bdi>${ch.n}</bdi></div><div class="ti">${ch.t}</div>
-    <div>${(()=>{ const id=(ch.file||'').replace(/\.html$/,''); let e=null,st=0; try{ e=JSON.parse(localStorage.getItem('lb-ex-'+id)||'null'); st=+(localStorage.getItem('lb-stars-'+id)||0); }catch(_){}
+    <div>${(()=>{ const v=v2s(ch); if(v){ const d=Object.values(v.ex||{}).filter(x=>x===1).length; return d?`<div class="exs">✓ <bdi>${d}</bdi>${v.t?` / <bdi>${v.t}</bdi>`:''} تمرين</div>`:''; } const id=(ch.file||'').replace(/\.html$/,''); let e=null,st=0; try{ e=JSON.parse(localStorage.getItem('lb-ex-'+id)||'null'); st=+(localStorage.getItem('lb-stars-'+id)||0); }catch(_){}
       const done=e&&e.r?Object.values(e.r).filter(v=>v===1).length:0; return (done||st)?`<div class="exs">${done?`✓ <bdi>${done}</bdi>${e.t?` / <bdi>${e.t}</bdi>`:''} تمرين`:''}${st?` <span class="st">${'★'.repeat(st)}</span>`:''}</div>`:''; })()}${p?`<div class="prog"><i style="width:${p.pct}%"></i></div>`:''}<div class="pg">ص <bdi dir="ltr">${ch.pg}</bdi></div></div></div></a>`; };
 const pill=ch=>`<span class="book lock mini" aria-disabled="true" style="--c1:${ch.c[0]}"><bdi>${ch.n}</bdi> ${ch.t}</span>`;
 document.getElementById('shelves').innerHTML=BOOKS.map(B=>{ const on=B.ch.filter(c=>c.file), off=B.ch.filter(c=>!c.file);
@@ -184,8 +187,8 @@ document.getElementById('shelves').innerHTML=BOOKS.map(B=>{ const on=B.ch.filter
 const last=all.filter(ch=>prog(ch)).sort((a,b)=>(+ls.get('lb-last-'+b.uid)||0)-(+ls.get('lb-last-'+a.uid)||0))[0]; if(last){ const p=prog(last);
   document.getElementById('resume').classList.remove('hide');
   document.getElementById('rT').textContent='تابع القراءة: '+last.t;
-  document.getElementById('rS').innerHTML=`${last.b.t.split('·').pop().trim()} · وصلت إلى الصفحة <bdi>${p.page}</bdi> من <bdi>${p.total}</bdi>`;
-  document.getElementById('rB').style.width=p.pct+'%'; document.getElementById('rGo').href=last.file; }
+  document.getElementById('rS').innerHTML=p.v2?`${last.b.t.split('·').pop().trim()} · أنهيت <bdi>${p.seen}</bdi> من <bdi>${p.n}</bdi> دروس`:`${last.b.t.split('·').pop().trim()} · وصلت إلى الصفحة <bdi>${p.page}</bdi> من <bdi>${p.total}</bdi>`;
+  document.getElementById('rB').style.width=p.pct+'%'; document.getElementById('rGo').href=p.v2?`v2/${last.v2}.html${p.last?'#l='+p.last:''}`:last.file; }
 /* theme */
 const root=document.documentElement; const t0=ls.get('lb-theme'); if(t0) root.dataset.theme=t0;
 document.getElementById('theme').onclick=()=>{ const d=(root.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))==='dark'?'light':'dark'; root.dataset.theme=d; ls.set('lb-theme',d); };
