@@ -111,3 +111,11 @@ body.mb-board #mbBar .mbgt{width:auto}
 @media print{ #mbBar,#mbCanvas,#mbCover,#mbMsg,#mbHandle,#mbIdea,#mbHead{display:none!important} }
 /* navigation bar fits the extra «أدوات» button on small phones */
 @media (max-width:440px){ #tb{gap:.15rem!important;padding-inline:.25rem!important} #tb .sep{display:none} #tb .tbtn{padding:0 .42rem!important;min-width:0} }
+/* v1.12.1 — touch screens: draw the open book as one flat surface so taps always reach the buttons.
+   (On some Android GPUs, nested preserve-3d layers send taps to the wrong layer.) The lab card still pops up and pages still turn. */
+@media (pointer:coarse){
+  #book{transform:none!important;transform-style:flat!important}
+  #book>.slot,#book .slot>.page,#book .page{transform-style:flat!important}
+  #book>.cover,#book>.bshadow{transform:none!important}
+  #book>.flip{perspective:2200px;perspective-origin:50% 20%}
+}
