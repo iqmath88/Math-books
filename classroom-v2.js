@@ -132,7 +132,12 @@
  new MutationObserver(()=>{ if(inBoard()) requestAnimationFrame(buildIdea); }).observe(board,{childList:true});
  /* the drawing in board mode is shown flat: no pre-stretch for the tilted card */
  if(typeof globalThis.AK==='function'){ const ak=globalThis.AK; globalThis.AK=p=>p&&p.closest&&p.closest('#teach')&&body.classList.contains('mb-board')?1:ak(p); }
- function syncBoard(){ const on=inBoard(); body.classList.toggle('mb-board',on); if(!on){ lastPage=null; showAll(); setSpot(false); } setBar(false); if(!cover.hidden) toggleCover(false);
+ /* the board is always shown in the light theme (clear on projectors); the reader's own theme returns on exit */
+ const root=document.documentElement; let savedTheme=null, forced=false;
+ const reTheme=()=>{ try{ if(typeof themeChanged==='function') themeChanged(); }catch(_){} };
+ function boardTheme(on){ if(on&&!forced){ savedTheme=root.hasAttribute('data-theme')?root.dataset.theme:null; forced=true; if(root.dataset.theme!=='light'){ root.dataset.theme='light'; reTheme(); } }
+  else if(!on&&forced){ forced=false; if(savedTheme===null) root.removeAttribute('data-theme'); else root.dataset.theme=savedTheme; reTheme(); } }
+ function syncBoard(){ const on=inBoard(); boardTheme(on); body.classList.toggle('mb-board',on); if(!on){ lastPage=null; showAll(); setSpot(false); } setBar(false); if(!cover.hidden) toggleCover(false);
   if(on){ requestAnimationFrame(()=>{ buildIdea(); const pg=board.querySelector(':scope>.page'); const S=typeof SP!=='undefined'?SP:null; if(S&&typeof pos!=='undefined') S[pos]?.lab?.fit?.(); }); } }
  new MutationObserver(syncBoard).observe(teach,{attributes:true,attributeFilter:['class']});
  addEventListener('resize',()=>{ if(inBoard()){ const S=typeof SP!=='undefined'?SP:null; if(S&&typeof pos!=='undefined') setTimeout(()=>S[pos]?.lab?.fit?.(),150); } });
