@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مبرهنة القيمة المتوسطة – الرياضيات الحيّة</title>
+<meta name="theme-color" content="#0f1729">
+<link rel="stylesheet" href="lib/katex/katex.min.css">
+<script src="lib/katex/katex.min.js"></script>
+<style>
+@font-face{font-family:Plex;src:url(lib/fonts/plex-ar-400.woff2) format("woff2");font-weight:400;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(lib/fonts/plex-ar-500.woff2) format("woff2");font-weight:500;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(lib/fonts/plex-ar-700.woff2) format("woff2");font-weight:700;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(lib/fonts/plex-lat-400.woff2) format("woff2");font-weight:400;unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:Plex;src:url(lib/fonts/plex-lat-500.woff2) format("woff2");font-weight:500;unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:Plex;src:url(lib/fonts/plex-lat-700.woff2) format("woff2");font-weight:700;unicode-range:U+0000-00FF,U+2000-206F}
+:root{
+  --bg:#f6f7fb; --surface:#ffffff; --surface2:#f0f2f8; --ink:#141a2b; --ink2:#4a5370; --muted:#7c84a0; --line:#e3e6ef; --grid:#eceef5; --axis:#9aa1b8;
+  --f:#2b59c3;      /* the function */
+  --chord:#e8711a;  /* chord AB, average rate */
+  --tan:#0f9d6e;    /* tangent, f′(c) */
+  --c:#c2185b;      /* the number c */
+  --int:#7c4dff;    /* the interval [a , b] */
+  --ok:#0f9d6e; --bad:#d6334a; --accent:#2b59c3; --hdr:#0f1729;
+  --shadow:0 1px 2px rgba(20,26,43,.06),0 8px 24px rgba(20,26,43,.06);
+  --hh:60px; color-scheme:light;
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --bg:#0d111c; --surface:#151b2b; --surface2:#1b2336; --ink:#e8ebf5; --ink2:#b4bbd2; --muted:#7f88a6; --line:#263049; --grid:#1d2538; --axis:#59627f;
+  --f:#7aa2ff; --chord:#ffa257; --tan:#3ed3a0; --c:#ff6fa6; --int:#a98bff; --ok:#3ed3a0; --bad:#ff6b80; --accent:#7aa2ff; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark; } }
+:root[data-theme="dark"]{ --bg:#0d111c; --surface:#151b2b; --surface2:#1b2336; --ink:#e8ebf5; --ink2:#b4bbd2; --muted:#7f88a6; --line:#263049; --grid:#1d2538; --axis:#59627f;
+  --f:#7aa2ff; --chord:#ffa257; --tan:#3ed3a0; --c:#ff6fa6; --int:#a98bff; --ok:#3ed3a0; --bad:#ff6b80; --accent:#7aa2ff; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark; }
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.85 Plex,"Segoe UI","Noto Sans Arabic",Tahoma,sans-serif}
+button{font:inherit;color:inherit}
+.katex{font-size:1.08em}
+bdi.m{unicode-bidi:isolate;direction:ltr;white-space:nowrap}
+/* colour tokens: the same colour in text, formulas and figure */
+.tk-f{color:var(--f)} .tk-chord{color:var(--chord)} .tk-tan{color:var(--tan)} .tk-c{color:var(--c)} .tk-int{color:var(--int)}
+.tag{display:inline-block;border-radius:6px;padding:0 .35em;font-weight:700;line-height:1.5}
+.tag.chord{background:color-mix(in srgb,var(--chord) 14%,transparent);color:var(--chord)}
+.tag.tan{background:color-mix(in srgb,var(--tan) 14%,transparent);color:var(--tan)}
+.tag.c{background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c)}
+.tag.int{background:color-mix(in srgb,var(--int) 14%,transparent);color:var(--int)}
+.tag.f{background:color-mix(in srgb,var(--f) 14%,transparent);color:var(--f)}
+
+/* ---------- header ---------- */
+header{position:sticky;top:0;z-index:20;height:var(--hh);display:flex;align-items:center;gap:14px;padding:0 max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left));background:var(--hdr);color:#fff}
+header .crumb{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+header .crumb small{color:#9fb0d6;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .crumb b{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .sp{flex:1}
+.hb{height:38px;min-width:38px;padding:0 12px;border-radius:10px;border:1px solid #ffffff2a;background:#ffffff12;color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-size:14px;text-decoration:none;white-space:nowrap}
+.hb:hover{background:#ffffff22}
+.hb svg{width:18px;height:18px}
+.hb[aria-pressed="true"]{background:#fff;color:var(--hdr)}
+.prog{position:absolute;inset:auto 0 0 0;height:3px;background:#ffffff18}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--tan),var(--accent));transition:width .15s}
+@media (max-width:640px){ .hb .l{display:none} header{gap:8px} }
+
+/* ---------- layout: outline | story | sticky figure ---------- */
+.wrap{display:grid;grid-template-columns:210px minmax(0,1fr) minmax(0,1.12fr);gap:28px;max-width:1500px;margin:0 auto;padding:0 24px}
+nav.outline{position:sticky;top:calc(var(--hh) + 24px);align-self:start;padding-top:28px}
+nav.outline ol{list-style:none;margin:0;padding:0;border-inline-start:2px solid var(--line)}
+nav.outline a{display:flex;gap:10px;align-items:center;padding:7px 12px;margin-inline-start:-2px;border-inline-start:2px solid transparent;color:var(--muted);text-decoration:none;font-size:14.5px;line-height:1.4}
+nav.outline a .n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--surface2);font-size:12px;font-weight:700;flex:none}
+nav.outline a.on{color:var(--ink);border-color:var(--accent);font-weight:500}
+nav.outline a.on .n{background:var(--accent);color:#fff}
+nav.outline a.done .n{background:color-mix(in srgb,var(--ok) 20%,transparent);color:var(--ok)}
+.story{padding:28px 0 40vh}
+.fig{position:sticky;top:calc(var(--hh) + 20px);align-self:start;height:calc(100dvh - var(--hh) - 40px);margin-top:20px}
+
+/* ---------- figure panel ---------- */
+.panel{height:100%;background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
+.panel .top{display:flex;flex-wrap:wrap;gap:8px;padding:14px 16px 6px;align-items:center}
+.panel .title{font-weight:700;font-size:15px;margin-inline-end:auto}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 11px;font-size:13.5px;font-weight:500;background:var(--surface2);border:1px solid var(--line);white-space:nowrap;transition:opacity .3s}
+.chip i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.chip b{font-weight:700;direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+.chip.hide{opacity:0;pointer-events:none;position:absolute}
+.svgbox{flex:1;min-height:0;position:relative;touch-action:none}
+svg.g{width:100%;height:100%;display:block;font-family:Plex,"Segoe UI",sans-serif;direction:ltr}
+svg.g text{direction:ltr;unicode-bidi:plaintext}
+.panel .hint{padding:6px 16px 14px;font-size:13.5px;color:var(--muted);min-height:1.9em;transition:color .3s}
+.panel .hint.ok{color:var(--ok);font-weight:700}
+.handle{cursor:grab}.handle:active{cursor:grabbing}
+
+/* ---------- story blocks ---------- */
+.sec{margin:0 0 18vh}
+.sec:first-child{margin-top:8px}
+.kicker{display:inline-flex;gap:8px;align-items:center;font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.2px;margin-bottom:6px}
+.kicker .pg{color:var(--muted);font-weight:500}
+h1{font-size:clamp(30px,3.4vw,44px);line-height:1.25;margin:4px 0 14px;font-weight:700;letter-spacing:-.3px}
+h2{font-size:clamp(23px,2.3vw,30px);line-height:1.35;margin:4px 0 10px;font-weight:700}
+.lead{font-size:1.12em;color:var(--ink2)}
+.step{position:relative;padding:18px 20px;margin:0 0 14px;border-radius:16px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);transition:opacity .35s,transform .35s,border-color .35s}
+.story.focus .step{opacity:.42}
+.story.focus .step.on{opacity:1;border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
+.step p{margin:.2em 0}
+.step .lbl{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:4px}
+.law{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:20px 22px;box-shadow:var(--shadow)}
+.law .lbl{display:inline-block;background:var(--hdr);color:#fff;font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:7px;margin-bottom:8px}
+.law ol{margin:.3em 0;padding-inline-start:1.3em}
+.big{display:block;text-align:center;margin:14px 0 6px;font-size:1.35em;direction:ltr}
+.or{display:block;text-align:center;color:var(--muted);font-size:14px}
+.note{border-inline-start:4px solid var(--int);background:color-mix(in srgb,var(--int) 7%,var(--surface));border-radius:12px;padding:14px 16px;margin:14px 0}
+.ask{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.opt{border:1.5px solid var(--line);background:var(--surface2);border-radius:12px;padding:8px 16px;cursor:pointer;font-weight:500}
+.opt:hover{border-color:var(--accent)}
+.opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,var(--surface));color:var(--ok)}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--surface));color:var(--bad)}
+.why{margin-top:10px;padding:10px 14px;border-radius:12px;background:var(--surface2);display:none}
+.why.on{display:block}
+.ex-h{display:flex;align-items:baseline;gap:10px;margin:0 0 10px}
+.ex-h .badge{background:var(--accent);color:#fff;border-radius:8px;padding:1px 10px;font-weight:700;font-size:14px}
+.ex-q{font-size:1.05em}
+.sn{position:absolute;inset-inline-end:16px;top:14px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;background:var(--surface2);color:var(--muted)}
+.step.on .sn{background:var(--accent);color:#fff}
+.mathline{direction:ltr;text-align:right;margin:6px 0 2px;font-size:1.06em;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.why2{color:var(--ink2);font-size:.95em}
+.result{border-color:var(--ok)!important}
+.result .lbl{color:var(--ok)}
+/* practice */
+.prac{display:flex;gap:8px;margin-top:10px}
+.prac input{flex:1;min-width:0;font:500 18px Plex,sans-serif;direction:ltr;text-align:left;padding:9px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface2);color:var(--ink)}
+.prac input:focus{outline:none;border-color:var(--accent)}
+.btn{border:0;border-radius:12px;padding:9px 18px;font-weight:700;background:var(--accent);color:#fff;cursor:pointer}
+.fb{min-height:1.6em;margin-top:6px;font-weight:700;font-size:15px}
+.fb.ok{color:var(--ok)}.fb.bad{color:var(--bad)}
+.summary{background:linear-gradient(135deg,var(--hdr),#23345e);color:#fff;border-radius:22px;padding:26px 26px 22px;box-shadow:var(--shadow)}
+.summary h2{color:#fff}
+.summary .katex{color:#fff}
+.summary ul{margin:.4em 0;padding-inline-start:1.2em}
+.summary li{margin:.35em 0}
+.summary .tk-chord{color:#ffb27a}.summary .tk-tan{color:#5fe0b4}.summary .tk-c{color:#ff8fbb}
+.next{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.next a{color:#fff;text-decoration:none;border:1px solid #ffffff40;border-radius:12px;padding:8px 14px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* ---------- tablet portrait & phone: figure on top, story underneath ---------- */
+@media (max-width:1100px){ .wrap{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr)} nav.outline{display:none} }
+@media (max-width:820px){
+  .wrap{display:flex;flex-direction:column;padding:0}
+  .fig{order:-1;align-self:stretch;position:sticky;top:var(--hh);height:42dvh;margin:0;z-index:5;padding:10px 12px 8px;background:linear-gradient(var(--bg) 88%,transparent)}
+  .panel{border-radius:16px}
+  .panel .top{padding:8px 10px 2px;gap:6px}.chip{font-size:12px;padding:2px 9px}.panel .title{display:none}
+  .panel .hint{padding:2px 12px 8px;font-size:12.5px}
+  .story{padding:16px 16px 50vh}
+  body{font-size:16px}
+  .sec{margin-bottom:12vh}
+  .step{scroll-margin-top:calc(var(--hh) + 44dvh + 8px)}
+}
+/* ---------- presentation (classroom) mode ---------- */
+html.present body{font-size:22px}
+html.present nav.outline{display:none}
+html.present .wrap{grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);max-width:none}
+html.present .story.focus .step:not(.on){opacity:.18}
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} .step,.chip{transition:none} }
+</style>
+</head>
+<body>
+<header>
+  <a class="hb" href="../index.html" aria-label="المكتبة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg><span class="l">المكتبة</span></a>
+  <div class="crumb"><small>السادس العلمي · الفصل الثالث · [3−2−5] · ص 102–105</small><b>مبرهنة القيمة المتوسطة</b></div>
+  <span class="sp"></span>
+  <button class="hb" id="bPresent" aria-pressed="false" title="وضع العرض الصفي (الأسهم للتنقل)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/></svg><span class="l">عرض صفي</span></button>
+  <button class="hb" id="bTheme" aria-label="تبديل الألوان"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/></svg></button>
+  <div class="prog"><i id="prog"></i></div>
+</header>
+
+<div class="wrap">
+ <nav class="outline" aria-label="أقسام الدرس"><ol id="outline"></ol></nav>
+
+ <main class="story focus" id="story">
+  <!-- 1 · question -->
+  <section class="sec" data-sec="سؤال" id="s-q">
+   <div class="step" data-scene="hook">
+    <div class="kicker">الدرس · <span class="pg">ص 102</span></div>
+    <h1>مماسٌ يوازي الوتر</h1>
+    <p class="lead">على منحني الدالة <span class="tex" data-tex="\htmlClass{tk-f}{f(x)=x^3-4x^2}"></span> نقطتان <span class="tag chord">A</span> و <span class="tag chord">B</span> يصل بينهما <span class="tag chord">الوتر</span>.</p>
+    <p><b>اسحب النقطة <span class="tag c">c</span> على المنحني</b> في الرسم. هل تجد موضعاً يصبح فيه <span class="tag tan">المماس</span> موازياً للوتر؟</p>
+   </div>
+   <div class="step" data-scene="hook-ask">
+    <span class="lbl">توقّع قبل أن تكمل</span>
+    <p>لكل دالة مستمرة وملساء على الفترة، كم موضعاً على الأقل يكون فيه المماس موازياً للوتر؟</p>
+    <div class="ask" data-ans="1"><button class="opt">لا يوجد دائماً</button><button class="opt">موضع واحد على الأقل</button><button class="opt">موضعان دائماً</button></div>
+    <div class="why">هذا بالضبط ما تقوله المبرهنة: <b>يوجد على الأقل قيمة واحدة</b> <span class="tag c">c</span>.</div>
+   </div>
+  </section>
+
+  <!-- 2 · theorem -->
+  <section class="sec" data-sec="المبرهنة" id="s-t">
+   <div class="step" data-scene="cond">
+    <div class="kicker">[3−2−5] · <span class="pg">ص 102</span></div>
+    <h2>المبرهنة</h2>
+    <div class="law">
+     <span class="lbl">مبرهنة القيمة المتوسطة</span>
+     <p>إذا كانت <span class="tex" data-tex="\htmlClass{tk-f}{f}"></span> دالة <b>مستمرة</b> في الفترة المغلقة <span class="tex" data-tex="\htmlClass{tk-int}{[a\,,\,b]}"></span> و<b>قابلة للاشتقاق</b> على الفترة المفتوحة <span class="tex" data-tex="\htmlClass{tk-int}{(a\,,\,b)}"></span> فإنه يوجد على الأقل قيمة واحدة <span class="tex" data-tex="\htmlClass{tk-c}{c}"></span> تنتمي الى <span class="tex" data-tex="\htmlClass{tk-int}{(a\,,\,b)}"></span> وتحقق:</p>
+     <span class="big tex" data-tex="\htmlClass{tk-tan}{f'(\htmlClass{tk-c}{c})}=\htmlClass{tk-chord}{\dfrac{f(b)-f(a)}{b-a}}"></span>
+     <span class="or">او</span>
+     <span class="big tex" data-tex="f(b)-f(a)=\htmlClass{tk-tan}{f'(\htmlClass{tk-c}{c})}\,(b-a)"></span>
+    </div>
+   </div>
+  </section>
+
+  <!-- 3 · geometry -->
+  <section class="sec" data-sec="التفسير الهندسي" id="s-g">
+   <div class="step" data-scene="geo-chord">
+    <div class="kicker">التفسير الهندسي · <span class="pg">ص 102</span></div>
+    <h2>ميلان متساويان</h2>
+    <span class="lbl">١ · الوتر</span>
+    <p>ميل <span class="tag chord">الوتر</span> المار بالنقطتين <span class="tex" data-tex="A\,,\,B"></span> يساوي</p>
+    <div class="mathline tex" data-tex="\htmlClass{tk-chord}{\dfrac{\Delta y}{\Delta x}=\dfrac{f(b)-f(a)}{b-a}}"></div>
+   </div>
+   <div class="step" data-scene="geo-tan">
+    <span class="lbl">٢ · المماس</span>
+    <p>ميل <span class="tag tan">المماس</span> للمنحني عند <span class="tag c">c</span> = المشتقة الاولى للدالة <span class="tex" data-tex="f"></span> عند <span class="tex" data-tex="c"></span>:</p>
+    <div class="mathline tex" data-tex="\htmlClass{tk-tan}{f'(\htmlClass{tk-c}{c})}"></div>
+   </div>
+   <div class="step" data-scene="geo-par">
+    <span class="lbl">٣ · التوازي</span>
+    <p>لكن المماس والوتر <b>متوازيان</b> لذا يتساوى ميلاهما:</p>
+    <div class="mathline tex" data-tex="\htmlClass{tk-tan}{f'(\htmlClass{tk-c}{c})}=\htmlClass{tk-chord}{\dfrac{f(b)-f(a)}{b-a}}"></div>
+   </div>
+   <div class="step" data-scene="rolle">
+    <span class="lbl">ملاحظة · ص 103</span>
+    <div class="note" style="margin:0">أن <b>مبرهنة رول</b> هي حالة خاصة من مبرهنة القيمة المتوسطة ففي مبرهنة رول يجب توافر شرط ثالث هو: <span class="tex" data-tex="f(a)=f(b)"></span> أي أن الوتر والمماس يوازيان محور السينات، أي فرق الصادات = 0 لذا يصبح الميل = 0 فنحصل على: <span class="tex" data-tex="\htmlClass{tk-tan}{f'(\htmlClass{tk-c}{c})=0}"></span></div>
+   </div>
+  </section>
+
+  <!-- 4 · examples -->
+  <section class="sec" data-sec="الأمثلة" id="s-e">
+   <div class="step" data-scene="e3a-0">
+    <div class="kicker">أمثلة الكتاب · <span class="pg">ص 103–105</span></div>
+    <h2>مثال 3 · a</h2>
+    <p class="ex-q">برهن ان الدالة تحقق شروط مبرهنة القيمة المتوسطة واوجد قيم <span class="tex" data-tex="c"></span>: <span class="tex" data-tex="\htmlClass{tk-f}{f(x)=x^2-6x+4}\,,\;x\in\htmlClass{tk-int}{[-1\,,\,7]}"></span></p>
+   </div>
+   <div class="step" data-scene="e3a-1"><span class="sn">1</span><span class="lbl">الشرطان</span>
+    <p>الشرط الأول يتحقق: الدالة مستمرة في الفترة <span class="tex" data-tex="[-1\,,\,7]"></span> لأنها كثيرة الحدود. الشرط الثاني يتحقق: الدالة قابلة للاشتقاق على الفترة <span class="tex" data-tex="(-1\,,\,7)"></span> لانها دالة كثيرة الحدود.</p></div>
+   <div class="step" data-scene="e3a-2"><span class="sn">2</span><span class="lbl">ميل المماس</span>
+    <div class="mathline tex" data-tex="\htmlClass{tk-tan}{f'(x)=2x-6\;\Rightarrow\;f'(\htmlClass{tk-c}{c})=2\htmlClass{tk-c}{c}-6}"></div></div>
+   <div class="step" data-scene="e3a-3"><span class="sn">3</span><span class="lbl">ميل الوتر</span>
+    <div class="mathline tex" data-tex="\htmlClass{tk-chord}{\dfrac{f(b)-f(a)}{b-a}=\dfrac{f(7)-f(-1)}{7+1}=\dfrac{11-11}{8}=0}"></div></div>
+   <div class="step result" data-scene="e3a-4"><span class="sn">4</span><span class="lbl">ميل المماس = ميل الوتر</span>
+    <div class="mathline tex" data-tex="0=2\htmlClass{tk-c}{c}-6\;\Rightarrow\;\htmlClass{tk-c}{c=3}\in(-1\,,\,7)"></div></div>
+
+   <div class="step" data-scene="e3b-0" style="margin-top:8vh">
+    <h2>مثال 3 · b</h2>
+    <p class="ex-q"><span class="tex" data-tex="\htmlClass{tk-f}{f(x)=\sqrt{25-x^2}}\,,\;x\in\htmlClass{tk-int}{[-4\,,\,0]}"></span></p></div>
+   <div class="step" data-scene="e3b-1"><span class="sn">1</span><span class="lbl">المجال والاستمرارية</span>
+    <p>مجال <span class="tex" data-tex="f"></span> = مجموعة حل المتباينة <span class="tex" data-tex="25-x^2\ge 0"></span> اي <span class="tex" data-tex="[-5\,,\,5]"></span>، و</p>
+    <div class="mathline tex" data-tex="\lim_{x\to-4^+}\sqrt{25-x^2}=3=f(-4)\,,\quad \lim_{x\to0^-}\sqrt{25-x^2}=5=f(0)"></div>
+    <p class="why2">∴ <span class="tex" data-tex="f"></span> مستمرة على الفترة المغلقة <span class="tex" data-tex="[-4\,,\,0]"></span></p></div>
+   <div class="step" data-scene="e3b-2"><span class="sn">2</span><span class="lbl">قابلية الاشتقاق</span>
+    <div class="mathline tex" data-tex="\htmlClass{tk-tan}{f'(x)=\dfrac{-x}{\sqrt{25-x^2}}}"></div>
+    <p class="why2">مجال <span class="tex" data-tex="f'"></span> = <span class="tex" data-tex="(-5\,,\,5)"></span> ⇐ <span class="tex" data-tex="f"></span> قابلة للاشتقاق في الفترة <span class="tex" data-tex="(-4\,,\,0)"></span> لانها محتواة كلياً في مجال مشتقة <span class="tex" data-tex="f"></span></p></div>
+   <div class="step" data-scene="e3b-3"><span class="sn">3</span><span class="lbl">ميل الوتر</span>
+    <div class="mathline tex" data-tex="\htmlClass{tk-chord}{\dfrac{f(0)-f(-4)}{0+4}=\dfrac{5-3}{4}=\dfrac12}"></div></div>
+   <div class="step" data-scene="e3b-4"><span class="sn">4</span><span class="lbl">ميل المماس = ميل الوتر</span>
+    <div class="mathline tex" data-tex="\dfrac12=\dfrac{-\htmlClass{tk-c}{c}}{\sqrt{25-\htmlClass{tk-c}{c}^2}}\;\Rightarrow\;\sqrt{25-c^2}=-2c\;\Rightarrow\;25-c^2=4c^2\;\Rightarrow\;c^2=5"></div></div>
+   <div class="step result" data-scene="e3b-5"><span class="sn">5</span><span class="lbl">النتيجة</span>
+    <div class="mathline tex" data-tex="c=\pm\sqrt5\,:\quad c=\sqrt5\notin(-4\,,\,0)\,,\quad \htmlClass{tk-c}{c=-\sqrt5}\in(-4\,,\,0)"></div></div>
+
+   <div class="step" data-scene="e4-0" style="margin-top:8vh">
+    <h2>مثال 4</h2>
+    <p class="ex-q">اذا كانت <span class="tex" data-tex="\htmlClass{tk-f}{f:[0\,,\,b]\to R\,,\;f(x)=x^3-4x^2}"></span> وكانت <span class="tex" data-tex="f"></span> تحقق مبرهنة القيمة المتوسطة عند <span class="tex" data-tex="\htmlClass{tk-c}{c=\tfrac23}"></span> فجد قيمة <span class="tex" data-tex="b"></span>.</p></div>
+   <div class="step" data-scene="e4-1"><span class="sn">1</span><span class="lbl">ميل المماس عند c</span>
+    <div class="mathline tex" data-tex="\htmlClass{tk-tan}{f'(x)=3x^2-8x\;\Rightarrow\;f'(\tfrac23)=\tfrac43-\tfrac{16}3=-4}"></div></div>
+   <div class="step" data-scene="e4-2"><span class="sn">2</span><span class="lbl">ميل الوتر</span>
+    <div class="mathline tex" data-tex="\htmlClass{tk-chord}{\dfrac{f(b)-f(0)}{b-0}=\dfrac{b^3-4b^2-0}{b}=b^2-4b}"></div></div>
+   <div class="step result" data-scene="e4-3"><span class="sn">3</span><span class="lbl">ميل المماس = ميل الوتر</span>
+    <div class="mathline tex" data-tex="b^2-4b=-4\;\Rightarrow\;b^2-4b+4=0\;\Rightarrow\;(b-2)^2=0\;\Rightarrow\;b=2"></div></div>
+  </section>
+
+  <!-- 5 · practice -->
+  <section class="sec" data-sec="تدريب" id="s-p">
+   <div class="step" data-scene="p7a">
+    <div class="kicker">تمارين (3−2) · 7 · <span class="pg">ص 112</span></div>
+    <h2>دورك الآن</h2>
+    <p>اختبر امكانية تطبيق القيمة المتوسطة للدوال التالية على الفترة المعطاة ازاءها، وإن تحققت المبرهنة جد قيم <span class="tex" data-tex="c"></span> الممكنة:</p>
+    <p class="ex-q"><b>a)</b> <span class="tex" data-tex="\htmlClass{tk-f}{f(x)=x^3-x-1}\,,\;\htmlClass{tk-int}{[-1\,,\,2]}"></span></p>
+    <div class="prac" data-key="1"><input placeholder="قيمة c" aria-label="قيمة c"><button class="btn">تحقّق</button></div><div class="fb"></div>
+   </div>
+   <div class="step" data-scene="p7b"><p class="ex-q"><b>b)</b> <span class="tex" data-tex="\htmlClass{tk-f}{h(x)=x^2-4x+5}\,,\;\htmlClass{tk-int}{[-1\,,\,5]}"></span></p>
+    <div class="prac" data-key="2"><input placeholder="قيمة c" aria-label="قيمة c"><button class="btn">تحقّق</button></div><div class="fb"></div></div>
+   <div class="step" data-scene="p7c"><p class="ex-q"><b>c)</b> <span class="tex" data-tex="\htmlClass{tk-f}{g(x)=\dfrac{4}{x+2}}\,,\;\htmlClass{tk-int}{[-1\,,\,2]}"></span></p>
+    <div class="prac" data-key="0"><input placeholder="قيمة c" aria-label="قيمة c"><button class="btn">تحقّق</button></div><div class="fb"></div></div>
+   <div class="step" data-scene="p7d"><p class="ex-q"><b>d)</b> <span class="tex" data-tex="\htmlClass{tk-f}{B(x)=\sqrt[3]{(x+1)^2}}\,,\;\htmlClass{tk-int}{[-2\,,\,7]}"></span></p>
+    <div class="ask" data-ans="1"><button class="opt">تتحقق المبرهنة</button><button class="opt">لا تتحقق</button></div>
+    <div class="why"><span class="tex" data-tex="B'(x)=\dfrac{2}{3\sqrt[3]{x+1}}"></span> غير معرفة عند <span class="tex" data-tex="x=-1\in(-2\,,\,7)"></span>، فالدالة غير قابلة للاشتقاق على الفترة المفتوحة. انظر الرأس الحاد في الرسم.</div></div>
+  </section>
+
+  <!-- 6 · summary -->
+  <section class="sec" data-sec="الخلاصة" id="s-s">
+   <div class="summary step" data-scene="sum">
+    <h2>الخلاصة</h2>
+    <ul>
+     <li>الشرطان: مستمرة على <span class="tex" data-tex="[a,b]"></span> وقابلة للاشتقاق على <span class="tex" data-tex="(a,b)"></span>.</li>
+     <li>النتيجة: يوجد <span class="tex" data-tex="\htmlClass{tk-c}{c}\in(a,b)"></span> يكون عنده <span class="tex" data-tex="\htmlClass{tk-tan}{f'(c)}=\htmlClass{tk-chord}{\frac{f(b)-f(a)}{b-a}}"></span></li>
+     <li>هندسياً: المماس عند <span class="tex" data-tex="\htmlClass{tk-c}{c}"></span> يوازي الوتر <span class="tex" data-tex="AB"></span>.</li>
+     <li>رول حالة خاصة: <span class="tex" data-tex="f(a)=f(b)\Rightarrow f'(c)=0"></span>.</li>
+     <li>الحل دائماً: ميل المماس = ميل الوتر، ثم نرفض قيم <span class="tex" data-tex="c"></span> الواقعة خارج <span class="tex" data-tex="(a,b)"></span>.</li>
+    </ul>
+    <div class="next"><a href="../g12c3.html">العودة إلى الفصل</a><a href="#s-q">إعادة الدرس</a></div>
+   </div>
+  </section>
+ </main>
+
+ <aside class="fig" aria-label="الرسم التفاعلي">
+  <div class="panel">
+   <div class="top">
+    <span class="title" id="figTitle">الرسم</span>
+    <span class="chip" id="chCh"><i style="background:var(--chord)"></i>ميل الوتر <b id="vCh">0</b></span>
+    <span class="chip" id="chTan"><i style="background:var(--tan)"></i>f′(c) <b id="vTan">0</b></span>
+    <span class="chip" id="chC"><i style="background:var(--c)"></i>c <b id="vC">0</b></span>
+   </div>
+   <div class="svgbox" id="box"><svg class="g" id="svg" dir="ltr" aria-hidden="true"></svg></div>
+   <div class="hint" id="hint">اسحب النقطة c</div>
+  </div>
+ </aside>
+</div>
+
+<script>
+"use strict";
+/* ================= maths typesetting ================= */
+document.querySelectorAll('.tex').forEach(el=>{ try{ katex.render(el.dataset.tex,el,{trust:true,strict:false,throwOnError:false,displayMode:false}); el.classList.add('m'); el.setAttribute('dir','ltr'); }catch(e){ el.textContent=el.dataset.tex; } });
+
+/* ================= scenes =================
+   each scene: function f, its derivative d, interval [a,b], view, what to show, c (fixed or draggable) */
+const F={
+ cubic:{f:x=>x**3-4*x*x, d:x=>3*x*x-8*x, name:'f(x) = x³ − 4x²'},
+ quad:{f:x=>x*x-6*x+4, d:x=>2*x-6, name:'f(x) = x² − 6x + 4'},
+ semi:{f:x=>Math.sqrt(Math.max(0,25-x*x)), d:x=>-x/Math.sqrt(25-x*x), name:'f(x) = √(25 − x²)', dom:[-5,5]},
+ rolle:{f:x=>(2-x)**2, d:x=>-2*(2-x), name:'f(x) = (2 − x)²'},
+ p7a:{f:x=>x**3-x-1, d:x=>3*x*x-1, name:'f(x) = x³ − x − 1'},
+ p7b:{f:x=>x*x-4*x+5, d:x=>2*x-4, name:'h(x) = x² − 4x + 5'},
+ p7c:{f:x=>4/(x+2), d:x=>-4/(x+2)**2, name:'g(x) = 4/(x + 2)', dom:[-1.95,9]},
+ p7d:{f:x=>Math.cbrt((x+1)**2), d:x=>2/(3*Math.cbrt(x+1)), name:'B(x) = ∛((x + 1)²)'}
+};
+const S={
+ 'hook':    {fn:'cubic',a:0,b:2,v:[-.5,2.6,-9.2,1.6],chord:1,tan:1,c:1.6,drag:1,title:'اسحب c',hint:'اسحب النقطة c حتى يصبح المماس موازياً للوتر'},
+ 'hook-ask':{fn:'cubic',a:0,b:2,v:[-.5,2.6,-9.2,1.6],chord:1,tan:1,c:1.6,drag:1,title:'اسحب c',hint:'اسحب النقطة c حتى يصبح المماس موازياً للوتر'},
+ 'cond':    {fn:'cubic',a:0,b:2,v:[-.5,2.6,-9.2,1.6],chord:1,tan:1,c:2/3,interval:1,title:'شروط المبرهنة',hint:'مستمرة على [a , b] وقابلة للاشتقاق على (a , b)'},
+ 'geo-chord':{fn:'cubic',a:0,b:2,v:[-.5,2.6,-9.2,1.6],chord:1,tri:1,title:'الوتر AB',hint:'ميل الوتر = Δy ÷ Δx'},
+ 'geo-tan': {fn:'cubic',a:0,b:2,v:[-.5,2.6,-9.2,1.6],chord:.25,tan:1,c:1.25,drag:1,title:'المماس عند c',hint:'اسحب c وراقب ميل المماس f′(c)'},
+ 'geo-par': {fn:'cubic',a:0,b:2,v:[-.5,2.6,-9.2,1.6],chord:1,tan:1,c:2/3,par:1,title:'متوازيان',hint:'عند c = 2/3 يتساوى الميلان: −4'},
+ 'rolle':   {fn:'rolle',a:0,b:4,v:[-.8,4.8,-.8,5],chord:1,tan:1,c:2,par:1,title:'حالة رول: f(a) = f(b)',hint:'الوتر أفقي، فالمماس أفقي: f′(c) = 0'},
+ 'e3a-0':{fn:'quad',a:-1,b:7,v:[-2,8,-6.5,13],title:'مثال 3 a'},
+ 'e3a-1':{fn:'quad',a:-1,b:7,v:[-2,8,-6.5,13],interval:1,title:'مثال 3 a · الشرطان',hint:'كثيرة حدود: مستمرة وقابلة للاشتقاق'},
+ 'e3a-2':{fn:'quad',a:-1,b:7,v:[-2,8,-6.5,13],tan:1,c:5,drag:1,title:'مثال 3 a · ميل المماس',hint:'اسحب c: ميل المماس 2c − 6'},
+ 'e3a-3':{fn:'quad',a:-1,b:7,v:[-2,8,-6.5,13],chord:1,tri:1,title:'مثال 3 a · ميل الوتر',hint:'f(−1) = f(7) = 11 ⇒ الوتر أفقي'},
+ 'e3a-4':{fn:'quad',a:-1,b:7,v:[-2,8,-6.5,13],chord:1,tan:1,c:3,par:1,title:'مثال 3 a · c = 3',hint:'c = 3 ∈ (−1 , 7)'},
+ 'e3b-0':{fn:'semi',a:-4,b:0,v:[-6,6,-.8,6.2],eq:1,title:'مثال 3 b'},
+ 'e3b-1':{fn:'semi',a:-4,b:0,v:[-6,6,-.8,6.2],eq:1,interval:1,dom:1,title:'مثال 3 b · المجال',hint:'المجال [−5 , 5]، والفترة [−4 , 0] داخله'},
+ 'e3b-2':{fn:'semi',a:-4,b:0,v:[-6,6,-.8,6.2],eq:1,tan:1,c:-2,drag:1,title:'مثال 3 b · f′(x)',hint:'اسحب c: ميل المماس −c ÷ √(25 − c²)'},
+ 'e3b-3':{fn:'semi',a:-4,b:0,v:[-6,6,-.8,6.2],eq:1,chord:1,tri:1,title:'مثال 3 b · ميل الوتر',hint:'(5 − 3) ÷ 4 = 1/2'},
+ 'e3b-4':{fn:'semi',a:-4,b:0,v:[-6,6,-.8,6.2],eq:1,chord:1,tan:1,c:-Math.sqrt(5),par:1,title:'مثال 3 b',hint:'c² = 5'},
+ 'e3b-5':{fn:'semi',a:-4,b:0,v:[-6,6,-.8,6.2],eq:1,chord:1,tan:1,c:-Math.sqrt(5),par:1,reject:Math.sqrt(5),title:'مثال 3 b · c = −√5',hint:'c = √5 خارج الفترة فتُرفض'},
+ 'e4-0':{fn:'cubic',a:0,b:3,v:[-.6,4.4,-10,10],c:2/3,tan:1,title:'مثال 4'},
+ 'e4-1':{fn:'cubic',a:0,b:3,v:[-.6,4.4,-10,10],tan:1,c:2/3,title:'مثال 4 · f′(2/3) = −4',hint:'ميل المماس عند c = 2/3 هو −4'},
+ 'e4-2':{fn:'cubic',a:0,b:3.4,v:[-.6,4.4,-10,10],chord:1,tan:1,c:2/3,sweep:1,title:'مثال 4 · ميل الوتر = b² − 4b',hint:'b يتغير: متى يصبح ميل الوتر −4؟'},
+ 'e4-3':{fn:'cubic',a:0,b:2,v:[-.6,4.4,-10,10],chord:1,tan:1,c:2/3,par:1,title:'مثال 4 · b = 2',hint:'b = 2 : الوتر يوازي المماس'},
+ 'p7a':{fn:'p7a',a:-1,b:2,v:[-1.6,2.6,-2.6,6],chord:1,interval:1,title:'تمرين 7 a',hint:'جد c ثم تحقّق'},
+ 'p7b':{fn:'p7b',a:-1,b:5,v:[-2,6,-1,11],chord:1,interval:1,title:'تمرين 7 b',hint:'جد c ثم تحقّق'},
+ 'p7c':{fn:'p7c',a:-1,b:2,v:[-1.6,2.6,-.5,4.6],chord:1,interval:1,title:'تمرين 7 c',hint:'جد c ثم تحقّق'},
+ 'p7d':{fn:'p7d',a:-2,b:7,v:[-2.6,7.6,-.6,4.4],chord:1,interval:1,cusp:-1,title:'تمرين 7 d',hint:'انتبه إلى النقطة x = −1'},
+ 'sum':{fn:'cubic',a:0,b:2,v:[-.5,2.6,-9.2,1.6],chord:1,tan:1,c:2/3,par:1,title:'الخلاصة',hint:'المماس عند c يوازي الوتر AB'}
+};
+
+/* ================= figure renderer (SVG, crisp, theme-aware, morphing) ================= */
+const svg=document.getElementById('svg'), box=document.getElementById('box'), NS='http://www.w3.org/2000/svg';
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue('--'+n).trim();
+let W=0,H=0, cur=null, from=null, t=1, raf=0, cDrag=null, sweepT=0;
+const ease=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+function view(sc){ let [x0,x1,y0,y1]=sc.v; const pad={l:34,r:14,t:14,b:26};
+  if(sc.eq){ const sx=(W-pad.l-pad.r)/(x1-x0), sy=(H-pad.t-pad.b)/(y1-y0); if(sx<sy){ const m=(y0+y1)/2, h=(H-pad.t-pad.b)/sx; y0=m-h/2; y1=m+h/2; } else { const m=(x0+x1)/2, w=(W-pad.l-pad.r)/sy; x0=m-w/2; x1=m+w/2; } }
+  return {x0,x1,y0,y1,pad}; }
+function lerp(a,b,k){ return a+(b-a)*k; }
+function mix(A,B,k){ return {x0:lerp(A.x0,B.x0,k),x1:lerp(A.x1,B.x1,k),y0:lerp(A.y0,B.y0,k),y1:lerp(A.y1,B.y1,k),pad:B.pad}; }
+function niceStep(range,px,min){ for(const s of [.1,.2,.25,.5,1,2,2.5,5,10,20,50]) if(px*s/range>=min) return s; return 100; }
+const fmt=v=>{ if(!isFinite(v)) return '—'; let r=Math.round(v*100)/100; if(Math.abs(r)<1e-9) r=0; const s=String(Math.abs(r)); return (r<0?'−':'')+s; };
+function el(tag,attrs,parent){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); (parent||svg).appendChild(e); return e; }
+function scene(name){ return S[name]; }
+function curC(){ return cDrag!==null&&cur.drag?cDrag:cur.c; }
+function draw(){
+  if(!W) return; const k=ease(Math.min(1,t)), A=from?view(from):view(cur), B=view(cur), V=mix(A,B,from?k:1);
+  const X=x=>V.pad.l+(x-V.x0)/(V.x1-V.x0)*(W-V.pad.l-V.pad.r), Y=y=>V.pad.t+(V.y1-y)/(V.y1-V.y0)*(H-V.pad.t-V.pad.b);
+  svg.replaceChildren(); svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const col={f:css('f'),chord:css('chord'),tan:css('tan'),c:css('c'),int:css('int'),grid:css('grid'),axis:css('axis'),muted:css('muted'),ink:css('ink'),surf:css('surface')};
+  /* grid + axes */
+  const sx=niceStep(V.x1-V.x0,W,46), sy=niceStep(V.y1-V.y0,H,34); let g='';
+  for(let x=Math.ceil(V.x0/sx)*sx;x<=V.x1;x+=sx) g+=`M${X(x)} ${V.pad.t}V${H-V.pad.b}`; for(let y=Math.ceil(V.y0/sy)*sy;y<=V.y1;y+=sy) g+=`M${V.pad.l} ${Y(y)}H${W-V.pad.r}`;
+  el('path',{d:g,stroke:col.grid,'stroke-width':1,fill:'none'});
+  const ya=Math.min(Math.max(0,V.y0),V.y1), xa=Math.min(Math.max(0,V.x0),V.x1);
+  el('path',{d:`M${V.pad.l} ${Y(ya)}H${W-V.pad.r}M${X(xa)} ${H-V.pad.b}V${V.pad.t}`,stroke:col.axis,'stroke-width':1.4});
+  const lab=(x,y,s,o={})=>{ const e=el('text',{x,y,fill:o.fill||col.muted,'font-size':o.size||11,'text-anchor':o.anchor||'middle','font-weight':o.w||400,'dominant-baseline':'middle'}); e.textContent=s; return e; };
+  for(let x=Math.ceil(V.x0/sx)*sx;x<=V.x1+1e-9;x+=sx){ if(Math.abs(x)<1e-9) continue; lab(X(x),Math.min(H-10,Y(ya)+13),fmt(x)); }
+  for(let y=Math.ceil(V.y0/sy)*sy;y<=V.y1+1e-9;y+=sy){ if(Math.abs(y)<1e-9) continue; lab(Math.max(V.pad.l-6,X(xa)-6),Y(y),fmt(y),{anchor:'end'}); }
+  const clip=el('clipPath',{id:'cp'}); el('rect',{x:V.pad.l,y:V.pad.t,width:W-V.pad.l-V.pad.r,height:H-V.pad.t-V.pad.b},clip);
+  const G=el('g',{'clip-path':'url(#cp)'});
+  const sc=cur, fn=F[sc.fn], pf=from?F[from.fn]:fn, a=from?lerp(from.a,sc.a,k):sc.a, b=from?lerp(from.b,sc.b,k):sc.b;
+  let bb=b; if(sc.sweep){ bb=2+1.4*(0.5+0.5*Math.cos(sweepT)); }
+  const f=x=>{ const y1=fn.f(x); if(!from||k>=1||from.fn===sc.fn) return y1; return lerp(pf.f(x),y1,k); };
+  /* interval band */
+  if(sc.interval){ el('rect',{x:X(a),y:V.pad.t,width:X(bb)-X(a),height:H-V.pad.t-V.pad.b,fill:col.int,opacity:.07},G);
+    el('path',{d:`M${X(a)} ${Y(ya)}H${X(bb)}`,stroke:col.int,'stroke-width':4,'stroke-linecap':'round',opacity:.85},G);
+    lab(X(a),Y(ya)-12,'a',{fill:col.int,w:700,size:13}); lab(X(bb),Y(ya)-12,'b',{fill:col.int,w:700,size:13}); }
+  /* curve: faint outside [a,b], strong inside */
+  const path=(x0,x1)=>{ let d='',pen=false; const n=360; for(let i=0;i<=n;i++){ const x=x0+(x1-x0)*i/n, y=f(x); if(!isFinite(y)||Math.abs(y)>1e4){ pen=false; continue; } d+=(pen?'L':'M')+X(x).toFixed(1)+' '+Y(y).toFixed(1); pen=true; } return d; };
+  const dom=fn.dom||[V.x0,V.x1];
+  el('path',{d:path(Math.max(V.x0,dom[0]),Math.min(V.x1,dom[1])),stroke:col.f,'stroke-width':2,fill:'none',opacity:.28},G);
+  el('path',{d:path(a,bb),stroke:col.f,'stroke-width':3.2,fill:'none','stroke-linecap':'round'},G);
+  if(sc.dom){ [-5,5].forEach(x=>el('circle',{cx:X(x),cy:Y(0),r:4,fill:col.f},G)); lab(X(-5),Y(0)+14,'−5',{fill:col.f,w:700}); lab(X(5),Y(0)+14,'5',{fill:col.f,w:700}); }
+  const fa=f(a), fb=f(bb), m=(fb-fa)/(bb-a);
+  const line=(x1,y1,s,colr,o={})=>{ const L=V.x1-V.x0; el('path',{d:`M${X(x1-L)} ${Y(y1-s*L)}L${X(x1+L)} ${Y(y1+s*L)}`,stroke:colr,'stroke-width':o.w||2.2,'stroke-dasharray':o.dash||'',opacity:o.op??1},G); };
+  /* chord */
+  const chO=sc.chord===undefined?0:sc.chord;
+  if(chO){ line(a,fa,m,col.chord,{w:1.6,dash:'6 6',op:.55*chO}); el('path',{d:`M${X(a)} ${Y(fa)}L${X(bb)} ${Y(fb)}`,stroke:col.chord,'stroke-width':3,opacity:chO,'stroke-linecap':'round'},G); }
+  if(sc.tri){ el('path',{d:`M${X(a)} ${Y(fa)}H${X(bb)}V${Y(fb)}`,stroke:col.chord,'stroke-width':1.6,'stroke-dasharray':'4 4',fill:'none'},G);
+    lab((X(a)+X(bb))/2,Y(fa)+(fb>fa?14:-12),'Δx',{fill:col.chord,w:700,size:13}); if(Math.abs(fb-fa)>1e-6) lab(X(bb)+16,(Y(fa)+Y(fb))/2,'Δy',{fill:col.chord,w:700,size:13}); }
+  /* tangent at c */
+  const c=curC(); let mt=NaN;
+  if(sc.tan&&c!==undefined){ const yc=f(c); mt=fn.d(c); if(isFinite(mt)) line(c,yc,mt,col.tan,{w:2.6});
+    el('path',{d:`M${X(c)} ${Y(yc)}V${Y(ya)}`,stroke:col.c,'stroke-width':1.2,'stroke-dasharray':'3 4'},G);
+    lab(X(c),Math.min(H-8,Y(ya)+14),'c',{fill:col.c,w:700,size:13}); }
+  if(sc.cusp!==undefined){ el('circle',{cx:X(sc.cusp),cy:Y(f(sc.cusp)),r:9,fill:'none',stroke:col.c,'stroke-width':2,'stroke-dasharray':'3 3'},G); }
+  if(sc.reject!==undefined){ const r=sc.reject, yr=f(r); el('circle',{cx:X(r),cy:Y(yr),r:6,fill:'none',stroke:col.muted,'stroke-width':2},G); el('path',{d:`M${X(r)-6} ${Y(yr)-6}L${X(r)+6} ${Y(yr)+6}M${X(r)+6} ${Y(yr)-6}L${X(r)-6} ${Y(yr)+6}`,stroke:col.muted,'stroke-width':2},G); lab(X(r),Y(yr)-16,'c = √5 ✗',{fill:col.muted,size:12,w:700}); }
+  /* end points A, B */
+  if(chO||sc.interval){ [[a,fa,'A'],[bb,fb,'B']].forEach(([x,y,s])=>{ el('circle',{cx:X(x),cy:Y(y),r:5.5,fill:col.surf,stroke:col.chord,'stroke-width':2.4},G); lab(X(x)+(s==='A'?-12:12),Y(y)-13,s,{fill:col.chord,w:700,size:14}); }); }
+  /* c handle */
+  if(sc.tan&&c!==undefined){ const yc=f(c), par=isFinite(mt)&&Math.abs(mt-m)<.03*(1+Math.abs(m));
+    if(sc.drag){ const h=el('circle',{cx:X(c),cy:Y(yc),r:16,fill:col.c,opacity:.14,class:'handle'},G); }
+    el('circle',{cx:X(c),cy:Y(yc),r:7.5,fill:col.c,stroke:col.surf,'stroke-width':2.5,class:sc.drag?'handle':''},G);
+    if(par&&chO) el('circle',{cx:X(c),cy:Y(yc),r:13,fill:'none',stroke:col.tan,'stroke-width':2},G); }
+  /* chips + hint */
+  document.getElementById('figTitle').textContent=sc.title||'';
+  const show=(id,on)=>document.getElementById(id).classList.toggle('hide',!on);
+  show('chCh',!!chO); show('chTan',!!sc.tan&&c!==undefined); show('chC',!!sc.tan&&c!==undefined);
+  document.getElementById('vCh').textContent=fmt(m); document.getElementById('vTan').textContent=fmt(mt); document.getElementById('vC').textContent=sc.c!==undefined&&Math.abs(c-2/3)<.004?'2/3':Math.abs(Math.abs(c)-Math.sqrt(5))<.004?(c<0?'−√5':'√5'):fmt(c);
+  const hint=document.getElementById('hint'); const par=sc.tan&&chO&&isFinite(mt)&&Math.abs(mt-m)<.03*(1+Math.abs(m));
+  if(sc.drag&&chO&&par){ hint.textContent='✓ المماس يوازي الوتر: ميلاهما متساويان'; hint.className='hint ok'; } else { hint.textContent=sc.hint||''; hint.className='hint'; }
+  W2X=x=>V.x0+(x-V.pad.l)/(W-V.pad.l-V.pad.r)*(V.x1-V.x0); curA=a; curB=bb;
+}
+let W2X=null, curA=0, curB=1;
+function loop(){ raf=0; let more=false; if(from&&t<1){ t+=1/36; more=true; } else if(from){ from=null; }
+  if(cur.sweep){ sweepT+=.03; more=true; } draw(); if(more) raf=requestAnimationFrame(loop); }
+function go(name){ const sc=scene(name); if(!sc||sc===cur) return; from=cur&&!matchMedia('(prefers-reduced-motion: reduce)').matches?cur:null; t=0; cur=sc; cDrag=null; sweepT=0; if(!raf) raf=requestAnimationFrame(loop); }
+function size(){ const r=box.getBoundingClientRect(); W=r.width; H=r.height; draw(); }
+new ResizeObserver(size).observe(box);
+/* drag c directly on the graph */
+let dragging=false;
+const setC=e=>{ if(!W2X) return; const r=svg.getBoundingClientRect(); let x=W2X(e.clientX-r.left); const lo=Math.min(curA,curB)+.02, hi=Math.max(curA,curB)-.02; cDrag=Math.max(lo,Math.min(hi,x)); draw(); };
+svg.addEventListener('pointerdown',e=>{ if(!cur.drag) return; dragging=true; svg.setPointerCapture(e.pointerId); setC(e); });
+svg.addEventListener('pointermove',e=>{ if(dragging) setC(e); });
+svg.addEventListener('pointerup',()=>dragging=false); svg.addEventListener('pointercancel',()=>dragging=false);
+
+/* ================= scrollytelling: the step crossing the reading line drives the figure ================= */
+const steps=[...document.querySelectorAll('[data-scene]')], secs=[...document.querySelectorAll('.sec')];
+const outline=document.getElementById('outline');
+outline.innerHTML=secs.map((s,i)=>`<li><a href="#${s.id}" data-i="${i}"><span class="n">${i+1}</span>${s.dataset.sec}</a></li>`).join('');
+let active=null;
+function pick(){ const line=(window.innerWidth<=820? document.querySelector('.fig').getBoundingClientRect().bottom+innerHeight*.06 : innerHeight*.45);
+  let best=steps[0], bd=1e9; if(scrollY>40) for(const s of steps){ const r=s.getBoundingClientRect(); const d=r.top<=line&&r.bottom>=line?0:Math.min(Math.abs(r.top-line),Math.abs(r.bottom-line)); if(d<bd){ bd=d; best=s; } }
+  if(best!==active){ active?.classList.remove('on'); active=best; best.classList.add('on'); go(best.dataset.scene); }
+  const si=secs.indexOf(best.closest('.sec')); outline.querySelectorAll('a').forEach((a,i)=>{ a.classList.toggle('on',i===si); a.classList.toggle('done',i<si); });
+  const h=document.documentElement; document.getElementById('prog').style.width=Math.min(100,h.scrollTop/(h.scrollHeight-innerHeight)*100)+'%'; }
+addEventListener('scroll',()=>requestAnimationFrame(pick),{passive:true}); addEventListener('resize',pick);
+cur=S.hook; pick();
+
+/* ================= predict questions & practice ================= */
+document.querySelectorAll('.ask').forEach(q=>{ const ans=+q.dataset.ans, why=q.parentElement.querySelector('.why');
+  q.querySelectorAll('.opt').forEach((b,i)=>b.onclick=()=>{ q.querySelectorAll('.opt').forEach((x,j)=>{ x.classList.toggle('right',j===ans); x.classList.toggle('wrong',j===i&&i!==ans); }); why&&why.classList.add('on'); }); });
+function num(s){ s=s.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[−–]/g,'-').replace(/٫/g,'.').replace(/\s/g,'').replace(/^c=/i,'');
+  if(!/^[-+0-9./()√]+$/.test(s)) return NaN; s=s.replace(/√(\d+(\.\d+)?)/g,'Math.sqrt($1)'); try{ return Function('"use strict";return ('+s+')')(); }catch(e){ return NaN; } }
+document.querySelectorAll('.prac').forEach(p=>{ const key=+p.dataset.key, inp=p.querySelector('input'), fb=p.nextElementSibling, sc=p.closest('[data-scene]').dataset.scene;
+  const check=()=>{ const v=num(inp.value); if(!inp.value.trim()) { fb.textContent='اكتب قيمة c'; fb.className='fb'; return; }
+    if(!isFinite(v)){ fb.textContent='اكتب عدداً، مثل 1 أو 3/2 أو √3'; fb.className='fb'; return; }
+    if(Math.abs(v-key)<1e-3){ fb.textContent='✓ صحيح! انظر الرسم: المماس عند c يوازي الوتر.'; fb.className='fb ok'; const s=S[sc]; s.tan=1; s.c=key; s.par=1; cur=null; go(sc); }
+    else { fb.textContent='✗ ليس صحيحاً. ساوِ ميل المماس بميل الوتر، وتأكد أن c داخل الفترة المفتوحة.'; fb.className='fb bad'; } };
+  p.querySelector('.btn').onclick=check; inp.addEventListener('keydown',e=>{ if(e.key==='Enter') check(); }); });
+
+/* ================= theme & presentation mode ================= */
+const root=document.documentElement; try{ const t0=localStorage.getItem('lb-theme'); if(t0) root.dataset.theme=t0; }catch(e){}
+document.getElementById('bTheme').onclick=()=>{ const dark=(root.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))==='dark'; root.dataset.theme=dark?'light':'dark'; try{ localStorage.setItem('lb-theme',root.dataset.theme); }catch(e){} draw(); };
+const bP=document.getElementById('bPresent');
+bP.onclick=()=>{ const on=root.classList.toggle('present'); bP.setAttribute('aria-pressed',on); setTimeout(()=>{ size(); active&&active.scrollIntoView({block:'center'}); },60); };
+addEventListener('keydown',e=>{ if(e.target.matches('input')) return; const i=steps.indexOf(active);
+  if(['ArrowDown','PageDown','ArrowLeft',' '].includes(e.key)){ e.preventDefault(); steps[Math.min(steps.length-1,i+1)].scrollIntoView({block:'center'}); }
+  if(['ArrowUp','PageUp','ArrowRight'].includes(e.key)){ e.preventDefault(); steps[Math.max(0,i-1)].scrollIntoView({block:'center'}); } });
+</script>
+</body>
+</html>
