@@ -349,12 +349,60 @@ function draw(){
         if(isU) el('circle',{cx:X(x),cy:yl,r:5,fill:COL.surf,stroke:COL.ink2,'stroke-width':2});
         const zl=(sg.zl&&sg.zl[i])||fmt(x); lab(X(x),yl+16,isU?`(${zl})`:zl,{fill:COL.ink,w:700,size:12}); }); }
     W2Xg=W2X; curA=a; curB=b;
-  } else if(sc.draw){ sc.draw(A); }
+  } else if(sc.fig){ drawFig(sc.fig,sc.k??99,A); if(sc.draw) sc.draw(A); }
+  else if(sc.nl){ drawNL(sc.nl,A); if(sc.draw) sc.draw(A); }
+  else if(sc.draw){ sc.draw(A); }
   /* chips, legend, hint */
   const ch=$('#chips'); ch.innerHTML=chips.map(([c,l,v])=>`<span class="chip"><i style="background:var(--${c})"></i>${esc(iso(l))} <b>${esc(v)}</b></span>`).join('');
   const lg=$('#legend'); lg.hidden=!legend.length; lg.innerHTML=legend.map(([c,l])=>`<span><i style="background:${c}"></i>${esc(iso(l))}</span>`).join('');
   const hh=$('#hint'); hh.textContent=iso(hint); hh.className='hint'+(hintOk?' ok':'');
 }
+
+/* geometry figure language (grade 9): F={pts:{A:[x,y]}, el:[{t,…,s (first step), h (glow steps), c, d, l}], names} */
+const FCM={'c-std':'f','c-radius':'chord','c-center':'int','c-point':'c','c-gen':'int','c-cut':'tan',graphite:'ink2',muted:'muted'};
+function drawFig(F,k,A){ const c=A.col, W=A.W, H=A.H, pad=34, P_=p=>typeof p==='string'?F.pts[p]:p;
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9; const add=(x,y)=>{ x0=Math.min(x0,x); x1=Math.max(x1,x); y0=Math.min(y0,y); y1=Math.max(y1,y); };
+  Object.values(F.pts||{}).forEach(([x,y])=>add(x,y)); (F.el||[]).forEach(e=>{ if(e.t==='c'||e.t==='arc'){ const [x,y]=P_(e.o); add(x-e.r,y-e.r); add(x+e.r,y+e.r); } if(e.t==='e'){ const [x,y]=P_(e.o); add(x-e.rx,y-e.ry); add(x+e.rx,y+e.ry); } });
+  if(F.box){ add(F.box[0],F.box[1]); add(F.box[2],F.box[3]); }
+  const s=Math.min((W-2*pad)/Math.max(x1-x0,1e-6),(H-2*pad)/Math.max(y1-y0,1e-6)), ox=(W-(x1-x0)*s)/2-x0*s, oy=(H+(y1-y0)*s)/2+y0*s;
+  const X=([x,y])=>[ox+x*s,oy-y*s], Q=p=>X(P_(p));
+  const vis=e=>(e.s??0)<=k&&(e.u===undefined||k<e.u), glow=e=>Array.isArray(e.h)?e.h.includes(k):e.h===k;
+  const CC=n=>c[FCM[n]||n]||n||c.ink2, col=e=>glow(e)?c.c:CC(e.c||'graphite'), wid=e=>(e.w||1.8)*(glow(e)?1.7:1)*1.3;
+  const els=(F.el||[]).filter(vis), L=(x1,y1,x2,y2,o)=>A.el('path',{d:`M${x1} ${y1}L${x2} ${y2}`,stroke:o.color,'stroke-width':o.w,'stroke-dasharray':o.dash,'stroke-linecap':'round'});
+  const path=(pts,o)=>A.el('path',{d:'M'+pts.map(p=>p.map(v=>v.toFixed(1)).join(' ')).join('L'),stroke:o.color,'stroke-width':o.w,fill:'none','stroke-dasharray':o.dash,'stroke-linejoin':'round',opacity:o.a});
+  const txt=(t,x,y,col,size=12.5)=>A.lab(x,y,t,{fill:col,w:700,size,halo:1});
+  els.filter(e=>e.t==='p').forEach(e=>{ const pts=e.P.map(Q); A.el('path',{d:'M'+pts.map(p=>p.join(' ')).join('L')+'Z',fill:glow(e)?c.c:CC(e.c||'c-std'),opacity:glow(e)?.3:(e.a??.16)}); });
+  els.forEach(e=>{ const C=col(e), w=wid(e);
+    if(e.t==='s'){ const a=Q(e.a), b=Q(e.b); L(a[0],a[1],b[0],b[1],{color:C,w,dash:e.d?'6 4':undefined}); if(e.l){ const m=[(a[0]+b[0])/2,(a[1]+b[1])/2], len=Math.hypot(b[0]-a[0],b[1]-a[1])||1, nx=-(b[1]-a[1])/len, ny=(b[0]-a[0])/len, off=(e.off??13)*1.1; txt(e.l,m[0]+nx*off,m[1]+ny*off,glow(e)?c.c:CC(e.lc||e.c||'c-radius')); } }
+    else if(e.t==='ln'){ const a=Q(e.a), b=Q(e.b), dx=b[0]-a[0], dy=b[1]-a[1], f=e.ext??.35; L(a[0]-dx*(e.e0??f),a[1]-dy*(e.e0??f),b[0]+dx*(e.e1??f),b[1]+dy*(e.e1??f),{color:C,w,dash:e.d?'6 4':undefined}); if(e.l) txt(e.l,b[0]+dx*(e.e1??f)+10,b[1]+dy*(e.e1??f),C,12); }
+    else if(e.t==='c'){ const [cx,cy]=Q(e.o); A.el('circle',{cx,cy,r:e.r*s,fill:e.fill?CC(e.fill):'none','fill-opacity':e.fill?.12:undefined,stroke:C,'stroke-width':(e.w||1.6)*1.4,'stroke-dasharray':e.d?'6 4':undefined}); }
+    else if(e.t==='e'){ const [cx,cy]=Q(e.o); if(e.fill) A.el('ellipse',{cx,cy,rx:e.rx*s,ry:e.ry*s,fill:CC(e.fill),opacity:.14});
+      if(e.back){ const fr=[], bb=[]; for(let i=0;i<=36;i++){ const t=i/36*Math.PI; fr.push([cx+e.rx*s*Math.cos(t),cy+e.ry*s*Math.sin(t)]); bb.push([cx+e.rx*s*Math.cos(Math.PI+t),cy+e.ry*s*Math.sin(Math.PI+t)]); } path(fr,{color:C,w}); path(bb,{color:C,w:w*.8,dash:'5 4'}); }
+      else A.el('ellipse',{cx,cy,rx:e.rx*s,ry:e.ry*s,fill:'none',stroke:C,'stroke-width':w}); }
+    else if(e.t==='arc'){ const [cx,cy]=Q(e.o), pts=[], n=Math.max(8,Math.ceil(Math.abs(e.a1-e.a0)/3)); for(let i=0;i<=n;i++){ const a=(e.a0+(e.a1-e.a0)*i/n)*Math.PI/180; pts.push([cx+e.r*s*Math.cos(a),cy-e.r*s*Math.sin(a)]); } path(pts,{color:C,w:(e.w||3.4),a:.85});
+      if(e.l){ const am=(e.a0+e.a1)/2*Math.PI/180, rr=e.r*s+(e.lo??16); txt(e.l,cx+rr*Math.cos(am),cy-rr*Math.sin(am),C); } }
+    else if(e.t==='ang'||e.t==='ra'){ const v=Q(e.v), a=Q(e.a), b=Q(e.b); let Aa=Math.atan2(a[1]-v[1],a[0]-v[0]), Bb=Math.atan2(b[1]-v[1],b[0]-v[0]); let d=Bb-Aa; while(d>Math.PI) d-=2*Math.PI; while(d<-Math.PI) d+=2*Math.PI; const r=e.r||22;
+      if(e.t==='ra'){ const u=[Math.cos(Aa),Math.sin(Aa)], w2=[Math.cos(Bb),Math.sin(Bb)], q=11; path([[v[0]+u[0]*q,v[1]+u[1]*q],[v[0]+(u[0]+w2[0])*q,v[1]+(u[1]+w2[1])*q],[v[0]+w2[0]*q,v[1]+w2[1]*q]],{color:C,w:1.4}); }
+      else { const pts=[]; for(let i=0;i<=16;i++){ const t=Aa+d*i/16; pts.push([v[0]+r*Math.cos(t),v[1]+r*Math.sin(t)]); } path(pts,{color:C,w:glow(e)?2.8:1.8}); if(e.n===2) path(pts.map(([x,y])=>[v[0]+(x-v[0])*1.2,v[1]+(y-v[1])*1.2]),{color:C,w:1.5});
+        if(e.l){ const m=Aa+d/2, rr=r+(e.lo??14); txt(e.l,v[0]+rr*Math.cos(m),v[1]+rr*Math.sin(m),glow(e)?c.c:CC(e.c||'c-center'),12); } } }
+    else if(e.t==='tk'){ const a=Q(e.a), b=Q(e.b), m=[(a[0]+b[0])/2,(a[1]+b[1])/2], len=Math.hypot(b[0]-a[0],b[1]-a[1])||1, ux=(b[0]-a[0])/len, uy=(b[1]-a[1])/len; for(let i=0;i<(e.n||1);i++){ const off=(i-((e.n||1)-1)/2)*4.5, cx=m[0]+ux*off, cy=m[1]+uy*off; L(cx-uy*6,cy+ux*6,cx+uy*6,cy-ux*6,{color:CC(e.c||'c-point'),w:1.6}); } }
+    else if(e.t==='par'){ const a=Q(e.a), b=Q(e.b), m=[(a[0]+b[0])/2,(a[1]+b[1])/2], an=Math.atan2(b[1]-a[1],b[0]-a[0]); A.el('path',{d:`M${m[0]+5*Math.cos(an)} ${m[1]+5*Math.sin(an)}L${m[0]-7*Math.cos(an-.5)} ${m[1]-7*Math.sin(an-.5)}M${m[0]+5*Math.cos(an)} ${m[1]+5*Math.sin(an)}L${m[0]-7*Math.cos(an+.5)} ${m[1]-7*Math.sin(an+.5)}`,stroke:CC(e.c||'c-point'),'stroke-width':1.8,fill:'none'}); }
+    else if(e.t==='l'){ const p=Q(e.p); txt(e.s,p[0]+(e.dx||0),p[1]+(e.dy||0),glow(e)?c.c:CC(e.c||'graphite'),e.size||12.5); }
+    else if(e.t==='dot'){ const p=Q(e.p); A.el('circle',{cx:p[0],cy:p[1],r:e.r||3.6,fill:CC(e.c||'graphite')}); }
+  });
+  if(F.names!==false){ const ps=Object.entries(F.pts||{}).filter(([n])=>!/^_/.test(n)&&!(F.hide||[]).includes(n)); if(ps.length){ const cx=ps.reduce((a,[,p])=>a+p[0],0)/ps.length, cy=ps.reduce((a,[,p])=>a+p[1],0)/ps.length;
+    ps.forEach(([n,p])=>{ const [x,y]=X(p); const dx=p[0]-cx, dy=p[1]-cy, len=Math.hypot(dx,dy)||1, off=(F.off&&F.off[n])||[dx/len*15,-dy/len*15]; txt(n.replace(/\d$/,''),x+off[0],y+off[1],CC((F.nc&&F.nc[n])||'graphite'),13.5); }); } } }
+/* stacked number lines: nl={w:[x0,x1], rows:[{I:[[a,b,incA,incB]],lab,col}], c (centre), r} */
+function drawNL(N,A){ const c=A.col, W=A.W, H=A.H, [x0,x1]=N.w, rows=N.rows, X=v=>28+(Math.max(x0-1,Math.min(x1+1,v))-x0)/(x1-x0)*(W-56), st=niceStep(x1-x0,W,46);
+  rows.forEach((R,i)=>{ const y=H*(rows.length===1?.55:.2+.62*i/(rows.length-1)), col=c[FCM[R.col]||R.col]||c.f;
+    A.el('path',{d:`M14 ${y}H${W-14}`,stroke:c.axis,'stroke-width':1.6});
+    for(let t=Math.ceil(x0/st)*st;t<=x1+1e-9;t+=st){ A.el('path',{d:`M${X(t)} ${y-5}V${y+5}`,stroke:c.axis,'stroke-width':1.2}); A.lab(X(t),y+18,fmt(t,2),{fill:c.muted,size:11}); }
+    R.I.forEach(([a,b,ia,ib])=>{ const xa=isFinite(a)?X(a):10, xb=isFinite(b)?X(b):W-10; A.el('path',{d:`M${xa} ${y}H${xb}`,stroke:col,'stroke-width':6,'stroke-linecap':'round',opacity:.85});
+      if(!isFinite(a)) A.el('path',{d:`M${xa+8} ${y-7}L${xa-2} ${y}L${xa+8} ${y+7}`,stroke:col,'stroke-width':2.4,fill:'none'}); else A.el('circle',{cx:xa,cy:y,r:6,fill:ia?col:c.surf,stroke:col,'stroke-width':2.4});
+      if(!isFinite(b)) A.el('path',{d:`M${xb-8} ${y-7}L${xb+2} ${y}L${xb-8} ${y+7}`,stroke:col,'stroke-width':2.4,fill:'none'}); else A.el('circle',{cx:xb,cy:y,r:6,fill:ib?col:c.surf,stroke:col,'stroke-width':2.4}); });
+    if(R.lab) A.lab(W-16,y-16,R.lab,{fill:col,w:700,size:13,anchor:'end',halo:1});
+    if(N.c!==undefined&&i===rows.length-1){ A.el('circle',{cx:X(N.c),cy:y,r:4.5,fill:c.int}); A.el('path',{d:`M${X(N.c)} ${y-26}H${X(N.c+N.r)}M${X(N.c)} ${y-26}H${X(N.c-N.r)}`,stroke:c.int,'stroke-width':1.4,'stroke-dasharray':'5 4'}); A.lab(X(N.c),y-38,'المركز '+fmt(N.c,2)+' ، البعد '+fmt(N.r,2),{fill:c.int,size:12,w:700,halo:1}); } });
+  if(N.chips) N.chips.forEach(ch=>A.chips.push(ch)); }
 let W2Xg=null, curA=0, curB=1;
 function loop(){ raf=0; let more=false; if(from&&t<1){ t+=1/36; more=true; } else if(from){ from=null; }
   if(cur&&cur.sweep){ sweepT+=.03; more=true; }
