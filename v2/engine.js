@@ -298,7 +298,7 @@ function draw(){
   if(sc.v){
     const Vb=view(sc), V=from&&from.v&&k<1?mixV(view(from),Vb,k):Vb, pad=V.pad, gb=H-pad.b;
     const X=x=>pad.l+(x-V.x0)/(V.x1-V.x0)*(W-pad.l-pad.r), Y=y=>pad.t+(V.y1-y)/(V.y1-V.y0)*(gb-pad.t), W2X=px=>V.x0+(px-pad.l)/(W-pad.l-pad.r)*(V.x1-V.x0);
-    Object.assign(A,{X,Y,V,W2X});
+    Object.assign(A,{X,Y,V,W2X,X_inv:W2X,Y_inv:py=>V.y1-(py-pad.t)/(gb-pad.t)*(V.y1-V.y0)});
     /* grid & axes */
     if(!sc.noaxes){ const sx=sc.sx||niceStep(V.x1-V.x0,W,56), sy=sc.sy||niceStep(V.y1-V.y0,gb,40); let g='';
       for(let x=Math.ceil(V.x0/sx)*sx;x<=V.x1;x+=sx) g+=`M${X(x)} ${pad.t}V${gb}`; for(let y=Math.ceil(V.y0/sy)*sy;y<=V.y1;y+=sy) g+=`M${pad.l} ${Y(y)}H${W-pad.r}`;
