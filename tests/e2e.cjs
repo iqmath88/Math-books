@@ -89,11 +89,20 @@ async function page(b,vp='board',o={}){ const ctx=o.ctx||await b.newContext({vie
   r.badge=await st.evaluate(s=>s.querySelector('.k-exam')?.textContent.replace('×','').trim());
   await pg.reload(); await pg.waitForSelector('.k-exam'); r.persist=await pg.$eval('.k-exam',e=>e.textContent.replace('×','').trim());
   await pg.click('#bRole'); r.studentNoAdd=await pg.$$eval('.tadd',b=>b.filter(x=>x.offsetParent).length===0); r.studentBadge=await pg.$eval('.k-exam',e=>!!e.offsetParent);
-  await pg.click('#bRole'); await pg.goto(BASE+'v2/g12c3.html'); await pg.waitForSelector('.exlist a'); r.homeHref=await pg.$eval('.exlist a',a=>a.getAttribute('href'));
-  await pg.click('.exlist a'); await pg.waitForTimeout(1300); r.jumped=await pg.evaluate(()=>document.querySelector('.step.on')?.dataset.key);
+  await pg.click('#bRole'); await pg.goto(BASE+'v2/g12c3.html'); await pg.waitForSelector('.exlist a'); const sel=`.exlist a[href$="k=${r.key}"]`; r.homeHref=await pg.$eval(sel,a=>a.getAttribute('href'));
+  await pg.click(sel); await pg.waitForTimeout(1300); r.jumped=await pg.evaluate(()=>document.querySelector('.step.on')?.dataset.key);
   await pg.click('.step.on .k-exam .tx'); r.removed=await pg.evaluate(()=>!document.querySelector('.step.on .k-exam'));
   const ok=r.btns>3&&r.badge==='وزاري 2013 · الدور الثاني'&&r.persist===r.badge&&r.studentNoAdd&&r.studentBadge&&r.jumped===r.key&&r.removed&&!errs.length;
   rec('T22','وسوم «وزاري»: إضافة المدرّس للسنة والدور، الحفظ، الإظهار للطالب، قائمة الفصل، الحذف',ok,JSON.stringify(r)+' '+errs.join('|')); await ctx.close(); }
+ /* T23 solution template (lesson 3-1): «نفرض» tables, framed relations, worksheet companion + generator */
+ if(want('T23')){ const {ctx,pg,errs}=await page(b,'phone'); await pg.goto(BASE+'v2/g12c3.html#l=rates'); await pg.waitForSelector('.let'); const r={};
+  r.let=await pg.$$eval('.let',x=>x.length); r.rel=await pg.$$eval('.rel',x=>x.length); r.kerr=await pg.$$eval('.katex-error',x=>x.length); r.ow=await pg.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
+  const st=await pg.evaluateHandle(()=>[...document.querySelectorAll('.step.enr')].find(s=>/2018/.test(s.textContent))); const p=await st.$('.prac');
+  await (await p.$('input')).fill('0.1'); await (await p.$('.btn')).click(); r.miss=/يتسرب/.test(await p.evaluate(x=>x.nextElementSibling.textContent));
+  await (await p.$('input')).fill('-0.1'); await (await p.$('.btn')).click(); r.ok=/صحيح/.test(await p.evaluate(x=>x.nextElementSibling.textContent));
+  r.gen=await pg.evaluate(()=>{ let ok=0; for(let i=0;i<40;i++){ const q=BOOK.G.gTank(); const m=q.q.match(/ضلعها \$(\d+)\\,m\$.*?بمعدل \$([\d.]+)\\,m\^3/); if(!m) return 'parse'; const v=(+m[2])/(m[1]*m[1])*(/يتسرب/.test(q.q)?-1:1); if(Math.abs(v-(+q.ans))<1e-9) ok++; } return ok; });
+  const ok=r.let===6&&r.rel===7&&r.kerr===0&&r.ow<=0&&r.miss&&r.ok&&r.gen===40&&!errs.length;
+  rec('T23','قالب الحل في الدرس 3−1: جداول «نفرض»، العلاقة المؤطرة، سؤال الورقة الوزاري ومولّده',ok,JSON.stringify(r)+' '+errs.join('|')); await ctx.close(); }
  if(want('T12')){ const {ctx,pg}=await page(b); await pg.goto(BASE+'v2/g12c4.html#l=ftc'); await pg.waitForSelector('.step'); await pg.click('#bTools').catch(()=>{}); const z=await pg.$('[data-tool="zoom"],#bZoom');
   let ok=false; if(z){ const f0=await pg.evaluate(()=>parseFloat(getComputedStyle(document.querySelector('.story')).fontSize)); await z.click(); const f1=await pg.evaluate(()=>parseFloat(getComputedStyle(document.querySelector('.story')).fontSize)); ok=f1>f0; }
   rec('T12','تكبير النص والمعادلات في التصميم الجديد',ok,z?'':'لا يوجد زر تكبير'); await ctx.close(); }

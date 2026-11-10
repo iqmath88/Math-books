@@ -37,19 +37,19 @@ function parse(src){
     if(!st) continue;
     if(s.startsWith('| ')||s==='|'){ if(box) box.lines.push(s.slice(2)); continue; }
     const m=s.match(/^([a-z0-9*]+):\s?(.*)$/);
-    if(m&&['k','p','h1','h2','lead','law','note','err','ask','o','o*','why','prac','sol','self','ok','tbl','tbh','html','fig','xp','hint','miss','gen','tnote'].includes(m[1])){
+    if(m&&['k','p','h1','h2','lead','law','note','err','ask','o','o*','why','prac','sol','self','ok','tbl','tbh','html','fig','xp','hint','miss','gen','tnote','let','rel'].includes(m[1])){
       const [ ,key,val]=m; flushList();
       if(key==='o'||key==='o*'){ const q=st.parts.findLast(p=>p.k==='ask'); if(q){ if(key==='o*') q.ans=q.o.length; q.o.push(val); } continue; }
       if(key==='hint'||key==='miss'||key==='gen'){ const q=st.parts.findLast(p=>p.k==='prac'||p.k==='self'); if(q){ if(key==='gen') q.gen=val.trim(); else if(key==='hint') (q.hints=q.hints||[]).push(val); else { const i=val.indexOf(';'); (q.miss=q.miss||[]).push([val.slice(0,i).trim(),val.slice(i+1).trim()]); } } continue; }
       if(key==='ok'){ const q=st.parts.findLast(p=>p.k==='prac'||p.k==='self'); if(q) q.ok=val; continue; }
       if(key==='tbl'||key==='tbh'){ let t=st.parts.at(-1); if(!t||t.k!=='tbl'){ t={k:'tbl',rows:[]}; st.parts.push(t); } t.rows.push({h:key==='tbh',c:val.split('|').map(x=>x.trim())}); continue; }
       const p={k:key,v:val,lines:val?[val]:[]};
-      if(key==='law'||key==='xp'){ p.lines=[]; }
+      if(key==='law'||key==='xp'||key==='let'){ p.lines=[]; }
       if(key==='prac'){ const [ans,ph]=val.split(';').map(x=>x.trim()); p.ans=ans; p.ph=ph||'الجواب'; p.lines=[]; }
       if(key==='self'){ p.lines=[]; }
       if(key==='ask'){ p.o=[]; p.ans=0; }
       if(key==='sol'||key==='why'){ const q=st.parts.findLast(x=>['prac','self','ask'].includes(x.k)); if(q){ q[key]=p; } }
-      st.parts.push(p); box=['law','note','err','sol','why','self','html','lead','xp','tnote'].includes(key)?p:null; continue; }
+      st.parts.push(p); box=['law','note','err','sol','why','self','html','lead','xp','tnote','let'].includes(key)?p:null; continue; }
     if(s.startsWith('$$')){ flushList(); st.parts.push({k:'m',v:s.slice(2).trim()}); box=null; continue; }
     if(s.startsWith('- ')){ if(!list){ list={k:'ul',items:[]}; st.parts.push(list); } list.items.push(s.slice(2)); box=null; continue; }
     flushList(); st.parts.push({k:'p',v:s}); box=null;
@@ -88,6 +88,8 @@ function stepHTML(st,les,si,ki){
       case 'ul': h+=`<ul>${p.items.map(i=>`<li>${T(i)}</li>`).join('')}</ul>`; break;
       case 'law': h+=`<div class="law"><span class="lbl">${T(p.v)}</span><div>${p.lines.map(x=>x.startsWith('$$')&&!x.slice(2).includes('$$')?`<span class="big tex" data-tex="${esc(x.slice(2).trim()).replace(/"/g,'&quot;')}"></span>`:`<p>${T(x)}</p>`).join('')}</div></div>`; break;
       case 'xp': h+=`<div class="xp"><span class="xl">${p.v?T(p.v):'خطوة توضيحية'}</span><div>${p.lines.map(x=>`<p>${LN(x)}</p>`).join('')}</div></div>`; break;
+      case 'let': h+=`<div class="let"><div class="lh"><b>${p.v?T(p.v):'نفرض'}</b><span class="xl">ترتيب المعطيات · توضيح</span></div><div class="lg">${p.lines.map(x=>{ const c=x.split(' ; '); return `<div class="lr"><span class="ls">${T(c[0]||'')}</span><span class="lm">${T(c[1]||'')}</span><span class="lv">${T(c[2]||'')}</span></div>`; }).join('')}</div></div>`; break;
+      case 'rel': { const ex=p.v.startsWith('» '); h+=`<div class="rel${ex?' rx':''}"><span>${T(ex?p.v.slice(2):p.v)}</span></div>`; break; }
       case 'tnote': h+=`<div class="tnote"><b>للمدرّس:</b> ${lines(p)}</div>`; break;
       case 'note': h+=`<div class="note">${lines(p)}</div>`; break;
       case 'err': h+=`<div class="err"><b>تنبيه على خطأ في الكتاب:</b> ${lines(p)}</div>`; break;
