@@ -26,9 +26,10 @@ function parse(src){
     if(!st) continue;
     if(s.startsWith('| ')||s==='|'){ if(box) box.lines.push(s.slice(2)); continue; }
     const m=s.match(/^([a-z0-9*]+):\s?(.*)$/);
-    if(m&&['k','p','h1','h2','lead','law','note','err','ask','o','o*','why','prac','sol','self','ok','tbl','tbh','html','fig','xp'].includes(m[1])){
+    if(m&&['k','p','h1','h2','lead','law','note','err','ask','o','o*','why','prac','sol','self','ok','tbl','tbh','html','fig','xp','hint','miss','gen'].includes(m[1])){
       const [ ,key,val]=m; flushList();
       if(key==='o'||key==='o*'){ const q=st.parts.findLast(p=>p.k==='ask'); if(q){ if(key==='o*') q.ans=q.o.length; q.o.push(val); } continue; }
+      if(key==='hint'||key==='miss'||key==='gen'){ const q=st.parts.findLast(p=>p.k==='prac'||p.k==='self'); if(q){ if(key==='gen') q.gen=val.trim(); else if(key==='hint') (q.hints=q.hints||[]).push(val); else { const i=val.indexOf(';'); (q.miss=q.miss||[]).push([val.slice(0,i).trim(),val.slice(i+1).trim()]); } } continue; }
       if(key==='ok'){ const q=st.parts.findLast(p=>p.k==='prac'||p.k==='self'); if(q) q.ok=val; continue; }
       if(key==='tbl'||key==='tbh'){ let t=st.parts.at(-1); if(!t||t.k!=='tbl'){ t={k:'tbl',rows:[]}; st.parts.push(t); } t.rows.push({h:key==='tbh',c:val.split('|').map(x=>x.trim())}); continue; }
       const p={k:key,v:val,lines:val?[val]:[]};
@@ -61,6 +62,8 @@ const lines=p=>p.lines.map(LN).join('<br>');
 const MAC={"\\cf":"\\htmlClass{tk-f}{#1}","\\cch":"\\htmlClass{tk-chord}{#1}","\\ctn":"\\htmlClass{tk-tan}{#1}","\\ccc":"\\htmlClass{tk-c}{#1}","\\cin":"\\htmlClass{tk-int}{#1}","\\cok":"\\htmlClass{tk-ok}{#1}","\\cbad":"\\htmlClass{tk-bad}{#1}","\\R":"R"};
 function typeset(r){ $$('.tex',r).forEach(el=>{ try{ katex.render(el.dataset.tex,el,{trust:true,strict:false,throwOnError:false,displayMode:false,macros:{...MAC}}); el.classList.add('m'); el.setAttribute('dir','ltr'); }catch(e){ el.textContent=el.dataset.tex; } }); }
 
+const extra=(p,id)=>(p.hints?`<button type="button" class="btn ghost small" data-hint>💡 تلميح <bdi>1/${p.hints.length}</bdi></button>`:'')+(p.gen?`<button type="button" class="btn ghost small" data-gen="${esc(p.gen)}">↻ تمرين مشابه</button>`:'');
+const extraBox=p=>(p.hints?`<div class="hints">${p.hints.map(x=>`<p class="hn" hidden>${T(x)}</p>`).join('')}</div>`:'')+(p.gen?'<div class="genbox" hidden></div>':'');
 function stepHTML(st,les,si,ki){
   let h=''; if(st.n) h+=`<span class="sn">${esc(st.n)}</span>`; if(st.lbl) h+=`<span class="lbl">${T(st.lbl)}</span>`;
   st.parts.forEach((p,pi)=>{ const id=`${les.id}-${si}-${ki}-${pi}`;
@@ -79,9 +82,9 @@ function stepHTML(st,les,si,ki){
       case 'html': h+=p.lines.join('\n'); break;
       case 'tbl': h+=`<div class="tblwrap"><table class="t">${p.rows.map(r=>`<tr>${r.c.map(c=>`<${r.h?'th':'td'}>${T(c)}</${r.h?'th':'td'}>`).join('')}</tr>`).join('')}</table></div>`; break;
       case 'ask': h+=`<p>${T(p.v)}</p><div class="ask" data-ans="${p.ans}">${p.o.map(o=>`<button type="button" class="opt">${T(o)}</button>`).join('')}</div><div class="why">${p.why?lines(p.why):''}</div>`; break;
-      case 'prac': h+=`<div class="prac" data-key="${esc(p.ans)}" data-id="${id}"${p.ok?` data-ok="${esc(p.ok)}"`:''}><input inputmode="text" autocomplete="off" placeholder="${esc(p.ph)}" aria-label="${esc(p.ph)}"><button type="button" class="btn">تحقّق</button></div><div class="fb"></div>`+
-        `<div class="selfrow"><button type="button" class="btn ghost small" data-show>الحل</button></div><div class="sol">${p.sol?lines(p.sol):''}</div>`; break;
-      case 'self': h+=(p.lines.length?`<p>${lines(p)}</p>`:'')+`<div class="selfrow" data-self="${id}"${p.ok?` data-ok="${esc(p.ok)}"`:''}><button type="button" class="btn ghost small" data-show>أظهر الحل</button><span class="mk" hidden>هل كان حلّك صحيحاً؟ <button type="button" class="btn small" data-y>✓ نعم</button> <button type="button" class="btn ghost small" data-n>✗ ليس بعد</button></span><span class="done" hidden></span></div><div class="sol">${p.sol?lines(p.sol):''}</div>`; break;
+      case 'prac': h+=`<div class="prac" data-key="${esc(p.ans)}" data-id="${id}"${p.ok?` data-ok="${esc(p.ok)}"`:''}${p.miss?` data-miss="${encodeURIComponent(JSON.stringify(p.miss))}"`:''}><input inputmode="text" autocomplete="off" placeholder="${esc(p.ph)}" aria-label="${esc(p.ph)}"><button type="button" class="btn">تحقّق</button></div><div class="fb"></div>`+
+        `<div class="selfrow">${extra(p,id)}<button type="button" class="btn ghost small" data-show>الحل</button></div>${extraBox(p)}<div class="sol">${p.sol?lines(p.sol):''}</div>`; break;
+      case 'self': h+=(p.lines.length?`<p>${lines(p)}</p>`:'')+`<div class="selfrow" data-self="${id}"${p.ok?` data-ok="${esc(p.ok)}"`:''}>${extra(p,id)}<button type="button" class="btn ghost small" data-show>أظهر الحل</button><span class="mk" hidden>هل كان حلّك صحيحاً؟ <button type="button" class="btn small" data-y>✓ نعم</button> <button type="button" class="btn ghost small" data-n>✗ ليس بعد</button></span><span class="done" hidden></span></div>${extraBox(p)}<div class="sol">${p.sol?lines(p.sol):''}</div>`; break;
     } });
   return h;
 }
@@ -131,11 +134,19 @@ function renderHome(){
   $('#home').innerHTML=`<div class="hero"><svg class="deco" viewBox="0 0 300 200" fill="none" stroke="#fff" stroke-width="3"><path d="M0 170C60 170 80 20 150 40S240 180 300 60"/><path d="M40 150L260 70" stroke-dasharray="8 8"/><circle cx="150" cy="40" r="8" fill="#fff"/></svg>
     <small>${esc(B.grade)} · ${esc(B.chapter)}</small><h1>${esc(B.title)}</h1><p>${T(B.desc||'')}</p>
     <div class="bar"><i style="width:${LES.length?Math.round(seen/LES.length*100):0}%"></i></div>
-    <div class="meta">أنهيت ${seen} من ${LES.length} دروس${tot?` · حللت ${done} من ${tot} تمريناً`:''}</div></div>
+    <div class="meta">أنهيت ${seen} من ${LES.length} دروس${tot?` · حللت ${done} من ${tot} تمريناً`:''}</div><div class="share"><input id="shN" placeholder="اسمك (اختياري)" autocomplete="name" aria-label="الاسم"><button type="button" class="btn small" id="shB">📤 أرسل تقدّمي للمدرّس</button></div><pre id="shT" hidden></pre></div>
    <div class="lessons">${LES.map((l,i)=>{ const n=exDone(l); return `<a class="lcard" href="#l=${l.id}"><span class="no"><span>${esc(/^\d/.test(l.no)?'['+l.no+']':l.no)}</span><span class="pg">ص ${esc(l.pg)}</span></span><b>${T(l.t)}</b><p>${T(l.d)}</p>
      <span class="st">${ST.seen[l.id]?'<span class="okb">✓ مكتمل</span>':`الدرس ${i+1}`}${l.nEx?`<span class="mini"><i style="width:${Math.round(n/l.nEx*100)}%"></i></span><span>${n}/${l.nEx}</span>`:''}</span></a>`; }).join('')}</div>
    ${B.classic?`<p class="classic">تفضّل الكتاب بصفحاته؟ <a href="${B.classic}">افتح النسخة الكلاسيكية</a></p>`:''}`;
   typeset($('#home')); scrollTo({top:0,behavior:'instant'}); $('#prog').style.width='0';
+  try{ $('#shN').value=localStorage.getItem('lb-name')||''; }catch(e){}
+  $('#shB').onclick=async()=>{ const nm=$('#shN').value.trim(); try{ localStorage.setItem('lb-name',nm); }catch(e){}
+    const tried=LES.map(l=>{ let z=0; l.secs.forEach((s2,si)=>s2.steps.forEach((st,ki)=>st.parts.forEach((q,pi)=>{ if((q.k==='prac'||q.k==='self')&&ST.ex[`${l.id}-${si}-${ki}-${pi}`]===0) z++; }))); return z?`  • ${l.no} ${l.t}: ${z}`:''; }).filter(Boolean);
+    const txt=[`الرياضيات الحيّة — ${B.grade} · ${B.chapter}: ${B.title}`, nm?`الاسم: ${nm}`:'', `الدروس المكتملة: ${seen} من ${LES.length}`, tot?`التمارين المحلولة: ${done} من ${tot}`:'', ST.gen?`تمارين مشابهة حُلّت صحيحاً: ${ST.gen}`:'',
+      tried.length?'تمارين حاولتها ولم أحلّها بعد:\n'+tried.join('\n'):'', 'التاريخ: '+new Date().toLocaleDateString('ar-IQ')].filter(Boolean).join('\n');
+    const pre=$('#shT'); pre.hidden=false; pre.textContent=txt;
+    try{ if(navigator.share){ await navigator.share({text:txt}); return; } }catch(e){ if(e&&e.name==='AbortError') return; }
+    try{ await navigator.clipboard.writeText(txt); $('#shB').textContent='✓ نُسخ النص: الصقه في رسالة للمدرّس'; }catch(e){ $('#shB').textContent='انسخ النص الظاهر أو صوّره'; } };
 }
 
 /* ================= lesson ================= */
@@ -180,21 +191,37 @@ function nums(s){ s=String(s).replace(/[−–]/g,'-').replace(/\b[a-zA-Z]\s*=/g
 function same(got,key){ if(got.length!==key.length||got.some(v=>!isFinite(v))) return false;
   const g=got.map((v,i)=>({v,d:(got.dec||[])[i]||0})).sort((a,b)=>a.v-b.v), k=[...key].sort((a,b)=>a-b);
   return k.every((v,i)=>Math.abs(v-g[i].v)<=Math.max(1e-4,Math.abs(v)*2e-4,g[i].d?0.51*10**-g[i].d:0)); }
+/* «تمرين مشابه»: generator G[name]() → {q, ans, sol:[lines], sc?} */
+let genN=0;
+function genEx(name,bx){ const g=B.G&&B.G[name]; if(!g) return; const E=g(); bx.hidden=false;
+  bx.innerHTML=`<p class="gq"><b>تمرين مشابه:</b> ${T(E.q)}</p><div class="prac"><input inputmode="text" autocomplete="off" placeholder="${esc(E.ph||'الجواب')}" aria-label="الجواب"><button type="button" class="btn">تحقّق</button></div><div class="fb"></div>`+
+   `<div class="selfrow"><button type="button" class="btn ghost small" data-gs>الحل</button><button type="button" class="btn ghost small" data-gn>↻ تمرين آخر</button></div><div class="sol">${E.sol.map(x=>LN(x)).join('<br>')}</div>`;
+  typeset(bx); const inp=$('input',bx), fb=$('.fb',bx), sol=$('.sol',bx), key=nums(E.ans);
+  const check=()=>{ const got=nums(inp.value.trim()); if(!inp.value.trim()||!got.length||got.some(x=>!isFinite(x))){ fb.textContent='اكتب جوابك عدداً'; fb.className='fb'; return; }
+    if(same(got,key)){ fb.textContent='✓ صحيح! جرّب تمريناً آخر لتتأكد.'; fb.className='fb ok'; sol.classList.add('on'); ST.gen=(ST.gen||0)+1; save(); }
+    else { const m=(E.miss||[]).find(([k])=>same(got,nums(k))); fb.innerHTML='✗ '+(m?T(m[1]):'ليس صحيحاً بعد. حاول مرة أخرى أو اعرض الحل.'); if(m) typeset(fb); fb.className='fb bad'; } };
+  $('.btn',bx).onclick=check; inp.addEventListener('keydown',e=>{ if(e.key==='Enter') check(); });
+  $('[data-gs]',bx).onclick=()=>sol.classList.toggle('on'); $('[data-gn]',bx).onclick=()=>genEx(name,bx);
+  if(E.sc){ const k='gen'+(++genN); B.S[k]=E.sc; const stp=bx.closest('.step'); if(stp){ stp.dataset.scene=k; go(k); } } }
 function wire(les){
   $$('.ask',story).forEach(q=>{ const ans=+q.dataset.ans, why=q.nextElementSibling;
     $$('.opt',q).forEach((b,i)=>b.onclick=()=>{ $$('.opt',q).forEach((x,j)=>{ x.classList.toggle('right',j===ans); x.classList.toggle('wrong',j===i&&i!==ans); }); why&&why.classList.add('on'); }); });
-  $$('.prac',story).forEach(p=>{ const key=nums(p.dataset.key), inp=$('input',p), fb=p.nextElementSibling, row=fb.nextElementSibling, sol=row.nextElementSibling, id=p.dataset.id;
-    if(!sol.innerHTML.trim()) row.hidden=true;
+  $$('.prac',story).forEach(p=>{ const key=nums(p.dataset.key), inp=$('input',p), fb=p.nextElementSibling, row=fb.nextElementSibling, id=p.dataset.id; let sol=row.nextElementSibling; while(sol&&!sol.classList.contains('sol')) sol=sol.nextElementSibling;
+    const miss=p.dataset.miss?JSON.parse(decodeURIComponent(p.dataset.miss)):[];
+    if(!sol.innerHTML.trim()&&!row.querySelector('[data-hint],[data-gen]')) row.hidden=true; else if(!sol.innerHTML.trim()) $('[data-show]',row).hidden=true;
     const mark=v=>{ ST.ex[id]=v; save(); };
     if(ST.ex[id]===1){ fb.textContent='✓ حللته سابقاً'; fb.className='fb ok'; }
     const check=()=>{ const v=inp.value.trim(); if(!v){ fb.textContent='اكتب جوابك أولاً'; fb.className='fb'; return; }
       const got=nums(v); if(!got.length||got.some(x=>!isFinite(x))){ fb.textContent='اكتب عدداً، مثل 3 أو 1/2 أو √5 أو -4'; fb.className='fb'; return; }
       if(same(got,key)){ fb.textContent='✓ صحيح!'; fb.className='fb ok'; mark(1); sol.classList.add('on'); if(p.dataset.ok&&B.S[p.dataset.ok]){ p.closest('.step').dataset.scene=p.dataset.ok; go(p.dataset.ok); } }
       else if(key.length>1&&got.length<key.length&&got.every(g=>key.some(k=>Math.abs(k-g)<=1e-3))){ fb.textContent=`صحيح جزئياً: للسؤال ${key.length} قيم، افصل بينها بفاصلة.`; fb.className='fb'; }
-      else { fb.textContent='✗ ليس صحيحاً بعد. راجع خطواتك وحاول مرة أخرى.'; fb.className='fb bad'; if(ST.ex[id]!==1) mark(0); } };
+      else { const m=miss.find(([k])=>same(got,nums(k))); fb.innerHTML=m?'✗ '+T(m[1]):'✗ ليس صحيحاً بعد. راجع خطواتك'+(row.querySelector('[data-hint]')?' أو اطلب تلميحاً.':' وحاول مرة أخرى.'); fb.className='fb bad'; if(m) typeset(fb); if(ST.ex[id]!==1) mark(0); } };
     $('.btn',p).onclick=check; inp.addEventListener('keydown',e=>{ if(e.key==='Enter') check(); });
     $('[data-show]',row).onclick=()=>sol.classList.toggle('on'); });
-  $$('[data-self]',story).forEach(r=>{ const id=r.dataset.self, sol=r.nextElementSibling, mk=$('.mk',r), dn=$('.done',r);
+  $$('[data-hint]',story).forEach(b=>{ const hs=$$('.hn',b.parentElement.nextElementSibling); let i=0;
+    b.onclick=()=>{ if(i<hs.length){ hs[i].hidden=false; i++; } b.querySelector('bdi').textContent=Math.min(i+1,hs.length)+'/'+hs.length; if(i>=hs.length){ b.disabled=true; b.firstChild.textContent='💡 لا تلميحات أخرى '; } }; });
+  $$('[data-gen]',story).forEach(b=>{ let bx=b.parentElement.nextElementSibling; while(bx&&!bx.classList.contains('genbox')) bx=bx.nextElementSibling; b.onclick=()=>genEx(b.dataset.gen,bx); });
+  $$('[data-self]',story).forEach(r=>{ const id=r.dataset.self; let sol=r.nextElementSibling; while(sol&&!sol.classList.contains('sol')) sol=sol.nextElementSibling; const mk=$('.mk',r), dn=$('.done',r);
     const show=v=>{ mk.hidden=true; dn.hidden=false; dn.textContent=v===1?'✓ حللته':'سأعيد المحاولة'; dn.style.color=v===1?'':'var(--muted)'; };
     if(ST.ex[id]!==undefined) show(ST.ex[id]);
     $('[data-show]',r).onclick=()=>{ sol.classList.toggle('on'); if(ST.ex[id]===undefined){ mk.hidden=false; } if(r.dataset.ok&&B.S[r.dataset.ok]){ r.closest('.step').dataset.scene=r.dataset.ok; go(r.dataset.ok); } };
@@ -416,7 +443,7 @@ function loop(){ raf=0; let more=false; if(from&&t<1){ t+=1/36; more=true; } els
 const kick=()=>{ if(!raf) raf=requestAnimationFrame(loop); };
 function syncSlider(){ const s=cur&&cur.sl, w=$('#sl'); w.hidden=!s; if(!s) return; const i=$('#slI'); i.min=s.min; i.max=s.max; i.step=s.step||'any'; i.value=P; $('#slL').textContent=s.lab||''; $('#slV').textContent=(s.fmt||fmt)(P); }
 function go(name){ const sc=B.S[name]; if(!sc||sc===cur) return; const red=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  from=cur&&!red?cur:null; t=0; cur=sc; cDrag=null; sweepT=0; if(sc.sl){ P=sc.sl.v??sc.sl.min; playing=!!sc.sl.play&&!red; playT=0; } syncSlider(); kick(); }
+  from=cur&&!red?cur:null; t=0; cur=sc; cDrag=null; sweepT=0; if(sc.sl){ const sl=sc.sl; P=sl.v??sl.min; playing=!!sl.play&&!red; const u0=Math.min(1,Math.max(0,(P-sl.min)/((sl.max-sl.min)||1))); playT=Math.acos(1-2*u0)/(sl.speed||.6); } syncSlider(); kick(); }
 function size(){ const r=box.getBoundingClientRect(); W=r.width; H=r.height; draw(); }
 new ResizeObserver(size).observe(box);
 $('#slI').addEventListener('input',e=>{ playing=false; P=+e.target.value; $('#slV').textContent=(cur.sl.fmt||fmt)(P); draw(); });

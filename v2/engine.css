@@ -219,3 +219,14 @@ body:not(.is-home) .home{display:none}
 .xp p{margin:4px 0}
 .xpl{display:inline;color:var(--ink2)}
 .xpl::before{content:'توضيح';margin:0 0 0 6px;padding:0 7px;vertical-align:1px}
+
+/* graded hints & similar exercises */
+.hints .hn{margin:8px 0 0;padding:8px 12px;border-radius:10px;background:color-mix(in srgb,var(--chord) 8%,var(--surface));border-inline-start:3px solid var(--chord);font-size:.95em}
+.genbox{margin-top:12px;padding:12px 14px;border:1.5px dashed color-mix(in srgb,var(--accent) 55%,transparent);border-radius:12px}
+.genbox .gq{margin:0 0 6px}
+.btn[disabled]{opacity:.5;cursor:default}
+
+.hero .share{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;position:relative}
+.hero .share input{flex:1 1 160px;min-width:0;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;font:inherit}
+.hero .share input::placeholder{color:rgba(255,255,255,.7)}
+.hero pre{white-space:pre-wrap;background:rgba(0,0,0,.25);border-radius:10px;padding:10px 12px;margin-top:10px;font:inherit;font-size:13px;position:relative}
