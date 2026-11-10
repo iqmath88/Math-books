@@ -681,3 +681,25 @@ GEN.gWall=()=>{ const [L,m10]=pick([[20,16],[12,15],[15,18],[10,20],[18,12]]), v
    sol:[`» نفرض: $x$ بعده عن الحائط ($\\dfrac{dx}{dt}=-${v2/2}$ لأنه يقترب) ، $y$ طول الظل على الحائط`,`التشابه: $\\dfrac{${L}-x}{${L}}=\\dfrac{${m10/10}}{y}\\Rightarrow y=\\dfrac{${+(m10*L/10).toFixed(2)}}{${L}-x}$`,
      `نشتق: $\\dfrac{dy}{dt}=\\dfrac{${+(m10*L/10).toFixed(2)}}{(${L}-x)^2}\\cdot\\dfrac{dx}{dt}$`,`نعوّض $${L}-x=${d}$ : $\\dfrac{dy}{dt}=\\dfrac{${+(m10*L/10).toFixed(2)}}{${d*d}}(-${v2/2})=${r.t}$`,'» سالب: كلما اقترب من الحائط ابتعد عن الضوء فقصر ظله.'],
    miss:[[fq(-num,den).s,'الشخص يقترب من الحائط فـ $x$ تتناقص: $\\dfrac{dx}{dt}$ سالبة.']]}; };
+
+/* funnel (cone, vertex down) H = 20, R = 10, leaking 5 cm³/min: r = h/2, V = πh³/12 — worksheet question (وزاري 2010) */
+S.rFunnel={title:'قمع ارتفاعه 20cm وقطر قاعدته 20cm',hint:'r/10 = h/20 ⇒ r = h/2 ⇒ V = πh³/12',anim:1,sl:{min:2,max:19,v:14,step:.01,play:1,speed:.3,lab:'عمق الماء h',fmt:v=>fr(v,1)+' cm'},
+ pick(A,px,py){ const g=A._g; return g?(g.Y(0)-py)/g.s:null; },
+ draw(A){ const h=A.p, r=h/2, g=fit(A,-14,17,-5,23.5), X=g.X, Y=g.Y, f=A.col, t=A.t; A._g=g;
+  poly(A,[[X(0),Y(0)],[X(r),Y(h)],[X(-r),Y(h)]],{fill:f.f,opacity:.3});
+  A.el('ellipse',{cx:X(0),cy:Y(h),rx:r*g.s,ry:r*g.s*.22,fill:'#fde68a',opacity:.75,stroke:f.f,'stroke-width':1.6});
+  A.el('path',{d:`M${X(-10)} ${Y(20)}L${X(0)} ${Y(0)}L${X(10)} ${Y(20)}`,fill:'none',stroke:'#2c6a3e','stroke-width':3});
+  A.el('ellipse',{cx:X(0),cy:Y(20),rx:10*g.s,ry:10*g.s*.22,fill:'#3f8f55',opacity:.18,stroke:'#2c6a3e','stroke-width':2.6});
+  /* similar triangles abc (10 , 20) and aef (r , h) */
+  A.el('path',{d:`M${X(0)} ${Y(0)}V${Y(20)}H${X(10)}`,stroke:f.muted,'stroke-width':1.4,'stroke-dasharray':'3 4',fill:'none'});
+  A.el('path',{d:`M${X(0)} ${Y(0)}V${Y(h)}H${X(r)}`,stroke:f.c,'stroke-width':2.6,fill:'none'});
+  T(A,X(5),Y(20)-14,'10','muted'); T(A,X(11.5),Y(10),'20','muted',{anchor:'start'});
+  T(A,X(-.7),Y(h/2),'h','c',{anchor:'end',size:15}); T(A,X(r/2),Y(h)+14,'r','c',{size:15});
+  T(A,X(0)-4,Y(0)+4,'a','ink2',{anchor:'end',size:12}); T(A,X(0)-4,Y(20)-10,'b','ink2',{anchor:'end',size:12}); T(A,X(10)+6,Y(20)-8,'c','ink2',{anchor:'start',size:12});
+  T(A,X(0)-4,Y(h)-10,'e','ink2',{anchor:'end',size:12}); T(A,X(r)+6,Y(h),'f','ink2',{anchor:'start',size:12});
+  /* leak at the vertex */
+  for(let k=0;k<2;k++){ const ph=((t*1.1+k/2)%1); A.el('ellipse',{cx:X(0),cy:Y(0)+8+ph*g.s*3,rx:3,ry:4.4,fill:f.f,opacity:1-ph*.7}); }
+  T(A,X(.8),Y(-3.2),'تسرب 5 cm³/min','chord',{size:12.5,anchor:'start'});
+  arrow(A,X(-r)-10,Y(h)-4,X(-r)-10,Y(h)+22,'tan');
+  const dh=-20/(PI*h*h); A.chips.push(['c','r = h/2',fr(r,2)+' cm'],['f','V = πh³/12',fr(PI*h**3/12,1)+' cm³'],['chord','dV/dt','−5'],['tan','dh/dt',this.q?'?':fr(dh,4)]); }};
+S.rFunnelOk=Object.assign({},S.rFunnel,{title:'عند h = 6 : dh/dt = −5/(9π)',sl:Object.assign({},S.rFunnel.sl,{v:6,play:0}),q:0}); S.rFunnel.q=1;

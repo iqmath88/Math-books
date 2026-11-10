@@ -358,6 +358,25 @@ sol: **نفرض:** $h$ الارتفاع ($\dfrac{dh}{dt}=0.5$) ، $r$ نصف ا�
 | **نشتق الطرفين بالنسبة لـ $t$:** $r^2\dfrac{dh}{dt}+2rh\dfrac{dr}{dt}=0$
 | **نعوّض:** $64(0.5)+2(8)(5)\dfrac{dr}{dt}=0\Rightarrow32+80\dfrac{dr}{dt}=0\Rightarrow\dfrac{dr}{dt}=-0.4\ cm/s$
 | » **المعنى:** نصف القطر يتناقص بمعدل $0.4\ cm/s$
+>>> rFunnel .enr
+p: **وزاري (2010 الدور 3):** قمع على شكل مخروط دائري قائم رأسه إلى الأسفل قطر قاعدته $(20\,cm)$ وارتفاعه $(20cm)$ فإذا كان الماء يتسرب من الأسفل بمعدل $5\,cm^3/min$ ما هو معدل انخفاض الماء عندما يكون عمق الماء $6cm$
+p: هنا متغيران في قانون الحجم ($r$ و $h$) ، فنحتاج **التشابه** أولاً لنُبقي متغيراً واحداً، كما في مثال المرشح المخروطي من أمثلة الكتاب. اسحب سطح الماء.
+prac: -5/(9π) ; dh/dt (اكتب π)
+hint: من تشابه المثلثين $aef$ و $abc$ : $\dfrac{r}{10}=\dfrac{h}{20}\Rightarrow r=\dfrac h2$ (نصف القطر 10 لأن القطر 20).
+hint: $V=\tfrac13\pi\left(\tfrac h2\right)^2h=\dfrac{\pi}{12}h^3$ ، ثم اشتق وعوّض $h=6$ و $\dfrac{dV}{dt}=-5$.
+miss: 5/(9π) ; الماء يتسرب: $\dfrac{dV}{dt}$ سالبة فـ $\dfrac{dh}{dt}$ سالبة (ومعدل **الانخفاض** يُكتب بعدها بلا إشارة).
+miss: -5/(36π) ; يبدو أنك أخذت $r=h$ (القطر 20 بدل نصف القطر 10)؛ من التشابه $\dfrac{r}{10}=\dfrac{h}{20}\Rightarrow r=\tfrac h2$ .
+miss: -5/(3π) ; مشتقة $h^3$ هي $3h^2\dfrac{dh}{dt}$ : لا تنسَ العدد 3.
+ok: rFunnelOk
+gen: gCone
+sol: **نفرض:** $V$ حجم الماء ($\dfrac{dV}{dt}=-5\ cm^3/min$) ، $h$ عمق الماء ($h=6$ ، $\dfrac{dh}{dt}=?$) ، $r$ نصف قطر سطح الماء
+| **العلاقة:** $V=\tfrac13\pi r^2h\ \ldots(1)$
+| **من تشابه المثلثين** $aef$ و $abc$ : $\dfrac{r}{10}=\dfrac{h}{20}\Rightarrow r=\dfrac h2\ \ldots(2)$
+| نعوّض (2) في (1): $V=\tfrac13\pi\cdot\dfrac{h^2}{4}\cdot h=\dfrac{\pi}{12}h^3$
+| **نشتق الطرفين بالنسبة لـ $t$:** $\dfrac{dV}{dt}=\dfrac{\pi}{12}\cdot3h^2\dfrac{dh}{dt}=\dfrac{\pi}{4}h^2\dfrac{dh}{dt}$
+| **نعوّض:** $-5=\dfrac{\pi}{4}(36)\dfrac{dh}{dt}=9\pi\dfrac{dh}{dt}\Rightarrow\dfrac{dh}{dt}=\dfrac{-5}{9\pi}\ cm/min$
+| » **المعنى:** سالب ⇐ الماء ينخفض بمعدل $\dfrac{5}{9\pi}\approx0.18\ cm/min$ . الوحدة: $\dfrac{cm^3/min}{cm^2}=cm/min$ ✓
+note: سهو في الورقة: كُتب في «نفرض» $\dfrac{dv}{dt}=-5\,cm^3/s$ ، والصحيح $cm^3/min$ كما في نص السؤال.
 --- @practice وزاري · الفكرة 2: فيثاغورس
 >>> rCars3 .enr
 k: الفكرة 2 من 3
