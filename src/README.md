@@ -20,3 +20,12 @@ python3 -m http.server 8770      # من المجلد الذي يحتوي math-bo
 node tools/lesson-pdf.cjs g12c3 rates out.pdf             # نسخة الطالب (مفتاح الحلول في النهاية)
 node tools/lesson-pdf.cjs g12c3 rates out.pdf --teacher   # نسخة المدرّس (الحلول تحت كل سؤال وملاحظات التدريس)
 ```
+
+## تصدير درس إلى Word
+الأداة نفسها؛ يكفي أن ينتهي اسم الملف بـ `.docx`:
+```
+node tools/lesson-pdf.cjs g12c3 rates out.docx [--teacher]
+```
+تحتاج `pandoc` و `python-docx`. المعادلات تصبح معادلات Word أصلية قابلة للتعديل،
+والرسوم صور PNG عائمة على اليسار، والفقرات كلها من اليمين إلى اليسار
+(`tools/lesson-docx-part.cjs` ثم `tools/docx-math.lua` ثم `tools/docx-rtl.py`).

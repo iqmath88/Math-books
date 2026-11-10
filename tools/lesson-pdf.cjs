@@ -1,4 +1,4 @@
-/* Export one v2 lesson as a print-ready A4 PDF.
+/* Export one v2 lesson as a print-ready A4 PDF (or Word .docx when <out> ends in .docx).
    usage: node tools/lesson-pdf.cjs <book> <lessonId> <out.pdf> [--teacher]
    BASE (env) defaults to http://localhost:8770/math-books/  — serve the repo's parent folder first.
    Student edition: exercises with blank answer lines, answer key at the end, teacher notes hidden.
@@ -105,6 +105,7 @@ const font=b=>fs.readFileSync(path.join(__dirname,'..','v2','lib','fonts',b)).to
   `; document.head.append(css);
  },{figs,TEACH});
  await pg.waitForTimeout(400);
+ if(/\.docx$/i.test(out)){ await require('./lesson-docx-part.cjs')(pg,out,{TEACH,lesson}); await b.close(); return; }
  await pg.emulateMedia({media:'print'});
  const ff=`@font-face{font-family:PlexF;src:url(data:font/woff2;base64,${font('plex-ar-500.woff2')}) format("woff2")}`;
  const L=await pg.evaluate(()=>{ const L=LB.LES.find(l=>location.hash.includes('l='+l.id)); return {no:L.no,t:document.querySelector('.cover h1').textContent}; });
