@@ -53,3 +53,4 @@ node tools/reel-render.cjs tools/reels/ladder.html out.mp4 [--preview 3,8,17]
 ### «المعدلات المرتبطة بالزمن» (ريلز 45 ث، خزان أسطواني)
 - الصورة: `node tools/reel-render.cjs tools/reels/tank-rates.html video.mp4`
 - الصوت والدمج: `VOICE=… tools/reels/tank-rates-audio/build-audio.sh video.mp4 out.mp4`
+- النسخة المحسّنة v2: `tools/reels/tank-rates-v2.html` و `tools/reels/tank-rates-v2-audio/` (منظر علوي للقرص، اشتقاق بلقطة قريبة، مقارنة خزانين r و 2r بالتدفق نفسه).
