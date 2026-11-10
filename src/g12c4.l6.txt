@@ -1,0 +1,248 @@
+=== indef | 4−6 | التكامل غير المحدد | 178–183 | للدالة الواحدة عدد لانهائي من الدوال المقابلة F + C. قاعدة [f(x)]ⁿ f′(x)، وتكامل الدوال المثلثية التربيعية.
+--- سؤال
+>>> fam
+k: [4−6] · التكامل غير المحدد · Indefinite Integral
+h1: كم دالة مقابلة لـ 2x؟
+lead: كل المنحنيات $\cf{x^2+C}$ لها المشتقة نفسها $2x$ ، فمماساتها عند كل $x$ متوازية.
+p: **حرّك C** : يتحرك المنحني للأعلى أو للأسفل، لكن $F(3)-F(1)$ لا يتغير.
+>>>
+ask: كم دالة مقابلة للدالة $f(x)=2x$ ؟
+o: واحدة فقط $x^2$
+o: اثنتان $\pm x^2$
+o*: عدد لانهائي $x^2+C$
+why: الفرق بين أي دالتين مقابلتين عدد ثابت، لذلك نكتب $+C$.
+--- الدالة المقابلة ليست وحيدة
+>>> fam
+k: ص 178
+p: عرفنا في النظرية الاساسية للتكامل أنه إذا كانت $f$ دالة مستمرة على الفترة $[a,b]$ فانه توجد دالة مقابلة $F$ مستمرة على $[a,b]$ بحيث أن: $F'(x)=f(x)\,,\ \forall x\in(a,b)$
+p: فمثلا: $F:[1,3]\to R\,,\ F(x)=x^2$ هي دالة مقابلة للدالة $f(x)=2x$ . ولكن هل $F(x)=x^2$ دالة مقابلة وحيدة للدالة $F'(x)=2x$ ؟ وقبل الاجابة عن هذا السؤال نتأمل الدوال الآتية:
+- 1) $F_1:[1,3]\to R\,,\ F_1(x)=x^2+1$
+- 2) $F_2:[1,3]\to R\,,\ F_2(x)=x^2+\tfrac12$
+- 3) $F_3:[1,3]\to R\,,\ F_3(x)=x^2-\sqrt2$
+- 4) $F_4:[1,3]\to R\,,\ F_4(x)=x^2-5$
+>>> fam
+p: اننا نلاحظ أن كلاً من $F_1 , F_2 , F_3 , F_4$ لها صفات $F$ نفسها أي أنّ كلاً منها:
+- **(i)** مستمرة على $[1,3]$ (كثيرة الحدود)
+- **(ii)** قابلة للاشتقاق على $(1,3)$ (كثيرة الحدود)
+- **(iii)** $F_1'(x)=F_2'(x)=F_3'(x)=F_4'(x)=2x\,,\ \forall x\in(1,3)$
+p: وبناءاً على ذلك يمكن القول بان كلاً من: $F_1 , F_2 , F_3 , F_4$ دالة مقابلة الى $f$.
+p: أي انه توجد اكثر من دالة مقابلة للدالة المستمرة على $[1,3]$ والفرق بين أي دالتين مقابلتين للدالة $f$ يساوي عدداً ثابتاً لاحظ أن:
+$$F_1(x)-F_2(x)=(x^2+1)-\left(x^2+\tfrac12\right)=\tfrac12
+$$F_1(x)-F_4(x)=(x^2+1)-(x^2-5)=6\qquad\text{وهكذا}
+>>> fam !
+k: ص 179
+law: وبصورة عامة
+| اذا كانت للدالة $f$ المستمرة على $[a,b]$ دالة مقابلة $F$ فان يوجد عدد لانهائي من الدوال المقابلة للدالة $f$، كل منها تكون من الصورة: $F+C$ حيث $C$ عدداً ثابتاً والفرق بين أي إثنين منها يساوي عدداً ثابتاً.
+p: تسمى مجموعة الدوال المقابلة التي على الصورة $F+C$ **بالتكامل غير المحدد** للدالة $f$ المستمرة على $[a,b]$ ويرمز لها بالرمز $\int f(x)\,dx$ إذا كان رمز المتغير $x$. كما يصطلح على كتابة التكامل غير المحدد على الصورة:
+$$\int f(x)\,dx=F(x)+C\,,\qquad C\in R\ \text{عدد ثابت}
+xp: لماذا لا تؤثر C في التكامل المحدد؟
+| $\big[F(x)+C\big]_a^b=\big(F(b)+C\big)-\big(F(a)+C\big)=F(b)-F(a)$ : الثابت يُحذف.
+--- مثال 1
+>>> xs6
+k: مثال 1 · ص 179
+p: أوجد $\int f(x)\,dx$ اذا علمت أن:
+p: **a)** $f(x)=3x^2+2x+1$ **b)** $f(x)=\cos x+x^{-2}$ **c)** $f(x)=x+\sec x\tan x$ **d)** $f(x)=\sin(2x+4)$
+>>> xs6 #1 :: a , b
+p: **الحل:**
+$$\text{a)}\ \int(3x^2+2x+1)\,dx=\frac{3x^3}{3}+\frac{2x^2}{2}+x+c=x^3+x^2+x+c
+xp: في b : القوة سالبة
+| $x^{-2}$ : نضيف 1 للأس $-2+1=-1$ ونقسم على $-1$ ، و $x^{-1}=\dfrac1x$
+$$\text{b)}\ \int(\cos x+x^{-2})\,dx=\sin x+\frac{x^{-1}}{-1}+c=\sin x-\frac1x+c
+>>> xs6 #2 :: c , d
+$$\text{c)}\ \int(x+\sec x\tan x)\,dx=\frac{x^2}{2}+\sec x+c
+$$\text{d)}\ \int\sin(2x+4)\,dx=\frac{-1}{2}\cos(2x+4)+c
+xp: تحقق من d بالاشتقاق
+| $\dfrac{d}{dx}\left[-\tfrac12\cos(2x+4)\right]=-\tfrac12\cdot\big(-\sin(2x+4)\big)\cdot2=\sin(2x+4)$ ✓
+--- مثال 2 : قاعدة القوة
+>>> sub
+k: مثال 2 · ص 180
+p: جد التكاملات لكل مما يأتي:
+p: **a.** $\int(x^2+3)^2(2x)\,dx$
+p: **الحل:** لنفرض أن $f(x)=x^2+3$ $\therefore\ f'(x)=2x$
+$$\int(x^2+3)^2(2x)\,dx=\int[f(x)]^2f'(x)\,dx=\frac13[f(x)]^3+c=\frac13(x^2+3)^3+c
+xp: كيف نعرف أن القاعدة تنطبق؟
+| ما خارج القوس $(2x)$ هو بالضبط مشتقة ما داخله $(x^2+3)$ ، فالتكامل على صورة السطر الرابع في الجدول بـ $n=2$.
+>>> sub
+p: **b.** $\int(3x^2+8x+5)^6(3x+4)\,dx$
+p: نفرض أن: $f(x)=3x^2+8x+5\Rightarrow f'(x)=6x+8$
+xp: لماذا نضرب ونقسم على 2؟
+| الموجود $(3x+4)$ والمطلوب $(6x+8)=2(3x+4)$ ، فنضرب داخل التكامل في 2 ونقسم خارجه على 2 فلا تتغير القيمة.
+$$\therefore\ \int(3x^2+8x+5)^6(3x+4)\,dx=\frac12\int(3x^2+8x+5)^6(6x+8)\,dx
+$$\frac12\int[f(x)]^6f'(x)\,dx=\frac12\times\frac{[f(x)]^7}{7}+c=\frac{1}{14}(3x^2+8x+5)^7+c
+>>> sub
+p: **c.** $\int\sin^4x\cos x\,dx$
+p: نفرض أن: $f(x)=\sin x\Rightarrow f'(x)=\cos x$
+$$\therefore\ \int\sin^4x\cos x\,dx=\int[f(x)]^4\cdot f'(x)\,dx=\frac{[f(x)]^5}{5}+c=\frac15\sin^5x+c
+p: **d.** $\int\tan^6x\sec^2x\,dx$
+p: نفرض أن: $f(x)=\tan x\Rightarrow f'(x)=\sec^2x$
+$$\therefore\ \int\tan^6x\sec^2x\,dx=\int[f(x)]^6f'(x)\,dx=\frac{[f(x)]^7}{7}+c=\frac17\tan^7x+c
+--- [4−6−1] المثلثية التربيعية
+>>> sin2
+k: [4−6−1] · ص 181
+h2: تكامل الدوال المثلثية التربيعية
+law: قواعد
+| 1. $\int\sec^2\theta\,d\theta=\tan\theta+c$
+| 2. $\int\csc^2\theta\,d\theta=-\cot\theta+c$
+| 3. $\int\tan^2\theta\,d\theta=\int(\sec^2\theta-1)\,d\theta=\int\sec^2\theta\,d\theta-\int d\theta=\tan\theta-\theta+c$
+| 4. $\int\cot^2\theta\,d\theta=\int(\csc^2\theta-1)\,d\theta=-\cot\theta-\theta+c$
+| 5. $\int\sin^2\theta\,d\theta=\int\dfrac{1-\cos2\theta}{2}\,d\theta=\tfrac12\int d\theta-\tfrac14\int\cos2\theta(2)\,d\theta=\tfrac12\theta-\tfrac14\sin2\theta+c$
+| 6. $\int\cos^2\theta\,d\theta=\int\dfrac{1+\cos2\theta}{2}\,d\theta=\tfrac12\theta+\tfrac14\sin2\theta+c$
+xp: من أين تأتي هذه التحويلات؟
+| من المتطابقات: $1+\tan^2\theta=\sec^2\theta$ ، $1+\cot^2\theta=\csc^2\theta$ ، $\cos2\theta=1-2\sin^2\theta=2\cos^2\theta-1$
+| فالرسم يبيّن أن $\sin^2\theta$ و $\tfrac{1-\cos2\theta}{2}$ منحنى واحد.
+--- أمثلة
+>>> xs6
+k: أمثلة · ص 181
+p: جد تكاملات كل مما يأتي:
+$$1.\ \int9\sin3x\,dx=3\int3\sin3x\,dx=-3\cos3x+c
+$$2.\ \int x^2\sin x^3\,dx=\frac13\int3x^2\sin x^3\,dx=-\frac13\cos x^3+c
+xp: في 2 : لماذا 3x²؟
+| مشتقة $x^3$ هي $3x^2$ ، فنكمل المشتقة بضرب وقسمة على 3 ثم نطبق $\int\sin u\,du=-\cos u$.
+>>> xs6
+$$3.\ \int\sqrt{1-\sin2x}\,dx=\int\sqrt{\sin^2x-2\sin x\cos x+\cos^2x}\,dx=\int\sqrt{(\sin x-\cos x)^2}\,dx
+$$=\pm\int(\sin x-\cos x)\,dx=\pm(\cos x+\sin x)+c
+xp: خطوتان مختصرتان في الكتاب
+| $1=\sin^2x+\cos^2x$ و $\sin2x=2\sin x\cos x$ ، فما تحت الجذر مربع كامل.
+| $\int(\sin x-\cos x)\,dx=-\cos x-\sin x=-(\cos x+\sin x)$ ؛ ولأن أمامها $\pm$ فالنتيجة تُكتب $\pm(\cos x+\sin x)+c$.
+>>> xs6
+$$4.\ \int\sin^4x\,dx=\int\frac{(1-\cos2x)^2}{4}\,dx=\frac14\int dx-\frac14\int2\cos2x\,dx+\frac14\int\cos^22x\,dx
+$$=\frac14\int dx-\frac14\int2\cos2x\,dx+\frac18\int dx+\frac{1}{32}\int4\cos4x\,dx
+$$=\frac14x-\frac14\sin2x+\frac18x+\frac{1}{32}\sin4x+c=\frac38x-\frac14\sin2x+\frac1{32}\sin4x+c
+xp: كيف ظهر 1/8 و 1/32؟
+| $\cos^22x=\dfrac{1+\cos4x}{2}$ ⇐ $\tfrac14\cos^22x=\tfrac18+\tfrac18\cos4x$ ، و $\tfrac18\cos4x=\tfrac1{32}(4\cos4x)$
+>>> xs6
+k: ص 182
+$$5.\ \int(\sin x-\cos x)^7(\cos x+\sin x)\,dx=\frac{(\sin x-\cos x)^8}{8}+c
+$$6.\ \int\frac{1+\tan^2x}{\tan^3x}\,dx=\int\tan^{-3}x\sec^2x\,dx=\frac{\tan^{-2}x}{-2}+c=\frac{-1}{2\tan^2x}+c
+$$7.\ \int\cos^3x\,dx=\int\cos x(1-\sin^2x)\,dx=\int\cos x\,dx-\int\sin^2x\cos x\,dx=\sin x-\frac{\sin^3x}{3}+c
+xp: لماذا تنجح 5 و 6؟
+| في 5: مشتقة $(\sin x-\cos x)$ هي $(\cos x+\sin x)$. في 6: $1+\tan^2x=\sec^2x$ وهي مشتقة $\tan x$.
+>>> xs6
+$$8.\ \int\frac{\tan x}{\cos^2x}\,dx=\int\tan x\sec^2x\,dx=\frac{\tan^2x}{2}+c
+$$9.\ \int\sin6x\cos^23x\,dx=\int(2\sin3x\cos3x)\cos^23x\,dx=2\int\cos^33x\sin3x\,dx=\frac{-2}{3}\times\frac{\cos^43x}{4}+c=-\frac16\cos^43x+c
+xp: في 9 : من أين −2/3؟
+| مشتقة $\cos3x$ هي $-3\sin3x$ ، فنكتب $2\int\cos^33x\sin3x\,dx=-\tfrac23\int\cos^33x(-3\sin3x)\,dx=-\tfrac23\cdot\tfrac{\cos^43x}{4}$
+>>> xs6
+$$10.\ \int\frac{\cos4x}{\cos2x-\sin2x}\,dx=\int\frac{\cos^22x-\sin^22x}{\cos2x-\sin2x}\,dx=\int\frac{(\cos2x-\sin2x)(\cos2x+\sin2x)}{\cos2x-\sin2x}\,dx
+$$=\int(\cos2x+\sin2x)\,dx=\frac12\sin2x-\frac12\cos2x+c
+$$11.\ \int\sin^23x\,dx=\frac12x-\frac1{12}\sin6x+c
+$$12.\ \int\cot^25x\,dx=-\frac15\cot5x-x+c\qquad13.\ \int\tan^27x\,dx=\frac17\tan7x-x+c
+--- تمارين (4−6)
+>>> xs6
+k: تمارين · ص 183
+h2: دورك الآن
+p: جد تكاملات كل مما يلي ضمن مجال الدالة. حلّ في دفترك ثم أظهر الحل (تحقّق بنفسك: مشتقة جوابك يجب أن تعطي الدالة).
+>>> xs6
+p: **1.** $\displaystyle\int\frac{(2x^2-3)^2-9}{x^2}\,dx$
+self:
+hint: ابحث عن دالة داخلية مشتقتها موجودة خارجها (قاعدة القوة) ، أو بسّط/فكّ المقدار أولاً.
+hint: تحقق من جوابك باشتقاقه.
+sol: » نفك البسط: $(2x^2-3)^2-9=4x^4-12x^2+9-9=4x^4-12x^2$
+| $\int\dfrac{4x^4-12x^2}{x^2}\,dx=\int(4x^2-12)\,dx=\dfrac43x^3-12x+c$
+>>> xs6
+p: **2.** $\displaystyle\int\frac{(3-\sqrt{5x})^7}{\sqrt{7x}}\,dx$
+self:
+hint: ابحث عن دالة داخلية مشتقتها موجودة خارجها (قاعدة القوة) ، أو بسّط/فكّ المقدار أولاً.
+hint: تحقق من جوابك باشتقاقه.
+sol: » نفرض $f(x)=3-\sqrt5\,x^{1/2}$ ⇐ $f'(x)=-\dfrac{\sqrt5}{2\sqrt x}$
+| $\dfrac{1}{\sqrt{7x}}=\dfrac{1}{\sqrt7\sqrt x}=-\dfrac{2}{\sqrt{35}}\cdot f'(x)$
+| $\int=-\dfrac{2}{\sqrt{35}}\int[f(x)]^7f'(x)\,dx=-\dfrac{2}{\sqrt{35}}\cdot\dfrac{(3-\sqrt{5x})^8}{8}+c=-\dfrac{(3-\sqrt{5x})^8}{4\sqrt{35}}+c$
+>>> xs6
+p: **3.** $\displaystyle\int\frac{\cos^3x}{1-\sin x}\,dx$
+self:
+hint: ابحث عن دالة داخلية مشتقتها موجودة خارجها (قاعدة القوة) ، أو بسّط/فكّ المقدار أولاً.
+hint: تحقق من جوابك باشتقاقه.
+sol: » $\cos^3x=\cos x(1-\sin^2x)=\cos x(1-\sin x)(1+\sin x)$
+| $\int\cos x(1+\sin x)\,dx=\int\cos x\,dx+\int\sin x\cos x\,dx=\sin x+\dfrac{\sin^2x}{2}+c$
+>>> xs6
+p: **4.** $\int\csc^2x\cos x\,dx$
+self:
+hint: ابحث عن دالة داخلية مشتقتها موجودة خارجها (قاعدة القوة) ، أو بسّط/فكّ المقدار أولاً.
+hint: تحقق من جوابك باشتقاقه.
+sol: » $\csc^2x\cos x=(\sin x)^{-2}\cos x$ ، و $\cos x$ مشتقة $\sin x$
+| $\int(\sin x)^{-2}\cos x\,dx=\dfrac{(\sin x)^{-1}}{-1}+c=-\csc x+c$
+>>> xs6
+p: **5.** $\displaystyle\int\frac{x}{(3x^2+5)^4}\,dx$
+self:
+hint: ابحث عن دالة داخلية مشتقتها موجودة خارجها (قاعدة القوة) ، أو بسّط/فكّ المقدار أولاً.
+hint: تحقق من جوابك باشتقاقه.
+sol: » $\dfrac{d}{dx}(3x^2+5)=6x$ ⇐ $\int(3x^2+5)^{-4}x\,dx=\dfrac16\int(3x^2+5)^{-4}(6x)\,dx$
+| $=\dfrac16\cdot\dfrac{(3x^2+5)^{-3}}{-3}+c=-\dfrac{1}{18(3x^2+5)^3}+c$
+>>> xs6
+p: **6.** $\int\sqrt[3]{x^2+10x+25}\,dx$
+self:
+hint: ابحث عن دالة داخلية مشتقتها موجودة خارجها (قاعدة القوة) ، أو بسّط/فكّ المقدار أولاً.
+hint: تحقق من جوابك باشتقاقه.
+sol: » $x^2+10x+25=(x+5)^2$ ⇐ $\sqrt[3]{(x+5)^2}=(x+5)^{2/3}$ ، ومشتقة $(x+5)$ هي 1
+| $\int(x+5)^{2/3}\,dx=\dfrac{(x+5)^{5/3}}{5/3}+c=\dfrac35(x+5)^{5/3}+c$
+>>> xs6
+p: **7.** $\int\sin^3x\,dx$
+self:
+hint: ابحث عن دالة داخلية مشتقتها موجودة خارجها (قاعدة القوة) ، أو بسّط/فكّ المقدار أولاً.
+hint: تحقق من جوابك باشتقاقه.
+sol: » $\sin^3x=\sin x(1-\cos^2x)=\sin x-\cos^2x\sin x$
+| $\int\sin x\,dx-\int\cos^2x\sin x\,dx=-\cos x+\dfrac{\cos^3x}{3}+c$
+| » لأن $\int\cos^2x(-\sin x)\,dx=\tfrac{\cos^3x}{3}$
+>>> xs6
+p: **8.** $\displaystyle\int\frac{\cos\sqrt{1-x}}{\sqrt{1-x}}\,dx$
+self:
+hint: ابحث عن دالة داخلية مشتقتها موجودة خارجها (قاعدة القوة) ، أو بسّط/فكّ المقدار أولاً.
+hint: تحقق من جوابك باشتقاقه.
+sol: » $\dfrac{d}{dx}\sqrt{1-x}=\dfrac{-1}{2\sqrt{1-x}}$ ⇐ $\dfrac{1}{\sqrt{1-x}}=-2\cdot\dfrac{d}{dx}\sqrt{1-x}$
+| $\int=-2\int\cos(\sqrt{1-x})\cdot\dfrac{-1}{2\sqrt{1-x}}\,dx=-2\sin\sqrt{1-x}+c$
+>>> xs6
+p: **9.** $\int(3x^2+1)^2\,dx$
+self:
+hint: ابحث عن دالة داخلية مشتقتها موجودة خارجها (قاعدة القوة) ، أو بسّط/فكّ المقدار أولاً.
+hint: تحقق من جوابك باشتقاقه.
+sol: » نفك: $9x^4+6x^2+1$ (لأن المشتقة $6x$ غير موجودة لا نستخدم القاعدة الرابعة)
+| $\int(9x^4+6x^2+1)\,dx=\dfrac95x^5+2x^3+x+c$
+>>> xs6
+p: **10.** $\displaystyle\int\frac{\sqrt{\sqrt x-x}}{\sqrt[4]{x^3}}\,dx$
+self:
+hint: ابحث عن دالة داخلية مشتقتها موجودة خارجها (قاعدة القوة) ، أو بسّط/فكّ المقدار أولاً.
+hint: تحقق من جوابك باشتقاقه.
+sol: » $\sqrt{\sqrt x-x}=\sqrt{\sqrt x\,(1-\sqrt x)}=x^{1/4}(1-\sqrt x)^{1/2}$ ، فالمقدار $=x^{1/4-3/4}(1-\sqrt x)^{1/2}=\dfrac{(1-\sqrt x)^{1/2}}{\sqrt x}$
+| » $\dfrac{d}{dx}(1-\sqrt x)=-\dfrac{1}{2\sqrt x}$ ⇐ $\dfrac1{\sqrt x}=-2\cdot\dfrac{d}{dx}(1-\sqrt x)$
+| $\int=-2\cdot\dfrac{(1-\sqrt x)^{3/2}}{3/2}+c=-\dfrac43(1-\sqrt x)^{3/2}+c$
+>>> xs6
+p: **11.** $\int(1+\cos3x)^2\,dx$
+self:
+hint: ابحث عن دالة داخلية مشتقتها موجودة خارجها (قاعدة القوة) ، أو بسّط/فكّ المقدار أولاً.
+hint: تحقق من جوابك باشتقاقه.
+sol: » نفك: $1+2\cos3x+\cos^23x$ ، و $\cos^23x=\tfrac12+\tfrac12\cos6x$
+| $\int\left(\tfrac32+2\cos3x+\tfrac12\cos6x\right)dx=\dfrac32x+\dfrac23\sin3x+\dfrac1{12}\sin6x+c$
+>>> xs6
+p: **12.** $\int\sec^24x\,dx$ **13.** $\int\csc^22x\,dx$ **14.** $\int\tan^28x\,dx$
+self:
+hint: ابحث عن دالة داخلية مشتقتها موجودة خارجها (قاعدة القوة) ، أو بسّط/فكّ المقدار أولاً.
+hint: تحقق من جوابك باشتقاقه.
+sol: 12) $\dfrac14\tan4x+c$ 13) $-\dfrac12\cot2x+c$
+| 14) » $\tan^28x=\sec^28x-1$ ⇐ $\dfrac18\tan8x-x+c$
+>>> xs6
+p: **15.** $\displaystyle\int\frac{\sqrt{\cot2x}}{1-\cos^22x}\,dx$
+self:
+hint: ابحث عن دالة داخلية مشتقتها موجودة خارجها (قاعدة القوة) ، أو بسّط/فكّ المقدار أولاً.
+hint: تحقق من جوابك باشتقاقه.
+sol: » $1-\cos^22x=\sin^22x$ ⇐ المقدار $=(\cot2x)^{1/2}\csc^22x$ ، و $\dfrac{d}{dx}\cot2x=-2\csc^22x$
+| $\int=-\dfrac12\int(\cot2x)^{1/2}(-2\csc^22x)\,dx=-\dfrac12\cdot\dfrac{(\cot2x)^{3/2}}{3/2}+c=-\dfrac13(\cot2x)^{3/2}+c$
+>>> xs6
+p: **16.** $\int\cos^22x\,dx$ **17.** $\int\sin^28x\,dx$
+self:
+hint: ابحث عن دالة داخلية مشتقتها موجودة خارجها (قاعدة القوة) ، أو بسّط/فكّ المقدار أولاً.
+hint: تحقق من جوابك باشتقاقه.
+sol: 16) $\cos^22x=\tfrac12+\tfrac12\cos4x$ ⇐ $\dfrac x2+\dfrac18\sin4x+c$
+| 17) $\sin^28x=\tfrac12-\tfrac12\cos16x$ ⇐ $\dfrac x2-\dfrac1{32}\sin16x+c$
+>>> xs6
+p: **18.** $\int\cos^43x\,dx$
+self:
+hint: ابحث عن دالة داخلية مشتقتها موجودة خارجها (قاعدة القوة) ، أو بسّط/فكّ المقدار أولاً.
+hint: تحقق من جوابك باشتقاقه.
+sol: » $\cos^43x=\left(\dfrac{1+\cos6x}{2}\right)^2=\dfrac14+\dfrac12\cos6x+\dfrac14\cos^26x$ ، و $\dfrac14\cos^26x=\dfrac18+\dfrac18\cos12x$
+| $\int\left(\tfrac38+\tfrac12\cos6x+\tfrac18\cos12x\right)dx=\dfrac38x+\dfrac1{12}\sin6x+\dfrac1{96}\sin12x+c$
+>>> fam .summary
+h2: الخلاصة
+- $\int f(x)\,dx=F(x)+c$ حيث $F'=f$ ؛ الثابت $c$ لا يؤثر في التكامل المحدد.
+- $\int[f(x)]^nf'(x)\,dx=\dfrac{[f(x)]^{n+1}}{n+1}+c$ ، $n\ne-1$ : أكمل المشتقة بالضرب والقسمة على ثابت.
+- للتربيعيات: $\tan^2=\sec^2-1$ ، $\cot^2=\csc^2-1$ ، $\sin^2=\tfrac{1-\cos2\theta}2$ ، $\cos^2=\tfrac{1+\cos2\theta}2$.
+- تحقّق دائماً من جوابك بالاشتقاق.

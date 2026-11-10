@@ -1,0 +1,353 @@
+
+>>> p1a-0 +
+k: مثال 1 · ص 58
+p: اوجد القياس الرئيس لكل من الزوايا الآتية : $a) 8.75\pi$
+>>> p1a-0 #1
+$$8.75\pi = 8\pi + 0.75\pi
+p: القياس الرئيس θ يحقق 0 ≤ θ < 2π ، والزاوية = 2kπ + θ
+>>> p1a-1 #2
+$$0.75\pi = (\dfrac{3}{4})\pi
+>>> p1a-2 #3
+$$\;\text{القياس الرئيس}\; = (\dfrac{3}{4})\pi
+p: للزاوية التي قياسها 8.75π
+
+>>> p1b-0 +
+k: مثال 1 · ص 58
+p: اوجد القياس الرئيس لكل من الزوايا الآتية : $b) 66$
+>>> p1b-0 #1
+$$66 = 66 \times (\dfrac{7}{22}) \pi
+p: نحوّل الى مضاعفات π باعتبار π ≅ 22/7
+>>> p1b-1 #2
+$$= 21\pi = 20\pi + \pi
+>>> p1b-2 #3
+$$\;\text{القياس الرئيس}\; = \pi \cong 3.14
+
+>>> p2-0 +
+k: مثال 2 · ص 59
+p: احسب $\sin (-\dfrac{7\pi }{2})$
+>>> p2-0 #1
+$$-\dfrac{7\pi }{2} = -4\pi + \dfrac{\pi }{2}
+>>> p2-1 #2
+$$\;\text{القياس الرئيس للزاوية}\; -\dfrac{7\pi }{2} \;\text{هو}\; \dfrac{\pi }{2}
+>>> p2-2 #3
+$$\sin (-\dfrac{7\pi }{2}) = \sin \dfrac{\pi }{2} = 1
+p: الاحداثي الصادي للنقطة المثلثية (0 , 1)
+
+>>> t3-0 +
+k: مثال 3 · ص 62
+p: جد $\tan \dfrac{5\pi }{3}$
+>>> t3-0 #1
+$$\theta = \dfrac{5\pi }{3}
+p: الزاوية تنتهي في الربع الرابع، النقطة المثلثية (1/2 , −√3/2)
+>>> t3-1 #2
+$$\tan \dfrac{5\pi }{3} = (\sin \dfrac{5\pi }{3})/(\cos \dfrac{5\pi }{3})
+>>> t3-2 #3
+$$= (-\dfrac{\sqrt{3}}{2})/(\dfrac{1}{2}) = -\sqrt{3} \cong -1.732
+
+>>> s4-0 +
+k: مثال 4 · ص 63
+p: اذا كانت $\theta$ هو قياس الزاوية الموجهة بالوضع القياسي وكان $\sin \theta = \dfrac{3}{5}$ فاوجد قيمة $\cos \theta\,,\,\tan \theta$ علماً ان ضلع الزاوية النهائي التي قياسها $\theta$ يقع في الربع الثاني .
+>>> s4-0 #1
+$$\sin ^{2} \theta + \cos ^{2} \theta = 1 \Rightarrow \dfrac{9}{25} + \cos ^{2} \theta = 1
+>>> s4-1 #2
+$$\cos ^{2} \theta = 1 - \dfrac{9}{25} = \dfrac{16}{25} \Rightarrow \cos \theta = \pm \dfrac{4}{5}
+>>> s4-2 #3
+$$\cos \theta = -\dfrac{4}{5}
+p: وبما ان θ تقع في الربع الثاني ∴ cos θ < 0
+>>> s4-3 #4
+$$\tan \theta = \dfrac{\sin \theta }{\cos \theta} = (\dfrac{3}{5})/(-\dfrac{4}{5}) = -\dfrac{3}{4}
+
+>>> s5-0 +
+k: مثال 5 · ص 66
+p: اذا كان : $\dfrac{\pi }{2} < x < \pi$ وكان $\sin x = \dfrac{5}{13}$ فجد كلاً من : $\cos x\,,\,\tan x\,,\,\cot x\,,\,\sec x\,,\,\csc x$
+>>> s5-0 #1
+$$(\dfrac{5}{13})^{2} + \cos ^{2} x = 1 \Rightarrow \cos ^{2} x = 1 - \dfrac{25}{169} = \dfrac{144}{169}
+>>> s5-1 #2
+$$\cos x = \pm \dfrac{12}{13}
+>>> s5-2 #3
+$$\cos x = -\dfrac{12}{13}
+p: وبما ان π/2 < x < π اي انها تقع في الربع الثاني ∴ cos x < 0
+>>> s5-3 #4
+$$\tan x = \dfrac{\sin x}{\cos x} = (\dfrac{5}{13})/(-\dfrac{12}{13}) = -\dfrac{5}{12}
+>>> s5-4 #5
+$$\cot x = -\dfrac{12}{5}\,,\,\sec x = \dfrac{1}{\cos x} = -\dfrac{13}{12}\,,\,\csc x = \dfrac{1}{\sin x} = \dfrac{13}{5}
+
+>>> r8-0 +
+k: مثال 8 · ص 70
+p: جد $\csc 51^{\circ}$ باستخدام الآت الحاسبة
+>>> r8-0 #1
+$$\sin 51^{\circ} = 0.7771459
+p: نضغط على المفاتيح بالترتيب: sin 5 1
+>>> r8-1 #2
+$$\csc 51^{\circ} = 1.2867597
+p: ثم 2ndf ثم 1/x (مقلوب sin)
+
+>>> r9-0 +
+k: مثال 9 · ص 70
+p: جد $\csc 35^{\circ} 22'\,,\,\sec 35^{\circ} 22'\,,\,\cot 35^{\circ} 22'$ باستخدام الحاسبة
+>>> r9-0 #1
+$$22 \div 60 = 0.3666666
+p: 1. نحول الدقائق الى كسر عشري من الدرجات
+>>> r9-1 #2
+$$35^{\circ} 22' = 35.366667
+p: 2. نكمل كتابة قياس الزاوية
+>>> r9-2 #3
+$$\tan 35^{\circ} 22' = 0.620751391
+p: 3. نجد قيمة tan
+>>> r9-3 #4
+$$\cot 35^{\circ} 22' = 1.61095086
+p: 4. نجد مقلوب الدالة tan بالضغط على 2nd ثم 1/x
+
+>>> r10-0 +
+k: مثال 10 · ص 72
+p: جد $\cos 120^{\circ}\,,\,\sin 120^{\circ}$ دون استخدام الآلة الحاسبة.
+>>> r10-0 #1
+$$B(x\,,\,y) = B(\cos 120^{\circ}\,,\,\sin 120^{\circ})
+p: الزاوية 120° تقع في الربع الثاني
+>>> r10-1 #2
+$$B'(x'\,,\,y') = (\cos 60^{\circ}\,,\,\sin 60^{\circ})
+p: B → B′ تحت تأثير انعكاس في المحور Y
+>>> r10-2 #3
+$$x = -x' \Rightarrow \cos 120^{\circ} = - \cos 60^{\circ} = -\dfrac{1}{2}
+>>> r10-3 #4
+$$y = y' \Rightarrow \sin 120^{\circ} = \sin 60^{\circ} = \dfrac{\sqrt{3}}{2}
+
+>>> r11-0 +
+k: مثال 11 · ص 74
+p: جد قيم الدوال الدائرية للزوايا التي قياساتها: $420^{\circ}\,,\,330^{\circ}\,,\,210^{\circ}\,,\,150^{\circ}\,,\,30^{\circ}$
+>>> r11-0 #1
+$$\sin 30^{\circ} = \dfrac{1}{2}\,,\,\cos 30^{\circ} = \dfrac{\sqrt{3}}{2}\,,\,\tan 30^{\circ} = \dfrac{1}{\sqrt{3}}
+p: أ. الزاوية 30° تقع في الربع الاول
+>>> r11-1 #2
+$$\sin 150^{\circ} = \sin (180^{\circ} - 30^{\circ}) = \sin 30^{\circ} = \dfrac{1}{2}
+p: ب. الزاوية 150° في الربع الثاني، أو sin (90° + 60°) = cos 60°
+>>> r11-2 #3
+$$\cos 150^{\circ} = - \cos 30^{\circ} = -\dfrac{\sqrt{3}}{2}\,,\,\tan 150^{\circ} = -\dfrac{1}{\sqrt{3}}
+>>> r11-3 #4
+$$\sin 210^{\circ} = \sin (180^{\circ} + 30^{\circ}) = - \sin 30^{\circ} = -\dfrac{1}{2}
+p: جـ. الزاوية 210° في الربع الثالث
+>>> r11-4 #5
+$$\sin 330^{\circ} = \sin (360^{\circ} - 30^{\circ}) = - \sin 30^{\circ} = -\dfrac{1}{2}
+p: د. الزاوية 330° في الربع الرابع
+>>> r11-5 #6
+$$420^{\circ} = 60^{\circ} + 360^{\circ} \Rightarrow \sin 420^{\circ} = \sin 60^{\circ} = \dfrac{\sqrt{3}}{2}\,,\,\cos 420^{\circ} = \dfrac{1}{2}
+p: هـ. نطرح 360°
+
+>>> r12-0 +
+k: مثال 12 · ص 77
+p: جد $\cos (-240^{\circ})\,,\,\sin (-240^{\circ})$
+>>> r12-0 #1
+$$\sin (-240^{\circ}) = - \sin 240^{\circ} = - \sin (180^{\circ} + 60^{\circ})
+p: sin(−θ) = − sin θ
+>>> r12-1 #2
+$$= \sin 60 = \dfrac{\sqrt{3}}{2}
+>>> r12-2 #3
+$$\cos (-240^{\circ}) = \cos (240^{\circ}) = \cos (180^{\circ} + 60^{\circ}) = -\cos 60^{\circ} = -\dfrac{1}{2}
+p: cos(−θ) = cos θ
+
+>>> r13-0 +
+k: مثال 13 · ص 77
+p: جد $\tan (-300^{\circ})\,,\,\cos 780^{\circ}\,,\,\sin (\dfrac{19\pi }{2})$
+>>> r13-0 #1
+$$\sin (\dfrac{19\pi }{2}) = \sin (\dfrac{3\pi }{2} + 8\pi ) = \sin (\dfrac{3\pi }{2}) = -1
+>>> r13-1 #2
+$$\cos 780^{\circ} = \cos (2 \times 360 + 60^{\circ}) = \cos 60^{\circ} = \dfrac{1}{2}
+>>> r13-2 #3
+$$\tan (-300^{\circ}) = - \tan 300^{\circ} = - \tan (360 - 60)
+>>> r13-3 #4
+$$= -(-\tan 60) = \tan 60 = \sqrt{3}
+
+>>> u14-0 +
+k: مثال 14 · ص 79
+p: احسب $\cos 15^{\circ}\,,\,\cos 75^{\circ}$
+>>> u14-0 #1
+$$\cos 75^{\circ} = \cos (45^{\circ} + 30^{\circ}) = \cos 45^{\circ} \cos 30^{\circ} - \sin 45^{\circ} \sin 30^{\circ}
+p: cos (x₁ + x₂) = cos x₁ cos x₂ − sin x₁ sin x₂
+>>> u14-1 #2
+$$= (\dfrac{1}{\sqrt{2}}) \times (\dfrac{\sqrt{3}}{2}) - (\dfrac{1}{\sqrt{2}}) \times (\dfrac{1}{2}) = \dfrac{\sqrt{3} - 1}{2\sqrt{2}}
+>>> u14-2 #3
+$$\cos 15^{\circ} = \cos (45^{\circ} - 30^{\circ}) = \cos 45^{\circ} \cos 30^{\circ} + \sin 45^{\circ} \sin 30^{\circ}
+>>> u14-3 #4
+$$= (\dfrac{1}{\sqrt{2}}) \times (\dfrac{\sqrt{3}}{2}) + (\dfrac{1}{\sqrt{2}}) \times (\dfrac{1}{2}) = \dfrac{\sqrt{3} + 1}{2\sqrt{2}}
+
+>>> u15-0 +
+k: مثال 15 · ص 81
+p: احسب $\sin 15^{\circ}\,,\,\sin 75^{\circ}$
+>>> u15-0 #1
+$$\sin 75^{\circ} = \sin (45^{\circ} + 30^{\circ}) = \sin 45^{\circ} \cos 30^{\circ} + \cos 45^{\circ} \sin 30^{\circ}
+>>> u15-1 #2
+$$= (\dfrac{1}{\sqrt{2}}) \times (\dfrac{\sqrt{3}}{2}) + (\dfrac{1}{\sqrt{2}}) \times (\dfrac{1}{2}) = \dfrac{\sqrt{3} + 1}{2\sqrt{2}}
+>>> u15-2 #3
+$$\sin 15^{\circ} = \sin (45^{\circ} - 30^{\circ}) = \sin 45^{\circ} \cos 30^{\circ} - \cos 45^{\circ} \sin 30^{\circ}
+>>> u15-3 #4
+$$= \dfrac{\sqrt{3} - 1}{2\sqrt{2}}
+
+>>> u16-0 +
+k: مثال 16 · ص 83
+p: احسب $\tan 15^{\circ}\,,\,\tan 75^{\circ}$
+>>> u16-0 #1
+$$\tan 75^{\circ} = \tan (45^{\circ} + 30^{\circ}) = \dfrac{\tan 45^{\circ} + \tan 30^{\circ}}{1 - \tan 45^{\circ} \tan 30^{\circ}}
+>>> u16-1 #2
+$$= (1 + \dfrac{1}{\sqrt{3}})/(1 - 1 \times \dfrac{1}{\sqrt{3}}) = \dfrac{\sqrt{3} + 1}{\sqrt{3} - 1}
+>>> u16-2 #3
+$$\tan 15^{\circ} = \tan (45^{\circ} - 30^{\circ}) = \dfrac{\tan 45^{\circ} - \tan 30^{\circ}}{1 + \tan 45^{\circ} \tan 30^{\circ}}
+>>> u16-3 #4
+$$= (1 - \dfrac{1}{\sqrt{3}})/(1 + 1 \times \dfrac{1}{\sqrt{3}}) = \dfrac{\sqrt{3} - 1}{\sqrt{3} + 1}
+
+>>> u17-0 +
+k: مثال 17 · ص 84
+p: اذا كان $0 < \alpha < 90^{\circ}\,,\,\sin \alpha = \dfrac{4}{5}$ فاحسب : $\tan 2\alpha\,,\,\cos 2\alpha\,,\,\sin 2\alpha$
+>>> u17-0 #1
+$$\sin ^{2} \alpha + \cos ^{2} \alpha = 1 \Rightarrow \dfrac{16}{25} + \cos ^{2} \alpha = 1 \Rightarrow \cos ^{2} \alpha = \dfrac{9}{25}
+>>> u17-1 #2
+$$\cos \alpha = \pm \dfrac{3}{5}\,,\,0 < \alpha < 90^{\circ} \Rightarrow \cos \alpha = \dfrac{3}{5}
+>>> u17-2 #3
+$$\sin 2\alpha = 2 \sin \alpha \cos \alpha = 2 \times (\dfrac{4}{5}) \times (\dfrac{3}{5}) = \dfrac{24}{25}
+>>> u17-3 #4
+$$\cos 2\alpha = \cos ^{2} \alpha - \sin ^{2} \alpha = \dfrac{9}{25} - \dfrac{16}{25} = -\dfrac{7}{25}
+>>> u17-4 #5
+$$\tan 2\alpha = \dfrac{\sin 2\alpha }{\cos 2\alpha} = (\dfrac{24}{25})/(-\dfrac{7}{25}) = -\dfrac{24}{7}
+
+>>> u18-0 +
+k: مثال 18 · ص 85
+p: احسب $\cos \dfrac{\pi }{8}\,,\,\sin \dfrac{\pi }{8}$
+>>> u18-0 #1
+$$\sin ^{2} \dfrac{\pi }{8} = (1 - \cos \dfrac{\pi }{4})/2 = (1 - \dfrac{1}{\sqrt{2}})/2
+p: نتيجة (2): sin²(x/2) = (1 − cos x)/2
+>>> u18-1 #2
+$$= \dfrac{\sqrt{2} - 1}{2\sqrt{2}} = \dfrac{2 - \sqrt{2}}{4}
+p: بضرب البسط والمقام في √2
+>>> u18-2 #3
+$$\sin \dfrac{\pi }{8} = \surd \dfrac{2 - \sqrt{2}}{2}
+>>> u18-3 #4
+$$\cos ^{2} \dfrac{\pi }{8} = (1 + \cos \dfrac{\pi }{4})/2 \Rightarrow \cos \dfrac{\pi }{8} = \surd \dfrac{2 + \sqrt{2}}{2}
+
+>>> u19-0 +
+k: مثال 19 · ص 86
+p: بدون استخدام الحسابات احسب $\cos 105^{\circ}\,,\,\sin 105^{\circ}$
+>>> u19-0 #1
+p: الزاوية 105° تقع في الربع الثاني وهي نصف الزاوية 210°، نستخدم قانون نصف الزاوية
+>>> u19-1 #2
+$$\sin 105 = \sqrt{\dfrac{1 - \cos 210^{\circ}}{2}} = \sqrt{\dfrac{1 - (-\cos 30)}{2}}
+>>> u19-2 #3
+$$= \sqrt{(1 + \dfrac{\sqrt{3}}{2})/2} = \surd \dfrac{2 + \sqrt{3}}{2}
+>>> u19-3 #4
+$$\cos 105 = -\sqrt{\dfrac{1 + \cos 210^{\circ}}{2}} = -\sqrt{(1 - \dfrac{\sqrt{3}}{2})/2} = -\surd \dfrac{2 - \sqrt{3}}{2}
+p: انتبه: كتب الكتاب الناتج موجباً، والصحيح سالب لأن 105° في الربع الثاني
+
+>>> u20-0 +
+k: مثال 20 · ص 86
+p: بين أن: $\cos ^{4} \dfrac{x}{2} - \sin ^{4} \dfrac{x}{2} = \cos x\,,\,\forall x \in R$
+>>> u20-0 #1
+$$\cos ^{4} \dfrac{x}{2} - \sin ^{4} \dfrac{x}{2} = (\cos ^{2} \dfrac{x}{2} - \sin ^{2} \dfrac{x}{2})(\cos ^{2} \dfrac{x}{2} + \sin ^{2} \dfrac{x}{2})
+p: فرق بين مربعين
+>>> u20-1 #2
+$$= \cos (2 (\dfrac{x}{2})) (1)
+p: cos 2θ = cos² θ − sin² θ و cos² θ + sin² θ = 1
+>>> u20-2 #3
+$$= \cos x
+
+>>> e21-0 +
+k: مثال 21 · ص 88
+p: اذا كان $\sin x = \sin 45^{\circ}$ فما قيم $x$ ؟
+>>> e21-0 #1
+$$\sin x = \sin 45^{\circ} \Leftrightarrow x = 45^{\circ} \ \text{or}\ x = 180^{\circ} - 45^{\circ}
+p: sin x = sin θ ⇔ x = θ or x = 180° − θ
+>>> e21-1 #2
+$$x = 45^{\circ} \ \text{or}\ x = 135^{\circ}
+
+>>> e22-0 +
+k: مثال 22 · ص 89
+p: حل المعادلة : $\sin x = \dfrac{1}{2}$
+>>> e22-0 #1
+$$\sin 30^{\circ} = \dfrac{1}{2}
+p: نعلم ان
+>>> e22-1 #2
+$$\sin x = \sin 30^{\circ} \Leftrightarrow x = 30^{\circ} \ \text{or}\ x = 180 - 30^{\circ} = 150^{\circ}
+
+>>> e23-0 +
+k: مثال 23 · ص 89
+p: حل المعادلة $\cos x = \cos 75^{\circ}$
+>>> e23-0 #1
+$$\cos x = \cos 75^{\circ} \Leftrightarrow x = 75^{\circ} \ \text{or}\ x = 360^{\circ} - 75^{\circ}
+p: cos x = cos θ ⇔ x = θ or x = 360° − θ
+>>> e23-1 #2
+$$x = 75^{\circ} \ \text{or}\ x = 285^{\circ}
+>>> e23-2 #3
+$$\{75^{\circ}\,,\,285^{\circ}\}
+p: مجموعة الحل
+
+>>> e24-0 +
+k: مثال 24 · ص 89
+p: حل المعادلة $\cos x = -\dfrac{1}{2}$
+>>> e24-0 #1
+$$\cos x < 0
+p: x تقع في أحد الربعين الثاني أو الثالث
+>>> e24-1 #2
+$$180^{\circ} - 60^{\circ}\,,\,180^{\circ} + 60^{\circ}
+p: وهي منتسبة الى 60° لان cos 60 = 1/2
+>>> e24-2 #3
+$$\cos x = -\dfrac{1}{2} \Leftrightarrow x = 120^{\circ} \ \text{or}\ x = 240^{\circ}
+>>> e24-3 #4
+$$\{120^{\circ}\,,\,240^{\circ}\}
+p: مجموعة الحل
+
+>>> e25-0 +
+k: مثال 25 · ص 89
+p: حل المعادلة $\tan x = \tan 53^{\circ}$
+>>> e25-0 #1
+$$\tan x = \tan 53^{\circ} \Leftrightarrow x = 53^{\circ} \ \text{or}\ x = 180^{\circ} + 53^{\circ}
+p: tan x = tan θ ⇔ x = θ or x = 180° + θ
+>>> e25-1 #2
+$$x = 53^{\circ} \ \text{or}\ x = 233^{\circ}
+>>> e25-2 #3
+$$\{53^{\circ}\,,\,233^{\circ}\}
+p: مجموعة الحل
+
+>>> e26-0 +
+k: مثال 26 · ص 90
+p: حل المعادلة $\tan x = \sqrt{3}$
+>>> e26-0 #1
+$$\tan x = \sqrt{3} \Leftrightarrow \tan x = \tan 60^{\circ}
+>>> e26-1 #2
+$$x = 60^{\circ} \ \text{or}\ x = 180^{\circ} + 60^{\circ} = 240^{\circ}
+>>> e26-2 #3
+$$\{60^{\circ}\,,\,240^{\circ}\}
+p: مجموعة الحل
+
+>>> e27-0 +
+k: مثال 27 · ص 90
+p: حل المعادلة $\tan 4x + \cot x = 0$ حيث أن $0 < x < 90^{\circ}$
+>>> e27-0 #1
+$$\tan 4x = -\cot x
+>>> e27-1 #2
+$$\tan 4x = \tan (90^{\circ} + x) \Rightarrow 4x = 90^{\circ} + x \Rightarrow 3x = 90^{\circ} \Rightarrow x = 30^{\circ}
+p: في الربع الثاني
+>>> e27-2 #3
+$$\tan 4x = \tan (270^{\circ} + x) \Rightarrow 4x = 270^{\circ} + x \Rightarrow 3x = 270^{\circ} \Rightarrow x = 90^{\circ}
+p: في الربع الرابع، x = 90° تهمل لأن 0 < x < 90°
+>>> e27-3 #4
+$$\{30^{\circ}\}
+p: مجموعة الحل
+
+>>> e28-0 +
+k: مثال 28 · ص 90
+p: حل المعادلة : $2\cos ^{2} x + 3\cos x - 2 = 0$
+>>> e28-0 #1
+$$(\cos x + 2)(2\cos x - 1) = 0
+p: نحلل الطرف الايسر
+>>> e28-1 #2
+$$\cos x = -2
+p: يهمل لانه −1 ≤ cos x ≤ 1
+>>> e28-2 #3
+$$\cos x = \dfrac{1}{2}
+p: ويكون cos x موجباً في الربعين الاول والرابع
+>>> e28-3 #4
+$$\cos x = \cos 60^{\circ} \Rightarrow x = 60^{\circ}
+p: أ) في الربع الاول
+>>> e28-4 #5
+$$\cos x = \cos (360^{\circ} - 60^{\circ}) \Rightarrow x = 360^{\circ} - 60^{\circ} = 300^{\circ}
+p: ب) في الربع الرابع
+>>> e28-5 #6
+$$\{60^{\circ}\,,\,300^{\circ}\}
+p: مجموعة الحل
