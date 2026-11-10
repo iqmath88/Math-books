@@ -3,7 +3,7 @@ importScripts('./app-version.js');
 const {version, cachePrefix} = self.MATH_BOOKS_RELEASE;
 const CACHE_NAME = cachePrefix + version;
 const CORE = [
-  './', './index.html', './manifest.webmanifest', './app-version.js',
+  './', './index.html', './manifest.webmanifest', './app-version.js', './update.js',
   './classroom-v2.css', './classroom-v2.js', './practice.css', './practice.js',
   './ch3.html', './ch4.html', './ch5.html', './ch6.html',
   './g9c1.html', './g9c5.html', './g12c3.html',
@@ -46,8 +46,13 @@ const INDEX_URL = new URL('./index.html', APP_ROOT).href;
 const CORE_URLS = new Set(CORE.map(path => new URL(path, APP_ROOT).href));
 
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(CORE)));
+  // cache:'reload' bypasses the browser HTTP cache, so a new release never precaches stale copies.
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(CORE.map(u => new Request(u, {cache: 'reload'})))));
   // Do not call skipWaiting: avoid switching versions mid-lesson.
+});
+self.addEventListener('message', event => {
+  // The page asks for the new release only after the user pressed «حدّث الآن».
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 self.addEventListener('activate', event => {
   event.waitUntil(

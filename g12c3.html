@@ -1830,7 +1830,7 @@ let rz; addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ la
 /* resume where the student stopped */
 try{ const o=JSON.parse(localStorage.getItem('lb-g12c3-pos')||'null'); if(o&&o.pos>=0&&o.pos<SP.length){ pos=o.pos|0; sub=o.sub?1:0; } }catch(e){}
 layout();
-if('serviceWorker' in navigator && location.protocol!=='file:') navigator.serviceWorker.register('sw.js', {updateViaCache:'none'}).then(reg=>{ if(navigator.onLine) reg.update().catch(()=>{}); }).catch(()=>{});
+(d=>{ const s=d.createElement('script'); s.src='update.js'; d.head.append(s); })(document);
 </script>
 <script src="practice.js" defer></script>
 <script src="classroom-v2.js" defer></script>

@@ -4,6 +4,13 @@
 (function(){
 "use strict";
 const B=window.BOOK, D=document, root=D.documentElement;
+/* clear failure message instead of a blank page (missing chapter data or a runtime error) */
+const fail=(why)=>{ D.body.innerHTML=`<div dir="rtl" style="max-width:560px;margin:15vh auto;padding:24px;font:17px/1.7 system-ui,sans-serif;text-align:center">
+  <h2 style="margin:0 0 8px">تعذّر فتح هذا الفصل</h2><p style="margin:0 0 16px;color:#666">${why}</p>
+  <button onclick="location.reload()" style="min-height:44px;padding:0 18px;border-radius:12px;border:0;background:#2563eb;color:#fff;font:inherit">أعد المحاولة</button>
+  <a href="../index.html" style="display:inline-block;margin-inline-start:10px">العودة إلى المكتبة</a></div>`; };
+if(!B||!B.src){ fail('لم تُحمَّل بيانات الفصل. تأكد من الاتصال بالإنترنت في أول فتح للفصل ثم أعد المحاولة.'); return; }
+let booted=false; addEventListener('error',e=>{ if(!booted&&!/katex/i.test(String(e.filename||''))) fail('حدث خطأ أثناء تجهيز الصفحة: '+String(e.message||'').slice(0,120)); });
 const $=(s,r=D)=>r.querySelector(s), $$=(s,r=D)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 /* isolate Latin/number runs inside Arabic text so that "(2 , 8)" and "a ، b" keep their order */
@@ -109,9 +116,16 @@ D.body.innerHTML=`<header>
  <span class="sp"></span>
  <a class="hb" id="bLessons" href="#" title="دروس الفصل">${ICON.list}<span class="l">الدروس</span></a>
  <button class="hb" id="bPresent" aria-pressed="false" title="وضع العرض الصفي (الأسهم للتنقل)">${ICON.present}<span class="l">عرض صفي</span></button>
+ <button class="hb" id="bTools" aria-pressed="false" title="أدوات السبورة: قلم، ممحاة، تكبير، ملء الشاشة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 11-11-3-3L5 16l-1 4z"/><path d="M14 6l3 3"/></svg><span class="l">أدوات</span></button>
  <button class="hb" id="bTheme" aria-label="تبديل الألوان">${ICON.moon}</button>
  <div class="prog"><i id="prog"></i></div>
 </header>
+<div class="tools" id="tools" role="toolbar" aria-label="أدوات السبورة" hidden>
+ <button data-tool="pen" aria-pressed="false" title="قلم (اكتب بالإصبع أو Apple Pencil)" aria-label="قلم">✎</button><button data-tool="red" class="sw" style="--sw:#e0393e" aria-pressed="true" title="أحمر"></button><button data-tool="blue" class="sw" style="--sw:#2563eb" aria-pressed="false" title="أزرق"></button><button data-tool="green" class="sw" style="--sw:#059669" aria-pressed="false" title="أخضر"></button>
+ <button data-tool="erase" aria-pressed="false" title="ممحاة: المس الخط لمسحه" aria-label="ممحاة">⌫</button><button data-tool="undo" title="تراجع (Ctrl+Z)">↶</button><button data-tool="redo" title="إعادة (Ctrl+Y)">↷</button><button data-tool="clear" title="مسح كل الكتابة" aria-label="مسح الكل">🗑</button>
+ <span class="tsep"></span><button data-tool="zoom" title="تكبير النص والمعادلات">A+</button><button data-tool="zoomout" title="تصغير">A−</button><button data-tool="full" title="ملء الشاشة">⛶</button><button data-tool="close" class="x" title="إغلاق الأدوات">✕</button>
+</div>
+<canvas id="inkCanvas" aria-hidden="true"></canvas><div id="toast" role="status" aria-live="polite"></div>
 <div class="home" id="home"></div>
 <div class="wrap">
  <nav class="outline" aria-label="أقسام الدرس"><ol id="outline"></ol></nav>
@@ -455,7 +469,7 @@ svg.addEventListener('pointermove',e=>{ if(!dragging) return; if(cur.drag) setC(
 svg.addEventListener('pointerup',()=>dragging=false); svg.addEventListener('pointercancel',()=>dragging=false);
 
 /* ================= scrollytelling ================= */
-function pick(){ if(!curLes||!steps.length) return; const narrow=innerWidth<=820, line=narrow?$('.fig').getBoundingClientRect().bottom+innerHeight*.06:innerHeight*.45;
+function pick(){ if(!curLes||!steps.length||performance.now()<lockPick) return; const narrow=innerWidth<=820, line=narrow?$('.fig').getBoundingClientRect().bottom+innerHeight*.06:innerHeight*.45;
   let best=steps[0], bd=1e9; if(scrollY>40) for(const s of steps){ const r=s.getBoundingClientRect(); const d=r.top<=line&&r.bottom>=line?0:Math.min(Math.abs(r.top-line),Math.abs(r.bottom-line)); if(d<bd){ bd=d; best=s; } }
   if(best!==active){ active?.classList.remove('on'); active=best; best.classList.add('on'); if(best.dataset.scene) go(best.dataset.scene); }
   const si=secs.indexOf(best.closest('.sec')); $$('a',outline).forEach((a,i)=>{ a.classList.toggle('on',i===si); a.classList.toggle('done',i<si); });
@@ -469,11 +483,51 @@ $('#bTheme').onclick=()=>{ const dark=(root.dataset.theme||(matchMedia('(prefers
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>draw());
 const bP=$('#bPresent');
 bP.onclick=()=>{ const on=root.classList.toggle('present'); bP.setAttribute('aria-pressed',on); setTimeout(()=>{ size(); active&&active.scrollIntoView({block:'center'}); },60); };
-addEventListener('keydown',e=>{ if(e.target.matches('input,textarea')||!curLes) return; const i=steps.indexOf(active);
-  if(['ArrowDown','PageDown','ArrowLeft'].includes(e.key)){ e.preventDefault(); steps[Math.min(steps.length-1,i+1)].scrollIntoView({block:'center'}); }
-  if(['ArrowUp','PageUp','ArrowRight'].includes(e.key)){ e.preventDefault(); steps[Math.max(0,i-1)].scrollIntoView({block:'center'}); } });
+/* keyboard / clicker: activate the next step explicitly (scrolling alone cannot move past the first steps) */
+let lockPick=0;
+function activate(st){ if(!st) return; if(st!==active){ active?.classList.remove('on'); active=st; st.classList.add('on'); if(st.dataset.scene) go(st.dataset.scene); } lockPick=performance.now()+900; st.scrollIntoView({block:'center',behavior:'smooth'}); }
+addEventListener('keydown',e=>{ if(e.target.matches('input,textarea')||!curLes||e.ctrlKey||e.metaKey||e.altKey) return; const i=steps.indexOf(active);
+  if(['ArrowDown','PageDown','ArrowLeft',' '].includes(e.key)&&!(e.key===' '&&e.target.matches('button'))){ e.preventDefault(); activate(steps[Math.min(steps.length-1,i+1)]); }
+  if(['ArrowUp','PageUp','ArrowRight'].includes(e.key)){ e.preventDefault(); activate(steps[Math.max(0,i-1)]); } });
 
-window.LB={go,draw,LES,num,nums,same};
-if('serviceWorker' in navigator&&location.protocol==='https:') navigator.serviceWorker.register('../sw.js').catch(()=>{});
+/* ================= board tools: ink, zoom, fullscreen ================= */
+const ink=(()=>{ const cv=$('#inkCanvas'), cx=cv.getContext('2d'), bar=$('#tools'), bT=$('#bTools'), toast=$('#toast'); let mode='off', color='#e0393e', S=[], RD=[], cur=null, tt=0;
+  const say=t=>{ toast.textContent=t; toast.classList.add('on'); clearTimeout(tt); tt=setTimeout(()=>toast.classList.remove('on'),1800); };
+  /* strokes are stored in page coordinates so they stay on the content while scrolling */
+  const render=()=>{ const d=Math.min(devicePixelRatio||1,3), w=innerWidth, h=innerHeight; if(cv.width!==Math.round(w*d)||cv.height!==Math.round(h*d)){ cv.width=Math.round(w*d); cv.height=Math.round(h*d); }
+    cx.setTransform(d,0,0,d,0,0); cx.clearRect(0,0,w,h); cx.lineCap='round'; cx.lineJoin='round'; const ox=scrollX, oy=scrollY;
+    for(const k of S){ cx.strokeStyle=k.c; cx.lineWidth=k.w; cx.beginPath(); k.p.forEach(([x,y],i)=>i?cx.lineTo(x-ox,y-oy):cx.moveTo(x-ox,y-oy)); if(k.p.length===1) cx.lineTo(k.p[0][0]-ox+.1,k.p[0][1]-oy+.1); cx.stroke(); } };
+  const pt=e=>[e.clientX+scrollX,e.clientY+scrollY], near=p=>k=>k.p.some(q=>Math.hypot(q[0]-p[0],q[1]-p[1])<22);
+  cv.addEventListener('pointerdown',e=>{ if(mode==='off') return; e.preventDefault(); cv.setPointerCapture(e.pointerId); RD=[];
+    if(mode==='erase'){ const n=S.length; S=S.filter(k=>!near(pt(e))(k)); if(S.length!==n) render(); } else { cur={c:color,w:e.pointerType==='pen'?3+4*(e.pressure||.5):4,p:[pt(e)]}; S.push(cur); render(); } });
+  cv.addEventListener('pointermove',e=>{ if(mode==='off'||!(e.buttons||e.pressure)) return; e.preventDefault();
+    if(mode==='erase'){ const n=S.length; S=S.filter(k=>!near(pt(e))(k)); if(S.length!==n) render(); } else if(cur){ cur.p.push(pt(e)); render(); } });
+  const end=()=>{ cur=null; }; cv.addEventListener('pointerup',end); cv.addEventListener('pointercancel',end);
+  addEventListener('scroll',()=>{ if(S.length) requestAnimationFrame(render); },{passive:true}); addEventListener('resize',render);
+  const press=(t,on)=>{ const b=bar.querySelector(`[data-tool="${t}"]`); if(b) b.setAttribute('aria-pressed',String(!!on)); };
+  const setMode=m=>{ mode=mode===m?'off':m; cv.classList.toggle('on',mode!=='off'); press('pen',mode==='pen'); press('erase',mode==='erase');
+    say(mode==='pen'?'القلم مفعّل: اكتب على الشاشة · اضغط «قلم» مرة أخرى للتمرير':mode==='erase'?'الممحاة مفعّلة: المس الخط لمسحه':'القلم متوقف'); };
+  const undo=()=>{ if(S.length){ RD.push(S.pop()); render(); } else say('لا توجد كتابة'); }, redo=()=>{ if(RD.length){ S.push(RD.pop()); render(); } else say('لا يوجد ما يُعاد'); };
+  const clear=()=>{ if(S.length){ RD=[]; S=[]; render(); } };
+  const ZL=[1,1.15,1.3,1.5,1.75]; let zi=0; try{ zi=Math.max(0,ZL.indexOf(+localStorage.getItem('lb-zoom')||1)); }catch(e){}
+  const zoom=d=>{ zi=Math.max(0,Math.min(ZL.length-1,zi+d)); root.style.setProperty('--zoom',ZL[zi]); try{ localStorage.setItem('lb-zoom',ZL[zi]); }catch(e){} say('حجم النص '+Math.round(ZL[zi]*100)+'٪'); render(); };
+  root.style.setProperty('--zoom',ZL[zi]);
+  const full=async()=>{ const el=root, fs=D.fullscreenElement||D.webkitFullscreenElement;
+    try{ if(fs){ await (D.exitFullscreen||D.webkitExitFullscreen).call(D); } else if(el.requestFullscreen) await el.requestFullscreen(); else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen(); else throw 0; }
+    catch(e){ say('ملء الشاشة غير متاح هنا: أضف التطبيق إلى الشاشة الرئيسية ليفتح بملء الشاشة'); } };
+  const open=v=>{ bar.hidden=!v; bT.setAttribute('aria-pressed',String(v)); if(!v&&mode!=='off') setMode(mode); };
+  bT.onclick=()=>open(bar.hidden);
+  bar.addEventListener('click',e=>{ const b=e.target.closest('[data-tool]'); if(!b) return; const t=b.dataset.tool;
+    if(t==='pen'||t==='erase') setMode(t); else if(['red','blue','green'].includes(t)){ color=getComputedStyle(b).getPropertyValue("--sw").trim(); ['red','blue','green'].forEach(c=>press(c,c===t)); if(mode!=='pen') setMode('pen'); }
+    else if(t==='undo') undo(); else if(t==='redo') redo(); else if(t==='clear'){ clear(); say('مُسحت الكتابة'); } else if(t==='zoom') zoom(1); else if(t==='zoomout') zoom(-1); else if(t==='full') full(); else if(t==='close') open(false); });
+  addEventListener('keydown',e=>{ if(e.target.matches('input,textarea')) return; const k=e.key.toLowerCase();
+    if((e.ctrlKey||e.metaKey)&&k==='z'){ e.preventDefault(); e.shiftKey?redo():undo(); } else if((e.ctrlKey||e.metaKey)&&k==='y'){ e.preventDefault(); redo(); }
+    else if(k==='escape'&&mode!=='off') setMode(mode); });
+  addEventListener('hashchange',()=>{ clear(); RD=[]; });
+  return {count:()=>S.length,clear,setMode,say,render}; })();
+
+window.LB={go,draw,LES,num,nums,same,ink};
+(d=>{ const s=d.createElement('script'); s.src='../update.js'; d.head.append(s); })(document);
 route();
+booted=true;
 })();

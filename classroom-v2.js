@@ -143,7 +143,9 @@
  addEventListener('resize',()=>{ if(inBoard()){ const S=typeof SP!=='undefined'?SP:null; if(S&&typeof pos!=='undefined') setTimeout(()=>S[pos]?.lab?.fit?.(),150); } });
 
  /* ---------- navigation clears ink and hidden parts ---------- */
- const onTurn=()=>{ clearInk(); showAll(); if(!cover.hidden) toggleCover(false); };
+ /* only a real page change clears the ink: the book re-renders the same page after a flip animation */
+ const curPage=()=>typeof pos!=='undefined'?pos+':'+(typeof sub!=='undefined'?sub:0):null; let lastTurn=curPage();
+ const onTurn=()=>{ const p=curPage(); if(p!==null&&p===lastTurn) return; lastTurn=p; clearInk(); showAll(); if(!cover.hidden) toggleCover(false); };
  document.querySelectorAll('#book .slot').forEach(s=>new MutationObserver(onTurn).observe(s,{childList:true}));
  new MutationObserver(onTurn).observe(board,{childList:true});
 

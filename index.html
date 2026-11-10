@@ -199,7 +199,7 @@ ib.onclick=async()=>{ if(!deferred) return; deferred.prompt(); await deferred.us
 addEventListener('appinstalled',()=>ib.classList.add('hide'));
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
 if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!standalone) document.getElementById('ios').classList.remove('hide');
-if('serviceWorker' in navigator && location.protocol!=='file:') navigator.serviceWorker.register('sw.js', {updateViaCache:'none'}).then(reg=>{ if(navigator.onLine) reg.update().catch(()=>{}); }).catch(()=>{});
+(d=>{ const s=d.createElement('script'); s.src='update.js'; d.head.append(s); })(document);
 </script>
 <script>
 (()=>{
