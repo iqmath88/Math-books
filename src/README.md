@@ -37,3 +37,9 @@ node tools/lesson-video.cjs g12c3 rates-3-0 rates-3-4 tank.mp4 --sub "مثال 1
 `fromKey` و `toKey` مفاتيح الخطوات (`data-key`). يخرج 1920×1080 بمعدل 30 إطاراً، صامتاً:
 بطاقة عنوان، ثم كل خطوة مع رسمها الحي ونصها يظهر جزءاً جزءاً، ثم بطاقة ختام.
 `--vertical` نسخة طولية 1080×1920 للريلز والستوري (الرسم فوق والخطوات تحته). `--preview` يحفظ لقطتين من كل مقطع بدل الفيديو.
+
+## ريلز بإخراج خاص
+صفحات في `tools/reels/` (مثل `ladder.html`) تعرّف `render(t)` و `DURATION`، وترسم كل لقطة بنفسها:
+```
+node tools/reel-render.cjs tools/reels/ladder.html out.mp4 [--preview 3,8,17]
+```

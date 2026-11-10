@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<title>ريلز · السلّم المنزلق</title>
+<link rel="stylesheet" href="../../v2/lib/katex/katex.min.css">
+<script src="../../v2/lib/katex/katex.min.js"></script>
+<style>
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-ar-500.woff2) format("woff2");font-weight:500;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-ar-700.woff2) format("woff2");font-weight:700;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-lat-500.woff2) format("woff2");font-weight:500;unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-lat-700.woff2) format("woff2");font-weight:700;unicode-range:U+0000-00FF,U+2000-206F}
+:root{--bg1:#0b1730;--bg2:#13305c;--x:#ff9f43;--y:#2ee6a6;--k:#ffd666;--hot:#ff5d73;--ink:#f4f7ff;--mute:#9fb0cf}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg1)}
+body{font-family:Plex,system-ui,sans-serif;color:var(--ink);background:radial-gradient(1200px 900px at 70% 20%,#1d4785 0%,transparent 60%),linear-gradient(180deg,var(--bg1),var(--bg2) 55%,var(--bg1))}
+.grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:54px 54px}
+#scene{position:absolute;left:0;top:270px;width:1080px;height:830px;direction:ltr}
+.card{position:absolute;left:50px;right:50px;top:1120px;height:460px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px;opacity:0}
+.big{font-size:64px;font-weight:700;line-height:1.35}
+.mid{font-size:50px;font-weight:700;line-height:1.4}
+.sm{font-size:38px;font-weight:500;color:var(--mute);line-height:1.5}
+.tag{display:inline-flex;align-items:center;gap:14px;font-size:40px;font-weight:700;color:var(--k)}
+.tag .n{display:inline-grid;place-items:center;width:62px;height:62px;border-radius:50%;background:var(--k);color:var(--bg1);font-size:36px}
+.m{font-size:66px;direction:ltr}
+.m2{font-size:52px;direction:ltr;color:#dfe7f7}
+.res{font-size:60px;white-space:nowrap;direction:ltr;padding:16px 40px;border-radius:26px;border:4px solid var(--y);box-shadow:0 0 50px rgba(46,230,166,.45);background:rgba(46,230,166,.08)}
+.x{color:var(--x)} .y{color:var(--y)} .k{color:var(--k)} .hot{color:var(--hot)}
+.badge{position:absolute;top:236px;right:60px;font-size:30px;font-weight:700;color:#fff;background:var(--hot);padding:8px 22px;border-radius:99px;opacity:0;box-shadow:0 6px 20px rgba(255,93,115,.35)}
+.brand{position:absolute;top:150px;left:0;right:0;text-align:center;font-size:28px;color:var(--mute);font-weight:500;letter-spacing:.5px}
+.brand b{color:var(--ink)}
+.chips{position:absolute;top:310px;right:60px;align-items:flex-end;display:flex;flex-direction:column;gap:12px;direction:ltr}
+.chip{font-size:34px;font-weight:700;padding:8px 22px;border-radius:16px;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.12);min-width:330px}
+.chip span{font-variant-numeric:tabular-nums}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+#outro{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;text-align:center;background:linear-gradient(160deg,#0b1730,#1d4f8f);opacity:0;padding-bottom:160px}
+#outro .l{font-size:40px;color:var(--mute)} #outro .t{font-size:84px;font-weight:700} #outro .s{font-size:46px;color:var(--k);font-weight:700}
+#outro .a{font-size:40px;margin-top:30px} #outro .u{font-size:32px;color:var(--mute);direction:ltr}
+#fade{position:absolute;inset:0;background:#000;pointer-events:none}
+.slow{position:absolute;top:1075px;left:60px;font-size:28px;color:var(--mute);direction:ltr;opacity:0}
+</style></head><body>
+<div class="grid"></div>
+<div class="brand">الرياضيات الحيّة · <b>[3−1] المعدلات المرتبطة</b></div>
+<svg id="scene" viewBox="0 0 1080 830" direction="ltr"></svg>
+<div class="chips" id="chips">
+ <div class="chip x">dx/dt = <span id="vx">2</span> m/s</div>
+ <div class="chip y">dy/dt = <span id="vy">0</span> m/s</div>
+</div>
+<div class="badge" id="badge">سؤال وزاري 2017</div>
+<div class="slow" id="slow">slow motion ×½</div>
+
+<div class="card" id="cA"><div class="big">أسفل السلّم يبتعد عن الحائط<br>بسرعة <span class="x">ثابتة</span></div><div class="m x" data-tex="2\ \text{m/s}"></div></div>
+<div class="card" id="cB"><div class="sm">سلّم طوله <span class="m2" data-tex="10\,m" style="font-size:40px"></span> ، وأسفله الآن على بعد <span class="x">8 m</span></div><div class="big k">بأي سرعة ينزل رأسه؟</div></div>
+<div class="card" id="cC"><div class="tag"><span class="n">1</span>فيثاغورس يربط x و y</div><div class="m" data-tex="{\color{#ff9f43}x}^2+{\color{#2ee6a6}y}^2=10^2"></div><div class="m2" id="cC2" data-tex="x=8\;\Rightarrow\;y=\sqrt{100-64}=6"></div></div>
+<div class="card" id="cD"><div class="tag"><span class="n">2</span>نشتق الطرفين بالنسبة لـ t</div><div class="m" data-tex="2{\color{#ff9f43}x}\,{\color{#ff9f43}\dfrac{dx}{dt}}+2{\color{#2ee6a6}y}\,{\color{#2ee6a6}\dfrac{dy}{dt}}=0"></div><div class="sm" id="cD2">نشتق <b class="k">أولاً</b> … ثم نعوّض</div></div>
+<div class="card" id="cE"><div class="tag"><span class="n">3</span>نعوّض</div><div class="m2" data-tex="2({\color{#ff9f43}8})({\color{#ff9f43}2})+2({\color{#2ee6a6}6})\,{\color{#2ee6a6}\dfrac{dy}{dt}}=0"></div><div class="res" id="cE2" data-tex="{\color{#2ee6a6}\dfrac{dy}{dt}}=-\dfrac{8}{3}\approx-2.67\ \text{m/s}"></div></div>
+<div class="card" id="cF"><div class="mid">الإشارة <span class="hot">سالبة</span> ⇐ الرأس <span class="y">ينزل</span><br>وأسرع من أسفله!</div><div class="sm" id="cF2">وكلما اقترب من الأرض … <b class="hot">يتسارع أكثر</b></div></div>
+<div class="card" id="cG"><div class="mid">الأسفل سرعته <span class="x">ثابتة</span><br>والأعلى سرعته <span class="y">تتغير</span></div><div class="sm">لأنهما مرتبطان بعلاقة واحدة — وهذه هي<br><b class="k" style="font-size:52px">المعدلات المرتبطة</b></div></div>
+
+<div id="flash"></div>
+<div id="outro"><div class="l">الرياضيات الحيّة · السادس العلمي</div><div class="t">[3−1] المعدلات المرتبطة</div><div class="s">مثال 4 · ص 94 · سلّم ينزلق</div><div class="a">الأستاذ فائز الحمداني</div><div class="u">iqmath88.github.io/Math-books</div></div>
+<div id="fade"></div>
+<script>
+document.querySelectorAll('[data-tex]').forEach(e=>katex.render(e.dataset.tex,e,{throwOnError:false}));
+const NS='http://www.w3.org/2000/svg', svg=document.getElementById('scene'), $=id=>document.getElementById(id);
+const E=(tag,a,p=svg)=>{ const e=document.createElementNS(NS,tag); for(const k in a) e.setAttribute(k,a[k]); p.appendChild(e); return e; };
+const WX=170, GY=700, S=62;            /* wall x, ground y, px per metre */
+/* static: wall + ground */
+const defs=E('defs',{}); const pat=E('pattern',{id:'br',width:44,height:26,patternUnits:'userSpaceOnUse'},defs);
+E('rect',{width:44,height:26,fill:'#2a3f66'},pat); E('path',{d:'M0 0H44M0 13H44M22 0V13M0 13V26M44 13V26',stroke:'#3b5585','stroke-width':2},pat);
+E('rect',{x:WX-60,y:60,width:60,height:GY-60,fill:'url(#br)'}); E('line',{x1:WX,y1:60,x2:WX,y2:GY,stroke:'#6f8bbd','stroke-width':3});
+E('rect',{x:WX-60,y:GY,width:900,height:16,fill:'#2a3f66'}); E('line',{x1:WX-60,y1:GY,x2:1010,y2:GY,stroke:'#6f8bbd','stroke-width':3});
+const tri=E('polygon',{fill:'rgba(255,214,102,.13)',stroke:'#ffd666','stroke-width':3,'stroke-dasharray':'10 8',opacity:0});
+const dimX=E('g',{}), dimY=E('g',{});
+const lx=E('line',{stroke:'#ff9f43','stroke-width':4},dimX), tx=E('text',{fill:'#ff9f43','font-size':40,'font-weight':700,'text-anchor':'middle','font-family':'Plex'},dimX);
+const ly=E('line',{stroke:'#2ee6a6','stroke-width':4},dimY), ty=E('text',{fill:'#2ee6a6','font-size':40,'font-weight':700,'text-anchor':'end','font-family':'Plex'},dimY);
+const tL=E('text',{fill:'#ffd666','font-size':40,'font-weight':700,'text-anchor':'middle','font-family':'Plex',opacity:0});
+/* ladder: two rails + rungs drawn each frame */
+const lad=E('g',{});
+const arrX=E('g',{}), arrY=E('g',{});
+const ax=E('path',{fill:'none',stroke:'#ff9f43','stroke-width':7,'stroke-linecap':'round','stroke-linejoin':'round'},arrX), axt=E('text',{fill:'#ff9f43','font-size':36,'font-weight':700,'font-family':'Plex','text-anchor':'middle'},arrX);
+const ay=E('path',{fill:'none',stroke:'#2ee6a6','stroke-width':7,'stroke-linecap':'round','stroke-linejoin':'round'},arrY), ayt=E('text',{fill:'#2ee6a6','font-size':36,'font-weight':700,'font-family':'Plex'},arrY);
+const dotB=E('circle',{r:13,fill:'#ff9f43'}), dotT=E('circle',{r:13,fill:'#2ee6a6'});
+const stamp=E('text',{fill:'#fff','font-size':58,'font-weight':700,'font-family':'Plex','text-anchor':'middle',opacity:0});
+
+const cl=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)), ease=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2, eo=u=>1-Math.pow(1-u,3);
+const win=(t,a,b,fi=.35,fo=.3)=>cl((t-a)/fi)*cl((b-t)/fo);
+function xAt(t){ if(t<0.8) return 0.6; if(t<4.5) return 0.6+2*(t-0.8); if(t<20) return 8; return Math.min(9.8,8+1*(t-20)); }
+function drawLadder(x){ const y=Math.sqrt(100-x*x), bx=WX+x*S, ty_=GY-y*S, L=Math.hypot(bx-WX,GY-ty_), ux=(bx-WX)/L, uy=(GY-ty_)/L, nx=-uy*14, ny=ux*14;
+  lad.innerHTML=''; const P=(x1,y1,x2,y2,w,c)=>E('line',{x1,y1,x2,y2,stroke:c,'stroke-width':w,'stroke-linecap':'round'},lad);
+  for(let i=1;i<10;i++){ const px=WX+(bx-WX)*i/10, py=ty_+(GY-ty_)*i/10; P(px-nx,py-ny,px+nx,py+ny,6,'#c98a3e'); }
+  P(WX-nx,ty_-ny,bx-nx,GY-ny,10,'#e0a04f'); P(WX+nx,ty_+ny,bx+nx,GY+ny,10,'#e0a04f');
+  dotB.setAttribute('cx',bx); dotB.setAttribute('cy',GY); dotT.setAttribute('cx',WX); dotT.setAttribute('cy',ty_);
+  return {y,bx,ty:ty_}; }
+function render(t){
+  const x=xAt(t), g=drawLadder(x), y=g.y, dy=-2*x/y;
+  $('vy').textContent=(dy<0?'−':'')+Math.abs(dy).toFixed(2); $('vy').parentNode.style.color=Math.abs(dy)>4?'#ff5d73':'';
+  /* dimensions */
+  lx.setAttribute('x1',WX); lx.setAttribute('x2',g.bx); lx.setAttribute('y1',GY+50); lx.setAttribute('y2',GY+50);
+  tx.setAttribute('x',(WX+g.bx)/2); tx.setAttribute('y',GY+100); tx.textContent='x = '+x.toFixed(1);
+  ly.setAttribute('x1',WX-90); ly.setAttribute('x2',WX-90); ly.setAttribute('y1',g.ty); ly.setAttribute('y2',GY);
+  ty.setAttribute('x',WX-90); ty.setAttribute('y',g.ty-18); ty.setAttribute('text-anchor','middle'); ty.textContent='y';
+  /* arrows: bottom → constant, top ↓ grows with |dy/dt| */
+  const la=110; ax.setAttribute('d',`M${g.bx+24} ${GY-40}h${la}m-20 -16l20 16l-20 16`); axt.setAttribute('x',g.bx+24+la/2); axt.setAttribute('y',GY-62); axt.textContent='2 m/s';
+  const ly_=Math.min(260,40+Math.abs(dy)*30,GY-g.ty-24); ay.setAttribute('d',`M${WX+40} ${g.ty+10}v${ly_}m-16 -20l16 20l16 -20`); ayt.setAttribute('x',WX+34); ayt.setAttribute('y',g.ty-24); ayt.textContent=Math.abs(dy).toFixed(2)+' m/s';
+  /* freeze at x = 8: flash, stamp, triangle */
+  $('flash').style.opacity=t>4.5&&t<4.85?0.55*(1-(t-4.5)/0.35):0;
+  const st=win(t,4.55,9.5,.25,.4); stamp.setAttribute('opacity',st); stamp.setAttribute('x',g.bx); stamp.setAttribute('y',GY-150-30*(1-eo(cl((t-4.55)/.3)))); stamp.textContent='x = 8';
+  const tr=win(t,5.0,19.6,.5,.5); tri.setAttribute('opacity',tr); tri.setAttribute('points',`${WX},${GY} ${g.bx},${GY} ${WX},${g.ty}`);
+  tL.setAttribute('opacity',tr); { const L=Math.hypot(g.bx-WX,GY-g.ty), a=(g.bx-WX)/L, c=(GY-g.ty)/L; tL.setAttribute('x',(WX+g.bx)/2+70*c); tL.setAttribute('y',(g.ty+GY)/2-70*a+12); } tL.textContent='10';
+  ty.textContent=t>5.6&&t<19.6?'y = 6':'y';
+  /* cards */
+  const C=[['cA',0.3,2.8],['cB',2.8,6.6],['cC',6.6,10.4],['cD',10.4,14.6],['cE',14.6,19.4],['cF',19.4,24.2],['cG',24.2,28.6]];
+  C.forEach(([id,a,b])=>{ const o=win(t,a,b,.4,.3), k=eo(cl((t-a)/.5)); const e=$(id); e.style.opacity=o; e.style.transform=`translateY(${(1-k)*50}px) scale(${.96+.04*k})`; });
+  [['cC2',8.4],['cD2',12.4],['cE2',16.6],['cF2',20.2]].forEach(([id,a])=>{ const k=eo(cl((t-a)/.45)); $(id).style.opacity=k; $(id).style.transform=`scale(${.85+.15*k})`; });
+  $('badge').style.opacity=cl((t-5.2)/.4)*cl((28.6-t)/.3);
+  $('chips').style.opacity=cl((t-0.6)/.4)*cl((28.6-t)/.3);
+  $('slow').style.opacity=t>20&&t<22?1:0;
+  $('outro').style.opacity=cl((t-28.6)/.5);
+  $('fade').style.opacity=t<0.5?1-t/0.5:t>31.5?(t-31.5)/0.5:0;
+}
+window.DURATION=32; window.render=render; render(0);
+</script></body></html>
