@@ -45,10 +45,14 @@ xp: نحدد u
 $$\frac{dy}{dx}=\frac{1}{3x^2+4}\cdot\frac{d(3x^2+4)}{dx}=\cf{\frac{6x}{3x^2+4}}
 law: قاعدة التكامل
 | ان الصيغة $d(\ln u)=\dfrac1u\,du$ تقودنا الى $\displaystyle\int\frac{du}{u}=\ln u+c$ وبشرط ان تكون $u$ موجبة
+rel: $\displaystyle\frac{d}{dx}\ln u=\frac{u'}{u}\quad\Longleftrightarrow\quad\int\frac{u'}{u}\,dx=\ln|u|+c$
 >>> ln
 k: مثال 2 · ص 186
 p: جد $\displaystyle\int\frac{\cos\theta\,d\theta}{1+\sin\theta}$
 p: **الحل:** نفرض $u=1+\sin\theta$
+let: نفرض
+| $u$ ; المقام ; $1+\sin\theta$
+| $du$ ; مشتقته ; $\cos\theta\,d\theta$ = البسط ✓
 $$\frac{du}{d\theta}=\cos\theta\Rightarrow du=\cos\theta\,d\theta
 $$\therefore\ \int\frac{\cos\theta\,d\theta}{1+\sin\theta}=\int\frac{du}{u}=\ln|u|+c=\ln|1+\sin\theta|+c
 xp: لماذا القيمة المطلقة؟
@@ -77,14 +81,20 @@ h2: مثال 3
 p: لتكن $y=e^{\tan x}$ فجد $\dfrac{dy}{dx}$ .
 $$\frac{d(e^{\tan x})}{dx}=e^{\tan x}\cdot\frac{d(\tan x)}{dx}\;\Rightarrow\;\frac{dy}{dx}=e^{\tan x}\cdot\sec^2x
 note: **ملاحظة:** ان صيغة التفاضل $d(e^u)=e^u\dfrac{du}{dx}$ تقودنا الى صيغة التكامل: $\displaystyle\int e^u\,du=e^u+c$
+rel: $\displaystyle\frac{d}{dx}e^u=e^u\,u'\quad\Longleftrightarrow\quad\int e^u\,u'\,dx=e^u+c$
 err: الصواب $d(e^u)=e^u\,du$ أو $\dfrac{d}{dx}(e^u)=e^u\dfrac{du}{dx}$ ؛ كتابة $d(e^u)=e^u\dfrac{du}{dx}$ تخلط بين الصيغتين.
 >>> ex
 h2: مثال 4
 p: جد $\int xe^{x^2}\,dx$
 p: **الحل:** نفرض ان: $x^2=u\Rightarrow2x\,dx=du$
+let: نفرض
+| $u$ ; الأس ; $x^2$
+| $du$ ; مشتقته ; $2x\,dx$ والموجود $x\,dx$ ⇐ نضرب ونقسم على 2
 xp: إكمال المشتقة
 | الموجود $x\,dx$ والمطلوب $2x\,dx=du$ ، فنكتب $x\,dx=\tfrac12du$
 $$\therefore\ \int e^{x^2}x\,dx=\frac12\int e^u\,du=\frac12e^u+c=\frac12e^{x^2}+c
+xp: فحص بالاشتقاق
+| $\dfrac{d}{dx}\tfrac12e^{x^2}=\tfrac12e^{x^2}(2x)=xe^{x^2}$ ✓
 --- الأساس a
 >>> ex
 k: ص 187–188
@@ -122,12 +132,16 @@ sol: f) $\dfrac{\sin x}{2-\cos x}$ g) $(-10x+3)\,e^{-5x^2+3x+5}$
 --- تمارين (4−7) : التكاملات
 >>> t7a
 p: **2−** جد التكاملات الاتية: **a)** $\displaystyle\int_0^3\frac{1}{x+1}\,dx$
+xp: قالب الحل
+| **نفرض** $u$ (المقام أو الأس) ← **مشتقته موجودة؟** ← $\ln|u|$ أو $e^u$ ← **نعوّض الحدّين** ← **فحص** (تبسيط $\ln$ و $e$ ، أو الإشارة)
 prac: ln4 ; القيمة (يمكنك كتابة ln)
 hint: $\int\dfrac{du}{u}=\ln|u|$ مع $u=x+1$
 hint: $\ln1=0$
 gen: gLn
 ok: t7a
-sol: $\left[\ln|x+1|\right]_0^3=\ln4-\ln1=\ln4$
+sol: **نفرض:** $u=x+1$ ⇐ $du=dx$ موجودة ✓
+| $\left[\ln|x+1|\right]_0^3=\ln4-\ln1=\ln4$
+| » **فحص:** $\ln4\approx1.39$ موجب لأن الدالة موجبة، وأقل من $3\times1=3$ (أكبر قيمة للدالة × طول الفترة) ✓
 >>> t7b
 p: **b)** $\displaystyle\int_0^4\frac{2x}{x^2+9}\,dx$
 prac: ln(25/9) ; القيمة
@@ -142,7 +156,8 @@ hint: $\int e^{2x}dx=\tfrac12e^{2x}$
 hint: $e^{2\ln5}=e^{\ln25}=25$
 miss: 16 ; نسيت المعامل $\tfrac12$.
 gen: gExp
-sol: $\left[\tfrac12e^{2x}\right]_{\ln3}^{\ln5}=\tfrac12\left(e^{2\ln5}-e^{2\ln3}\right)=\tfrac12(25-9)=8$
+sol: **نفرض:** $u=2x$ ⇐ $du=2\,dx$ ، فنضرب ونقسم على 2
+| $\left[\tfrac12e^{2x}\right]_{\ln3}^{\ln5}=\tfrac12\left(e^{2\ln5}-e^{2\ln3}\right)=\tfrac12(25-9)=8$
 | » لأن $e^{2\ln5}=e^{\ln25}=25$
 >>> t7d
 p: **d)** $\displaystyle\int_0^{\ln2}e^{-x}\,dx$

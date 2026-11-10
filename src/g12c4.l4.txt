@@ -23,6 +23,9 @@ law: مبرهنة [4−4−1]
 | ويكون:
 | $$\int_a^b f(x)\,dx=F(b)-F(a)
 p: تسمى $F$ **الدالة المقابلة** للدالة $f$ (Antiderivative of The Function) على الفترة $[a,b]$
+rel: $\displaystyle\int_a^b f(x)\,dx=\big[F(x)\big]_a^b=F(b)-F(a)$
+xp: قالب الحل
+| **الدالة المقابلة** $F$ (من الجدول) ← **فحص:** $F'(x)=f(x)$ ؟ ← **نعوّض الحدّ الأعلى ثم الأدنى** ← **نطرح** بالترتيب $F(b)-F(a)$
 >>> ftc
 p: فمثلاً: اذا كانت $f:[1,2]\to R\,,\ f(x)=2x$ فان $F:[1,2]\to R\,,\ F(x)=x^2$
 $$F'(x)=2x=f(x)\,,\quad\forall x\in(1,2)
@@ -97,6 +100,8 @@ p: أوجد $\int_0^{\pi/4}\sec^2x\,dx$
 xp: من الجدول
 | $\sec^2x$ مقابلتها $\tan x$ (هنا $a=1 , b=0$)
 $$\int_0^{\frac{\pi}{4}}\sec^2x\,dx=\left[\tan x\right]_0^{\frac{\pi}{4}}=\tan\tfrac{\pi}{4}-\tan0=1-0=\cf{1}
+xp: فحص
+| $\dfrac{d}{dx}\tan x=\sec^2x$ ✓
 >>> k6
 k: مثال 6
 p: أوجد $\int_{\pi/4}^{\pi/2}\csc^2x\,dx$
@@ -109,12 +114,15 @@ p: أوجد $\int_0^{\pi/3}\sec x\tan x\,dx$
 $$\int_0^{\frac{\pi}{3}}\sec x\tan x\,dx=\left[\sec x\right]_0^{\frac{\pi}{3}}=\sec\tfrac{\pi}{3}-\sec0=2-1=\cf{1}
 xp: لماذا sec(π/3) = 2؟
 | $\sec\tfrac{\pi}{3}=\dfrac{1}{\cos\frac{\pi}{3}}=\dfrac{1}{\frac12}=2$ ، و $\sec0=\dfrac1{\cos0}=1$
+| » **فحص:** $\dfrac{d}{dx}\sec x=\sec x\tan x$ ✓
 >>> k8
 k: مثال 8
 p: جد $\int_1^3 x^3\,dx$
 xp: من الجدول بـ n = 3
 | $x^3$ مقابلتها $\dfrac{x^{3+1}}{3+1}=\dfrac{x^4}{4}$
 $$\int_1^3x^3\,dx=\left[\frac{x^4}{4}\right]_1^3=\frac{3^4}{4}-\frac14=\frac{81}{4}-\frac14=\frac{80}{4}=\cf{20}
+xp: فحص
+| $\dfrac{d}{dx}\dfrac{x^4}4=x^3$ ✓ ، والجواب موجب لأن $x^3>0$ على $[1,3]$ ✓
 --- تحقّق من فهمك
 >>> k8
 k: دورك الآن
@@ -125,7 +133,9 @@ hint: $\cos\pi=-1$ و $\cos0=1$
 miss: -2 ; انتبه للإشارة: $[-\cos x]_0^\pi=(-\cos\pi)-(-\cos0)$.
 miss: 0 ; تحقق من $\cos\pi=-1$.
 gen: gPoly
-sol: $\left[-\cos x\right]_0^{\pi}=-\cos\pi+\cos0=-(-1)+1=2$
+sol: **الدالة المقابلة:** $\sin x$ ⇐ $F(x)=-\cos x$ ، **فحص:** $(-\cos x)'=\sin x$ ✓
+| **نعوّض:** $\left[-\cos x\right]_0^{\pi}=(-\cos\pi)-(-\cos0)=-(-1)+1=2$
+| » المعنى: مساحة قوس الجيب الواحد $=2$ (الدالة موجبة على $[0,\pi]$)
 >>> ftc .summary
 h2: الخلاصة
 - $F$ دالة مقابلة لـ $f$ إذا كان $F'(x)=f(x)$.

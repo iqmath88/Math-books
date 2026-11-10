@@ -6,7 +6,7 @@ const fs=require('fs'), path=require('path');
 const BASE=process.env.BASE||'http://localhost:8770/math-books/';
 const ONLY=(process.argv.find(a=>a.startsWith('--only='))||'').slice(7).split(',').filter(Boolean);
 const R=[]; const rec=(id,name,ok,detail='')=>{ R.push({id,name,ok,detail:String(detail).slice(0,400)}); console.log((ok===true?'PASS':ok===false?'FAIL':'SKIP').padEnd(5),id,name,detail?'— '+String(detail).slice(0,200):''); };
-const V2=['g12c3','g12c4','ch3','ch4','ch5','ch6','g9c1','g9c5'], CLASSIC=['g12c3','ch3','ch4','ch5','ch6','g9c1','g9c5'];
+const V2=['g12c3','g12c4','g12c5','ch3','ch4','ch5','ch6','g9c1','g9c5'], CLASSIC=['g12c3','ch3','ch4','ch5','ch6','g9c1','g9c5'];
 const VIEWPORTS={phone:{width:390,height:844},ipad:{width:1180,height:820},board:{width:1920,height:1080}};
 const want=id=>!ONLY.length||ONLY.includes(id);
 
