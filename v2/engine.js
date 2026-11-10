@@ -88,7 +88,7 @@ function stepHTML(st,les,si,ki){
       case 'ul': h+=`<ul>${p.items.map(i=>`<li>${T(i)}</li>`).join('')}</ul>`; break;
       case 'law': h+=`<div class="law"><span class="lbl">${T(p.v)}</span><div>${p.lines.map(x=>x.startsWith('$$')&&!x.slice(2).includes('$$')?`<span class="big tex" data-tex="${esc(x.slice(2).trim()).replace(/"/g,'&quot;')}"></span>`:`<p>${T(x)}</p>`).join('')}</div></div>`; break;
       case 'xp': h+=`<div class="xp"><span class="xl">${p.v?T(p.v):'خطوة توضيحية'}</span><div>${p.lines.map(x=>`<p>${LN(x)}</p>`).join('')}</div></div>`; break;
-      case 'let': h+=`<div class="let"><div class="lh"><b>${p.v?T(p.v):'نفرض'}</b><span class="xl">ترتيب المعطيات · توضيح</span></div><div class="lg">${p.lines.map(x=>{ const c=x.split(' ; '); return `<div class="lr"><span class="ls">${T(c[0]||'')}</span><span class="lm">${T(c[1]||'')}</span><span class="lv">${T(c[2]||'')}</span></div>`; }).join('')}</div></div>`; break;
+      case 'let': h+=`<div class="let"><div class="lh"><b>${p.v?T(p.v):'نفرض'}</b><span class="xl">توضيح</span></div><div class="lg">${p.lines.map(x=>{ const c=x.replace(/\s;\s*$/,'').split(' ; '); return `<div class="lr"><span class="ls">${T(c[0]||'')}</span><span class="lm">${T(c[1]||'')}</span><span class="lv">${T(c[2]||'')}</span></div>`; }).join('')}</div></div>`; break;
       case 'rel': { const ex=p.v.startsWith('» '); h+=`<div class="rel${ex?' rx':''}"><span>${T(ex?p.v.slice(2):p.v)}</span></div>`; break; }
       case 'tnote': h+=`<div class="tnote"><b>للمدرّس:</b> ${lines(p)}</div>`; break;
       case 'note': h+=`<div class="note">${lines(p)}</div>`; break;
