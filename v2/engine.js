@@ -160,6 +160,7 @@ function renderHome(){
    <div class="lessons">${LES.map((l,i)=>{ const n=exDone(l); return `<a class="lcard" href="#l=${l.id}"><span class="no"><span>${esc(/^\d/.test(l.no)?'['+l.no+']':l.no)}</span><span class="pg">ص ${esc(l.pg)}</span></span><b>${T(l.t)}</b><p>${T(l.d)}</p>
      <span class="st">${ST.seen[l.id]?'<span class="okb">✓ مكتمل</span>':`الدرس ${i+1}`}${l.nEx?`<span class="mini"><i style="width:${Math.round(n/l.nEx*100)}%"></i></span><span>${n}/${l.nEx}</span>`:''}</span></a>`; }).join('')}</div>
    ${B.classic?`<p class="classic">تفضّل الكتاب بصفحاته؟ <a href="${B.classic}">افتح النسخة الكلاسيكية</a></p>`:''}`;
+  tags.home();
   $('#home').insertAdjacentHTML('beforeend',`<p class="credit home-credit">${CREDIT} · © 2026 جميع الحقوق محفوظة</p>`);
   typeset($('#home')); scrollTo({top:0,behavior:'instant'}); $('#prog').style.width='0';
   try{ $('#shN').value=localStorage.getItem('lb-name')||''; }catch(e){}
@@ -181,7 +182,7 @@ function renderLesson(les){
   let prevSc=null, h='';
   les.secs.forEach((sec,si)=>{ h+=`<section class="sec" data-sec="${esc(sec.t)}" data-stg="${esc(sec.stg||'')}" id="s${si}">`;
     sec.steps.forEach((st,ki)=>{ const sc=st.sc&&B.S[st.sc]?st.sc:prevSc; if(st.sc&&!B.S[st.sc]) console.warn('scene?',st.sc); prevSc=sc;
-      h+=`<div class="step ${st.cls.join(' ')}" data-scene="${esc(sc||'')}">${stepHTML(st,les,si,ki)}</div>`; });
+      h+=`<div class="step ${st.cls.join(' ')}" data-scene="${esc(sc||'')}" data-key="${les.id}-${si}-${ki}" id="k-${les.id}-${si}-${ki}">${stepHTML(st,les,si,ki)}</div>`; });
     h+='</section>'; });
   const i=LES.indexOf(les), nx=LES[i+1];
   h+=`<section class="sec" data-sec="التالي" id="sEnd"><div class="summary step" data-scene="${esc(prevSc||'')}"><h2>أحسنت!</h2><p>أنهيت درس «${T(les.t)}».</p><p class="credit">${CREDIT}</p><div class="lnav">${nx?`<a href="#l=${nx.id}"><span><small>الدرس التالي · ${esc(/^\d/.test(nx.no)?'['+nx.no+']':nx.no)}</small><br>${T(nx.t)}</span><span>←</span></a>`:''}<a href="#"><span>كل دروس الفصل</span><span>←</span></a><a href="#l=${les.id}" data-top><span>إعادة الدرس من أوله</span><span>↑</span></a></div></div></section>`;
@@ -194,7 +195,8 @@ function renderLesson(les){
   $$('button',sb).forEach(b=>b.onclick=()=>{ const sec=secs.find(x=>x.dataset.stg===b.dataset.stg); const st=sec&&$('.step',sec); if(st) activate(st,1); });
   $$('a',outline).forEach(a=>a.onclick=e=>{ e.preventDefault(); secs[+a.dataset.s].scrollIntoView({behavior:'smooth'}); });
   $$('[data-top]',story).forEach(a=>a.onclick=e=>{ e.preventDefault(); scrollTo({top:0,behavior:'smooth'}); });
-  wire(les); cur=null; from=null; scrollTo({top:0,behavior:'instant'}); requestAnimationFrame(()=>{ size(); pick(); });
+  wire(les); cur=null; from=null; tags.apply(); scrollTo({top:0,behavior:'instant'}); requestAnimationFrame(()=>{ size(); pick();
+    const km=location.hash.match(/k=([\w-]+)/), kt=km&&D.getElementById('k-'+km[1]); if(kt){ activate(kt,1); kt.classList.add('flash'); setTimeout(()=>kt.classList.remove('flash'),2200); } });
 }
 function route(){ const m=location.hash.match(/l=([\w-]+)/), les=m&&LES.find(l=>l.id===m[1]); if(les) renderLesson(les); else { curLes=null; renderHome(); } }
 addEventListener('hashchange',route);
@@ -555,7 +557,50 @@ $('#bRole').onclick=()=>{ role.set(role.get()==='teacher'?'student':'teacher'); 
 const gate=(row,fb)=>{ if(role.get()==='teacher') return true; if(row.dataset.tried) return true; const hb=row.querySelector('[data-hint]'); if(hb&&hb.disabled) return true;
   fb.textContent='جرّب أولاً: اكتب جوابك واضغط «تحقّق»'+(hb?' أو اطلب التلميحات':'')+'، ثم يُفتح الحل.'; fb.className='fb'; return false; };
 
-window.LB={go,draw,LES,num,nums,same,ink,role};
+/* ================= exam-year tags («وزاري») =================
+   The teacher tags a question with the years it appeared in a ministerial exam.
+   Published tags: v2/tags.json (edited on GitHub, fetched fresh, never precached so edits reach students).
+   Teacher's own tags: localStorage, merged over the published ones (an empty list hides a published tag). */
+const ROUNDS=['الدور الأول','الدور الثاني','الدور الثالث','التمهيدي','خارج القطر','دور مكمّل'];
+const tags=(()=>{ const LK='lb-tags-'+B.id, PK='lb-tagspub';
+  let pub={}, loc={};
+  try{ pub=(JSON.parse(localStorage.getItem(PK)||'{}')[B.id])||{}; }catch(e){}
+  try{ loc=JSON.parse(localStorage.getItem(LK)||'{}'); }catch(e){}
+  const get=k=>Array.isArray(loc[k])?loc[k]:(pub[k]||[]);
+  const all=()=>{ const o={}; new Set([...Object.keys(pub),...Object.keys(loc)]).forEach(k=>{ const v=get(k); if(v.length) o[k]=v; }); return o; };
+  const saveLoc=()=>{ try{ localStorage.setItem(LK,JSON.stringify(loc)); }catch(e){} };
+  const lab=t=>`وزاري ${esc(t.y)}${t.d?' · '+esc(t.d):''}`;
+  const sorted=v=>v.slice().sort((a,b)=>(+b.y||0)-(+a.y||0));
+  const eligible=st=>st.querySelector(':scope > h1,:scope > h2,.prac,.self');
+  function paint(st){ const k=st.dataset.key, v=sorted(get(k)); let box=st.querySelector(':scope > .exams');
+    if(!box){ box=D.createElement('div'); box.className='exams'; const after=st.querySelector(':scope > .kind,:scope > .sn,:scope > .lbl'); after?after.parentNode.insertBefore(box,[...st.querySelectorAll(':scope > .kind,:scope > .sn,:scope > .lbl')].pop().nextSibling):st.prepend(box); }
+    box.innerHTML=v.map((t,i)=>`<span class="kind k-exam">${lab(t)}<button type="button" class="tx" data-tx="${i}" aria-label="حذف ${lab(t)}">×</button></span>`).join('')+`<button type="button" class="tadd" data-tadd>＋ وزاري</button><form class="tform" hidden><input inputmode="numeric" maxlength="9" placeholder="السنة مثل 2013" aria-label="سنة الامتحان" required><select aria-label="الدور">${ROUNDS.map(r=>`<option>${r}</option>`).join('')}<option value="">بدون</option></select><button class="btn small">حفظ</button><button type="button" class="btn ghost small" data-tcancel>إلغاء</button></form>`;
+    box.hidden=!v.length&&!eligible(st); st.classList.toggle('has-exam',!!v.length);
+    const f=$('form',box);
+    $('[data-tadd]',box).onclick=()=>{ f.hidden=false; $('input',f).focus(); };
+    $('[data-tcancel]',box).onclick=()=>{ f.hidden=true; };
+    f.onsubmit=e=>{ e.preventDefault(); const y=$('input',f).value.trim().replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)); if(!/^\d{4}(\s*[-/]\s*\d{2,4})?$/.test(y)){ ink.say('اكتب السنة بأرقام، مثل 2013'); return; }
+      const d=$('select',f).value, cur=get(k).slice(); if(!cur.some(t=>t.y===y&&t.d===d)) cur.push(d?{y,d}:{y}); loc[k]=cur; saveLoc(); paint(st); ink.say('أُضيف: '+lab(d?{y,d}:{y})+' — على هذا الجهاز'); };
+    $$('[data-tx]',box).forEach(b=>b.onclick=()=>{ const t=v[+b.dataset.tx], cur=get(k).filter(x=>!(x.y===t.y&&(x.d||'')===(t.d||''))); loc[k]=cur; saveLoc(); paint(st); ink.say('حُذف الوسم من هذا الجهاز'); });
+  }
+  const apply=()=>{ if(curLes) $$('.step[data-key]',story).forEach(paint); };
+  function home(){ const o=all(), ks=Object.keys(o).filter(k=>LES.some(l=>k.startsWith(l.id+'-'))); const h=$('#home'); let x='';
+    if(ks.length){ const rows=ks.map(k=>{ const l=LES.find(l=>k.startsWith(l.id+'-')), m=k.slice(l.id.length+1).split('-'), st=l.secs[+m[0]]&&l.secs[+m[0]].steps[+m[1]];
+        const nm=st?((st.parts.find(p=>p.k==='h2'||p.k==='h1')||{}).v||st.lbl||(st.parts.find(p=>p.k==='k')||{}).v||'سؤال'):''; return {k,l,nm,v:sorted(o[k])}; })
+        .sort((a,b)=>(+b.v[0].y||0)-(+a.v[0].y||0));
+      x=`<section class="exlist"><h2>أسئلة وزارية في هذا الفصل <small>${rows.length}</small></h2><ul>${rows.map(r=>`<li><a href="#l=${r.l.id}&k=${r.k}"><span>${r.v.map(t=>`<span class="kind k-exam">${lab(t)}</span>`).join('')}</span><b>${T(String(r.nm))}</b><small>${esc(/^\d/.test(r.l.no)?'['+r.l.no+']':r.l.no)} ${T(r.l.t)}</small></a></li>`).join('')}</ul></section>`; }
+    x+=`<div class="tagtools"><b>وسوم «وزاري» (للمدرّس)</b><p>في وضع المدرّس يظهر زر «＋ وزاري» تحت كل مثال وتمرين. ما تضيفه يُحفظ على هذا الجهاز؛ لنشره للطلاب انسخه وأرسله لتحديث الملف المنشور.</p><button type="button" class="btn small" id="tgCopy">نسخ الوسوم</button><button type="button" class="btn ghost small" id="tgReset">إرجاع الوسوم المنشورة</button><pre id="tgOut" hidden></pre></div>`;
+    h.insertAdjacentHTML('beforeend',x);
+    $('#tgCopy').onclick=async()=>{ const txt=JSON.stringify({[B.id]:all()},null,1); const pre=$('#tgOut'); pre.hidden=false; pre.textContent=txt;
+      try{ await navigator.clipboard.writeText(txt); ink.say('نُسخت الوسوم: الصقها في رسالة'); }catch(e){ ink.say('انسخ النص الظاهر يدوياً'); } };
+    $('#tgReset').onclick=()=>{ if($('#tgReset').dataset.sure!=='1'){ $('#tgReset').dataset.sure='1'; $('#tgReset').textContent='اضغط مرة أخرى لتأكيد حذف وسومك المحلية'; return; } loc={}; saveLoc(); route(); ink.say('أُعيدت الوسوم المنشورة'); };
+  }
+  fetch(new URL('tags.json',location.href),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{ if(!j) return;
+    try{ localStorage.setItem(PK,JSON.stringify(j)); }catch(e){} const n=j[B.id]||{}; if(JSON.stringify(n)===JSON.stringify(pub)) return; pub=n;
+    if(curLes) apply(); else route(); }).catch(()=>{});
+  return {apply,home,all,get}; })();
+
+window.LB={go,draw,LES,num,nums,same,ink,role,tags};
 (d=>{ const s=d.createElement('script'); s.src='../update.js'; d.head.append(s); })(document);
 route();
 booted=true;

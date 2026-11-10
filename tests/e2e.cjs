@@ -80,6 +80,20 @@ async function page(b,vp='board',o={}){ const ctx=o.ctx||await b.newContext({vie
   await pg.reload(); await pg.waitForSelector('#stages button'); r.persist=await pg.evaluate(()=>LB.role.get()); r.kinds=await pg.$$eval('.kind',k=>[...new Set(k.map(x=>x.textContent))]);
   const ok=r.stages.length===6&&r.noteHidden&&r.noteShown&&r.teacherSol&&r.jump==='practice'&&r.jump2==='check'&&r.persist==='teacher'&&r.kinds.length>=3&&!errs.length;
   rec('T21','وضع المدرّس/الطالب، ملاحظات المدرّس، القفز إلى المراحل الست، وسوم نوع المحتوى',ok,JSON.stringify(r)+' '+errs.join('|')); await ctx.close(); }
+ /* T22 exam-year tags: teacher adds/removes «وزاري», badge persists, home list links back */
+ if(want('T22')){ const {ctx,pg,errs}=await page(b,'ipad'); await pg.addInitScript(()=>{ try{ localStorage.setItem('lb-role','teacher'); }catch(e){} });
+  await pg.goto(BASE+'v2/g12c3.html#l=rates'); await pg.waitForSelector('.tadd'); const r={};
+  r.btns=await pg.$$eval('.tadd',b=>b.filter(x=>x.offsetParent).length);
+  const st=await pg.evaluateHandle(()=>document.querySelector('.tadd').closest('.step')); r.key=await st.evaluate(s=>s.dataset.key);
+  await (await st.$('.tadd')).click(); await (await st.$('.tform input')).fill('٢٠١٣'); await (await st.$('.tform select')).selectOption('الدور الثاني'); await (await st.$('.tform .btn')).click();
+  r.badge=await st.evaluate(s=>s.querySelector('.k-exam')?.textContent.replace('×','').trim());
+  await pg.reload(); await pg.waitForSelector('.k-exam'); r.persist=await pg.$eval('.k-exam',e=>e.textContent.replace('×','').trim());
+  await pg.click('#bRole'); r.studentNoAdd=await pg.$$eval('.tadd',b=>b.filter(x=>x.offsetParent).length===0); r.studentBadge=await pg.$eval('.k-exam',e=>!!e.offsetParent);
+  await pg.click('#bRole'); await pg.goto(BASE+'v2/g12c3.html'); await pg.waitForSelector('.exlist a'); r.homeHref=await pg.$eval('.exlist a',a=>a.getAttribute('href'));
+  await pg.click('.exlist a'); await pg.waitForTimeout(1300); r.jumped=await pg.evaluate(()=>document.querySelector('.step.on')?.dataset.key);
+  await pg.click('.step.on .k-exam .tx'); r.removed=await pg.evaluate(()=>!document.querySelector('.step.on .k-exam'));
+  const ok=r.btns>3&&r.badge==='وزاري 2013 · الدور الثاني'&&r.persist===r.badge&&r.studentNoAdd&&r.studentBadge&&r.jumped===r.key&&r.removed&&!errs.length;
+  rec('T22','وسوم «وزاري»: إضافة المدرّس للسنة والدور، الحفظ، الإظهار للطالب، قائمة الفصل، الحذف',ok,JSON.stringify(r)+' '+errs.join('|')); await ctx.close(); }
  if(want('T12')){ const {ctx,pg}=await page(b); await pg.goto(BASE+'v2/g12c4.html#l=ftc'); await pg.waitForSelector('.step'); await pg.click('#bTools').catch(()=>{}); const z=await pg.$('[data-tool="zoom"],#bZoom');
   let ok=false; if(z){ const f0=await pg.evaluate(()=>parseFloat(getComputedStyle(document.querySelector('.story')).fontSize)); await z.click(); const f1=await pg.evaluate(()=>parseFloat(getComputedStyle(document.querySelector('.story')).fontSize)); ok=f1>f0; }
   rec('T12','تكبير النص والمعادلات في التصميم الجديد',ok,z?'':'لا يوجد زر تكبير'); await ctx.close(); }

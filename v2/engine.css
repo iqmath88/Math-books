@@ -287,3 +287,29 @@ nav.outline a{color:var(--ink2)}
 
 .credit{font-size:13px;opacity:.85;margin-top:10px}
 .home-credit{text-align:center;color:var(--muted);margin:28px 0 12px}
+
+/* exam-year tags («وزاري») */
+.exams{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;margin:0 0 8px}
+.exams:empty{display:none}
+.k-exam{color:#8a4b00;border-color:#e7b469;background:#fff4e2;margin:0}
+.k-exam .tx{display:none;border:0;background:none;color:inherit;font:inherit;font-weight:700;padding:0 0 0 2px;margin-inline-start:4px;cursor:pointer;min-width:22px}
+.tadd{display:none;border:1px dashed #d9a24f;background:none;color:#8a4b00;border-radius:99px;padding:2px 10px;font:inherit;font-size:12.5px;cursor:pointer}
+html[data-role="teacher"] .tadd,html[data-role="teacher"] .k-exam .tx{display:inline-block}
+html:not([data-role="teacher"]) .exams .tform{display:none}
+.tform{display:flex;flex-wrap:wrap;gap:6px;align-items:center;width:100%;margin-top:4px}
+.tform[hidden]{display:none}
+.tform input,.tform select{font:inherit;font-size:15px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.tform input{width:9em}
+html:not([data-role="teacher"]) .exams:not(:has(.k-exam)){display:none}
+.step.flash{animation:exflash 2s ease}
+@keyframes exflash{0%,40%{box-shadow:0 0 0 4px #e7b469}100%{box-shadow:none}}
+.exlist{margin:22px 0}.exlist h2{font-size:19px;margin:0 0 10px}.exlist h2 small{font-size:13px;color:var(--ink2)}
+.exlist ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.exlist a{display:flex;flex-direction:column;gap:4px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);text-decoration:none}
+.exlist a>span{display:flex;flex-wrap:wrap;gap:4px}.exlist a small{color:var(--ink2)}
+.tagtools{display:none;margin:18px 0;padding:12px 14px;border:1px dashed var(--line);border-radius:12px;font-size:14px}
+html[data-role="teacher"] .tagtools{display:block}
+.tagtools p{margin:4px 0 8px;color:var(--ink2)}.tagtools .btn{margin:0 0 6px 6px}
+.tagtools pre{white-space:pre-wrap;direction:ltr;text-align:left;font-size:12px;max-height:200px;overflow:auto;background:var(--surface2);padding:8px;border-radius:8px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .k-exam{color:#ffcf8a;background:#3a2a12;border-color:#7a5523}}
+:root[data-theme="dark"] .k-exam{color:#ffcf8a;background:#3a2a12;border-color:#7a5523}
