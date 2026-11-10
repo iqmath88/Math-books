@@ -212,3 +212,10 @@ body:not(.is-home) .home{display:none}
 .hb[hidden]{display:none}
 .step.gap{margin-top:8vh}
 [hidden]{display:none!important}
+
+/* explanatory steps added by the app (not book text) */
+.xp{border:1.5px dashed color-mix(in srgb,var(--tan) 70%,transparent);background:color-mix(in srgb,var(--tan) 5%,var(--surface));border-radius:12px;padding:10px 14px 8px;margin:10px 0}
+.xp .xl,.xpl::before{display:inline-block;font-size:.72em;font-weight:700;color:var(--tan);border:1px solid color-mix(in srgb,var(--tan) 50%,transparent);border-radius:99px;padding:1px 8px;margin-bottom:4px}
+.xp p{margin:4px 0}
+.xpl{display:inline;color:var(--ink2)}
+.xpl::before{content:'توضيح';margin:0 0 0 6px;padding:0 7px;vertical-align:1px}

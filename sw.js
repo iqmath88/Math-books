@@ -7,7 +7,7 @@ const CORE = [
   './classroom-v2.css', './classroom-v2.js', './practice.css', './practice.js',
   './ch3.html', './ch4.html', './ch5.html', './ch6.html',
   './g9c1.html', './g9c5.html', './g12c3.html',
-  './v2/engine.css', './v2/engine.js', './v2/g12c3.html', './v2/g12c3.js',
+  './v2/engine.css', './v2/engine.js', './v2/g12c3.html', './v2/g12c3.js', './v2/g12c4.html', './v2/g12c4.js',
   './v2/ch3.html', './v2/ch3.js', './v2/ch4.html', './v2/ch4.js', './v2/ch5.html', './v2/ch5.js', './v2/ch6.html', './v2/ch6.js',
   './v2/g9c1.html', './v2/g9c1.js', './v2/g9c5.html', './v2/g9c5.js',
   './v2/lib/fonts/plex-ar-400.woff2',

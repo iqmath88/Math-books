@@ -7,7 +7,7 @@ const B=window.BOOK, D=document, root=D.documentElement;
 const $=(s,r=D)=>r.querySelector(s), $$=(s,r=D)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 /* isolate Latin/number runs inside Arabic text so that "(2 , 8)" and "a ، b" keep their order */
-const iso=s=>{ s=String(s); return /[\u0600-\u06FF]/.test(s)?s.replace(/[^\u0600-\u06FF]+/g,m=>/[A-Za-z0-9]/.test(m)?m.replace(/^([^A-Za-z0-9(\[√−+-]*)([\s\S]*?)(\s*)$/,(_,a,b,c)=>a+'\u2066'+b+'\u2069'+c):m):s; };
+const iso=s=>{ s=String(s); return /[\u0600-\u06FF]/.test(s)?s.replace(/[^\u0600-\u06FF]+/g,m=>/[A-Za-z0-9]/.test(m)?m.replace(/^([^A-Za-z0-9(\[√−+-]*)([\s\S]*?)(\s*)$/,(_,a,b,c)=>a+'\u2066'+b+'\u2069'+c):m):/[A-Za-z0-9]/.test(s)?'\u2066'+s+'\u2069':s; };
 
 /* ================= markup → lessons ================= */
 function parse(src){
@@ -26,18 +26,18 @@ function parse(src){
     if(!st) continue;
     if(s.startsWith('| ')||s==='|'){ if(box) box.lines.push(s.slice(2)); continue; }
     const m=s.match(/^([a-z0-9*]+):\s?(.*)$/);
-    if(m&&['k','p','h1','h2','lead','law','note','err','ask','o','o*','why','prac','sol','self','ok','tbl','tbh','html','fig'].includes(m[1])){
+    if(m&&['k','p','h1','h2','lead','law','note','err','ask','o','o*','why','prac','sol','self','ok','tbl','tbh','html','fig','xp'].includes(m[1])){
       const [ ,key,val]=m; flushList();
       if(key==='o'||key==='o*'){ const q=st.parts.findLast(p=>p.k==='ask'); if(q){ if(key==='o*') q.ans=q.o.length; q.o.push(val); } continue; }
       if(key==='ok'){ const q=st.parts.findLast(p=>p.k==='prac'||p.k==='self'); if(q) q.ok=val; continue; }
       if(key==='tbl'||key==='tbh'){ let t=st.parts.at(-1); if(!t||t.k!=='tbl'){ t={k:'tbl',rows:[]}; st.parts.push(t); } t.rows.push({h:key==='tbh',c:val.split('|').map(x=>x.trim())}); continue; }
       const p={k:key,v:val,lines:val?[val]:[]};
-      if(key==='law'){ p.lines=[]; }
+      if(key==='law'||key==='xp'){ p.lines=[]; }
       if(key==='prac'){ const [ans,ph]=val.split(';').map(x=>x.trim()); p.ans=ans; p.ph=ph||'الجواب'; p.lines=[]; }
       if(key==='self'){ p.lines=[]; }
       if(key==='ask'){ p.o=[]; p.ans=0; }
       if(key==='sol'||key==='why'){ const q=st.parts.findLast(x=>['prac','self','ask'].includes(x.k)); if(q){ q[key]=p; } }
-      st.parts.push(p); box=['law','note','err','sol','why','self','html','lead'].includes(key)?p:null; continue; }
+      st.parts.push(p); box=['law','note','err','sol','why','self','html','lead','xp'].includes(key)?p:null; continue; }
     if(s.startsWith('$$')){ flushList(); st.parts.push({k:'m',v:s.slice(2).trim()}); box=null; continue; }
     if(s.startsWith('- ')){ if(!list){ list={k:'ul',items:[]}; st.parts.push(list); } list.items.push(s.slice(2)); box=null; continue; }
     flushList(); st.parts.push({k:'p',v:s}); box=null;
@@ -56,7 +56,8 @@ function T(s){
     const mm=r.match(/^([^A-Za-z0-9(\[√−+\-|]*)([\s\S]*?)([\s.،:؛]*)$/); return mm[1]+(mm[2]?`<bdi dir="ltr">${mm[2]}</bdi>`:'')+mm[3]; }));
   return s.replace(/[-]/g,c=>keep[c.charCodeAt(0)-0xE000]);
 }
-const lines=p=>p.lines.map(T).join('<br>');
+const LN=x=>x.startsWith('» ')?`<span class="xpl">${T(x.slice(2))}</span>`:x.startsWith('$$')&&!x.slice(2).includes('$$')?`<span class="big tex" data-tex="${esc(x.slice(2).trim()).replace(/"/g,'&quot;')}"></span>`:T(x);
+const lines=p=>p.lines.map(LN).join('<br>');
 const MAC={"\\cf":"\\htmlClass{tk-f}{#1}","\\cch":"\\htmlClass{tk-chord}{#1}","\\ctn":"\\htmlClass{tk-tan}{#1}","\\ccc":"\\htmlClass{tk-c}{#1}","\\cin":"\\htmlClass{tk-int}{#1}","\\cok":"\\htmlClass{tk-ok}{#1}","\\cbad":"\\htmlClass{tk-bad}{#1}","\\R":"R"};
 function typeset(r){ $$('.tex',r).forEach(el=>{ try{ katex.render(el.dataset.tex,el,{trust:true,strict:false,throwOnError:false,displayMode:false,macros:{...MAC}}); el.classList.add('m'); el.setAttribute('dir','ltr'); }catch(e){ el.textContent=el.dataset.tex; } }); }
 
@@ -72,6 +73,7 @@ function stepHTML(st,les,si,ki){
       case 'm': h+=`<div class="mathline tex" data-tex="${esc(p.v).replace(/"/g,'&quot;')}"></div>`; break;
       case 'ul': h+=`<ul>${p.items.map(i=>`<li>${T(i)}</li>`).join('')}</ul>`; break;
       case 'law': h+=`<div class="law"><span class="lbl">${T(p.v)}</span><div>${p.lines.map(x=>x.startsWith('$$')&&!x.slice(2).includes('$$')?`<span class="big tex" data-tex="${esc(x.slice(2).trim()).replace(/"/g,'&quot;')}"></span>`:`<p>${T(x)}</p>`).join('')}</div></div>`; break;
+      case 'xp': h+=`<div class="xp"><span class="xl">${p.v?T(p.v):'خطوة توضيحية'}</span><div>${p.lines.map(x=>`<p>${LN(x)}</p>`).join('')}</div></div>`; break;
       case 'note': h+=`<div class="note">${lines(p)}</div>`; break;
       case 'err': h+=`<div class="err"><b>تنبيه على خطأ في الكتاب:</b> ${lines(p)}</div>`; break;
       case 'html': h+=p.lines.join('\n'); break;
@@ -161,13 +163,15 @@ addEventListener('hashchange',route);
 
 /* ================= interactions inside the story ================= */
 function num(s){ s=String(s).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[−–]/g,'-').replace(/٫/g,'.').replace(/×/g,'*').replace(/÷/g,'/').replace(/\s/g,'');
+  s=s.replace(/(\d*)([½⅓⅔¼¾])/g,(m,d,f)=>'('+(d||0)+'+'+{'½':'1/2','⅓':'1/3','⅔':'2/3','¼':'1/4','¾':'3/4'}[f]+')');
   s=s.replace(/π/g,'(PI)').replace(/\bpi\b/gi,'(PI)').replace(/²/g,'^2').replace(/³/g,'^3');
   s=s.replace(/∛\(/g,'cbrt(').replace(/√\(/g,'sqrt(').replace(/∛([0-9.]+)/g,'cbrt($1)').replace(/√([0-9.]+|\(PI\))/g,'sqrt($1)');
-  s=s.replace(/(\d|\))(\(|sqrt|cbrt)/g,'$1*$2');
-  if(!/^[-+*/^0-9.()a-zA-Z]*$/.test(s)||/[a-zA-Z]/.test(s.replace(/sqrt|cbrt|PI/g,''))) return NaN;
-  s=s.replace(/\^/g,'**').replace(/sqrt/g,'Math.sqrt').replace(/cbrt/g,'Math.cbrt').replace(/PI/g,'Math.PI');
+  s=s.replace(/ln\(/g,'LN(').replace(/ln([0-9.]+|\(PI\))/g,'LN($1)').replace(/(^|[^a-zA-Z])e(?![a-zA-Z])/g,'$1(EE)');
+  s=s.replace(/(\d|\))(\(|sqrt|cbrt|LN)/g,'$1*$2');
+  if(!/^[-+*/^0-9.()a-zA-Z]*$/.test(s)||/[a-zA-Z]/.test(s.replace(/sqrt|cbrt|PI|LN|EE/g,''))) return NaN;
+  s=s.replace(/\^/g,'**').replace(/sqrt/g,'Math.sqrt').replace(/cbrt/g,'Math.cbrt').replace(/PI/g,'Math.PI').replace(/LN/g,'Math.log').replace(/EE/g,'Math.E');
   try{ const v=Function('"use strict";return ('+s+')')(); return typeof v==='number'?v:NaN; }catch(e){ return NaN; } }
-function nums(s){ s=String(s).replace(/[−–]/g,'-').replace(/\b[a-zA-Z]\s*=/g,'').replace(/[a-zA-Z]+[²³]?(\/[a-zA-Z]+)?/g,m=>/^(pi|sqrt|cbrt)$/i.test(m)?m:'');
+function nums(s){ s=String(s).replace(/[−–]/g,'-').replace(/\b[a-zA-Z]\s*=/g,'').replace(/[a-zA-Z]+[²³]?(\/[a-zA-Z]+)?/g,m=>/^(pi|sqrt|cbrt|ln|e)$/i.test(m.replace(/[²³]$/,''))?m:'');
   s=s.replace(/\(([^()]*[,،][^()]*)\)/g,'$1');
   const out=[], dec=[]; for(let part of s.split(/[,،;؛]|\sو\s?|\sأو\s|\bor\b/)){ part=part.trim(); if(!part) continue;
     const m=part.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/٫/g,'.').match(/^[-+]?\d*\.(\d+)$/), d=m?m[1].length:0;
