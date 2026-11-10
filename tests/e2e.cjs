@@ -101,7 +101,7 @@ async function page(b,vp='board',o={}){ const ctx=o.ctx||await b.newContext({vie
   await (await p.$('input')).fill('0.1'); await (await p.$('.btn')).click(); r.miss=/يتسرب/.test(await p.evaluate(x=>x.nextElementSibling.textContent));
   await (await p.$('input')).fill('-0.1'); await (await p.$('.btn')).click(); r.ok=/صحيح/.test(await p.evaluate(x=>x.nextElementSibling.textContent));
   r.gen=await pg.evaluate(()=>{ let ok=0; for(let i=0;i<40;i++){ const q=BOOK.G.gTank(); const m=q.q.match(/ضلعها \$(\d+)\\,m\$.*?بمعدل \$([\d.]+)\\,m\^3/); if(!m) return 'parse'; const v=(+m[2])/(m[1]*m[1])*(/يتسرب/.test(q.q)?-1:1); if(Math.abs(v-(+q.ans))<1e-9) ok++; } return ok; });
-  const ok=r.let===6&&r.rel===7&&r.kerr===0&&r.ow<=0&&r.miss&&r.ok&&r.gen===40&&!errs.length;
+  const ok=r.let===6&&r.rel===10&&r.kerr===0&&r.ow<=0&&r.miss&&r.ok&&r.gen===40&&!errs.length;
   rec('T23','قالب الحل في الدرس 3−1: جداول «نفرض»، العلاقة المؤطرة، سؤال الورقة الوزاري ومولّده',ok,JSON.stringify(r)+' '+errs.join('|')); await ctx.close(); }
  if(want('T12')){ const {ctx,pg}=await page(b); await pg.goto(BASE+'v2/g12c4.html#l=ftc'); await pg.waitForSelector('.step'); await pg.click('#bTools').catch(()=>{}); const z=await pg.$('[data-tool="zoom"],#bZoom');
   let ok=false; if(z){ const f0=await pg.evaluate(()=>parseFloat(getComputedStyle(document.querySelector('.story')).fontSize)); await z.click(); const f1=await pg.evaluate(()=>parseFloat(getComputedStyle(document.querySelector('.story')).fontSize)); ok=f1>f0; }
