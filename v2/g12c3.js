@@ -302,19 +302,6 @@ S.o6={v:[-5,5,-.5,7],eq:1,title:'أقرب نقطة من القطع الزائد 
 S.oSteps={v:[0,6,0,140],title:'خطوات حل مسائل القيم العظمى والصغرى',hint:'نكوّن الدالة في متغير واحد ونحدد مجالها',f:x=>x*(12-2*x)**2,a:0,b:6,pts:[[2,128,'القيمة العظمى','tan']]};
 
 /* ---------- reference lesson 3−1: ladder against time (discover / try) ---------- */
-function ladderTime(o){ return {title:o.title,hint:o.hint,sl:{min:0,max:4.6,v:o.v??0,step:.01,play:o.play?1:0,speed:.35,lab:'الزمن t (ثانية)',fmt:v=>fr(v,2)},
- draw(A){ const t=A.p, x=.5+2*t, y=sq(Math.max(0,100-x*x)), vy=y>1e-6?-2*x/y:-Infinity, c=A.col, W=A.W, H=A.H;
-  const gw=W*.52, sc=Math.min((gw-30)/11,(H-60)/11), oy=(H-11*sc)/2+11*sc, X=u=>16+u*sc, Y=v=>oy-v*sc;
-  A.el('path',{d:`M${X(0)} ${Y(0)}H${X(11)}M${X(0)} ${Y(0)}V${Y(11)}`,stroke:c.ink2,'stroke-width':3});
-  A.el('path',{d:`M${X(x)} ${Y(0)}L${X(0)} ${Y(y)}`,stroke:c.f,'stroke-width':6,'stroke-linecap':'round'});
-  arrow(A,X(x),Y(0)-10,X(x)+34,Y(0)-10,'chord'); if(isFinite(vy)) arrow(A,X(0)+10,Y(y),X(0)+10,Y(y)+Math.min(120,-vy*12),'tan');
-  T(A,X(x/2),Y(0)+16,'x = '+fr(x,2),'chord',{size:12}); T(A,X(0)+16,Y(y/2),'y','tan',{anchor:'start'}); T(A,X(5.5),Y(10.6),'سلّم طوله 10 m','muted',{size:12});
-  const pr=A.subplot([gw+30,16,W-gw-46,H*.42],[0,4.6,0,10.5]); pr.axes('t','y'); pr.curve(u=>sq(Math.max(0,100-(.5+2*u)**2)),'tan',0,4.6,2.4); pr.pt(t,y,'tan');
-  const pd=A.subplot([gw+30,H*.52+8,W-gw-46,H*.42-12],[0,4.6,-20,0]); pd.axes('t','dy/dt'); pd.curve(u=>{ const xx=.5+2*u, yy=sq(Math.max(1e-9,100-xx*xx)); return -2*xx/yy; },'c',0,4.45,2.4); if(isFinite(vy)&&vy>-20) pd.pt(t,vy,'c');
-  A.chips.push(['chord','dx/dt','2 m/s'],['chord','x',fr(x,2)],['tan','y',fr(y,2)],['c','dy/dt',isFinite(vy)?fr(vy,3):'—']);
-  if(o.target){ A.ok=abs(x-8)<.06; if(A.ok) A.hint='✓ عند x = 8 : y = 6 ، dy/dt = −8/3 ≈ −2.667'; } }}; }
-S.rDisc=ladderTime({title:'سلّم ينزلق: الطرف الأسفل بسرعة ثابتة 2 m/s',hint:'راقب منحني dy/dt : هل هو ثابت؟',play:1,v:0});
-S.rTry=ladderTime({title:'جرّب: حرّك الزمن حتى يصبح x = 8',hint:'السلم 10 m ، والطرف الأسفل يبتعد 2 m/s',v:.5,target:1});
 
 /* ---------- «تمرين مشابه» generators (enrichment, not from the book) ---------- */
 const GEN={};
@@ -399,6 +386,89 @@ S.rCone.draw=function(A){ const h=A.p, r=h/3, g=fit(A,-14,14,-4.5,28.5), X=g.X, 
 /* right angle mark + wall label on the ladder */
 { const d0=S.rLadder.draw; S.rLadder.draw=function(A){ d0.call(this,A); const g=fit(A,-1.6,11.4,-1.6,11.2), X=g.X, Y=g.Y, q=12;
   A.el('path',{d:`M${X(0)+q} ${Y(0)}V${Y(0)-q}H${X(0)}`,stroke:A.col.ink2,'stroke-width':1.6,fill:'none'}); T(A,X(-.6),Y(10.4),'حائط','muted',{size:12}); T(A,X(10),Y(-.6),'أرض','muted',{size:12}); }; }
+
+/* ---------- realistic, draggable illustrations (3−1) ---------- */
+const WOOD='#b7772f', WOOD2='#8a5520';
+function bricks(A,x,y,w,h){ const c=A.col; A.el('rect',{x,y,width:w,height:h,fill:'#c8704a',opacity:.22,stroke:c.line});
+  const bh=14, bw=30; let d=''; for(let r=0;y+r*bh<y+h;r++){ const yy=y+r*bh; d+=`M${x} ${yy}H${x+w}`; for(let k=(r%2?bw/2:0);k<w;k+=bw) d+=`M${x+k} ${yy}V${Math.min(y+h,yy+bh)}`; }
+  A.el('path',{d,stroke:'#a5502f',opacity:.35,'stroke-width':1}); }
+function ground(A,x0,x1,y,h=16){ const c=A.col; A.el('rect',{x:x0,y,width:x1-x0,height:h,fill:'#7a5b3a',opacity:.25});
+  A.el('path',{d:`M${x0} ${y}H${x1}`,stroke:'#4f8a3c','stroke-width':4}); let d=''; for(let x=x0+4;x<x1;x+=9) d+=`M${x} ${y}l-2 -5M${x+3} ${y}l1 -6`; A.el('path',{d,stroke:'#4f8a3c','stroke-width':1.3,opacity:.8}); }
+/* ladder from foot (x1,y1) to top (x2,y2) in pixels: two rails + rungs */
+function ladderPx(A,x1,y1,x2,y2,wid=13){ const L=Math.hypot(x2-x1,y2-y1), ux=(x2-x1)/L, uy=(y2-y1)/L, nx=-uy*wid/2, ny=ux*wid/2;
+  const n=Math.max(4,Math.round(L/26)); let d=''; for(let k=1;k<n;k++){ const px=x1+ux*L*k/n, py=y1+uy*L*k/n; d+=`M${px+nx} ${py+ny}L${px-nx} ${py-ny}`; }
+  A.el('path',{d,stroke:WOOD,'stroke-width':4,'stroke-linecap':'round'});
+  [[1],[-1]].forEach(([s])=>A.el('path',{d:`M${x1+s*nx} ${y1+s*ny}L${x2+s*nx} ${y2+s*ny}`,stroke:WOOD2,'stroke-width':5.5,'stroke-linecap':'round'})); }
+/* walking person: feet at (x,y), height hp px, gait phase ph, facing +1 right */
+function person(A,x,y,hp,ph,face=1){ const c=A.col, s=hp/1.8, col=c.ink2, sw=Math.sin(ph)*.32;
+  const hip=[x,y-0.95*s], neck=[x+face*.04*s,y-1.5*s], head=[x+face*.06*s,y-1.66*s];
+  const leg=a=>`M${hip[0]} ${hip[1]}L${hip[0]+Math.sin(a)*.5*s} ${hip[1]+Math.cos(a)*.48*s}L${hip[0]+Math.sin(a)*.95*s+face*.06*s} ${y}`;
+  A.el('path',{d:leg(sw)+leg(-sw),stroke:col,'stroke-width':Math.max(3,s*.09),'stroke-linecap':'round','stroke-linejoin':'round',fill:'none'});
+  A.el('path',{d:`M${hip[0]} ${hip[1]}L${neck[0]} ${neck[1]}`,stroke:c.f,'stroke-width':Math.max(5,s*.2),'stroke-linecap':'round'});
+  const arm=a=>`M${neck[0]} ${neck[1]+.05*s}L${neck[0]+Math.sin(a)*.32*s} ${neck[1]+.38*s}L${neck[0]+Math.sin(a)*.55*s} ${neck[1]+.68*s}`;
+  A.el('path',{d:arm(-sw)+arm(sw),stroke:col,'stroke-width':Math.max(2.6,s*.075),'stroke-linecap':'round',fill:'none'});
+  A.el('circle',{cx:head[0],cy:head[1],r:Math.max(5,s*.13),fill:'#e8b58c',stroke:col,'stroke-width':1.4}); }
+function lamp(A,x,y,top){ const c=A.col; A.el('path',{d:`M${x} ${y}V${top}`,stroke:'#5b6475','stroke-width':7,'stroke-linecap':'round'});
+  A.el('rect',{x:x-12,y:y-6,width:24,height:6,rx:2,fill:'#5b6475'});
+  [44,30,18].forEach((r,i)=>A.el('circle',{cx:x,cy:top,r,fill:'#ffd34d',opacity:[.12,.2,.35][i]})); A.el('circle',{cx:x,cy:top,r:9,fill:'#ffc21a',stroke:'#c58f00'}); }
+
+/* ladder vs time (discover / try): real ladder, wall, ground; drag the foot */
+function ladderTime(o){ return {title:o.title,hint:o.hint,anim:0,sl:{min:0,max:4.6,v:o.v??0,step:.01,play:o.play?1:0,speed:.35,lab:'الزمن t (ثانية)',fmt:v=>fr(v,2)},
+ pick(A,px,py){ const g=A._g; if(!g||px>A.W*.55) return null; return ((px-g.X0)/g.s-.5)/2; },
+ draw(A){ const t=A.p, x=.5+2*t, y=sq(Math.max(0,100-x*x)), vy=y>1e-6?-2*x/y:-Infinity, c=A.col, W=A.W, H=A.H;
+  const gw=W*.6, sc=Math.min((gw-40)/11,(H-70)/11), oy=(H-11*sc)/2+11*sc, X=u=>30+u*sc, Y=v=>oy-v*sc; A._g={s:sc,X0:30};
+  bricks(A,X(-.9),Y(11.2),X(0)-X(-.9),Y(0)-Y(11.2)); ground(A,X(-.9),X(11),Y(0));
+  ladderPx(A,X(x),Y(0),X(0)+4,Y(y));
+  arrow(A,X(x),Y(0)+24,X(x)+40,Y(0)+24,'chord'); if(isFinite(vy)) arrow(A,X(0)+22,Y(y),X(0)+22,Y(y)+Math.min(110,-vy*12),'tan');
+  A.el('circle',{cx:X(x),cy:Y(0),r:9,fill:c.chord,opacity:.25}); 
+  T(A,X(x/2),Y(0)+40,'x = '+fr(x,2)+' m','chord',{size:12}); T(A,X(0)+30,Y(y/2),'y = '+fr(y,2),'tan',{anchor:'start',size:12}); T(A,X(6.5),Y(4),'سلّم 10 m','muted',{size:12}); T(A,X(6.5),Y(4)+16,'اسحب قدم السلم','muted',{size:11.5});
+  const pr=A.subplot([gw+26,16,W-gw-42,H*.42],[0,4.6,0,10.5]); pr.axes('t','y'); pr.curve(u=>sq(Math.max(0,100-(.5+2*u)**2)),'tan',0,4.6,2.4); pr.pt(t,y,'tan');
+  const pd=A.subplot([gw+26,H*.52+8,W-gw-42,H*.42-12],[0,4.6,-20,0]); pd.axes('t','dy/dt'); pd.curve(u=>{ const xx=.5+2*u, yy=sq(Math.max(1e-9,100-xx*xx)); return -2*xx/yy; },'c',0,4.45,2.4); if(isFinite(vy)&&vy>-20) pd.pt(t,vy,'c');
+  A.chips.push(['chord','dx/dt','2 m/s'],['chord','x',fr(x,2)],['tan','y',fr(y,2)],['c','dy/dt',isFinite(vy)?fr(vy,3):'—']);
+  if(o.target){ A.ok=abs(x-8)<.06; if(A.ok) A.hint='✓ عند x = 8 : y = 6 ، dy/dt = −8/3 ≈ −2.667'; } }}; }
+S.rDisc=ladderTime({title:'سلّم ينزلق: الطرف الأسفل بسرعة ثابتة 2 m/s',hint:'راقب منحني dy/dt — أو اسحب قدم السلم بإصبعك',play:1,v:0});
+S.rTry=ladderTime({title:'جرّب: اسحب قدم السلم حتى يصبح x = 8',hint:'السلم 10 m ، والطرف الأسفل يبتعد 2 m/s',v:.5,target:1});
+
+/* example 4: real ladder + angle, drag the foot */
+S.rLadder.pick=(A,px)=>{ const g=A._g; return g?(px-g.X(0))/g.s:null; };
+S.rLadder.draw=function(A){ const x=A.p, y=sq(100-x*x), g=fit(A,-1.8,11.6,-2,11.2), X=g.X, Y=g.Y, f=A.col, th=Math.atan2(y,x); A._g=g;
+  bricks(A,X(-1.4),Y(11),X(0)-X(-1.4),Y(0)-Y(11)); ground(A,X(-1.4),X(11.4),Y(0));
+  ladderPx(A,X(x),Y(0),X(0)+4,Y(y),Math.max(10,g.s*.55));
+  A.el('path',{d:`M${X(x)} ${Y(0)}L${X(0)} ${Y(y)}`,stroke:f.f,'stroke-width':1.4,'stroke-dasharray':'5 5',opacity:.7});
+  A.el('path',{d:`M${X(x)-34} ${Y(0)}A34 34 0 0 1 ${X(x)-34*Math.cos(th)} ${Y(0)-34*Math.sin(th)}`,fill:'none',stroke:f.int,'stroke-width':2.4}); T(A,X(x)-50,Y(0)-14,'θ','int',{size:15});
+  A.el('path',{d:`M${X(0)+12} ${Y(0)}V${Y(0)-12}H${X(0)}`,stroke:f.ink2,'stroke-width':1.6,fill:'none'});
+  A.el('path',{d:`M${X(0)} ${Y(0)+28}H${X(x)}`,stroke:f.chord,'stroke-width':2}); T(A,X(x/2),Y(0)+42,'x = '+fr(x,1),'chord');
+  A.el('path',{d:`M${X(0)-26} ${Y(0)}V${Y(y)}`,stroke:f.tan,'stroke-width':2}); T(A,X(0)-30,Y(y/2),'y = '+fr(y,2),'tan',{anchor:'end'});
+  T(A,(X(x)+X(0))/2+22,(Y(0)+Y(y))/2-8,'10 m','f');
+  arrow(A,X(x)+6,Y(0)-14,X(x)+52,Y(0)-14,'chord'); const vy=-2*x/y; arrow(A,X(0)+18,Y(y)+6,X(0)+18,Y(y)+Math.min(110,-vy*14),'tan');
+  A.chips.push(['chord','dx/dt','2'],['tan','y',fr(y,2)],['tan','dy/dt',fr(vy,3)],['int','dθ/dt',fr(vy/(10*Math.cos(th)),3)]);
+  A.ok=abs(x-8)<.06; A.hint=A.ok?'✓ عند x = 8 : y = 6 ، dy/dt = −8/3 ، dθ/dt = −1/3':'اسحب قدم السلم أو حرّك المنزلق إلى x = 8'; };
+
+/* exercise 2: lamp post, walking man, light ray, shadow; drag the man */
+S.rShadow.pick=(A,px)=>{ const g=A._g; return g?(px-g.X(0))/g.s:null; };
+S.rShadow.draw=function(A){ const x=A.p, s=x/3, g=fit(A,-2,23,-1.6,8.6), X=g.X, Y=g.Y, f=A.col; A._g=g;
+  /* night sky + ground */
+  A.el('rect',{x:X(-2),y:Y(8.6),width:X(23)-X(-2),height:Y(0)-Y(8.6),fill:'#1b2a4d',opacity:.08});
+  ground(A,X(-2),X(23),Y(0),Y(-1.6)-Y(0));
+  /* lit region and shadow */
+  poly(A,[[X(0),Y(7.2)],[X(-1.5),Y(0)],[X(x+s),Y(0)]],{fill:'#ffd34d',opacity:.16});
+  A.el('ellipse',{cx:X(x+s/2),cy:Y(0)+3,rx:s*g.s/2,ry:5,fill:'#111',opacity:.45});
+  A.el('path',{d:`M${X(0)} ${Y(7.2)}L${X(x+s)} ${Y(0)}`,stroke:'#e0a800','stroke-width':1.8,'stroke-dasharray':'6 5'});
+  lamp(A,X(0),Y(0),Y(7.2)); person(A,X(x),Y(0),1.8*g.s,x*2.4,1);
+  /* measurements */
+  const yy=Y(0)+(Y(-1.6)-Y(0))*.55; A.el('path',{d:`M${X(0)} ${yy}H${X(x)}`,stroke:f.c,'stroke-width':2.2}); T(A,X(x/2),yy+14,'x = '+fr(x,1),'c');
+  A.el('path',{d:`M${X(x)} ${yy}H${X(x+s)}`,stroke:f.chord,'stroke-width':4}); T(A,X(x+s/2),yy+14,'s = '+fr(s,2),'chord');
+  T(A,X(0)-12,Y(3.6),'7.2 m','muted',{anchor:'end'}); T(A,X(x)+16,Y(1),'1.8 m','muted',{anchor:'start',size:12});
+  arrow(A,X(x)+10,Y(2.3),X(x)+46,Y(2.3),'c'); T(A,X(x)+30,Y(2.3)-12,'30 m/min','c',{size:11.5});
+  A.chips.push(['c','dx/dt','30'],['chord','s = x/3',fr(s,2)],['chord','ds/dt','10 m/min']); A.hint='اسحب الرجل بإصبعك أو شغّل الحركة: الظل يطول بثلث سرعته'; };
+
+/* drag handles for the remaining figures */
+S.rTank.pick=(A,px,py)=>{ const g=A._g; return g?(g.Y(0)-py)/g.s:null; };
+{ const d=S.rTank.draw; S.rTank.draw=function(A){ A._g=fit(A,-1.4,4.6,-1.1,3.6); d.call(this,A); }; }
+S.rCone.pick=(A,px,py)=>{ const g=A._g; return g?(g.Y(0)-py)/g.s:null; };
+{ const d=S.rCone.draw; S.rCone.draw=function(A){ A._g=fit(A,-14,14,-4.5,28.5); d.call(this,A); }; }
+S.rPlate.pick=(A,px)=>{ const g=A._g; return g?(px-g.X(0))/g.s:null; };
+{ const d=S.rPlate.draw; S.rPlate.draw=function(A){ A._g=fit(A,-3,22,-3,18); d.call(this,A); }; }
 
 S.rTank.anim=1; S.rCone.anim=1;
 staged('rTank',[[0,'g','side = 2 m','المعطيات'],[0,'g','dV/dt = −0.4 m³/h','تسرب ⇒ سالب'],[0,'r','dh/dt = ?','المطلوب'],

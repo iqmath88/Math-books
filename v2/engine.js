@@ -294,6 +294,7 @@ function draw(){
   $('#figTitle').textContent=iso(sc.title||''); const chips=[]; let hint=sc.hint||'', hintOk=false;
   const legend=[];
   const A={W,H,el,lab,col:COL,p:P,t:(performance.now()-T0)/1000,svg,fmt,subplot:(r,v)=>subplot(svg,r,v),chips,set hint(v){ hint=v; },get hint(){ return hint; },set ok(v){ hintOk=v; },get ok(){ return hintOk; }};
+  lastA=A;
   if(sc.v){
     const Vb=view(sc), V=from&&from.v&&k<1?mixV(view(from),Vb,k):Vb, pad=V.pad, gb=H-pad.b;
     const X=x=>pad.l+(x-V.x0)/(V.x1-V.x0)*(W-pad.l-pad.r), Y=y=>pad.t+(V.y1-y)/(V.y1-V.y0)*(gb-pad.t), W2X=px=>V.x0+(px-pad.l)/(W-pad.l-pad.r)*(V.x1-V.x0);
@@ -469,15 +470,17 @@ function loop(){ raf=0; let more=false; if(from&&t<1){ t+=1/36; more=true; } els
 const kick=()=>{ if(!raf) raf=requestAnimationFrame(loop); };
 function syncSlider(){ const s=cur&&cur.sl, w=$('#sl'); w.hidden=!s; if(!s) return; const i=$('#slI'); i.min=s.min; i.max=s.max; i.step=s.step||'any'; i.value=P; $('#slL').textContent=s.lab||''; $('#slV').textContent=(s.fmt||fmt)(P); }
 function go(name){ const sc=B.S[name]; if(!sc||sc===cur) return; const red=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  from=cur&&!red?cur:null; t=0; cur=sc; cDrag=null; sweepT=0; if(sc.sl){ const sl=sc.sl; P=sl.v??sl.min; playing=!!sl.play&&!red; const u0=Math.min(1,Math.max(0,(P-sl.min)/((sl.max-sl.min)||1))); playT=Math.acos(1-2*u0)/(sl.speed||.6); } syncSlider(); kick(); }
+  from=cur&&!red?cur:null; t=0; cur=sc; cDrag=null; sweepT=0; svg.style.touchAction=sc.pick?'none':''; svg.style.cursor=sc.pick?'grab':''; if(sc.sl){ const sl=sc.sl; P=sl.v??sl.min; playing=!!sl.play&&!red; const u0=Math.min(1,Math.max(0,(P-sl.min)/((sl.max-sl.min)||1))); playT=Math.acos(1-2*u0)/(sl.speed||.6); } syncSlider(); kick(); }
 function size(){ const r=box.getBoundingClientRect(); W=r.width; H=r.height; draw(); }
 new ResizeObserver(size).observe(box);
 $('#slI').addEventListener('input',e=>{ playing=false; P=+e.target.value; $('#slV').textContent=(cur.sl.fmt||fmt)(P); draw(); });
 let dragging=false;
 const setC=e=>{ if(!W2Xg) return; const r=svg.getBoundingClientRect(); const x=W2Xg(e.clientX-r.left); const lo=Math.min(curA,curB)+.01*(curB-curA), hi=Math.max(curA,curB)-.01*(curB-curA); cDrag=Math.max(lo,Math.min(hi,x)); draw(); };
-svg.addEventListener('pointerdown',e=>{ if(!cur) return; if(cur.drag){ dragging=true; svg.setPointerCapture(e.pointerId); setC(e); } else if(cur.sl&&cur.slx&&W2Xg){ dragging=true; svg.setPointerCapture(e.pointerId); slDrag(e); } });
+let lastA=null;
+const objDrag=e=>{ const r=svg.getBoundingClientRect(), s=cur.sl, v=cur.pick(lastA,e.clientX-r.left,e.clientY-r.top); if(v==null||!isFinite(v)) return; playing=false; P=Math.max(s.min,Math.min(s.max,v)); syncSlider(); draw(); };
+svg.addEventListener('pointerdown',e=>{ if(!cur) return; if(cur.pick&&cur.sl&&lastA){ dragging=true; svg.setPointerCapture(e.pointerId); objDrag(e); return; } if(cur.drag){ dragging=true; svg.setPointerCapture(e.pointerId); setC(e); } else if(cur.sl&&cur.slx&&W2Xg){ dragging=true; svg.setPointerCapture(e.pointerId); slDrag(e); } });
 const slDrag=e=>{ const r=svg.getBoundingClientRect(); const x=W2Xg(e.clientX-r.left), s=cur.sl; playing=false; P=Math.max(s.min,Math.min(s.max,x)); syncSlider(); draw(); };
-svg.addEventListener('pointermove',e=>{ if(!dragging) return; if(cur.drag) setC(e); else if(cur.slx) slDrag(e); });
+svg.addEventListener('pointermove',e=>{ if(!dragging) return; if(cur.pick&&lastA) objDrag(e); else if(cur.drag) setC(e); else if(cur.slx) slDrag(e); });
 svg.addEventListener('pointerup',()=>dragging=false); svg.addEventListener('pointercancel',()=>dragging=false);
 
 /* ================= scrollytelling ================= */
