@@ -65,9 +65,21 @@ async function page(b,vp='board',o={}){ const ctx=o.ctx||await b.newContext({vie
    drew=await pg.evaluate(()=>window.LB&&LB.ink&&LB.ink.count()>0); await pg.click('[data-tool="undo"]'); undone=await pg.evaluate(()=>LB.ink.count()===0); }
   rec('T10','القلم والتراجع في التصميم الجديد',!!pen&&drew&&undone,pen?`drew=${drew} undo=${undone}`:'لا يوجد قلم في التصميم الجديد'); await ctx.close(); }
  if(want('T11')){ const {ctx,pg,errs}=await page(b); await pg.goto(BASE+'v2/g12c4.html#l=area'); await pg.waitForSelector('.prac');
-  const r=await pg.evaluate(()=>{ const st=document.querySelector('.prac').closest('.step'); const sol=st.querySelector('.sol'); st.querySelector('[data-show]').click(); const a=sol.classList.contains('on');
-   const hb=st.querySelector('[data-hint]'); hb.click(); const h1=[...st.querySelectorAll('.hn')].filter(x=>!x.hidden).length; hb.click(); const h2=[...st.querySelectorAll('.hn')].filter(x=>!x.hidden).length; return {a,h1,h2}; });
-  rec('T11','إظهار الحل والتلميحات تدريجياً',r.a&&r.h1===1&&r.h2===2&&!errs.length,JSON.stringify(r)); await ctx.close(); }
+  const r=await pg.evaluate(()=>{ const st=document.querySelector('.prac').closest('.step'), sol=st.querySelector('.sol'), p=st.querySelector('.prac'); LB.role.set('student');
+   st.querySelector('[data-show]').click(); const blocked=!sol.classList.contains('on');
+   p.querySelector('input').value='123'; p.querySelector('.btn').click(); st.querySelector('[data-show]').click(); const afterTry=sol.classList.contains('on');
+   const hb=st.querySelector('[data-hint]'); hb.click(); const h1=[...st.querySelectorAll('.hn')].filter(x=>!x.hidden).length; hb.click(); const h2=[...st.querySelectorAll('.hn')].filter(x=>!x.hidden).length; return {blocked,afterTry,h1,h2}; });
+  rec('T11','الحل التدريجي: الطالب يُفتح له الحل بعد المحاولة، والتلميحات واحداً واحداً',r.blocked&&r.afterTry&&r.h1===1&&r.h2===2&&!errs.length,JSON.stringify(r)); await ctx.close(); }
+ /* T21 teacher / student mode, teacher notes, six-stage navigation */
+ if(want('T21')){ const {ctx,pg,errs}=await page(b,'ipad'); await pg.goto(BASE+'v2/g12c3.html#l=rates'); await pg.waitForSelector('#stages button');
+  const r={}; r.stages=await pg.$$eval('#stages button',b=>b.map(x=>x.textContent.trim())); r.noteHidden=await pg.evaluate(()=>getComputedStyle(document.querySelector('.tnote')).display==='none');
+  await pg.click('#bRole'); r.noteShown=await pg.evaluate(()=>getComputedStyle(document.querySelector('.tnote')).display!=='none');
+  r.teacherSol=await pg.evaluate(()=>{ const st=document.querySelector('.prac').closest('.step'); st.querySelector('[data-show]').click(); return st.querySelector('.sol').classList.contains('on'); });
+  await pg.keyboard.press('5'); await pg.waitForTimeout(1100); r.jump=await pg.evaluate(()=>document.querySelector('.step.on')?.closest('.sec')?.dataset.stg);
+  await pg.click('#stages button:nth-child(6)'); await pg.waitForTimeout(1100); r.jump2=await pg.evaluate(()=>document.querySelector('.step.on')?.closest('.sec')?.dataset.stg);
+  await pg.reload(); await pg.waitForSelector('#stages button'); r.persist=await pg.evaluate(()=>LB.role.get()); r.kinds=await pg.$$eval('.kind',k=>[...new Set(k.map(x=>x.textContent))]);
+  const ok=r.stages.length===6&&r.noteHidden&&r.noteShown&&r.teacherSol&&r.jump==='practice'&&r.jump2==='check'&&r.persist==='teacher'&&r.kinds.length>=3&&!errs.length;
+  rec('T21','وضع المدرّس/الطالب، ملاحظات المدرّس، القفز إلى المراحل الست، وسوم نوع المحتوى',ok,JSON.stringify(r)+' '+errs.join('|')); await ctx.close(); }
  if(want('T12')){ const {ctx,pg}=await page(b); await pg.goto(BASE+'v2/g12c4.html#l=ftc'); await pg.waitForSelector('.step'); await pg.click('#bTools').catch(()=>{}); const z=await pg.$('[data-tool="zoom"],#bZoom');
   let ok=false; if(z){ const f0=await pg.evaluate(()=>parseFloat(getComputedStyle(document.querySelector('.story')).fontSize)); await z.click(); const f1=await pg.evaluate(()=>parseFloat(getComputedStyle(document.querySelector('.story')).fontSize)); ok=f1>f0; }
   rec('T12','تكبير النص والمعادلات في التصميم الجديد',ok,z?'':'لا يوجد زر تكبير'); await ctx.close(); }

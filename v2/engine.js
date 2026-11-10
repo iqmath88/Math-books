@@ -17,6 +17,10 @@ const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 const iso=s=>{ s=String(s); return /[\u0600-\u06FF]/.test(s)?s.replace(/[^\u0600-\u06FF]+/g,m=>/[A-Za-z0-9]/.test(m)?m.replace(/^([^A-Za-z0-9(\[√−+-]*)([\s\S]*?)(\s*)$/,(_,a,b,c)=>a+'\u2066'+b+'\u2069'+c):m):/[A-Za-z0-9]/.test(s)?'\u2066'+s+'\u2069':s; };
 
 /* ================= markup → lessons ================= */
+/* the six lesson stages (a section opts in with "--- @stage title") */
+const STAGES={discover:['اكتشف','🔍'],understand:['افهم','💡'],try:['جرّب','🎛'],learn:['تعلّم الحل','📝'],practice:['تدرّب','✏️'],check:['تحقّق','✅']};
+/* step content type (".book .extra .act .enr" on the >>> line) */
+const KIND={book:'من الكتاب',extra:'شرح إضافي',act:'نشاط تفاعلي',enr:'تمرين إثرائي'};
 function parse(src){
   const L=[]; let les=null, sec=null, st=null, box=null, list=null;
   const flushList=()=>{ list=null; };
@@ -25,7 +29,7 @@ function parse(src){
     if(!s){ box=null; flushList(); continue; }
     if(s.startsWith('//')) continue;
     if(s.startsWith('===')){ const [id,no,t,pg,d]=s.slice(3).split('|').map(x=>x.trim()); les={id,no,t,pg,d:d||'',secs:[]}; L.push(les); sec=null; st=null; continue; }
-    if(s.startsWith('---')){ sec={t:s.slice(3).trim(),steps:[]}; les.secs.push(sec); st=null; continue; }
+    if(s.startsWith('---')){ let t=s.slice(3).trim(), stg=''; const m2=t.match(/^@(\w+)\s*(.*)$/); if(m2){ stg=m2[1]; t=m2[2]||STAGES[stg]?.[0]||t; } sec={t,stg,steps:[]}; les.secs.push(sec); st=null; continue; }
     if(s.startsWith('>>>')){ let h=s.slice(3).trim(), lbl=''; const i=h.indexOf('::'); if(i>=0){ lbl=h.slice(i+2).trim(); h=h.slice(0,i).trim(); }
       const tk=h.split(/\s+/).filter(Boolean); st={sc:null,n:'',cls:[],lbl,parts:[]};
       for(const t of tk){ if(t[0]==='#') st.n=t.slice(1); else if(t==='!') st.cls.push('result'); else if(t==='+') st.cls.push('gap'); else if(t[0]==='.') st.cls.push(t.slice(1)); else st.sc=t; }
@@ -33,7 +37,7 @@ function parse(src){
     if(!st) continue;
     if(s.startsWith('| ')||s==='|'){ if(box) box.lines.push(s.slice(2)); continue; }
     const m=s.match(/^([a-z0-9*]+):\s?(.*)$/);
-    if(m&&['k','p','h1','h2','lead','law','note','err','ask','o','o*','why','prac','sol','self','ok','tbl','tbh','html','fig','xp','hint','miss','gen'].includes(m[1])){
+    if(m&&['k','p','h1','h2','lead','law','note','err','ask','o','o*','why','prac','sol','self','ok','tbl','tbh','html','fig','xp','hint','miss','gen','tnote'].includes(m[1])){
       const [ ,key,val]=m; flushList();
       if(key==='o'||key==='o*'){ const q=st.parts.findLast(p=>p.k==='ask'); if(q){ if(key==='o*') q.ans=q.o.length; q.o.push(val); } continue; }
       if(key==='hint'||key==='miss'||key==='gen'){ const q=st.parts.findLast(p=>p.k==='prac'||p.k==='self'); if(q){ if(key==='gen') q.gen=val.trim(); else if(key==='hint') (q.hints=q.hints||[]).push(val); else { const i=val.indexOf(';'); (q.miss=q.miss||[]).push([val.slice(0,i).trim(),val.slice(i+1).trim()]); } } continue; }
@@ -45,7 +49,7 @@ function parse(src){
       if(key==='self'){ p.lines=[]; }
       if(key==='ask'){ p.o=[]; p.ans=0; }
       if(key==='sol'||key==='why'){ const q=st.parts.findLast(x=>['prac','self','ask'].includes(x.k)); if(q){ q[key]=p; } }
-      st.parts.push(p); box=['law','note','err','sol','why','self','html','lead','xp'].includes(key)?p:null; continue; }
+      st.parts.push(p); box=['law','note','err','sol','why','self','html','lead','xp','tnote'].includes(key)?p:null; continue; }
     if(s.startsWith('$$')){ flushList(); st.parts.push({k:'m',v:s.slice(2).trim()}); box=null; continue; }
     if(s.startsWith('- ')){ if(!list){ list={k:'ul',items:[]}; st.parts.push(list); } list.items.push(s.slice(2)); box=null; continue; }
     flushList(); st.parts.push({k:'p',v:s}); box=null;
@@ -72,7 +76,7 @@ function typeset(r){ $$('.tex',r).forEach(el=>{ try{ katex.render(el.dataset.tex
 const extra=(p,id)=>(p.hints?`<button type="button" class="btn ghost small" data-hint>💡 تلميح <bdi>1/${p.hints.length}</bdi></button>`:'')+(p.gen?`<button type="button" class="btn ghost small" data-gen="${esc(p.gen)}">↻ تمرين مشابه</button>`:'');
 const extraBox=p=>(p.hints?`<div class="hints">${p.hints.map(x=>`<p class="hn" hidden>${T(x)}</p>`).join('')}</div>`:'')+(p.gen?'<div class="genbox" hidden></div>':'');
 function stepHTML(st,les,si,ki){
-  let h=''; if(st.n) h+=`<span class="sn">${esc(st.n)}</span>`; if(st.lbl) h+=`<span class="lbl">${T(st.lbl)}</span>`;
+  let h=''; const kd=st.cls.find(c=>KIND[c]); if(kd) h+=`<span class="kind k-${kd}">${KIND[kd]}</span>`; if(st.n) h+=`<span class="sn">${esc(st.n)}</span>`; if(st.lbl) h+=`<span class="lbl">${T(st.lbl)}</span>`;
   st.parts.forEach((p,pi)=>{ const id=`${les.id}-${si}-${ki}-${pi}`;
     switch(p.k){
       case 'k': h+=`<div class="kicker">${T(p.v)}</div>`; break;
@@ -84,6 +88,7 @@ function stepHTML(st,les,si,ki){
       case 'ul': h+=`<ul>${p.items.map(i=>`<li>${T(i)}</li>`).join('')}</ul>`; break;
       case 'law': h+=`<div class="law"><span class="lbl">${T(p.v)}</span><div>${p.lines.map(x=>x.startsWith('$$')&&!x.slice(2).includes('$$')?`<span class="big tex" data-tex="${esc(x.slice(2).trim()).replace(/"/g,'&quot;')}"></span>`:`<p>${T(x)}</p>`).join('')}</div></div>`; break;
       case 'xp': h+=`<div class="xp"><span class="xl">${p.v?T(p.v):'خطوة توضيحية'}</span><div>${p.lines.map(x=>`<p>${LN(x)}</p>`).join('')}</div></div>`; break;
+      case 'tnote': h+=`<div class="tnote"><b>للمدرّس:</b> ${lines(p)}</div>`; break;
       case 'note': h+=`<div class="note">${lines(p)}</div>`; break;
       case 'err': h+=`<div class="err"><b>تنبيه على خطأ في الكتاب:</b> ${lines(p)}</div>`; break;
       case 'html': h+=p.lines.join('\n'); break;
@@ -116,6 +121,7 @@ D.body.innerHTML=`<header>
  <span class="sp"></span>
  <a class="hb" id="bLessons" href="#" title="دروس الفصل">${ICON.list}<span class="l">الدروس</span></a>
  <button class="hb" id="bPresent" aria-pressed="false" title="وضع العرض الصفي (الأسهم للتنقل)">${ICON.present}<span class="l">عرض صفي</span></button>
+ <button class="hb" id="bRole" aria-pressed="false" title="التبديل بين وضع الطالب ووضع المدرّس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span class="l" id="bRoleL">طالب</span></button>
  <button class="hb" id="bTools" aria-pressed="false" title="أدوات السبورة: قلم، ممحاة، تكبير، ملء الشاشة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 11-11-3-3L5 16l-1 4z"/><path d="M14 6l3 3"/></svg><span class="l">أدوات</span></button>
  <button class="hb" id="bTheme" aria-label="تبديل الألوان">${ICON.moon}</button>
  <div class="prog"><i id="prog"></i></div>
@@ -127,6 +133,7 @@ D.body.innerHTML=`<header>
 </div>
 <canvas id="inkCanvas" aria-hidden="true"></canvas><div id="toast" role="status" aria-live="polite"></div>
 <div class="home" id="home"></div>
+<div class="stages" id="stages" role="navigation" aria-label="مراحل الدرس" hidden></div>
 <div class="wrap">
  <nav class="outline" aria-label="أقسام الدرس"><ol id="outline"></ol></nav>
  <main class="story focus" id="story"></main>
@@ -142,7 +149,7 @@ const story=$('#story'), outline=$('#outline');
 
 /* ================= chapter home ================= */
 function renderHome(){
-  D.body.classList.add('is-home'); D.title=`${B.title} – الرياضيات الحيّة`;
+  D.body.classList.add('is-home'); root.classList.remove('has-stages'); D.title=`${B.title} – الرياضيات الحيّة`;
   $('#crS').textContent=`${B.grade} · ${B.chapter}`; $('#crB').textContent=B.title; $('#bBack').href='../index.html'; $('#bBackL').textContent='المكتبة'; $('#bLessons').hidden=true;
   const tot=LES.reduce((a,l)=>a+l.nEx,0), done=LES.reduce((a,l)=>a+exDone(l),0), seen=LES.filter(l=>ST.seen[l.id]).length;
   $('#home').innerHTML=`<div class="hero"><svg class="deco" viewBox="0 0 300 200" fill="none" stroke="#fff" stroke-width="3"><path d="M0 170C60 170 80 20 150 40S240 180 300 60"/><path d="M40 150L260 70" stroke-dasharray="8 8"/><circle cx="150" cy="40" r="8" fill="#fff"/></svg>
@@ -170,7 +177,7 @@ function renderLesson(les){
   $('#crS').textContent=`${B.grade} · ${B.chapter} · ${/^\d/.test(les.no)?'['+les.no+']':les.no} · ص ${les.pg}`; $('#crB').innerHTML=T(les.t); typeset($('#crB'));
   $('#bBack').href='#'; $('#bBackL').textContent='الدروس'; $('#bLessons').hidden=true;
   let prevSc=null, h='';
-  les.secs.forEach((sec,si)=>{ h+=`<section class="sec" data-sec="${esc(sec.t)}" id="s${si}">`;
+  les.secs.forEach((sec,si)=>{ h+=`<section class="sec" data-sec="${esc(sec.t)}" data-stg="${esc(sec.stg||'')}" id="s${si}">`;
     sec.steps.forEach((st,ki)=>{ const sc=st.sc&&B.S[st.sc]?st.sc:prevSc; if(st.sc&&!B.S[st.sc]) console.warn('scene?',st.sc); prevSc=sc;
       h+=`<div class="step ${st.cls.join(' ')}" data-scene="${esc(sc||'')}">${stepHTML(st,les,si,ki)}</div>`; });
     h+='</section>'; });
@@ -178,7 +185,11 @@ function renderLesson(les){
   h+=`<section class="sec" data-sec="التالي" id="sEnd"><div class="summary step" data-scene="${esc(prevSc||'')}"><h2>أحسنت!</h2><p>أنهيت درس «${T(les.t)}».</p><div class="lnav">${nx?`<a href="#l=${nx.id}"><span><small>الدرس التالي · ${esc(/^\d/.test(nx.no)?'['+nx.no+']':nx.no)}</small><br>${T(nx.t)}</span><span>←</span></a>`:''}<a href="#"><span>كل دروس الفصل</span><span>←</span></a><a href="#l=${les.id}" data-top><span>إعادة الدرس من أوله</span><span>↑</span></a></div></div></section>`;
   story.innerHTML=h; typeset(story);
   steps=$$('.step',story); secs=$$('.sec',story); active=null;
-  outline.innerHTML=secs.map((s,i)=>`<li><a href="#l=${les.id}" data-s="${i}"><span class="n">${i+1}</span>${esc(s.dataset.sec)}</a></li>`).join('');
+  outline.innerHTML=secs.map((s,i)=>`<li><a href="#l=${les.id}" data-s="${i}"><span class="n">${s.dataset.stg&&STAGES[s.dataset.stg]?STAGES[s.dataset.stg][1]:i+1}</span>${esc(s.dataset.sec)}</a></li>`).join('');
+  /* stage bar: jump straight to any of the six stages */
+  const stg=Object.keys(STAGES).filter(k=>secs.some(x=>x.dataset.stg===k)); const sb=$('#stages');
+  sb.hidden=!stg.length; root.classList.toggle('has-stages',!!stg.length); sb.innerHTML=stg.map((k,i)=>`<button type="button" data-stg="${k}" title="${STAGES[k][0]} (${i+1})"><span>${STAGES[k][1]}</span>${STAGES[k][0]}</button>`).join('');
+  $$('button',sb).forEach(b=>b.onclick=()=>{ const sec=secs.find(x=>x.dataset.stg===b.dataset.stg); const st=sec&&$('.step',sec); if(st) activate(st,1); });
   $$('a',outline).forEach(a=>a.onclick=e=>{ e.preventDefault(); secs[+a.dataset.s].scrollIntoView({behavior:'smooth'}); });
   $$('[data-top]',story).forEach(a=>a.onclick=e=>{ e.preventDefault(); scrollTo({top:0,behavior:'smooth'}); });
   wire(les); cur=null; from=null; scrollTo({top:0,behavior:'instant'}); requestAnimationFrame(()=>{ size(); pick(); });
@@ -224,14 +235,15 @@ function wire(les){
     const miss=p.dataset.miss?JSON.parse(decodeURIComponent(p.dataset.miss)):[];
     if(!sol.innerHTML.trim()&&!row.querySelector('[data-hint],[data-gen]')) row.hidden=true; else if(!sol.innerHTML.trim()) $('[data-show]',row).hidden=true;
     const mark=v=>{ ST.ex[id]=v; save(); };
+    if(ST.ex[id]!==undefined) row.dataset.tried=1;
     if(ST.ex[id]===1){ fb.textContent='✓ حللته سابقاً'; fb.className='fb ok'; }
-    const check=()=>{ const v=inp.value.trim(); if(!v){ fb.textContent='اكتب جوابك أولاً'; fb.className='fb'; return; }
+    const check=()=>{ const v=inp.value.trim(); if(!v){ fb.textContent='اكتب جوابك أولاً'; fb.className='fb'; return; } row.dataset.tried=1;
       const got=nums(v); if(!got.length||got.some(x=>!isFinite(x))){ fb.textContent='اكتب عدداً، مثل 3 أو 1/2 أو √5 أو -4'; fb.className='fb'; return; }
       if(same(got,key)){ fb.textContent='✓ صحيح!'; fb.className='fb ok'; mark(1); sol.classList.add('on'); if(p.dataset.ok&&B.S[p.dataset.ok]){ p.closest('.step').dataset.scene=p.dataset.ok; go(p.dataset.ok); } }
       else if(key.length>1&&got.length<key.length&&got.every(g=>key.some(k=>Math.abs(k-g)<=1e-3))){ fb.textContent=`صحيح جزئياً: للسؤال ${key.length} قيم، افصل بينها بفاصلة.`; fb.className='fb'; }
       else { const m=miss.find(([k])=>same(got,nums(k))); fb.innerHTML=m?'✗ '+T(m[1]):'✗ ليس صحيحاً بعد. راجع خطواتك'+(row.querySelector('[data-hint]')?' أو اطلب تلميحاً.':' وحاول مرة أخرى.'); fb.className='fb bad'; if(m) typeset(fb); if(ST.ex[id]!==1) mark(0); } };
     $('.btn',p).onclick=check; inp.addEventListener('keydown',e=>{ if(e.key==='Enter') check(); });
-    $('[data-show]',row).onclick=()=>sol.classList.toggle('on'); });
+    $('[data-show]',row).onclick=()=>{ if(sol.classList.contains('on')||gate(row,fb)) sol.classList.toggle('on'); }; });
   $$('[data-hint]',story).forEach(b=>{ const hs=$$('.hn',b.parentElement.nextElementSibling); let i=0;
     b.onclick=()=>{ if(i<hs.length){ hs[i].hidden=false; i++; } b.querySelector('bdi').textContent=Math.min(i+1,hs.length)+'/'+hs.length; if(i>=hs.length){ b.disabled=true; b.firstChild.textContent='💡 لا تلميحات أخرى '; } }; });
   $$('[data-gen]',story).forEach(b=>{ let bx=b.parentElement.nextElementSibling; while(bx&&!bx.classList.contains('genbox')) bx=bx.nextElementSibling; b.onclick=()=>genEx(b.dataset.gen,bx); });
@@ -469,10 +481,11 @@ svg.addEventListener('pointermove',e=>{ if(!dragging) return; if(cur.drag) setC(
 svg.addEventListener('pointerup',()=>dragging=false); svg.addEventListener('pointercancel',()=>dragging=false);
 
 /* ================= scrollytelling ================= */
+function hiStage(si){ $$('a',outline).forEach((a,i)=>{ a.classList.toggle('on',i===si); a.classList.toggle('done',i<si); }); let k=''; for(let j=si;j>=0&&!k;j--) k=secs[j]?.dataset.stg||''; $$('#stages button').forEach(b=>b.classList.toggle('on',b.dataset.stg===k)); }
 function pick(){ if(!curLes||!steps.length||performance.now()<lockPick) return; const narrow=innerWidth<=820, line=narrow?$('.fig').getBoundingClientRect().bottom+innerHeight*.06:innerHeight*.45;
   let best=steps[0], bd=1e9; if(scrollY>40) for(const s of steps){ const r=s.getBoundingClientRect(); const d=r.top<=line&&r.bottom>=line?0:Math.min(Math.abs(r.top-line),Math.abs(r.bottom-line)); if(d<bd){ bd=d; best=s; } }
   if(best!==active){ active?.classList.remove('on'); active=best; best.classList.add('on'); if(best.dataset.scene) go(best.dataset.scene); }
-  const si=secs.indexOf(best.closest('.sec')); $$('a',outline).forEach((a,i)=>{ a.classList.toggle('on',i===si); a.classList.toggle('done',i<si); });
+  const si=secs.indexOf(best.closest('.sec')); hiStage(si); $$('a',outline).forEach((a,i)=>{ a.classList.toggle('on',i===si); a.classList.toggle('done',i<si); });
   const h=root, pr=Math.min(100,h.scrollTop/Math.max(1,h.scrollHeight-innerHeight)*100); $('#prog').style.width=pr+'%';
   if(si>=secs.length-1&&!ST.seen[curLes.id]){ ST.seen[curLes.id]=1; save(); } }
 addEventListener('scroll',()=>requestAnimationFrame(pick),{passive:true}); addEventListener('resize',pick);
@@ -485,10 +498,11 @@ const bP=$('#bPresent');
 bP.onclick=()=>{ const on=root.classList.toggle('present'); bP.setAttribute('aria-pressed',on); setTimeout(()=>{ size(); active&&active.scrollIntoView({block:'center'}); },60); };
 /* keyboard / clicker: activate the next step explicitly (scrolling alone cannot move past the first steps) */
 let lockPick=0;
-function activate(st){ if(!st) return; if(st!==active){ active?.classList.remove('on'); active=st; st.classList.add('on'); if(st.dataset.scene) go(st.dataset.scene); } lockPick=performance.now()+900; st.scrollIntoView({block:'center',behavior:'smooth'}); }
+function activate(st,jump){ if(!st) return; if(st!==active){ active?.classList.remove('on'); active=st; st.classList.add('on'); if(st.dataset.scene) go(st.dataset.scene); } hiStage(secs.indexOf(st.closest('.sec'))); lockPick=performance.now()+900; st.scrollIntoView({block:'center',behavior:jump?'instant':'smooth'}); }
 addEventListener('keydown',e=>{ if(e.target.matches('input,textarea')||!curLes||e.ctrlKey||e.metaKey||e.altKey) return; const i=steps.indexOf(active);
   if(['ArrowDown','PageDown','ArrowLeft',' '].includes(e.key)&&!(e.key===' '&&e.target.matches('button'))){ e.preventDefault(); activate(steps[Math.min(steps.length-1,i+1)]); }
-  if(['ArrowUp','PageUp','ArrowRight'].includes(e.key)){ e.preventDefault(); activate(steps[Math.max(0,i-1)]); } });
+  if(['ArrowUp','PageUp','ArrowRight'].includes(e.key)){ e.preventDefault(); activate(steps[Math.max(0,i-1)]); }
+  if(/^[1-6]$/.test(e.key)){ const b=$$('#stages button')[+e.key-1]; if(b){ e.preventDefault(); b.click(); } } });
 
 /* ================= board tools: ink, zoom, fullscreen ================= */
 const ink=(()=>{ const cv=$('#inkCanvas'), cx=cv.getContext('2d'), bar=$('#tools'), bT=$('#bTools'), toast=$('#toast'); let mode='off', color='#e0393e', S=[], RD=[], cur=null, tt=0;
@@ -526,7 +540,17 @@ const ink=(()=>{ const cv=$('#inkCanvas'), cx=cv.getContext('2d'), bar=$('#tools
   addEventListener('hashchange',()=>{ clear(); RD=[]; });
   return {count:()=>S.length,clear,setMode,say,render}; })();
 
-window.LB={go,draw,LES,num,nums,same,ink};
+/* ================= teacher / student mode =================
+   student: a worked solution opens only after an attempt (a check or every hint); teacher notes hidden.
+   teacher: solutions open freely, teacher notes visible. */
+const role={ get:()=>root.dataset.role||'student', set(r){ root.dataset.role=r; try{ localStorage.setItem('lb-role',r); }catch(e){} $('#bRole').setAttribute('aria-pressed',String(r==='teacher')); $('#bRoleL').textContent=r==='teacher'?'مدرّس':'طالب'; } };
+try{ role.set(localStorage.getItem('lb-role')==='teacher'?'teacher':'student'); }catch(e){ role.set('student'); }
+$('#bRole').onclick=()=>{ role.set(role.get()==='teacher'?'student':'teacher'); ink.say(role.get()==='teacher'?'وضع المدرّس: الحلول وملاحظات التدريس ظاهرة':'وضع الطالب: الحل يُفتح بعد المحاولة'); };
+/* gate: called by the solution buttons of auto-checked exercises */
+const gate=(row,fb)=>{ if(role.get()==='teacher') return true; if(row.dataset.tried) return true; const hb=row.querySelector('[data-hint]'); if(hb&&hb.disabled) return true;
+  fb.textContent='جرّب أولاً: اكتب جوابك واضغط «تحقّق»'+(hb?' أو اطلب التلميحات':'')+'، ثم يُفتح الحل.'; fb.className='fb'; return false; };
+
+window.LB={go,draw,LES,num,nums,same,ink,role};
 (d=>{ const s=d.createElement('script'); s.src='../update.js'; d.head.append(s); })(document);
 route();
 booted=true;
