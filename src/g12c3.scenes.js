@@ -682,24 +682,47 @@ GEN.gWall=()=>{ const [L,m10]=pick([[20,16],[12,15],[15,18],[10,20],[18,12]]), v
      `نشتق: $\\dfrac{dy}{dt}=\\dfrac{${+(m10*L/10).toFixed(2)}}{(${L}-x)^2}\\cdot\\dfrac{dx}{dt}$`,`نعوّض $${L}-x=${d}$ : $\\dfrac{dy}{dt}=\\dfrac{${+(m10*L/10).toFixed(2)}}{${d*d}}(-${v2/2})=${r.t}$`,'» سالب: كلما اقترب من الحائط ابتعد عن الضوء فقصر ظله.'],
    miss:[[fq(-num,den).s,'الشخص يقترب من الحائط فـ $x$ تتناقص: $\\dfrac{dx}{dt}$ سالبة.']]}; };
 
-/* funnel (cone, vertex down) H = 20, R = 10, leaking 5 cm³/min: r = h/2, V = πh³/12 — worksheet question (وزاري 2010) */
-S.rFunnel={title:'قمع ارتفاعه 20cm وقطر قاعدته 20cm',hint:'r/10 = h/20 ⇒ r = h/2 ⇒ V = πh³/12',anim:1,sl:{min:2,max:19,v:14,step:.01,play:1,speed:.3,lab:'عمق الماء h',fmt:v=>fr(v,1)+' cm'},
+/* cone with vertex down (funnel / filter): H, R, inflow, outflow — worksheet questions (وزاري 2010 ، 2018) */
+function funnel(o){ const H=o.H, R=o.R, k=R/H, net=(o.inn||0)-(o.out||0), u=o.u||'s';
+ return {title:o.title,hint:`r/${R} = h/${H} ⇒ r = ${k===.5?'h/2':k===1/3?'h/3':fr(k,3)+'h'}`,anim:1,q:o.q,sl:{min:H*.1,max:H*.95,v:o.v??H*.7,step:.01,play:o.play??1,speed:.3,lab:'عمق السائل h',fmt:v=>fr(v,1)+' cm'},
  pick(A,px,py){ const g=A._g; return g?(g.Y(0)-py)/g.s:null; },
- draw(A){ const h=A.p, r=h/2, g=fit(A,-14,17,-5,23.5), X=g.X, Y=g.Y, f=A.col, t=A.t; A._g=g;
+ draw(A){ const h=A.p, r=k*h, M=Math.max(H,2*R), g=fit(A,-R*1.4,R*1.7,-M*.22,H*1.17), X=g.X, Y=g.Y, f=A.col, t=A.t; A._g=g;
   poly(A,[[X(0),Y(0)],[X(r),Y(h)],[X(-r),Y(h)]],{fill:f.f,opacity:.3});
   A.el('ellipse',{cx:X(0),cy:Y(h),rx:r*g.s,ry:r*g.s*.22,fill:'#fde68a',opacity:.75,stroke:f.f,'stroke-width':1.6});
-  A.el('path',{d:`M${X(-10)} ${Y(20)}L${X(0)} ${Y(0)}L${X(10)} ${Y(20)}`,fill:'none',stroke:'#2c6a3e','stroke-width':3});
-  A.el('ellipse',{cx:X(0),cy:Y(20),rx:10*g.s,ry:10*g.s*.22,fill:'#3f8f55',opacity:.18,stroke:'#2c6a3e','stroke-width':2.6});
-  /* similar triangles abc (10 , 20) and aef (r , h) */
-  A.el('path',{d:`M${X(0)} ${Y(0)}V${Y(20)}H${X(10)}`,stroke:f.muted,'stroke-width':1.4,'stroke-dasharray':'3 4',fill:'none'});
+  A.el('path',{d:`M${X(-R)} ${Y(H)}L${X(0)} ${Y(0)}L${X(R)} ${Y(H)}`,fill:'none',stroke:'#2c6a3e','stroke-width':3});
+  A.el('ellipse',{cx:X(0),cy:Y(H),rx:R*g.s,ry:R*g.s*.22,fill:'#3f8f55',opacity:.18,stroke:'#2c6a3e','stroke-width':2.6});
+  A.el('path',{d:`M${X(0)} ${Y(0)}V${Y(H)}H${X(R)}`,stroke:f.muted,'stroke-width':1.4,'stroke-dasharray':'3 4',fill:'none'});
   A.el('path',{d:`M${X(0)} ${Y(0)}V${Y(h)}H${X(r)}`,stroke:f.c,'stroke-width':2.6,fill:'none'});
-  T(A,X(5),Y(20)-14,'10','muted'); T(A,X(11.5),Y(10),'20','muted',{anchor:'start'});
-  T(A,X(-.7),Y(h/2),'h','c',{anchor:'end',size:15}); T(A,X(r/2),Y(h)+14,'r','c',{size:15});
-  T(A,X(0)-4,Y(0)+4,'a','ink2',{anchor:'end',size:12}); T(A,X(0)-4,Y(20)-10,'b','ink2',{anchor:'end',size:12}); T(A,X(10)+6,Y(20)-8,'c','ink2',{anchor:'start',size:12});
-  T(A,X(0)-4,Y(h)-10,'e','ink2',{anchor:'end',size:12}); T(A,X(r)+6,Y(h),'f','ink2',{anchor:'start',size:12});
-  /* leak at the vertex */
-  for(let k=0;k<2;k++){ const ph=((t*1.1+k/2)%1); A.el('ellipse',{cx:X(0),cy:Y(0)+8+ph*g.s*3,rx:3,ry:4.4,fill:f.f,opacity:1-ph*.7}); }
-  T(A,X(.8),Y(-3.2),'تسرب 5 cm³/min','chord',{size:12.5,anchor:'start'});
-  arrow(A,X(-r)-10,Y(h)-4,X(-r)-10,Y(h)+22,'tan');
-  const dh=-20/(PI*h*h); A.chips.push(['c','r = h/2',fr(r,2)+' cm'],['f','V = πh³/12',fr(PI*h**3/12,1)+' cm³'],['chord','dV/dt','−5'],['tan','dh/dt',this.q?'?':fr(dh,4)]); }};
-S.rFunnelOk=Object.assign({},S.rFunnel,{title:'عند h = 6 : dh/dt = −5/(9π)',sl:Object.assign({},S.rFunnel.sl,{v:6,play:0}),q:0}); S.rFunnel.q=1;
+  T(A,X(R/2),Y(H)-14,String(R),'muted'); T(A,X(R*1.15),Y(H/2),String(H),'muted',{anchor:'start'});
+  T(A,X(0)-6,Y(h/2),'h','c',{anchor:'end',size:15}); T(A,X(r/2),Y(h)+14,'r','c',{size:15});
+  if(o.abc){ T(A,X(0)-4,Y(0)+4,'a','ink2',{anchor:'end',size:12}); T(A,X(0)-4,Y(H)-10,'b','ink2',{anchor:'end',size:12}); T(A,X(R)+6,Y(H)-8,'c','ink2',{anchor:'start',size:12});
+   T(A,X(0)-4,Y(h)-10,'e','ink2',{anchor:'end',size:12}); T(A,X(r)+6,Y(h),'f','ink2',{anchor:'start',size:12}); }
+  if(o.inn){ const sx=X(-R*.25); A.el('path',{d:`M${X(-R*1.1)} ${Y(H*1.15)}Q${sx} ${Y(H*1.16)} ${sx} ${Y(h)}`,stroke:f.tan,'stroke-width':4,fill:'none','stroke-dasharray':'8 6','stroke-dashoffset':-t*40});
+   T(A,X(-R*1.1),Y(H*1.15)-12,`صب ${o.inn} cm³/${u}`,'tan',{size:12.5,anchor:'start'}); }
+  if(o.out){ for(let q=0;q<2;q++){ const ph=((t*1.1+q/2)%1); A.el('ellipse',{cx:X(0),cy:Y(0)+8+ph*g.s*H*.15,rx:3,ry:4.4,fill:f.f,opacity:1-ph*.7}); }
+   T(A,X(R*.08),Y(-H*.17),`تسرب ${o.out} cm³/${u}`,'chord',{size:12.5,anchor:'start'}); }
+  arrow(A,X(-r)-10,Y(h)+(net<0?-4:22),X(-r)-10,Y(h)+(net<0?22:-4),'tan');
+  const dh=net/(PI*k*k*h*h); A.chips.push(['c','r',fr(r,2)+' cm'],['f','V',fr(PI*k*k*h**3/3,1)+' cm³'],['chord','dV/dt',fr(net)],['tan','dh/dt',this.q?'?':fr(dh,4)]); }}; }
+S.rFunnel=funnel({H:20,R:10,out:5,u:'min',abc:1,q:1,v:14,title:'قمع ارتفاعه 20cm وقطر قاعدته 20cm'});
+S.rFunnelOk=funnel({H:20,R:10,out:5,u:'min',abc:1,v:6,play:0,title:'عند h = 6 : dh/dt = −5/(9π)'});
+S.rFilter=funnel({H:12,R:4,inn:5,out:1,q:1,v:8,title:'مرشح ارتفاعه 12cm وقطر قاعدته 8cm'});
+S.rFilterOk=funnel({H:12,R:4,inn:5,out:1,v:6,play:0,title:'عند h = 6 : dh/dt = 1/π'});
+
+/* sand pouring from a tank into an upright cone whose height equals its diameter: h = 2r, V = 2πr³/3 */
+S.rSand={title:'رمل يكوّن مخروطاً ارتفاعه = قطر قاعدته',hint:'h = 2r ⇒ V = ⅔πr³',anim:1,q:1,sl:{min:1,max:7,v:4,step:.01,play:1,speed:.3,lab:'نصف القطر r',fmt:v=>fr(v,2)+' cm'},
+ pick(A,px){ const g=A._g; return g?Math.abs(px-g.X(0))/g.s:null; },
+ draw(A){ const r=A.p, h=2*r, g=fit(A,-9,9,-2.5,20), X=g.X, Y=g.Y, c=A.col, t=A.t; A._g=g;
+  ground(A,X(-9),X(9),Y(0),Y(-2.5)-Y(0));
+  /* tank above with a nozzle */
+  A.el('rect',{x:X(-2.2),y:Y(19.5),width:X(2.2)-X(-2.2),height:Y(17)-Y(19.5),rx:6,fill:'#cbd5e1',stroke:'#64748b','stroke-width':1.6});
+  A.el('path',{d:`M${X(-.4)} ${Y(17)}L${X(0)} ${Y(16.2)}L${X(.4)} ${Y(17)}Z`,fill:'#64748b'});
+  for(let q=0;q<9;q++){ const ph=((t*1.6+q/9)%1), yy=16.2-(16.2-h)*ph; A.el('circle',{cx:X(Math.sin(q*7)*.15),cy:Y(yy),r:2.2,fill:'#d4a14a',opacity:.9}); }
+  /* sand cone */
+  poly(A,[[X(-r),Y(0)],[X(r),Y(0)],[X(0),Y(h)]],{fill:'#e3b866',stroke:'#a8782c','stroke-width':1.8});
+  A.el('ellipse',{cx:X(0),cy:Y(0),rx:r*g.s,ry:r*g.s*.22,fill:'#d4a14a',opacity:.6,stroke:'#a8782c','stroke-width':1.4});
+  A.el('path',{d:`M${X(0)} ${Y(0)}H${X(r)}`,stroke:c.c,'stroke-width':2.6}); T(A,X(r/2),Y(0)+16,'r','c',{size:15});
+  A.el('path',{d:`M${X(-r-1)} ${Y(0)}V${Y(h)}M${X(-r-1.3)} ${Y(0)}H${X(-r-.7)}M${X(-r-1.3)} ${Y(h)}H${X(-r-.7)}`,stroke:c.tan,'stroke-width':2.2}); T(A,X(-r-1.5),Y(h/2),'h = 2r','tan',{size:13,anchor:'end'});
+  arrow(A,X(r)+4,Y(.6),X(r)+30,Y(.6),'c');
+  T(A,X(2.6),Y(18.2),'25 cm³/s','chord',{size:12.5,anchor:'start'});
+  A.chips.push(['c','r',fr(r,2)+' cm'],['tan','h = 2r',fr(h,2)+' cm'],['f','V = ⅔πr³',fr(2*PI*r**3/3,1)+' cm³'],['c','dr/dt',this.q?'?':fr(25/(2*PI*r*r),4)]); }};
+S.rSandOk=Object.assign({},S.rSand,{title:'عند r = 5 : dr/dt = 1/(2π)',sl:Object.assign({},S.rSand.sl,{v:5,play:0}),q:0});
