@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<title>ريلز · المعدلات المرتبطة بالزمن</title>
+<link rel="stylesheet" href="../../v2/lib/katex/katex.min.css">
+<script src="../../v2/lib/katex/katex.min.js"></script>
+<style>
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-ar-500.woff2) format("woff2");font-weight:500;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-ar-700.woff2) format("woff2");font-weight:700;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-lat-500.woff2) format("woff2");font-weight:500;unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-lat-700.woff2) format("woff2");font-weight:700;unicode-range:U+0000-00FF,U+2000-206F}
+:root{--cy:#38d6ff;--au:#ffc94a;--ink:#f2f6ff;--mute:#8fa3c7}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:clip;background:#050d1f}
+body{position:relative;contain:paint;font-family:Plex,system-ui,sans-serif;color:var(--ink)}
+#bg{position:absolute;inset:0;background:linear-gradient(180deg,#040a19 0%,#0a1a38 50%,#050c1d 100%)}
+.blob{position:absolute;border-radius:50%;filter:blur(100px);mix-blend-mode:screen}
+#b1{width:780px;height:780px;background:radial-gradient(circle,rgba(56,214,255,.36),rgba(56,214,255,0) 70%)}
+#b2{width:700px;height:700px;background:radial-gradient(circle,rgba(255,201,74,.22),rgba(255,201,74,0) 70%)}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 42%,transparent 48%,rgba(0,0,0,.6) 100%);pointer-events:none}
+#scene{position:absolute;left:0;top:240px;width:1080px;height:880px}
+.hook{position:absolute;left:50px;right:50px;top:270px;text-align:center;opacity:0}
+.hook .a{font-size:46px;font-weight:500;color:#dce6fa}
+.hook .b{font-size:68px;font-weight:700;line-height:1.35;margin-top:10px;text-shadow:0 6px 30px rgba(0,0,0,.6)}
+.eq{position:absolute;left:40px;right:40px;top:1130px;height:240px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;opacity:0}
+.eq .k{direction:ltr;font-size:72px;color:#fff}
+.eq .s{font-size:36px;color:var(--mute);font-weight:500}
+.eq .s b{color:#fff}
+#cap{position:absolute;left:60px;right:60px;top:1392px;text-align:center;font-size:40px;line-height:1.45;font-weight:700}
+#cap span{background:rgba(3,8,20,.7);padding:6px 22px;border-radius:16px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.chip{position:absolute;direction:ltr;font-size:32px;font-weight:700;padding:8px 20px;border-radius:16px;background:rgba(5,13,31,.75);border:2px solid rgba(255,255,255,.14);white-space:nowrap;opacity:0}
+#ct{left:56px;top:262px} #ch{left:56px;top:326px;color:#7fe3ff} #cv{left:56px;top:390px}
+#brand{position:absolute;left:0;right:0;top:1500px;text-align:center;font-size:30px;color:var(--mute);opacity:0}
+#brand b{background:linear-gradient(90deg,var(--cy),var(--au));-webkit-background-clip:text;color:transparent;font-size:36px}
+#fade{position:absolute;inset:0;background:#000;pointer-events:none}
+</style></head><body>
+<div id="bg"></div><div class="blob" id="b1"></div><div class="blob" id="b2"></div>
+<svg id="scene" viewBox="0 0 1080 880" direction="ltr"></svg>
+<div class="chip" id="ct"></div><div class="chip" id="ch"></div><div class="chip" id="cv"></div>
+<div class="hook" id="hook"><div class="a">إذا كان الماء يتدفّق…</div><div class="b">فكيف نحسب <span style="color:var(--au)">سرعة ارتفاع</span> مستواه؟</div></div>
+<div class="eq" id="eV"><div class="k" data-tex="V=\color{#7fe3ff}\pi r^2\color{white}\,h"></div><div class="s">الحجم = <b style="color:#7fe3ff">مساحة القاعدة</b> × الارتفاع</div></div>
+<div class="eq" id="eS"><div class="k" data-tex="\Delta V=\color{#7fe3ff}\pi r^2\color{white}\,\Delta h"></div><div class="s">حجم طبقة رقيقة سُمكها <b dir="ltr">Δh</b></div></div>
+<div class="eq" id="eD0"><div class="k" data-tex="\frac{d}{dt}\big(V\big)=\frac{d}{dt}\big(\pi r^2h\big)" style="font-size:64px"></div><div class="s">نشتق الطرفين بالنسبة لـ <b dir="ltr">t</b></div></div>
+<div class="eq" id="eD"><div class="k" data-tex="\color{#ffc94a}\dfrac{dV}{dt}\color{white}=\pi r^2\,\color{#ffc94a}\dfrac{dh}{dt}"></div><div class="s" id="eDs"><b dir="ltr">πr²</b> ثابت لأن <b dir="ltr">r</b> ثابت</div></div>
+<div class="eq" id="eB"><div class="k" data-tex="\color{#ffc94a}\dfrac{dh}{dt}\color{white}=\dfrac{\color{#ffc94a}dV/dt}{\pi r^2}"></div><div class="s" id="eBs" style="direction:ltr;font-size:34px">r = 2 m ,  dV/dt = 4π m³/min  ⇒  dh/dt = 4π / 4π = <b style="color:var(--au)">1 m/min</b></div></div>
+<div class="eq" id="eQ"><div class="k" data-tex="r\;\to\;2r\quad\Rightarrow\quad\color{#ffc94a}\dfrac{dh}{dt}=\;?"></div><div class="s">والتدفق <b dir="ltr">dV/dt</b> نفسه — اكتب جوابك في التعليقات</div></div>
+<div id="cap"></div>
+<div id="brand"><b>الرياضيات الحيّة</b> · الأستاذ فائز الحمداني · السادس العلمي</div>
+<div id="vig"></div><div id="fade"></div>
+<script>
+const CUES=window.CUES||[[0.3,4.929],[5.729,1.895],[8.024,3.478],[12.002,2.361],[15.063,2.892],[18.455,2.807],[22.062,6.195],[28.857,4.447],[34.304,8.135],[43.039,1.644]];
+const CAPS=['الماء يتدفق إلى الخزان… فكيف نحسب سرعة ارتفاعه؟','نصف القطر r ثابت','وارتفاع الماء h يتغير مع الزمن','الحجم: πr² في h','كل طبقة جديدة تزيد الحجم','نشتق الطرفين بالنسبة للزمن','معدل تغير الحجم = مساحة القاعدة × سرعة الارتفاع','ومساحة القاعدة الثابتة هي الجسر بين المعدّلين','سؤال لك: إذا تضاعف نصف القطر والتدفق نفسه… فماذا يحدث لسرعة الارتفاع؟',''];
+window.DURATION=45;
+const C=i=>CUES[i][0], CE=i=>CUES[i][0]+CUES[i][1];
+document.querySelectorAll('[data-tex]').forEach(e=>katex.render(e.dataset.tex,e,{throwOnError:false}));
+const $=id=>document.getElementById(id), NS='http://www.w3.org/2000/svg';
+const E=(tag,a,p)=>{ const e=document.createElementNS(NS,tag); for(const k in a) e.setAttribute(k,a[k]); p.appendChild(e); return e; };
+const cl=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)), lerp=(a,b,k)=>a+(b-a)*k, eio=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2, eo=u=>1-Math.pow(1-u,3);
+const ramp=(t,a,d)=>cl((t-a)/d), win=(t,a,b,fi=.45,fo=.4)=>cl((t-a)/fi)*cl((b-t)/fo);
+const sv=$('scene'), defs=E('defs',{},sv);
+/* ---------- physics (consistent with the on-screen example): r = 2 m, dV/dt = 4π m³/min ⇒ dh/dt = 1 m/min ---------- */
+const MIN_PER_S=0.08, H0=0.5, Hmax=5;               /* video second → minutes; tank 5 m high */
+const tmin=t=>t*MIN_PER_S, hAt=t=>H0+1.0*tmin(t);   /* h(t) = 0.5 + t  (m, t in min) */
+/* ---------- tank geometry (px) ---------- */
+const CX=470, RX=200, RY=58, TOP=170, BOT=760, PXM=(BOT-TOP)/Hmax, yOf=h=>BOT-h*PXM;
+const lg=(id,stops,x2='1',y2='0')=>{ const g=E('linearGradient',{id,x1:0,y1:0,x2,y2},defs); stops.forEach(([o,c,a])=>E('stop',{offset:o,'stop-color':c,'stop-opacity':a},g)); };
+lg('glass',[[0,'#9fc4ff',.10],[.18,'#cfe2ff',.22],[.5,'#9fc4ff',.04],[.85,'#9fc4ff',.08],[1,'#cfe2ff',.18]]);
+lg('water',[[0,'#38d6ff',.30],[.35,'#7fe3ff',.42],[.7,'#2bb8e6',.30],[1,'#1a8fc4',.40]]);
+lg('pipe',[[0,'#8aa0c4',1],[.5,'#dfe8f7',1],[1,'#5e7299',1]],'0','1');
+const glowF=(id,sd)=>{ const f=E('filter',{id,filterUnits:'userSpaceOnUse',x:-600,y:-600,width:2400,height:2200},defs); E('feGaussianBlur',{stdDeviation:sd,result:'b'},f); const m=E('feMerge',{},f); E('feMergeNode',{in:'b'},m); E('feMergeNode',{in:'SourceGraphic'},m); };
+glowF('gl',6); glowF('gg',8);
+const cam=E('g',{},sv);
+/* shadow + back half of the tank */
+E('ellipse',{cx:CX,cy:BOT+18,rx:RX+40,ry:RY*0.55,fill:'rgba(0,0,0,.45)'},cam);
+const backTop=E('path',{d:`M${CX-RX} ${TOP}A${RX} ${RY} 0 0 1 ${CX+RX} ${TOP}`,fill:'none',stroke:'#9fc4ff','stroke-opacity':.35,'stroke-width':3},cam);
+const backBot=E('path',{d:`M${CX-RX} ${BOT}A${RX} ${RY} 0 0 1 ${CX+RX} ${BOT}`,fill:'none',stroke:'#9fc4ff','stroke-opacity':.25,'stroke-width':3,'stroke-dasharray':'8 8'},cam);
+const base=E('ellipse',{cx:CX,cy:BOT,rx:RX,ry:RY,fill:'#7fe3ff','fill-opacity':0,stroke:'#7fe3ff','stroke-opacity':0,'stroke-width':4,filter:'url(#gl)'},cam);
+/* water body */
+const wBody=E('path',{fill:'url(#water)'},cam);
+const slices=E('g',{},cam);
+const wTop=E('ellipse',{cx:CX,rx:RX-2,ry:RY-2,fill:'#9beaff','fill-opacity':.38,stroke:'#c9f4ff','stroke-opacity':.85,'stroke-width':3},cam);
+const ripples=E('g',{},cam);
+/* stream from the pipe */
+const SX=CX+70;
+const stream=E('path',{fill:'#9beaff','fill-opacity':.55},cam), streamCore=E('path',{fill:'none',stroke:'#e6fbff','stroke-opacity':.7,'stroke-width':3,'stroke-dasharray':'26 22'},cam);
+/* glass front */
+E('path',{d:`M${CX-RX} ${TOP}V${BOT}A${RX} ${RY} 0 0 0 ${CX+RX} ${BOT}V${TOP}`,fill:'url(#glass)',stroke:'#cfe2ff','stroke-opacity':.7,'stroke-width':3},cam);
+E('path',{d:`M${CX-RX} ${TOP}A${RX} ${RY} 0 0 0 ${CX+RX} ${TOP}`,fill:'none',stroke:'#cfe2ff','stroke-opacity':.8,'stroke-width':3},cam);
+E('rect',{x:CX-RX+26,y:TOP+30,width:16,height:BOT-TOP-60,rx:8,fill:'#ffffff','fill-opacity':.10},cam);
+/* pipe (comes in from the right, above the tank) */
+E('path',{d:`M1100 60H${SX+30}a30 30 0 0 0 -30 30V${TOP-70}`,fill:'none',stroke:'url(#pipe)','stroke-width':44,'stroke-linecap':'butt'},cam);
+E('rect',{x:SX-26,y:TOP-78,width:52,height:16,rx:4,fill:'#c3d2ea'},cam);
+/* radius (top) */
+const rG=E('g',{opacity:0},cam);
+E('ellipse',{cx:CX,cy:TOP,rx:RX,ry:RY,fill:'#ffffff','fill-opacity':.06},rG);
+const rLine=E('line',{x1:CX,y1:TOP,y2:TOP,stroke:'#ffffff','stroke-width':5,'stroke-linecap':'round'},rG);
+E('circle',{cx:CX,cy:TOP,r:7,fill:'#fff'},rG);
+const rTxt=E('text',{x:CX+RX/2,y:TOP-18,fill:'#fff','font-size':46,'font-weight':700,'font-style':'italic','text-anchor':'middle','font-family':'Plex'},rG); rTxt.textContent='r';
+const rTag=E('g',{opacity:0},cam); E('rect',{x:CX+RX+20,y:TOP-34,width:118,height:52,rx:14,fill:'rgba(255,255,255,.1)',stroke:'rgba(255,255,255,.3)','stroke-width':2},rTag);
+E('text',{x:CX+RX+79,y:TOP+2,fill:'#fff','font-size':30,'font-weight':700,'text-anchor':'middle','font-family':'Plex',direction:'rtl'},rTag).textContent='ثابت';
+/* h(t) dimension */
+const hG=E('g',{opacity:0},cam);
+const hx=CX-RX-56, hLine=E('line',{x1:hx,x2:hx,y1:BOT,stroke:'#7fe3ff','stroke-width':5},hG);
+E('line',{x1:hx-16,x2:hx+16,y1:BOT,y2:BOT,stroke:'#7fe3ff','stroke-width':5},hG); const hTick=E('line',{x1:hx-16,x2:hx+16,stroke:'#7fe3ff','stroke-width':5},hG);
+const hTxt=E('text',{fill:'#7fe3ff','font-size':44,'font-weight':700,'font-style':'italic','text-anchor':'end','font-family':'Plex'},hG); hTxt.textContent='h(t)';
+/* base label πr² */
+const bTxt=E('text',{x:CX,y:BOT+RY+62,fill:'#7fe3ff','font-size':44,'font-weight':700,'text-anchor':'middle','font-family':'Plex',opacity:0},cam); bTxt.textContent='πr²';
+/* rate arrows (gold) */
+const aV=E('g',{opacity:0,filter:'url(#gg)'},cam), aH=E('g',{opacity:0,filter:'url(#gg)'},cam);
+E('path',{d:`M${SX+40} ${TOP+80}v80m-18 -22l18 22l18 -22`,fill:'none',stroke:'#ffc94a','stroke-width':7,'stroke-linecap':'round','stroke-linejoin':'round'},aV);
+E('text',{x:SX+66,y:TOP+136,fill:'#ffc94a','font-size':40,'font-weight':700,'font-family':'Plex'},aV).textContent='dV/dt';
+const aHp=E('path',{fill:'none',stroke:'#ffc94a','stroke-width':7,'stroke-linecap':'round','stroke-linejoin':'round'},aH);
+const aHt=E('text',{fill:'#ffc94a','font-size':40,'font-weight':700,'font-family':'Plex'},aH); aHt.textContent='dh/dt';
+const bridge=E('path',{fill:'none',stroke:'#ffc94a','stroke-width':4,'stroke-dasharray':'12 10',opacity:0},cam);
+/* ghost wide tank (2r) for the final question */
+const gT=E('g',{opacity:0},sv);
+function cyl(g,cx,rx,ry,top,bot,lvl){ g.innerHTML=''; E('path',{d:`M${cx-rx} ${lvl}V${bot}A${rx} ${ry} 0 0 0 ${cx+rx} ${bot}V${lvl}A${rx} ${ry} 0 0 1 ${cx-rx} ${lvl}Z`,fill:'url(#water)'},g);
+  E('ellipse',{cx,cy:lvl,rx,ry,fill:'#9beaff','fill-opacity':.35,stroke:'#c9f4ff','stroke-width':3},g);
+  E('path',{d:`M${cx-rx} ${top}V${bot}A${rx} ${ry} 0 0 0 ${cx+rx} ${bot}V${top}`,fill:'url(#glass)',stroke:'#cfe2ff','stroke-opacity':.7,'stroke-width':3},g);
+  E('ellipse',{cx,cy:top,rx,ry,fill:'none',stroke:'#cfe2ff','stroke-opacity':.8,'stroke-width':3},g); }
+
+function render(t){
+  $('b1').style.transform=`translate(${-160+60*Math.sin(t*.2)}px,${200+50*Math.cos(t*.16)}px)`;
+  $('b2').style.transform=`translate(${520+60*Math.cos(t*.18)}px,${980+50*Math.sin(t*.22)}px)`;
+  const h=Math.min(hAt(t),4.6), ly=yOf(h);
+  /* camera: hook close-up on the surface → wide; push to base (V), to top (r); wide; then shift left for the question */
+  const shots=[ /* [t, scale, focusX, focusY] */
+    [0,2.25,SX-20,ly-40],[2.6,2.25,SX-20,yOf(hAt(2.6))-40],[5.2,1,540,440],[C(1),1,540,440],[C(1)+0.8,1.25,CX+60,TOP+120],[CE(1)+0.2,1.25,CX+60,TOP+120],
+    [C(2)+0.6,1,540,440],[C(3),1,540,440],[C(3)+0.7,1.3,CX,BOT-80],[CE(3)+0.4,1.3,CX,BOT-80],[C(4)+0.6,1.15,CX,ly+40],[CE(4)+0.3,1.15,CX,ly+40],[C(5)+0.6,1,540,440],
+    [C(8),1,540,440],[C(8)+1.2,0.62,970,465],[45,0.62,970,465]];
+  let k=0; while(k<shots.length-2&&t>=shots[k+1][0]) k++; const [ta,sa,xa,ya]=shots[k], [tb,sb,xb,yb]=shots[k+1], u=eio(cl((t-ta)/Math.max(.001,tb-ta)));
+  const s=lerp(sa,sb,u), fx=lerp(xa,xb,u), fy=lerp(ya,yb,u);
+  cam.setAttribute('transform',`translate(540 440) scale(${s}) translate(${-fx} ${-fy})`);
+  /* water */
+  wBody.setAttribute('d',`M${CX-RX+2} ${ly}V${BOT}A${RX-2} ${RY-2} 0 0 0 ${CX+RX-2} ${BOT}V${ly}A${RX-2} ${RY-2} 0 0 1 ${CX-RX+2} ${ly}Z`);
+  wTop.setAttribute('cy',ly);
+  ripples.innerHTML=''; for(let i=0;i<3;i++){ const p=((t*0.9+i/3)%1), rr=20+p*150; E('ellipse',{cx:SX,cy:ly,rx:Math.min(rr,RX-10),ry:Math.min(rr*0.29,RY-6),fill:'none',stroke:'#e6fbff','stroke-opacity':(1-p)*0.7,'stroke-width':2.5},ripples); }
+  /* stream: wobbling column from the nozzle to the surface */
+  const y0=TOP-62, wv=y=>4*Math.sin(y*0.05-t*9); let L='',R=''; for(let y=y0;y<=ly;y+=10){ const w=11-3*(y-y0)/(ly-y0+1); L+=`${SX-w+wv(y)} ${y} `; R=`${SX+w+wv(y)} ${y} `+R; }
+  stream.setAttribute('d','M'+L+'L'+R+'Z'); streamCore.setAttribute('d',`M${SX} ${y0}V${ly}`); streamCore.setAttribute('stroke-dashoffset',-t*260);
+  /* slices: new thin layers light up at the surface while "كل طبقة جديدة" is said */
+  slices.innerHTML=''; const sl=win(t,C(4)-0.2,CE(4)+1.2,.4,.6);
+  if(sl>0) for(let i=0;i<6;i++){ const yy=ly+i*22, a=sl*(1-i/6)*(0.55+0.45*Math.sin(t*5-i)); E('ellipse',{cx:CX,cy:yy,rx:RX-4,ry:RY-4,fill:'none',stroke:'#e6fbff','stroke-opacity':a,'stroke-width':3},slices); }
+  /* radius r + "ثابت" */
+  const rOn=ramp(t,C(1),0.5); rG.setAttribute('opacity',rOn); rLine.setAttribute('x2',CX+RX*eo(ramp(t,C(1)+0.1,0.6)));
+  rTag.setAttribute('opacity',ramp(t,C(1)+0.8,0.4)*cl((C(3)-t)/0.5)+win(t,C(5)+1.2,CE(5)+2.5));
+  /* h(t) */
+  hG.setAttribute('opacity',ramp(t,C(2),0.5)*cl((C(8)+0.6-t)/0.6)); hLine.setAttribute('y2',ly); hTick.setAttribute('y1',ly); hTick.setAttribute('y2',ly);
+  hTxt.setAttribute('x',hx-22); hTxt.setAttribute('y',(ly+BOT)/2+14);
+  /* base πr² glow */
+  const bOn=win(t,C(3)+0.4,CE(3)+1.6,.5,.6)+0.8*win(t,C(6)+2.4,CE(7),.5,.5);
+  base.setAttribute('fill-opacity',0.22*bOn); base.setAttribute('stroke-opacity',bOn); bTxt.setAttribute('opacity',bOn);
+  /* rates: dV/dt at the inflow, dh/dt at the surface, dashed bridge through the base */
+  const rOn2=ramp(t,C(6),0.5)*cl((C(8)+0.6-t)/0.6); aV.setAttribute('opacity',ramp(t,C(6),0.5)*cl((C(8)+0.6-t)/0.6)); aH.setAttribute('opacity',ramp(t,C(6)+2.4,0.5)*cl((C(8)+0.6-t)/0.6));
+  aHp.setAttribute('d',`M${CX-60} ${ly-14}v-80m-18 22l18 -22l18 22`); aHt.setAttribute('x',CX-36); aHt.setAttribute('y',ly-60);
+  const bp=ramp(t,C(7),1.0); bridge.setAttribute('opacity',bp*cl((C(8)+0.6-t)/0.6)); bridge.setAttribute('d',`M${SX+120} ${TOP+150}C${CX+RX+160} ${BOT-60} ${CX+RX+40} ${BOT+RY+40} ${CX} ${BOT+RY+20}`);
+  bridge.setAttribute('stroke-dashoffset',-t*60);
+  /* chips: t, h, V — numbers obey V = πr²h with r = 2 (V = 4πh) */
+  const cOn=ramp(t,C(2)+0.4,0.5)*cl((C(8)-t)/0.5);
+  ['ct','ch','cv'].forEach(id=>$(id).style.opacity=cOn);
+  $('ct').textContent='t = '+tmin(t).toFixed(2)+' min'; $('ch').textContent='h = '+h.toFixed(2)+' m'; $('cv').textContent='V = 4π·h ≈ '+(4*Math.PI*h).toFixed(1)+' m³';
+  $('cv').style.opacity=cOn*ramp(t,C(3)+1.2,0.5);
+  /* ghost tank 2r */
+  const gq=ramp(t,C(8)+0.6,1.0); gT.setAttribute('opacity',gq);
+  if(gq>0){ const S=0.62, sy=y=>440+S*(y-465), lvl=sy(ly), GX=700+40*(1-eo(gq)), grx=2*RX*S, gry=2*RY*S*0.8;
+    cyl(gT,GX,grx,gry,sy(TOP),sy(BOT),lvl);
+    E('line',{x1:GX,y1:sy(TOP),x2:GX+grx,y2:sy(TOP),stroke:'#fff','stroke-width':5},gT);
+    E('text',{x:GX+grx/2,y:sy(TOP)-20,fill:'#fff','font-size':46,'font-weight':700,'font-style':'italic','text-anchor':'middle','font-family':'Plex'},gT).textContent='2r';
+    const q=E('text',{x:GX,y:lvl-50,fill:'#ffc94a','font-size':96,'font-weight':700,'text-anchor':'middle','font-family':'Plex',filter:'url(#gg)'},gT); q.textContent='?'; q.setAttribute('opacity',0.65+0.35*Math.sin(t*4)); }
+  /* hook text */
+  const hk=$('hook'); hk.style.opacity=ramp(t,0.25,0.5)*cl((C(1)-0.1-t)/0.5);
+  [...hk.children].forEach((e,i)=>{ const k=eo(ramp(t,0.25+i*0.9,0.6)); e.style.opacity=k; e.style.transform=`translateY(${(1-k)*30}px)`; e.style.filter=`blur(${(1-k)*8}px)`; });
+  /* equation cards */
+  [['eV',C(3)+0.2,C(4)],['eS',C(4),C(5)],['eD0',C(5),C(5)+1.9],['eD',C(5)+1.9,C(7)+0.1],['eB',C(7)+0.1,C(8)],['eQ',C(8)+0.6,45.1]].forEach(([id,a,b])=>{ const e=$(id), o=win(t,a,b,.45,.35), k=eo(ramp(t,a,.6)); e.style.opacity=o; e.style.transform=`translateY(${(1-k)*34}px) scale(${.95+.05*k})`; e.style.filter=`blur(${(1-k)*8}px)`; });
+  $('eBs').style.opacity=ramp(t,C(7)+2.2,0.5); $('eDs').style.opacity=ramp(t,C(5)+2.6,0.5);
+  /* captions */
+  let ci=-1; CUES.forEach((c,i)=>{ if(t>=c[0]-0.1&&t<c[0]+c[1]+0.4) ci=i; }); const cap=$('cap'), txt=ci>=0&&ci>0?CAPS[ci]:'';
+  if(cap.dataset.t!==txt){ cap.dataset.t=txt; cap.innerHTML=txt?`<span>${txt.replace(/πr²|\br\b|\bh\b/g,m=>`<b dir="ltr" style="color:#7fe3ff">${m}</b>`)}</span>`:''; }
+  cap.style.opacity=txt?cl((t-CUES[ci][0]+0.1)/0.25):0;
+  $('brand').style.opacity=ramp(t,C(9)-0.2,0.6);
+  $('fade').style.opacity=t<0.3?1-t/0.3:t>44.4?(t-44.4)/0.6:0;
+}
+window.render=render; render(0);
+</script></body></html>

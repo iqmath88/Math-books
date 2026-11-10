@@ -49,3 +49,7 @@ node tools/reel-render.cjs tools/reels/ladder.html out.mp4 [--preview 3,8,17]
 - الصوت (صوت عربي آلي Piper «كريم» + خلفية موسيقية مولّدة + مؤثرات) ثم الدمج:
   `VOICE=…/vits-piper-ar_JO-kareem-medium tools/reels/derivative-audio/build-audio.sh video.mp4 out.mp4`
   (طريقة تنزيل الصوت في رأس `build-audio.sh`؛ نص التعليق مشكول في `narration.txt`).
+
+### «المعدلات المرتبطة بالزمن» (ريلز 45 ث، خزان أسطواني)
+- الصورة: `node tools/reel-render.cjs tools/reels/tank-rates.html video.mp4`
+- الصوت والدمج: `VOICE=… tools/reels/tank-rates-audio/build-audio.sh video.mp4 out.mp4`
