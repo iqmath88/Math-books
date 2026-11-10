@@ -157,3 +157,5 @@
  });
  syncBoard();
 })();
+/* author credit on every classic page */
+(()=>{ const d=document.createElement('div'); d.textContent='إعداد وتصميم: الأستاذ فائز الحمداني · © 2026'; d.style.cssText='position:fixed;bottom:4px;left:8px;z-index:5;font:600 11px system-ui,sans-serif;opacity:.55;pointer-events:none'; (document.body?Promise.resolve():new Promise(r=>addEventListener('DOMContentLoaded',r))).then(()=>document.body.append(d)); })();

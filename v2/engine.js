@@ -111,6 +111,7 @@ ST.n=LES.length; ST.t=LES.reduce((a,l)=>a+l.nEx,0); save();
 const exDone=l=>Object.keys(ST.ex).filter(k=>k.startsWith(l.id+'-')&&ST.ex[k]===1).length;
 
 /* ================= page skeleton ================= */
+const CREDIT='إعداد وتصميم: الأستاذ فائز الحمداني';
 const ICON={back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>',
  present:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/></svg>',
  moon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/></svg>',
@@ -159,6 +160,7 @@ function renderHome(){
    <div class="lessons">${LES.map((l,i)=>{ const n=exDone(l); return `<a class="lcard" href="#l=${l.id}"><span class="no"><span>${esc(/^\d/.test(l.no)?'['+l.no+']':l.no)}</span><span class="pg">ص ${esc(l.pg)}</span></span><b>${T(l.t)}</b><p>${T(l.d)}</p>
      <span class="st">${ST.seen[l.id]?'<span class="okb">✓ مكتمل</span>':`الدرس ${i+1}`}${l.nEx?`<span class="mini"><i style="width:${Math.round(n/l.nEx*100)}%"></i></span><span>${n}/${l.nEx}</span>`:''}</span></a>`; }).join('')}</div>
    ${B.classic?`<p class="classic">تفضّل الكتاب بصفحاته؟ <a href="${B.classic}">افتح النسخة الكلاسيكية</a></p>`:''}`;
+  $('#home').insertAdjacentHTML('beforeend',`<p class="credit home-credit">${CREDIT} · © 2026 جميع الحقوق محفوظة</p>`);
   typeset($('#home')); scrollTo({top:0,behavior:'instant'}); $('#prog').style.width='0';
   try{ $('#shN').value=localStorage.getItem('lb-name')||''; }catch(e){}
   $('#shB').onclick=async()=>{ const nm=$('#shN').value.trim(); try{ localStorage.setItem('lb-name',nm); }catch(e){}
@@ -182,7 +184,7 @@ function renderLesson(les){
       h+=`<div class="step ${st.cls.join(' ')}" data-scene="${esc(sc||'')}">${stepHTML(st,les,si,ki)}</div>`; });
     h+='</section>'; });
   const i=LES.indexOf(les), nx=LES[i+1];
-  h+=`<section class="sec" data-sec="التالي" id="sEnd"><div class="summary step" data-scene="${esc(prevSc||'')}"><h2>أحسنت!</h2><p>أنهيت درس «${T(les.t)}».</p><div class="lnav">${nx?`<a href="#l=${nx.id}"><span><small>الدرس التالي · ${esc(/^\d/.test(nx.no)?'['+nx.no+']':nx.no)}</small><br>${T(nx.t)}</span><span>←</span></a>`:''}<a href="#"><span>كل دروس الفصل</span><span>←</span></a><a href="#l=${les.id}" data-top><span>إعادة الدرس من أوله</span><span>↑</span></a></div></div></section>`;
+  h+=`<section class="sec" data-sec="التالي" id="sEnd"><div class="summary step" data-scene="${esc(prevSc||'')}"><h2>أحسنت!</h2><p>أنهيت درس «${T(les.t)}».</p><p class="credit">${CREDIT}</p><div class="lnav">${nx?`<a href="#l=${nx.id}"><span><small>الدرس التالي · ${esc(/^\d/.test(nx.no)?'['+nx.no+']':nx.no)}</small><br>${T(nx.t)}</span><span>←</span></a>`:''}<a href="#"><span>كل دروس الفصل</span><span>←</span></a><a href="#l=${les.id}" data-top><span>إعادة الدرس من أوله</span><span>↑</span></a></div></div></section>`;
   story.innerHTML=h; typeset(story);
   steps=$$('.step',story); secs=$$('.sec',story); active=null;
   outline.innerHTML=secs.map((s,i)=>`<li><a href="#l=${les.id}" data-s="${i}"><span class="n">${s.dataset.stg&&STAGES[s.dataset.stg]?STAGES[s.dataset.stg][1]:i+1}</span>${esc(s.dataset.sec)}</a></li>`).join('');

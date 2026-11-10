@@ -284,3 +284,6 @@ nav.outline a{color:var(--ink2)}
 
 .fig.grab svg{cursor:grab;touch-action:none}
 #svg,#svg text{-webkit-user-select:none;user-select:none}
+
+.credit{font-size:13px;opacity:.85;margin-top:10px}
+.home-credit{text-align:center;color:var(--muted);margin:28px 0 12px}
