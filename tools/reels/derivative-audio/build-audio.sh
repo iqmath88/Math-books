@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Arabic voice-over + music + sfx for tools/reels/derivative.html, then mux with the rendered video.
+#   one-off setup:  pip install piper-tts
+#                   curl -L -O https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-ar_JO-kareem-medium.tar.bz2 && tar xjf vits-piper-ar_JO-kareem-medium.tar.bz2
+#   usage: VOICE=path/to/vits-piper-ar_JO-kareem-medium ./build-audio.sh video.mp4 out.mp4
+# narration.txt: one line per cue (fully voweled for correct pronunciation). If you change a line,
+# re-run and copy the printed cue list into CUES in derivative.html, then re-render the video.
+set -euo pipefail
+cd "$(dirname "$0")"; M="$VOICE/ar_JO-kareem-medium.onnx"; i=0; mkdir -p tmp
+while IFS= read -r l; do i=$((i+1)); echo "$l" | python3 -m piper -m "$M" -c "$M.json" --length-scale 0.92 --sentence-silence 0.1 -f tmp/c$i.wav 2>/dev/null
+  ffmpeg -nostdin -v error -y -i tmp/c$i.wav -af "silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse,atempo=1.07" -ar 44100 -ac 1 tmp/k$i.wav
+done < narration.txt
+python3 mix.py tmp
+ffmpeg -nostdin -v error -y -i "$1" -i tmp/mix.wav -map 0:v -map 1:a -c:v copy -c:a aac -b:a 192k -shortest -movflags +faststart "$2"
+echo wrote "$2"

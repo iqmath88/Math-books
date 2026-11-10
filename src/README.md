@@ -43,3 +43,9 @@ node tools/lesson-video.cjs g12c3 rates-3-0 rates-3-4 tank.mp4 --sub "مثال 1
 ```
 node tools/reel-render.cjs tools/reels/ladder.html out.mp4 [--preview 3,8,17]
 ```
+
+### «ما هي المشتقة؟» (ريلز 40 ث بتعليق صوتي)
+- الصورة: `node tools/reel-render.cjs tools/reels/derivative.html video.mp4`
+- الصوت (صوت عربي آلي Piper «كريم» + خلفية موسيقية مولّدة + مؤثرات) ثم الدمج:
+  `VOICE=…/vits-piper-ar_JO-kareem-medium tools/reels/derivative-audio/build-audio.sh video.mp4 out.mp4`
+  (طريقة تنزيل الصوت في رأس `build-audio.sh`؛ نص التعليق مشكول في `narration.txt`).

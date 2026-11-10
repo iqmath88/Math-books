@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<title>ريلز · ما هي المشتقة؟</title>
+<link rel="stylesheet" href="../../v2/lib/katex/katex.min.css">
+<script src="../../v2/lib/katex/katex.min.js"></script>
+<style>
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-ar-500.woff2) format("woff2");font-weight:500;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-ar-700.woff2) format("woff2");font-weight:700;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-lat-500.woff2) format("woff2");font-weight:500;unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-lat-700.woff2) format("woff2");font-weight:700;unicode-range:U+0000-00FF,U+2000-206F}
+:root{--navy:#050d1f;--cy:#38d6ff;--au:#ffc94a;--neg:#ff6b7d;--ink:#eef4ff;--mute:#8fa3c7}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:clip;background:var(--navy)}
+body{position:relative;contain:paint}
+body{font-family:Plex,system-ui,sans-serif;color:var(--ink)}
+#bg{position:absolute;inset:0;background:linear-gradient(180deg,#040a19 0%,#0a1a38 45%,#061023 100%)}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);mix-blend-mode:screen}
+#b1{width:760px;height:760px;background:radial-gradient(circle,rgba(56,214,255,.42),rgba(56,214,255,0) 70%)}
+#b2{width:820px;height:820px;background:radial-gradient(circle,rgba(255,201,74,.30),rgba(255,201,74,0) 70%)}
+#grid{position:absolute;inset:0;background-image:linear-gradient(rgba(140,180,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(140,180,255,.05) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse at 50% 40%,#000 30%,transparent 75%)}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 45%,rgba(0,0,0,.65) 100%)}
+#grain{position:absolute;inset:-60px;opacity:.07;mix-blend-mode:overlay}
+#brand{position:absolute;top:150px;left:0;right:0;text-align:center;font-size:27px;letter-spacing:1px;color:var(--mute)}
+#title{position:absolute;left:0;right:0;text-align:center;font-weight:700;white-space:nowrap}
+#title .w{display:inline-block}
+#title .q{color:var(--au)}
+#sweep{position:absolute;top:0;bottom:0;width:180px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);mix-blend-mode:overlay;pointer-events:none}
+#g{position:absolute;left:0;top:300px;width:1080px;height:840px}
+#d{position:absolute;left:0;top:1150px;width:1080px;height:270px;opacity:0}
+.eq{position:absolute;left:40px;right:40px;top:1160px;height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;opacity:0;text-align:center}
+.eq .k{direction:ltr;font-size:62px}
+.eq .t{font-size:44px;font-weight:700}
+.box{padding:14px 36px;border-radius:24px;border:3px solid var(--au);background:rgba(255,201,74,.08);box-shadow:0 0 60px rgba(255,201,74,.28)}
+#cap{position:absolute;left:70px;right:70px;top:1452px;text-align:center;font-size:36px;line-height:1.5;font-weight:500;color:#fff}
+#cap span{background:rgba(3,8,20,.62);padding:6px 20px;border-radius:14px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.chip{position:absolute;direction:ltr;font-size:36px;font-weight:700;padding:10px 24px;border-radius:18px;background:rgba(5,13,31,.72);border:2px solid rgba(255,255,255,.14);white-space:nowrap}
+#ro{top:330px;left:60px;opacity:0}
+#hx{top:330px;right:60px;opacity:0;color:var(--mute)}
+#outro{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;opacity:0;padding-bottom:220px;text-align:center}
+#outro .l{font-size:76px;font-weight:700;background:linear-gradient(90deg,var(--cy),var(--au));-webkit-background-clip:text;color:transparent}
+#outro .s{font-size:40px;color:var(--ink)} #outro .u{font-size:30px;color:var(--mute);direction:ltr}
+#outro .line{width:0;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--cy),var(--au))}
+#fade{position:absolute;inset:0;background:#000;pointer-events:none}
+</style></head><body>
+<div id="bg"></div><div class="blob" id="b1"></div><div class="blob" id="b2"></div><div id="grid"></div><canvas id="grain" width="600" height="1070"></canvas>
+<div id="brand">الرياضيات الحيّة · حساب التفاضل</div>
+<div id="title"><span class="w">ما</span> <span class="w">هي</span> <span class="w q">المشتقة؟</span><div id="sweep"></div></div>
+<svg id="g" viewBox="0 0 1080 840" direction="ltr"></svg>
+<svg id="d" viewBox="0 0 1080 270" direction="ltr"></svg>
+<div class="chip" id="ro"></div><div class="chip" id="hx"></div>
+<div class="eq" id="e1"><div class="t">ميل القاطع</div><div class="k" data-tex="m=\dfrac{\Delta y}{\Delta x}"></div></div>
+<div class="eq" id="e2"><div class="k" data-tex="m=\dfrac{f(x+h)-f(x)}{h}"></div><div class="t" id="e2b" style="font-size:38px;color:var(--mute)">h ← 0</div></div>
+<div class="eq" id="e3"><div class="k box" data-tex="f'(x)=\displaystyle\lim_{h\to 0}\dfrac{f(x+h)-f(x)}{h}" style="font-size:50px"></div></div>
+<div class="eq" id="e4"><div class="t" style="font-size:56px"><span dir="ltr" style="color:var(--au)">f′(x)</span> = ميل المماس</div></div>
+<div id="cap"></div>
+<div id="vig"></div>
+<div id="outro"><div class="l">الرياضيات الحيّة</div><div class="line" id="ol"></div><div class="s">إعداد وتصميم: الأستاذ فائز الحمداني</div><div class="u">iqmath88.github.io/Math-books</div></div>
+<div id="fade"></div>
+<script>
+/* ---------- timing: cue i = [start, length] of narration line i (from the voice track) ---------- */
+const CUES=window.CUES||[[0.5,1.48],[2.58,2.56],[5.44,6.54],[12.39,2.77],[15.76,1.94],[18.1,2.86],[21.35,2.94],[24.49,4.29],[28.98,2.62],[32.1,4.8],[37.49,1.79]];
+const CAPS=['ما هي المشتقة؟','خذ منحنى، ونقطتين عليه.','الخط المارّ بهما هو القاطع، وميله: Δy على Δx','قرّب النقطتين… أكثر، وأكثر.','فيصير القاطع مماساً.','ميل هذا المماس هو المشتقة.','حيث يصعد المنحنى، الميل موجب.','عند القمة: المماس أفقي، والمشتقة صفر.','وحيث يهبط، تصير سالبة.','فالمشتقة: سرعة تغيّر الدالة عند كل نقطة.',''];
+window.DURATION=40;
+const C=i=>CUES[i][0], CE=i=>CUES[i][0]+CUES[i][1];
+document.querySelectorAll('[data-tex]').forEach(e=>katex.render(e.dataset.tex,e,{throwOnError:false}));
+const $=id=>document.getElementById(id), NS='http://www.w3.org/2000/svg';
+const E=(tag,a,p)=>{ const e=document.createElementNS(NS,tag); for(const k in a) e.setAttribute(k,a[k]); p.appendChild(e); return e; };
+const cl=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)), lerp=(a,b,k)=>a+(b-a)*k, eio=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2, eo=u=>1-Math.pow(1-u,3);
+const ramp=(t,a,d)=>cl((t-a)/d), win=(t,a,b,fi=.45,fo=.4)=>cl((t-a)/fi)*cl((b-t)/fo);
+/* ---------- maths ---------- */
+const f=x=>x*x*x-3*x, df=x=>3*x*x-3;
+const X0=-2.4,X1=2.4,Y0=-4.2,Y1=4.2, W=1080,H=840, PX=x=>60+(x-X0)/(X1-X0)*960, PY=y=>H-20-(y-Y0)/(Y1-Y0)*(H-40);
+/* ---------- grain (fixed texture, shifted every frame) ---------- */
+{ const c=$('grain').getContext('2d'), im=c.createImageData(600,1070); let s=7; const r=()=>(s=(s*16807)%2147483647)/2147483647; for(let i=0;i<im.data.length;i+=4){ const v=r()*255; im.data[i]=im.data[i+1]=im.data[i+2]=v; im.data[i+3]=255; } c.putImageData(im,0,0); $('grain').style.width='1200px'; $('grain').style.height='2140px'; }
+/* ---------- main graph ---------- */
+const g=$('g'), defs=E('defs',{},g);
+const glow=(id,col,sd)=>{ const fl=E('filter',{id,filterUnits:'userSpaceOnUse',x:-800,y:-800,width:2700,height:2500},defs); E('feGaussianBlur',{stdDeviation:sd,result:'b'},fl); const m=E('feMerge',{},fl); E('feMergeNode',{in:'b'},m); E('feMergeNode',{in:'SourceGraphic'},m); };
+glow('gc','#38d6ff',7); glow('ga','#ffc94a',8);
+const cam=E('g',{},g);
+const ax=E('g',{opacity:.0},cam);
+E('line',{x1:PX(X0),y1:PY(0),x2:PX(X1),y2:PY(0),stroke:'#6e86b5','stroke-width':2,'vector-effect':'non-scaling-stroke'},ax);
+E('line',{x1:PX(0),y1:PY(Y0),x2:PX(0),y2:PY(Y1),stroke:'#6e86b5','stroke-width':2,'vector-effect':'non-scaling-stroke'},ax);
+for(let i=-2;i<=2;i++) if(i) E('text',{x:PX(i),y:PY(0)+34,fill:'#6e86b5','font-size':24,'text-anchor':'middle','font-family':'Plex'},ax).textContent=i;
+E('text',{x:PX(X1)-10,y:PY(0)-14,fill:'#8fa3c7','font-size':30,'text-anchor':'end','font-family':'Plex','font-style':'italic'},ax).textContent='x';
+E('text',{x:PX(0)+14,y:PY(Y1)+30,fill:'#8fa3c7','font-size':30,'font-family':'Plex','font-style':'italic'},ax).textContent='y';
+let dpath=''; for(let i=0;i<=240;i++){ const x=X0+(X1-X0)*i/240, y=f(x); dpath+=(i?'L':'M')+PX(x).toFixed(1)+' '+PY(cl(y,Y0-1,Y1+1)).toFixed(1); }
+const clip=E('clipPath',{id:'cp'},defs); E('rect',{x:0,y:0,width:W,height:H},clip);
+const cg=E('g',{'clip-path':'url(#cp)'},cam);
+const curve=E('path',{d:dpath,fill:'none',stroke:'#38d6ff','stroke-width':6,'stroke-linecap':'round',filter:'url(#gc)','vector-effect':'non-scaling-stroke'},cg);
+const CL=curve.getTotalLength(); curve.setAttribute('stroke-dasharray',CL);
+const flab=E('text',{x:PX(1.55),y:PY(3.3),fill:'#38d6ff','font-size':34,'font-family':'Plex','font-weight':700,opacity:0},cam); flab.textContent='f(x) = x³ − 3x';
+const legs=E('g',{opacity:0},cam);
+const ldx=E('line',{stroke:'#ffc94a','stroke-width':3,'stroke-dasharray':'10 8','vector-effect':'non-scaling-stroke'},legs), ldy=E('line',{stroke:'#38d6ff','stroke-width':3,'stroke-dasharray':'10 8','vector-effect':'non-scaling-stroke'},legs);
+const tdx=E('text',{fill:'#ffc94a','font-size':32,'font-weight':700,'text-anchor':'middle','font-family':'Plex'},legs), tdy=E('text',{fill:'#38d6ff','font-size':32,'font-weight':700,'font-family':'Plex'},legs);
+const sec=E('line',{stroke:'#ffffff','stroke-width':4,'stroke-linecap':'round',opacity:0,'vector-effect':'non-scaling-stroke'},cg);
+const tan=E('line',{stroke:'#ffc94a','stroke-width':6,'stroke-linecap':'round',opacity:0,filter:'url(#ga)','vector-effect':'non-scaling-stroke'},cg);
+const ring=E('circle',{r:0,fill:'none',stroke:'#ffc94a','stroke-width':3,opacity:0,'vector-effect':'non-scaling-stroke'},cam);
+const P=E('circle',{r:15,fill:'#ffc94a',filter:'url(#ga)',opacity:0},cam), Q=E('circle',{r:13,fill:'#ffffff',opacity:0},cam);
+const tP=E('text',{fill:'#ffc94a','font-size':38,'font-weight':700,'font-family':'Plex',opacity:0},cam), tQ=E('text',{fill:'#fff','font-size':38,'font-weight':700,'font-family':'Plex',opacity:0},cam);
+tP.textContent='P'; tQ.textContent='Q';
+/* ---------- derivative strip ---------- */
+const d=$('d'), DY0=-3.5, DY1=6.5, DPY=y=>250-(cl(y,DY0-.5,DY1+.5)-DY0)/(DY1-DY0)*230;
+E('rect',{x:40,y:4,width:1000,height:262,rx:22,fill:'rgba(5,13,31,.55)',stroke:'rgba(255,255,255,.10)','stroke-width':2},d);
+E('line',{x1:60,y1:DPY(0),x2:1020,y2:DPY(0),stroke:'#6e86b5','stroke-width':2},d);
+E('text',{x:1010,y:42,fill:'#8fa3c7','font-size':28,'text-anchor':'end','font-family':'Plex'},d).textContent='منحنى المشتقة';
+const dlab=E('text',{x:70,y:46,fill:'#ffc94a','font-size':32,'font-weight':700,'font-family':'Plex',opacity:0},d); dlab.textContent="f′(x) = 3x² − 3";
+const dcl=E('clipPath',{id:'dc'},E('defs',{},d)); E('rect',{x:44,y:8,width:992,height:254,rx:20},dcl);
+const dtr=E('path',{fill:'none',stroke:'#ffc94a','stroke-width':5,'stroke-linecap':'round','clip-path':'url(#dc)'},d);
+const ddot=E('circle',{r:11,fill:'#ffc94a'},d);
+const trace=(a,b)=>{ let s=''; const n=Math.max(2,Math.round(Math.abs(b-a)*60)); for(let i=0;i<=n;i++){ const x=lerp(a,b,i/n); s+=(i?'L':'M')+PX(x).toFixed(1)+' '+DPY(df(x)).toFixed(1); } return s; };
+/* ---------- the moving point ---------- */
+const A0=-1.6;                                  /* point used for the secant → tangent story */
+function xp(t){ if(t<C(6)) return A0;          /* still while the tangent is built */
+  if(t<C(7)+0.9) return lerp(A0,-1,eio(ramp(t,C(6),C(7)+0.9-C(6))));    /* rising → reaches the top as "القمة" is heard */
+  if(t<C(8)) return -1;                          /* hold on the top */
+  if(t<C(9)) return lerp(-1,0.55,eio(ramp(t,C(8),C(9)-C(8))));           /* falling */
+  if(t<C(10)) return lerp(0.55,2.05,eio(ramp(t,C(9),C(10)-C(9))));        /* recap: sweep the rest */
+  return 2.05; }
+function hAt(t){ if(t<C(3)) return 0.9; return lerp(0.9,0.0001,eio(ramp(t,C(3),CE(4)-C(3)))); }
+const fmt=v=>(v<-0.005?'−':v>0.005?'+':'')+Math.abs(v).toFixed(2);
+function lineThrough(x,y,m,len){ /* segment centred on (x,y) with slope m in world coords, len in px */ const sx=960/(X1-X0), sy=(H-40)/(Y1-Y0), dx=1*sx, dy=-m*sy, L=Math.hypot(dx,dy); return [PX(x)-dx/L*len,PY(y)-dy/L*len,PX(x)+dx/L*len,PY(y)+dy/L*len]; }
+function setL(el,c){ el.setAttribute('x1',c[0]); el.setAttribute('y1',c[1]); el.setAttribute('x2',c[2]); el.setAttribute('y2',c[3]); }
+const slopeCol=m=>m>0.05?'#ffc94a':m<-0.05?'#ff6b7d':'#ffffff';
+
+function render(t){
+  /* background drift */
+  $('b1').style.transform=`translate(${-180+60*Math.sin(t*.21)}px,${120+50*Math.cos(t*.17)}px)`;
+  $('b2').style.transform=`translate(${420+70*Math.cos(t*.19)}px,${1040+60*Math.sin(t*.23)}px)`;
+  $('grain').style.transform=`translate(${-((t*97)%60)}px,${-((t*61)%60)}px)`;
+  /* title: big hook, then docks at the top */
+  const dock=eio(ramp(t,CE(0)+0.2,0.8)), ti=$('title');
+  ti.style.top=lerp(760,200,dock)+'px'; ti.style.fontSize=lerp(118,56,dock)+'px'; ti.style.opacity=ramp(t,0.15,0.4)*cl((C(10)-t)/0.5);
+  [...ti.querySelectorAll('.w')].forEach((w,i)=>{ const k=eo(ramp(t,0.15+i*0.18,0.5)); w.style.opacity=k; w.style.transform=`translateY(${(1-k)*40}px)`; w.style.filter=`blur(${(1-k)*10}px)`; });
+  $('sweep').style.left=lerp(-200,1200,ramp(t,0.9,0.9))+'px'; $('sweep').style.opacity=t>0.9&&t<1.8?1:0;
+  $('brand').style.opacity=ramp(t,CE(0),0.6)*cl((C(10)-t)/0.5);
+  /* camera: gentle push, zoom on P while h → 0, release when the point starts moving */
+  const zin=eio(ramp(t,C(3),2.2))*(1-eio(ramp(t,C(6)-0.2,1.4)));
+  const s=1+0.015*t/40+0.55*zin, fx=PX(A0)+120, fy=PY(f(A0))-60;
+  cam.setAttribute('transform',`translate(${W/2} ${H/2}) scale(${s}) translate(${lerp(W/2,fx,zin)*-1} ${lerp(H/2,fy,zin)*-1})`);
+  /* axes + curve draw-on */
+  ax.setAttribute('opacity',ramp(t,0.4,1.2)*0.9);
+  curve.setAttribute('stroke-dashoffset',CL*(1-eio(ramp(t,0.5,2.6))));
+  flab.setAttribute('opacity',ramp(t,C(1)+0.3,0.6)*cl((C(3)-t)/0.5)+ramp(t,C(9),0.6));
+  /* P, Q, secant */
+  const x=xp(t), h=hAt(t), y=f(x), xq=A0+h, yq=f(xq), ms=(yq-f(A0))/h, m=df(x);
+  const pin=eo(ramp(t,C(1)+0.3,0.5)), qin=eo(ramp(t,C(1)+1.1,0.5));
+  P.setAttribute('cx',PX(x)); P.setAttribute('cy',PY(y)); P.setAttribute('opacity',pin); P.setAttribute('r',15*(0.4+0.6*pin));
+  tP.setAttribute('x',PX(x)-46); tP.setAttribute('y',PY(y)-22); tP.setAttribute('opacity',pin*cl((C(6)-t)/0.4));
+  const qVis=qin*cl((CE(4)-t)/0.35); Q.setAttribute('cx',PX(xq)); Q.setAttribute('cy',PY(yq)); Q.setAttribute('opacity',qVis);
+  tQ.setAttribute('x',PX(xq)+20); tQ.setAttribute('y',PY(yq)-20); tQ.setAttribute('opacity',qVis*cl((C(3)+1.2-t)/0.4));
+  const rk=ramp(t,C(1)+0.3,0.9); ring.setAttribute('cx',PX(A0)); ring.setAttribute('cy',PY(f(A0))); ring.setAttribute('r',15+70*rk); ring.setAttribute('opacity',(1-rk)*(t>C(1)+0.3?1:0));
+  const sIn=ramp(t,C(2)+0.2,0.7); setL(sec,lineThrough((A0+xq)/2,(f(A0)+yq)/2,ms,560)); sec.setAttribute('opacity',sIn*cl((CE(4)+0.3-t)/0.5)*0.95);
+  /* Δx, Δy legs */
+  const lg=ramp(t,C(2)+2.2,0.6)*cl((C(3)+1.4-t)/0.5); legs.setAttribute('opacity',lg);
+  setL(ldx,[PX(A0),PY(f(A0)),PX(xq),PY(f(A0))]); setL(ldy,[PX(xq),PY(f(A0)),PX(xq),PY(yq)]);
+  tdx.setAttribute('x',(PX(A0)+PX(xq))/2); tdx.setAttribute('y',PY(f(A0))+42); tdx.textContent='Δx';
+  tdy.setAttribute('x',PX(xq)+16); tdy.setAttribute('y',(PY(f(A0))+PY(yq))/2+12); tdy.textContent='Δy';
+  /* tangent */
+  const tIn=ramp(t,C(4),0.6); setL(tan,lineThrough(x,y,m,330)); tan.setAttribute('opacity',tIn*cl((C(10)+3.5-t)/0.6)); tan.setAttribute('stroke',t<C(6)?'#ffc94a':slopeCol(m));
+  P.setAttribute('fill',t<C(6)?'#ffc94a':slopeCol(m));
+  /* chips: slope readout + h */
+  const ro=$('ro'); const roOn=ramp(t,C(2)+1.2,0.5)*cl((C(10)+3.6-t)/0.5); ro.style.opacity=roOn;
+  if(t<C(5)) { ro.textContent='m = '+ms.toFixed(2); ro.style.color='#fff'; ro.style.borderColor='rgba(255,255,255,.18)'; }
+  else { ro.textContent="f′("+x.toFixed(2)+") = "+fmt(m); ro.style.color=slopeCol(m); ro.style.borderColor=slopeCol(m); }
+  $('hx').style.opacity=ramp(t,C(3),0.4)*cl((CE(4)+0.4-t)/0.4); $('hx').textContent='h = '+Math.max(h,0).toFixed(3);
+  /* equation cards (each its own window) */
+  [['e1',C(2)+2.6,C(3)],['e2',C(3),C(4)+0.2],['e3',C(4)+0.2,C(5)+0.1],['e4',C(5)+0.1,C(6)+0.2]].forEach(([id,a,b])=>{ const e=$(id), o=win(t,a,b,.45,.35), k=eo(ramp(t,a,.6)); e.style.opacity=o; e.style.transform=`translateY(${(1-k)*36}px) scale(${.94+.06*k})`; e.style.filter=`blur(${(1-k)*8}px)`; });
+  $('e2b').style.opacity=0.5+0.5*Math.sin(t*6);
+  /* derivative strip: appears when the point starts to move, traced as it goes */
+  const din=ramp(t,C(6)-0.2,0.6)*cl((C(10)+3.6-t)/0.6); $('d').style.opacity=din; $('d').style.transform=`translateY(${(1-eo(ramp(t,C(6)-0.2,0.6)))*40}px)`;
+  dtr.setAttribute('d',trace(A0,Math.max(A0+0.001,x))); ddot.setAttribute('cx',PX(x)); ddot.setAttribute('cy',DPY(df(x))); ddot.setAttribute('fill',slopeCol(m));
+  dlab.setAttribute('opacity',ramp(t,C(9)+0.4,0.6));
+  /* captions (one line per narration line) */
+  let ci=-1; CUES.forEach((c,i)=>{ if(t>=c[0]-0.1&&t<c[0]+c[1]+0.35) ci=i; });
+  const cap=$('cap'); const txt=ci>=0?CAPS[ci]:''; if(cap.dataset.t!==txt){ cap.dataset.t=txt; cap.innerHTML=txt?`<span>${txt.replace(/Δy|Δx/g,s=>`<b dir="ltr" style="color:${s==='Δy'?'#38d6ff':'#ffc94a'}">${s}</b>`)}</span>`:''; }
+  cap.style.opacity=ci>=0&&ci<10?cl((t-CUES[ci][0]+0.1)/0.25):0;
+  /* outro */
+  const oi=ramp(t,C(10)-0.3,0.7); $('outro').style.opacity=oi; $('ol').style.width=lerp(0,520,eio(ramp(t,C(10),1.0)))+'px';
+  g.style.opacity=1-0.85*oi; g.style.filter=`blur(${oi*6}px)`;
+  $('fade').style.opacity=t<0.35?1-t/0.35:t>39.4?(t-39.4)/0.6:0;
+}
+window.render=render; render(0);
+</script></body></html>
