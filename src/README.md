@@ -13,3 +13,10 @@ python3 src/build.py           # كل الفصول
 python3 src/build.py g12c3     # فصل واحد
 ```
 ثم الاختبارات: `node release.test.cjs` و `node tests/e2e.cjs`.
+
+## تصدير درس إلى PDF
+```
+python3 -m http.server 8770      # من المجلد الذي يحتوي math-books
+node tools/lesson-pdf.cjs g12c3 rates out.pdf             # نسخة الطالب (مفتاح الحلول في النهاية)
+node tools/lesson-pdf.cjs g12c3 rates out.pdf --teacher   # نسخة المدرّس (الحلول تحت كل سؤال وملاحظات التدريس)
+```
