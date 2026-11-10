@@ -29,3 +29,11 @@ node tools/lesson-pdf.cjs g12c3 rates out.docx [--teacher]
 تحتاج `pandoc` و `python-docx`. المعادلات تصبح معادلات Word أصلية قابلة للتعديل،
 والرسوم صور PNG عائمة على اليسار، والفقرات كلها من اليمين إلى اليسار
 (`tools/lesson-docx-part.cjs` ثم `tools/docx-math.lua` ثم `tools/docx-rtl.py`).
+
+## تصدير مقطع من درس إلى فيديو MP4
+```
+node tools/lesson-video.cjs g12c3 rates-3-0 rates-3-4 tank.mp4 --sub "مثال 1" --next "مثال 2 · صفيحة تتمدد" --end "نشتق أولاً ، ثم نعوّض"
+```
+`fromKey` و `toKey` مفاتيح الخطوات (`data-key`). يخرج 1920×1080 بمعدل 30 إطاراً، صامتاً:
+بطاقة عنوان، ثم كل خطوة مع رسمها الحي ونصها يظهر جزءاً جزءاً، ثم بطاقة ختام.
+`--preview` يحفظ لقطتين من كل مقطع بدل الفيديو.
