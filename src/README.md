@@ -73,3 +73,8 @@ node tools/reel-render.cjs tools/reels/ladder.html out.mp4 [--preview 3,8,17]
 - `tools/reels/ladder-v2.html` (الكاملة 120.7 ث مع الزاوية) و `tools/reels/ladder-v2.html?short` (المختصرة 66.7 ث).
 - الصوت والتوقيت: `tools/reels/ladder-v2-audio/` (المفاتيح والنصوص في `narration.txt`، و`mix.py` يكتب `ladder-v2.timeline.<mode>.js`).
 - التحقق: `node tools/reels/ladder-v2.check.cjs [full|short]` و `node tools/reel-validate.cjs "tools/reels/ladder-v2.html?short" --step 0.1`.
+
+### «ظل الرجل» (تمارين 3−1، التمرين 2 ص 97 — ثلاثي الأبعاد 100.6 ث بصوت نسائي «B»)
+- الصورة: `node tools/reel-render.cjs tools/reels/shadow.html video.mp4` (~15–20 دقيقة)
+- الصوت: `VOICE=…/vits-piper-ar_JO-SA_dii-high tools/reels/shadow-audio/build-audio.sh video.mp4 out.mp4` (إعدادات الصوت B؛ `mix.py` يكتب `shadow.timeline.full.js`)
+- التحقق الحركي: `node tools/reels/shadow.check.cjs` (H و h ثابتان، y = x/3 في كل إطار، استقامة المصباح–الرأس–طرف الظل، dx/dt=30 و dy/dt=10 وسرعة الطرف 40 م/د بزمن حقيقي)

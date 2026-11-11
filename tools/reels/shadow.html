@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<title>ريلز · ظل الرجل</title>
+<link rel="stylesheet" href="../../v2/lib/katex/katex.min.css">
+<script src="../../v2/lib/katex/katex.min.js"></script>
+<script src="shadow.timeline.full.js"></script>
+<script type="importmap">{"imports":{"three":"./vendor/three-0.170.0.module.min.js"}}</script>
+<style>
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-ar-500.woff2) format("woff2");font-weight:500;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-ar-700.woff2) format("woff2");font-weight:700;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-lat-500.woff2) format("woff2");font-weight:500;unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-lat-700.woff2) format("woff2");font-weight:700;unicode-range:U+0000-00FF,U+2000-206F}
+:root{--cy:#38d6ff;--lc:#8ce9ff;--au:#ffc94a;--sh:#ff9f7a;--ink:#f4f8ff;--mute:#93a6c9}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:clip;background:#030916}
+body{position:relative;contain:paint;font-family:Plex,system-ui,sans-serif;color:var(--ink)}
+#bg{position:absolute;inset:0;background:radial-gradient(900px 700px at 30% 30%,#14315f 0%,#0a1a39 40%,#040b1d 75%,#02060f 100%)}
+canvas#gl{position:absolute;inset:0;width:1080px;height:1920px}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at 45% 40%,transparent 55%,rgba(0,0,0,.6) 100%);pointer-events:none}
+.head{position:absolute;left:90px;right:180px;top:1250px;text-align:center;opacity:0}
+.head .h{font-size:74px;font-weight:700;line-height:1.28;text-shadow:0 8px 30px rgba(0,0,0,.75)}
+.card{position:absolute;left:90px;right:180px;opacity:0;background:rgba(6,16,38,.86);border:2px solid rgba(140,233,255,.35);border-radius:28px;padding:20px 28px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.card .t{font-size:42px;font-weight:700;color:var(--mute);margin-bottom:8px}
+.card .bt{font-size:48px;line-height:1.6;font-weight:500;color:#e8efff}
+.card .bt b,.card .bt span{border-radius:10px;padding:0 6px}
+.sec{font-size:44px;font-weight:700;margin:6px 0 2px;display:flex;align-items:center;gap:12px}
+.sec i{display:inline-block;width:14px;height:44px;border-radius:7px}
+.row{display:flex;justify-content:space-between;align-items:center;font-size:52px;font-weight:700;margin:4px 0;padding:2px 10px;border-radius:14px}
+.row .v{direction:ltr}
+.small{font-size:38px;color:var(--mute);font-weight:500;margin-top:8px}
+#book{top:900px} #data{top:880px}
+.eq{position:absolute;left:90px;right:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;opacity:0;direction:ltr}
+.eq .k{font-size:84px;color:#fff;white-space:nowrap}
+.lo{top:1130px;height:240px}
+.box{padding:10px 34px;border-radius:24px;border:4px solid var(--au);background:rgba(255,201,74,.08);box-shadow:0 0 50px rgba(255,201,74,.25)}
+.note{direction:rtl;font-size:46px;font-weight:700;color:var(--lc);white-space:nowrap}
+.lbl{position:absolute;opacity:0;font-weight:700;white-space:nowrap;transform:translate(-50%,-50%);text-shadow:0 2px 14px rgba(0,0,0,.95);direction:ltr}
+.chip{position:absolute;direction:ltr;font-size:44px;font-weight:700;padding:4px 20px;border-radius:16px;background:rgba(5,13,31,.82);border:2px solid rgba(255,255,255,.16);white-space:nowrap;opacity:0}
+#c1{right:180px;top:196px} #c2{right:180px;top:270px;color:var(--sh);border-color:rgba(255,159,122,.6)} #c3{right:180px;top:344px;color:var(--mute);font-size:34px;direction:rtl}
+#cap{position:absolute;left:116px;right:206px;bottom:390px;text-align:center;font-size:54px;line-height:1.35;font-weight:700}
+#cap span{white-space:nowrap;display:inline-block;margin:3px 0;background:rgba(3,8,20,.76);padding:4px 22px;border-radius:16px}
+#brand{position:absolute;left:90px;right:180px;top:1480px;text-align:center;font-size:34px;color:var(--mute);opacity:0}
+#brand b{background:linear-gradient(90deg,var(--cy),var(--au));-webkit-background-clip:text;color:transparent}
+#fade{position:absolute;inset:0;background:#000;pointer-events:none}
+</style></head><body>
+<div id="bg"></div>
+<canvas id="gl" width="1080" height="1920"></canvas>
+<div class="head" id="hA"><div class="h">هل يطول <span style="color:var(--sh)">ظلّك</span><br>بسرعة <span style="color:var(--au)">مشيك</span>؟</div></div>
+<div class="card" id="book"><div class="t">تمارين (3−1) · التمرين 2 · ص 97</div><div class="bt">عمود طوله <b id="b1" dir="ltr">7.2m</b> في نهايته مصباح، يتحرك رجل طوله <b id="b2" dir="ltr">1.8m</b> مبتعداً عن العمود وبسرعة <b id="b3" dir="ltr">30m / min</b> ، <span id="b4">جد معدل تغير طول ظل الرجل.</span></div></div>
+<div class="card" id="data">
+ <div class="sec" style="color:var(--au)"><i style="background:var(--au)"></i>المعطيات</div>
+ <div class="row" id="g1"><span>ارتفاع العمود (ثابت)</span><span class="v" style="color:var(--lc)">H = 7.2 m</span></div>
+ <div class="row" id="g2"><span>طول الرجل (ثابت)</span><span class="v" style="color:var(--au)">h = 1.8 m</span></div>
+ <div class="row" id="g3"><span>سرعة الرجل</span><span class="v">dx/dt = 30 m/min</span></div>
+ <div class="sec" style="color:var(--sh);margin-top:12px"><i style="background:var(--sh)"></i>المطلوب</div>
+ <div class="row" id="r1"><span>معدل تغيّر طول الظل</span><span class="v" style="color:var(--sh)">dy/dt = ?</span></div>
+ <div class="small">بُعد الرجل عن العمود غير معطى — ولن نحتاجه</div>
+</div>
+<!-- 3D anchored labels -->
+<div class="lbl" id="LH" style="font-size:56px;color:var(--lc)">H = 7.2</div>
+<div class="lbl" id="Lh" style="font-size:52px;color:var(--au)">h = 1.8</div>
+<div class="lbl" id="Lx" style="font-size:60px;color:#fff">x</div>
+<div class="lbl" id="Ly" style="font-size:60px;color:var(--sh)">y</div>
+<div class="lbl" id="Lxy" style="font-size:50px;color:var(--mute)">x + y</div>
+<div class="lbl" id="Lv1" style="font-size:44px;color:#fff">30 m/min</div>
+<div class="lbl" id="Lv2" style="font-size:44px;color:var(--au)">40 m/min</div>
+<div class="chip" id="c1"></div><div class="chip" id="c2"></div><div class="chip" id="c3">زمن حقيقي</div>
+<!-- equations -->
+<div class="eq lo" id="e1"><div class="k" data-tex="\dfrac{{\color{#8ce9ff}7.2}}{x+{\color{#ff9f7a}y}}=\dfrac{{\color{#ffc94a}1.8}}{{\color{#ff9f7a}y}}" style="font-size:90px"></div></div>
+<div class="eq lo" id="e2"><div class="k" data-tex="{\color{#8ce9ff}H}\,{\color{#ff9f7a}y}={\color{#ffc94a}h}\,(x+{\color{#ff9f7a}y})" style="font-size:74px"></div><div class="k" id="e2b" data-tex="({\color{#8ce9ff}H}-{\color{#ffc94a}h})\,{\color{#ff9f7a}y}={\color{#ffc94a}h}\,x" style="font-size:74px"></div></div>
+<div class="eq lo" id="e3"><div class="k" data-tex="5.4\,{\color{#ff9f7a}y}=1.8\,x" style="font-size:80px"></div><div class="k box" id="e3b" data-tex="{\color{#ff9f7a}y}=\tfrac13\,x" style="font-size:76px"></div></div>
+<div class="eq lo" id="e4"><div class="k" data-tex="{\color{#ff9f7a}\dfrac{dy}{dt}}=\dfrac{h}{H-h}\,\dfrac{dx}{dt}" style="font-size:66px"></div><div class="k" data-tex="{\color{#ff9f7a}\dfrac{dy}{dt}}=\dfrac13\,\dfrac{dx}{dt}" style="font-size:66px"></div></div>
+<div class="eq lo" id="e5"><div class="k" data-tex="\dfrac{dy}{dt}=\dfrac13\,(30)" style="font-size:66px"></div><div class="k box" id="e5b" data-tex="{\color{#ff9f7a}\dfrac{dy}{dt}=10\ \text{m/min}}" style="font-size:62px"></div></div>
+<div class="eq lo" id="e6"><div class="k" data-tex="\dfrac{d(x+y)}{dt}=30+10" style="font-size:56px;color:#dbe6fb"></div><div class="k" data-tex="=40\ \text{m/min}" style="font-size:56px;color:#ffc94a"></div><div class="note">سرعة <span style="color:var(--au)">طرف</span> الظل — وليست المطلوب</div></div>
+<div class="eq lo" id="e7"><div class="k box" data-tex="{\color{#ff9f7a}\dfrac{dy}{dt}=10\ \text{m/min}}" style="font-size:74px"></div></div>
+<div id="cap"></div>
+<div id="brand"><b>الرياضيات الحيّة</b> · الأستاذ فائز الحمداني · السادس العلمي</div>
+<div id="vig"></div><div id="fade"></div>
+<script type="module">
+import * as THREE from 'three';
+const TLm={}; window.TL.forEach(([k,s,d])=>TLm[k]={s,d}); const S=k=>TLm[k].s, E=k=>TLm[k].s+TLm[k].d; window.DURATION=window.TL_END;
+const CAPS={model:'x: بُعد الرجل عن العمود\ny: طول ظله',rays:'شعاع المصباح يمرّ برأس الرجل\nويصل إلى طرف الظل',sim:'مثلثان متشابهان',cross:'نضرب الطرفين في الوسطين',simp:'الظل = ثلث البُعد دائماً',deriv:'H و h ثابتان… نشتق بالنسبة للزمن',sub:'نعوّض dx/dt = 30',tip:'طرف الظل 40 … وطول الظل 10',close:''};
+document.querySelectorAll('[data-tex]').forEach(e=>katex.render(e.dataset.tex,e,{throwOnError:false}));
+const $=id=>document.getElementById(id);
+const cl=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)), lerp=(a,b,k)=>a+(b-a)*k, eio=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2, eo=u=>1-Math.pow(1-u,3);
+const ramp=(t,a,d)=>cl((t-a)/d), win=(t,a,b,fi=.45,fo=.4)=>cl((t-a)/fi)*cl((b-t)/fo);
+
+/* ================= the book's exercise (ص 97، تمرين 2) =================
+   H = 7.2 m (pole), h = 1.8 m (man), dx/dt = 30 m/min = 0.5 m/s.  Similar triangles: H/(x+y) = h/y ⇒ (H−h)y = h x ⇒ y = x/3.
+   dy/dt = h/(H−h)·dx/dt = 10 m/min (constant);  tip s = x + y moves at 40 m/min.
+   Motion is shown in REAL time: the man walks 0.5 m every second; y and the tip are derived from x every frame. */
+const H=7.2, h=1.8, V=0.5;   /* m/s on screen = 30 m/min */
+const K_=h/(H-h);
+/* walking segments [t0, t1, x0]: x grows at V inside, holds outside */
+const SEG=[[0.5,E('hook')+0.2,1.6],[S('model')-1.6,S('model')+0.4,null],[S('deriv')+0.6,S('sub')+3.6,null],[S('tip')-0.2,E('tip')+0.4,null],[S('close')+0.4,99,null]];
+function xAt(t){ let x=1.6; for(const [a,b,x0] of SEG){ if(x0!==null) x=x0; if(t<=a) return x; x+=V*(Math.min(t,b)-a); if(t<b) return x; }
+  return x; }
+/* a reset before the tip scene keeps everything in frame: jump is hidden by a cross-fade (see fadeCut) */
+const RESET=[[S('deriv')-0.3,3.0],[S('tip')-0.6,2.5],[S('close')-0.2,4.0]];
+function xFinal(t){ let x=xAt(t); for(const [tr,xr] of RESET) if(t>=tr) x=xr+ (xAt(t)-xAt(tr)); return x; }
+const yOf=x=>K_*x;
+
+/* ================= three.js ================= */
+const renderer=new THREE.WebGLRenderer({canvas:$('gl'),antialias:true,alpha:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(1); renderer.setSize(1080,1920,false); renderer.setClearColor(0,0);
+const scene=new THREE.Scene(), cam=new THREE.PerspectiveCamera(30,1080/1920,0.1,500);
+scene.add(new THREE.AmbientLight(0x5a74b8,0.55));
+const moon=new THREE.DirectionalLight(0x8fb4ff,0.35); moon.position.set(-10,12,8); scene.add(moon);
+const lampLight=new THREE.PointLight(0xffd27a,90,40,1.6); lampLight.position.set(0,7.1,0); scene.add(lampLight);
+const tex=draw=>{ const c=document.createElement('canvas'); c.width=c.height=512; draw(c.getContext('2d')); const t=new THREE.CanvasTexture(c); t.wrapS=t.wrapT=THREE.RepeatWrapping; t.colorSpace=THREE.SRGBColorSpace; return t; };
+const gTex=tex(x=>{ x.fillStyle='#1a2747'; x.fillRect(0,0,512,512); x.strokeStyle='rgba(56,214,255,.16)'; x.lineWidth=3; for(let i=0;i<=8;i++){ x.beginPath(); x.moveTo(i*64,0); x.lineTo(i*64,512); x.stroke(); x.beginPath(); x.moveTo(0,i*64); x.lineTo(512,i*64); x.stroke(); } }); gTex.repeat.set(5,3);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(30,14),new THREE.MeshStandardMaterial({map:gTex,roughness:0.95})); ground.rotation.x=-Math.PI/2; ground.position.set(9,0,0); scene.add(ground);
+/* pole + lamp */
+const poleMat=new THREE.MeshStandardMaterial({color:0x34446a,metalness:0.7,roughness:0.35});
+const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.14,H,24),poleMat); pole.position.set(0,H/2,0); scene.add(pole);
+const hood=new THREE.Mesh(new THREE.ConeGeometry(0.42,0.32,24,1,true),new THREE.MeshStandardMaterial({color:0x24314f,metalness:0.6,roughness:0.4,side:THREE.DoubleSide})); hood.position.set(0,H+0.12,0); scene.add(hood);
+const bulb=new THREE.Mesh(new THREE.SphereGeometry(0.17,24,16),new THREE.MeshBasicMaterial({color:0xfff1c4})); bulb.position.set(0,H,0); scene.add(bulb);
+const gc=document.createElement('canvas'); gc.width=gc.height=256; { const x=gc.getContext('2d'), g=x.createRadialGradient(128,128,0,128,128,128); g.addColorStop(0,'rgba(255,220,140,1)'); g.addColorStop(.25,'rgba(255,200,90,.45)'); g.addColorStop(1,'rgba(255,190,80,0)'); x.fillStyle=g; x.fillRect(0,0,256,256); }
+const glow=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(gc),blending:THREE.AdditiveBlending,depthWrite:false,transparent:true})); glow.scale.set(3.4,3.4,1); glow.position.set(0,H,0); scene.add(glow);
+/* man: total height exactly h (top of head at y = 1.8); limbs swing, the head never bobs */
+const manMat=new THREE.MeshStandardMaterial({color:0x2b3a63,roughness:0.6,emissive:0x0a1430});
+const man=new THREE.Group(); scene.add(man);
+const cap=(r,l)=>new THREE.Mesh(new THREE.CapsuleGeometry(r,l,6,12),manMat);
+const headR=0.13; const head=new THREE.Mesh(new THREE.SphereGeometry(headR,24,16),manMat); head.position.y=h-headR; man.add(head);
+const torso=cap(0.17,0.5); torso.position.y=1.2; man.add(torso);
+const legs=[0,1].map(i=>{ const p=new THREE.Group(); p.position.set(0,0.88,(i?1:-1)*0.1); const l=cap(0.075,0.72); l.position.y=-0.43; p.add(l); man.add(p); return p; });
+const arms=[0,1].map(i=>{ const p=new THREE.Group(); p.position.set(0,1.45,(i?1:-1)*0.24); const a=cap(0.055,0.5); a.position.y=-0.3; p.add(a); man.add(p); return p; });
+/* shadow: derived from x only — from the feet (x) to the tip (x + y) */
+const shGeo=new THREE.BufferGeometry(); shGeo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(18),3));
+const shadow=new THREE.Mesh(shGeo,new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:0.62,depthWrite:false,side:THREE.DoubleSide})); scene.add(shadow);
+/* light ray (lamp → head → tip) and the two similar triangles in the plane z = ZF */
+const ZF=0.02;
+const tube=(col,rad=0.04)=>{ const m=new THREE.Mesh(new THREE.CylinderGeometry(rad,rad,1,12),new THREE.MeshBasicMaterial({color:col,transparent:true})); scene.add(m); return m; };
+const setTube=(m,a,b)=>{ const d=new THREE.Vector3().subVectors(b,a); m.scale.set(1,Math.max(d.length(),1e-3),1); m.position.copy(a).addScaledVector(d,0.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.clone().normalize()); };
+const ray=tube(0xffd27a,0.035), rayGlow=tube(0xffd27a,0.12); rayGlow.material.opacity=0.15; rayGlow.material.blending=THREE.AdditiveBlending;
+const bigTri=new THREE.Mesh(new THREE.BufferGeometry().setAttribute('position',new THREE.BufferAttribute(new Float32Array(9),3)),new THREE.MeshBasicMaterial({color:0x38d6ff,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false})); scene.add(bigTri);
+const smTri=new THREE.Mesh(new THREE.BufferGeometry().setAttribute('position',new THREE.BufferAttribute(new Float32Array(9),3)),new THREE.MeshBasicMaterial({color:0xffc94a,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false})); scene.add(smTri);
+const tH=tube(0x8ce9ff,0.05), th_=tube(0xffc94a,0.05), tX=tube(0xffffff,0.05), tY=tube(0xff9f7a,0.07), tXY=tube(0x93a6c9,0.03);
+const lineObj=col=>{ const l=new THREE.Line(new THREE.BufferGeometry(),new THREE.LineBasicMaterial({color:col,transparent:true})); scene.add(l); return l; };
+const ra1=lineObj(0xffffff), ra2=lineObj(0xffffff), arc1=lineObj(0xff9f7a), arc2=lineObj(0xff9f7a);
+const arrow=col=>{ const g=new THREE.Group(), m=new THREE.MeshBasicMaterial({color:col,transparent:true}); const sh=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,1,12),m), hd=new THREE.Mesh(new THREE.ConeGeometry(0.17,0.36,18),m); g.add(sh,hd); g.userData={sh,hd,m}; scene.add(g); return g; };
+const setArrow=(g,from,len,op)=>{ const {sh,hd,m}=g.userData, body=Math.max(len-0.36,0.01), d=new THREE.Vector3(1,0,0), q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),d);
+  sh.scale.set(1,body,1); sh.position.copy(from).addScaledVector(d,body/2); sh.quaternion.copy(q); hd.position.copy(from).addScaledVector(d,body+0.18); hd.quaternion.copy(q); m.opacity=op; g.visible=op>0.01; };
+const aMan=arrow(0xffffff), aTip=arrow(0xffc94a);
+const KA=0.06;   /* arrow metres per (m/min) — same scale for both */
+
+/* ================= camera ================= */
+const ANG=(d,az,lens,tx,ty=3.4,el=10)=>[d,el,az,tx,ty,lens], FR=(d,lens,tx,ty=3.4)=>[d,0,0,tx,ty,lens];
+const KEYS=[[0,...ANG(30,32,300,3.6,3.6,8)],[E('hook'),...ANG(30,18,300,4.0,3.6,9)],[S('q')+0.6,...ANG(34,22,640,4.4,3.6)],[E('ask')+0.2,...ANG(34,14,640,4.4,3.6)],
+  [S('model')+0.8,...FR(34,380,3.9)],[S('sim')-0.2,...FR(34,380,3.9)],[S('sim')+0.6,...FR(35,380,4.0)],[S('deriv')+0.2,...FR(42,330,5.0,3.6)],[E('sub')+0.3,...FR(43,330,5.1,3.6)],
+  [S('tip')+0.4,...ANG(44,16,380,5.0,3.4)],[E('tip')+0.2,...ANG(46,10,380,5.6,3.4)],[S('close')+0.8,...ANG(40,24,560,5.2,3.6)],[999,...ANG(42,12,560,6.0,3.6)]];
+const tgt=new THREE.Vector3();
+function rig(t){ let k=0; while(k<KEYS.length-2&&t>=KEYS[k+1][0]) k++; const a=KEYS[k], b=KEYS[k+1], u=eio(cl((t-a[0])/Math.max(.001,b[0]-a[0]))), F=i=>lerp(a[i],b[i],u);
+  const d=F(1)*(1+0.03*Math.sin(t*0.5)), el=F(2)*Math.PI/180, az=F(3)*Math.PI/180; tgt.set(F(4),F(5),0);
+  cam.position.set(tgt.x+d*Math.cos(el)*Math.sin(az),tgt.y+d*Math.sin(el),tgt.z+d*Math.cos(el)*Math.cos(az)); cam.lookAt(tgt); cam.setViewOffset(1080,1920,0,F(6),1080,1920); cam.updateMatrixWorld(); }
+const proj=v=>{ const p=v.clone().project(cam); return {x:(p.x+1)/2*1080,y:(1-p.y)/2*1920}; };
+const place=(id,v,o,dx=0,dy=0)=>{ const e=$(id), p=proj(v); e.style.left=(p.x+dx)+'px'; e.style.top=(p.y+dy)+'px'; e.style.opacity=o;
+  if(o>0.01){ const r=e.getBoundingClientRect(); if(r.left<94) e.style.left=(p.x+dx+94-r.left)+'px'; else if(r.right>896) e.style.left=(p.x+dx-(r.right-896))+'px'; } };
+let T0=0; const show=(id,a,b)=>{ const e=$(id), o=win(T0,a,b,.45,.35), k=eo(ramp(T0,a,.55)); e.style.opacity=o; e.style.transform=`translateY(${(1-k)*30}px) scale(${.95+.05*k+Math.min(.02,.005*Math.max(0,T0-a))})`; return o; };
+const arcPts=(cx,a0,a1,r)=>{ const p=[]; for(let i=0;i<=30;i++){ const a=lerp(a0,a1,i/30); p.push(new THREE.Vector3(cx+r*Math.cos(a),r*Math.sin(a),ZF)); } return p; };
+
+function render(t){ T0=t; rig(t);
+  const x=xFinal(t), y=yOf(x), tip=x+y;
+  /* walking pose from the distance travelled (stride ≈ 1.4 m per cycle); legs/arms swing only while x changes */
+  const moving=Math.abs(xFinal(t+0.02)-x)>1e-6, ph=x/0.7*Math.PI, sw=moving?0.45:0.04;
+  man.position.set(x,0,0); man.rotation.y=-Math.PI/2*0+0; man.rotation.set(0,0,0);
+  legs[0].rotation.z=Math.sin(ph)*sw; legs[1].rotation.z=-Math.sin(ph)*sw; arms[0].rotation.z=-Math.sin(ph)*sw*0.8; arms[1].rotation.z=Math.sin(ph)*sw*0.8;
+  /* shadow quad: feet → tip; width grows like a projected shadow */
+  const w0=0.22, w1=0.22*H/(H-h);
+  shGeo.attributes.position.array.set([x,0.006,-w0, tip,0.006,-w1, tip,0.006,w1,  x,0.006,-w0, tip,0.006,w1, x,0.006,w0]); shGeo.attributes.position.needsUpdate=true;
+  /* geometry */
+  const tm=S('model'), geo=ramp(t,tm+0.5,0.6)*cl((S('tip')-0.7-t)/0.4)+ramp(t,S('tip')+0.2,0.5)*cl((S('close')+0.6-t)/0.5);
+  const rOn=Math.max(win(t,0.8,E('hook')+0.3,.5,.4),ramp(t,S('rays'),0.6)*cl((S('tip')-0.7-t)/0.4),ramp(t,S('tip')+0.2,0.5));
+  const L0=new THREE.Vector3(0,H,ZF), HD=new THREE.Vector3(x,h,ZF), TP=new THREE.Vector3(tip,0,ZF);
+  const pr=eo(ramp(t,S('rays')+0.2,1.4)); const rayEnd=t>=S('rays')&&t<S('rays')+1.6?L0.clone().lerp(TP,pr):TP;
+  setTube(ray,L0,rayEnd); setTube(rayGlow,L0,rayEnd); ray.material.opacity=rOn; rayGlow.material.opacity=0.15*rOn; ray.visible=rayGlow.visible=rOn>0.01;
+  const tOn=ramp(t,S('rays')+2.2,0.6)*geo;
+  bigTri.geometry.attributes.position.array.set([0,0,ZF-0.01, 0,H,ZF-0.01, tip,0,ZF-0.01]); bigTri.geometry.attributes.position.needsUpdate=true; bigTri.material.opacity=0.13*tOn;
+  smTri.geometry.attributes.position.array.set([x,0,ZF, x,h,ZF, tip,0,ZF]); smTri.geometry.attributes.position.needsUpdate=true; smTri.material.opacity=0.28*tOn;
+  const mx=eo(ramp(t,tm+0.8,0.7)), my=eo(ramp(t,tm+3.6,0.7));
+  setTube(tH,new THREE.Vector3(-0.35,0,ZF),new THREE.Vector3(-0.35,H,ZF)); setTube(th_,new THREE.Vector3(x-0.3,0,ZF),new THREE.Vector3(x-0.3,h,ZF));
+  setTube(tX,new THREE.Vector3(0,0.04,ZF),new THREE.Vector3(x*mx,0.04,ZF)); setTube(tY,new THREE.Vector3(x,0.04,ZF),new THREE.Vector3(x+y*my,0.04,ZF)); setTube(tXY,new THREE.Vector3(0,-0.55,ZF),new THREE.Vector3(tip,-0.55,ZF));
+  const lab=geo; tH.material.opacity=th_.material.opacity=lab; tX.material.opacity=lab*(mx>0.01?1:0); tY.material.opacity=lab*(my>0.01?1:0); tXY.material.opacity=win(t,S('sim')+0.3,E('cross')+0.4)*geo;
+  [tH,th_,tX,tY,tXY].forEach(m=>m.visible=m.material.opacity>0.01);
+  ra1.geometry.setFromPoints([new THREE.Vector3(0.45,0,ZF),new THREE.Vector3(0.45,0.45,ZF),new THREE.Vector3(0,0.45,ZF)]); ra2.geometry.setFromPoints([new THREE.Vector3(x+0.4,0,ZF),new THREE.Vector3(x+0.4,0.4,ZF),new THREE.Vector3(x,0.4,ZF)]);
+  ra1.material.opacity=ra2.material.opacity=tOn; ra1.visible=ra2.visible=tOn>0.01;
+  const ang=Math.atan2(H,tip), aOn=win(t,S('sim'),E('sim')+0.5,.4,.4)*geo; arc1.geometry.setFromPoints(arcPts(tip,Math.PI-ang,Math.PI,1.6)); arc2.geometry.setFromPoints(arcPts(tip,Math.PI-ang,Math.PI,1.0));
+  arc1.material.opacity=arc2.material.opacity=aOn; arc1.visible=arc2.visible=aOn>0.01;
+  /* arrows in the tip scene: man 30, tip 40 — same scale */
+  const vOn=win(t,S('tip')+0.4,E('tip')+0.3,.4,.4);
+  setArrow(aMan,new THREE.Vector3(x-0.6,2.3,0),30*KA,vOn); setArrow(aTip,new THREE.Vector3(tip-0.6,1.1,0),40*KA,vOn);
+  renderer.render(scene,cam);
+  /* labels */
+  const labHh=lab*cl((S('tip')-0.4-t)/0.3)+lab*ramp(t,S('close')+0.6,0.5); $('LH').style.transform='translate(-100%,-50%)'; place('LH',new THREE.Vector3(-0.35,H*0.55,ZF),labHh,-20,0);
+  $('Lh').style.transform='translate(-100%,-50%)'; place('Lh',new THREE.Vector3(x-0.3,h*0.8,ZF),labHh,-20,0);
+  place('Lx',new THREE.Vector3(x/2,0,ZF),lab*mx,0,-44); place('Ly',new THREE.Vector3(x+y/2,0,ZF),lab*my,0,-44);
+  place('Lxy',new THREE.Vector3(tip/2,-0.55,ZF),tXY.material.opacity,0,44);
+  place('Lv1',new THREE.Vector3(x-0.6+15*KA,2.3,0),vOn,0,-40); place('Lv2',new THREE.Vector3(tip-0.6+20*KA,1.1,0),vOn,0,-58);
+  /* chips: live x and y with the time-lapse factor (real time) */
+  const chOn=win(t,0.8,E('hook')+0.3,.3,.3)+win(t,S('deriv')+0.4,E('sub')+0.4,.3,.3);
+  $('c1').style.opacity=chOn; $('c2').style.opacity=chOn; $('c3').style.opacity=chOn;
+  $('c1').innerHTML=`x = ${x.toFixed(2)} m`; $('c2').innerHTML=`y = x/3 = ${y.toFixed(2)} m`;
+  /* headline, cards */
+  show('hA',0.2,S('q')-0.2);
+  show('book',S('q')+0.2,S('ask')-0.1); const hl=(id,a,col)=>{ const k=ramp(t,a,.35); $(id).style.background=`rgba(${col},${0.3*k})`; };
+  hl('b1',S('q')+2.4,'140,233,255'); hl('b2',S('q')+7.4,'255,201,74'); hl('b3',S('q')+11.4,'255,255,255'); hl('b4',S('q')+13.4,'255,159,122');
+  show('data',S('ask'),E('ask')+0.6);
+  [['g1',S('ask')+0.1],['g2',S('ask')+0.3],['g3',S('ask')+0.5],['r1',S('ask')+1.0]].forEach(([id,a])=>{ const k=ramp(t,a,.35); $(id).style.opacity=0.35+0.65*k; });
+  /* equations — one step at a time */
+  show('e1',S('sim')+1.0,S('cross'));
+  show('e2',S('cross'),S('simp')); $('e2b').style.opacity=ramp(t,S('cross')+2.6,.45);
+  show('e3',S('simp'),S('deriv')); $('e3b').style.opacity=ramp(t,S('simp')+6.6,.45);
+  show('e4',S('deriv')+0.2,S('sub'));
+  show('e5',S('sub'),S('tip')-0.3); $('e5b').style.opacity=ramp(t,S('sub')+2.6,.45); $('e5b').style.transform=`scale(${.85+.15*eo(ramp(t,S('sub')+2.6,.5))})`;
+  show('e6',S('tip')+0.3,S('close'));
+  show('e7',S('close')+0.4,999);
+  /* captions */
+  let ck=null; window.TL.forEach(([k,s,d])=>{ if(t>=s-0.1&&t<s+d+0.35) ck=k; });
+  const txt=ck&&CAPS[ck]?CAPS[ck]:'', cap=$('cap');
+  if(cap.dataset.t!==txt){ cap.dataset.t=txt; cap.innerHTML=txt?txt.split('\n').map(l=>`<span>${l.replace(/dx\/dt = 30|\b[xyHh]\b|40|10/g,m=>`<b dir="ltr" style="color:#ffc94a">${m}</b>`)}</span>`).join('<br>'):''; }
+  cap.style.opacity=txt?cl((t-TLm[ck].s+0.1)/0.25):0;
+  $('brand').style.opacity=ramp(t,E('close')+0.2,0.5);
+  /* cross-fades hide the two position resets */
+  let f=t<0.4?1-t/0.4:t>DURATION-0.6?(t-DURATION+0.6)/0.6:0; for(const [tr] of RESET) f=Math.max(f,1-Math.abs(t-tr)/0.35); $('fade').style.opacity=f;
+  { const pts=[new THREE.Vector3(-0.5,H+0.4,0),new THREE.Vector3(-0.5,0,0),new THREE.Vector3(tip,0,0.8),new THREE.Vector3(tip,0,-0.8),new THREE.Vector3(x,h,0)].map(proj);
+    window.FIGS=[{name:'pole+man+shadow',x0:Math.min(...pts.map(p=>p.x)),y0:Math.min(...pts.map(p=>p.y)),x1:Math.max(...pts.map(p=>p.x)),y1:Math.max(...pts.map(p=>p.y))}]; }
+  /* collinearity of lamp, head and tip (cross product in the x–y plane) */
+  const col=(x-0)*(0-H)-(h-H)*(tip-0);
+  window.STATE={t,x,y,tip,H,h,headTop:h,poleX:0,collinear:col,moving};
+}
+window.render=render; render(0);
+</script></body></html>
