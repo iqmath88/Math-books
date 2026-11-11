@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<title>ريلز · المعدلات المرتبطة بالزمن v3</title>
+<link rel="stylesheet" href="../../v2/lib/katex/katex.min.css">
+<script src="../../v2/lib/katex/katex.min.js"></script>
+<style>
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-ar-500.woff2) format("woff2");font-weight:500;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-ar-700.woff2) format("woff2");font-weight:700;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-lat-500.woff2) format("woff2");font-weight:500;unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-lat-700.woff2) format("woff2");font-weight:700;unicode-range:U+0000-00FF,U+2000-206F}
+:root{--cy:#38d6ff;--lc:#7fe3ff;--au:#ffc94a;--ink:#f2f6ff;--mute:#8fa3c7}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:clip;background:#050d1f}
+body{position:relative;contain:paint;font-family:Plex,system-ui,sans-serif;color:var(--ink)}
+#bg{position:absolute;inset:0;background:linear-gradient(180deg,#040a19 0%,#0b1c3c 50%,#060e22 100%)}
+.blob{position:absolute;border-radius:50%;filter:blur(100px);mix-blend-mode:screen}
+#b1{width:820px;height:820px;background:radial-gradient(circle,rgba(56,214,255,.34),rgba(56,214,255,0) 70%)}
+#b2{width:720px;height:720px;background:radial-gradient(circle,rgba(255,201,74,.20),rgba(255,201,74,0) 70%)}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 50%,rgba(0,0,0,.55) 100%);pointer-events:none}
+#w{position:absolute;inset:0;width:1080px;height:1920px}
+.hook{position:absolute;left:90px;right:180px;top:240px;text-align:center}
+.hook div{font-size:76px;font-weight:700;line-height:1.3;text-shadow:0 8px 34px rgba(0,0,0,.75)}
+.hook .a{font-size:54px;font-weight:500;color:#dce6fa}
+.eq{position:absolute;left:90px;right:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;opacity:0;direction:ltr}
+.eq .k{font-size:84px;color:#fff;white-space:nowrap}
+.zone{top:1160px;height:195px}
+.zoneR{top:975px;height:335px;gap:20px}
+.top{top:196px;height:400px;gap:22px}
+.tag{direction:rtl;display:inline-block;font-size:44px;font-weight:700;color:var(--lc);border:3px solid var(--lc);border-radius:16px;padding:4px 18px;background:rgba(127,227,255,.08)}
+#cap{position:absolute;left:116px;right:206px;bottom:390px;text-align:center;font-size:56px;line-height:1.38;font-weight:700}
+#cap span{white-space:nowrap;display:inline-block;margin:3px 0;background:rgba(3,8,20,.74);padding:6px 24px;border-radius:18px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.chip{position:absolute;direction:ltr;font-size:40px;font-weight:700;padding:4px 20px;border-radius:16px;background:rgba(5,13,31,.78);border:2px solid rgba(255,255,255,.16);white-space:nowrap;opacity:0}
+#clk{left:90px;top:188px} #lap{display:none} #flw{left:90px;top:256px;color:var(--au);border-color:var(--au)}
+#brand{position:absolute;left:90px;right:180px;top:210px;text-align:center;font-size:36px;color:var(--mute);opacity:0}
+#brand b{background:linear-gradient(90deg,var(--cy),var(--au));-webkit-background-clip:text;color:transparent}
+#fade{position:absolute;inset:0;background:#000;pointer-events:none}
+</style></head><body>
+<div id="bg"></div><div class="blob" id="b1"></div><div class="blob" id="b2"></div>
+<svg id="w" viewBox="0 0 1080 1920" direction="ltr"></svg>
+<div class="chip" id="clk"></div><div class="chip" id="lap"></div><div class="chip" id="flw">dV/dt = 4π m³/min</div>
+<div class="hook" id="hook"><div class="a">الماء يتدفق بانتظام…</div><div>فبأي <span style="color:var(--au)">سرعة</span> يرتفع؟</div></div>
+<!-- one dominant equation at a time -->
+<div class="eq zone" id="eV"><div class="k" data-tex="V={\color{#7fe3ff}\pi r^2}\,h"></div></div>
+<div class="eq top" id="eD1"><div class="k" data-tex="\frac{d}{dt}\big(V\big)=\frac{d}{dt}\big({\color{#7fe3ff}\pi r^2}\,h\big)" style="font-size:76px"></div></div>
+<div class="eq top" id="eD2"><div class="k" data-tex="{\color{#ffc94a}\dfrac{dV}{dt}}={\color{#7fe3ff}\pi r^2}\,{\color{#ffc94a}\dfrac{dh}{dt}}" style="font-size:100px"></div><div class="tag" id="eD2t"><span dir="ltr">πr²</span> ثابت</div></div>
+<div class="eq zone" id="eS" style="gap:4px"><div class="k" data-tex="{\color{#ffc94a}4\pi}=4\pi\cdot{\color{#ffc94a}\dfrac{dh}{dt}}" style="font-size:60px"></div><div class="k" data-tex="\Rightarrow\;{\color{#ffc94a}\dfrac{dh}{dt}=1\ \text{m/min}}" style="font-size:60px"></div></div>
+<div class="eq zone" id="eA"><div class="k" data-tex="\pi(2r)^2=4\,\pi r^2" style="font-size:80px"></div></div>
+<div class="eq zoneR" id="eR"><div class="k" data-tex="{\color{#ffc94a}\Big(\dfrac{dh}{dt}\Big)_{\!2}}=\dfrac14\,{\color{#ffc94a}\Big(\dfrac{dh}{dt}\Big)_{\!1}}" style="font-size:74px"></div><div class="k" data-tex="\dfrac{dh}{dt}=\dfrac{dV/dt}{\pi r^2}\;\propto\;\dfrac{1}{r^2}" style="font-size:54px;color:#cfe0ff"></div></div>
+<div class="eq zone" id="eQ"><div class="k" data-tex="r\;\to\;\tfrac{r}{2}\quad\Rightarrow\quad{\color{#ffc94a}\dfrac{dh}{dt}}\;=\;?" style="font-size:64px"></div></div>
+<div id="cap"></div>
+<div id="brand"><b>الرياضيات الحيّة</b> · الأستاذ فائز الحمداني · السادس العلمي</div>
+<div id="vig"></div><div id="fade"></div>
+<script>
+const CUES=window.CUES||[[0.3,4.015],[4.715,4.421],[9.437,4.729],[14.466,2.829],[17.694,3.983],[22.178,3.241],[26.019,4.988],[31.407,5.053],[37.26,4.858],[42.617,2.499]];
+const CAPS=['','r = 2 m ، والتدفق 4π m³/min','من الأعلى: كل طبقة\nقرص مساحته πr²','الحجم =\nمساحة القرص × الارتفاع','نشتق بالنسبة للزمن\nو πr² ثابت','الماء يرتفع مترًا كل دقيقة','خزان ثانٍ نصف قطره 2r\nوالتدفق نفسه','القاعدة أكبر 4 مرات\nفالارتفاع أبطأ 4 مرات','سرعة الارتفاع تتناسب\nعكسيًا مع r²','ولو صار نصف القطر\nنصف ما كان؟'];
+window.DURATION=45.5;
+const C=i=>CUES[i][0], CE=i=>CUES[i][0]+CUES[i][1];
+document.querySelectorAll('[data-tex]').forEach(e=>katex.render(e.dataset.tex,e,{throwOnError:false}));
+const $=id=>document.getElementById(id), NS='http://www.w3.org/2000/svg';
+const E=(tag,a,p)=>{ const e=document.createElementNS(NS,tag); for(const k in a) e.setAttribute(k,a[k]); p.appendChild(e); return e; };
+const cl=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)), lerp=(a,b,k)=>a+(b-a)*k, eio=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2, eo=u=>1-Math.pow(1-u,3);
+const ramp=(t,a,d)=>cl((t-a)/d), win=(t,a,b,fi=.45,fo=.4)=>cl((t-a)/fi)*cl((b-t)/fo);
+const W=$('w'), defs=E('defs',{},W);
+const lg=(id,stops,x2='1',y2='0')=>{ const g=E('linearGradient',{id,x1:0,y1:0,x2,y2},defs); stops.forEach(([o,c,a])=>E('stop',{offset:o,'stop-color':c,'stop-opacity':a},g)); };
+lg('glass',[[0,'#9fc4ff',.10],[.18,'#cfe2ff',.22],[.5,'#9fc4ff',.04],[.85,'#9fc4ff',.08],[1,'#cfe2ff',.18]]);
+lg('water',[[0,'#38d6ff',.32],[.35,'#7fe3ff',.46],[.7,'#2bb8e6',.32],[1,'#1a8fc4',.42]]);
+lg('pipe',[[0,'#8aa0c4',1],[.5,'#dfe8f7',1],[1,'#5e7299',1]],'0','1');
+const rg=E('radialGradient',{id:'disc'},defs); E('stop',{offset:0,'stop-color':'#9beaff','stop-opacity':.55},rg); E('stop',{offset:1,'stop-color':'#2bb8e6','stop-opacity':.40},rg);
+const glowF=(id,sd)=>{ const f=E('filter',{id,filterUnits:'userSpaceOnUse',x:-600,y:-600,width:2400,height:3200},defs); E('feGaussianBlur',{stdDeviation:sd,result:'b'},f); const m=E('feMerge',{},f); E('feMergeNode',{in:'b'},m); E('feMergeNode',{in:'SourceGraphic'},m); };
+glowF('gl',6); glowF('gg',9);
+
+/* ================= physics =================
+   r = 2 m, dV/dt = 4π m³/min  ⇒  dh/dt = 4π/(π·2²) = 1 m/min
+   tank B: 2r = 4 m            ⇒  dh/dt = 4π/(π·4²) = 0.25 m/min
+   clock: minutes shown on screen; the video is time-lapsed (×3, then ×24 = 0.4 min per second). */
+const L1=0.05, L2=0.4, tL=()=>C(5)+0.6, tE=()=>C(6)-0.3;
+function Mmain(t){ if(t<tL()) return t*L1; return tL()*L1+L2*(Math.min(t,tE())-tL()); }
+const hMain=t=>0.5+Mmain(t), tC0=()=>C(6)+0.8, tC1=()=>C(8);
+const Mcmp=t=>L2*cl(t-tC0(),0,tC1()-tC0());
+
+/* ================= main tank (side view) ================= */
+const CX=470, RX=230, RY=62, TOP=330, BOT=1050, PXM=(BOT-TOP)/5, yOf=h=>BOT-h*PXM;
+const main=E('g',{},W);
+function tank(g,o){ /* o: cx, rx, ry, top, bot, pipe:true */
+  const p={}; p.sh=E('ellipse',{cx:o.cx,cy:o.bot+18,rx:o.rx+36,ry:o.ry*0.55,fill:'rgba(0,0,0,.45)'},g);
+  E('path',{d:`M${o.cx-o.rx} ${o.top}A${o.rx} ${o.ry} 0 0 1 ${o.cx+o.rx} ${o.top}`,fill:'none',stroke:'#9fc4ff','stroke-opacity':.35,'stroke-width':3},g);
+  E('path',{d:`M${o.cx-o.rx} ${o.bot}A${o.rx} ${o.ry} 0 0 1 ${o.cx+o.rx} ${o.bot}`,fill:'none',stroke:'#9fc4ff','stroke-opacity':.25,'stroke-width':3,'stroke-dasharray':'8 8'},g);
+  p.base=E('ellipse',{cx:o.cx,cy:o.bot,rx:o.rx,ry:o.ry,fill:'#7fe3ff','fill-opacity':0,stroke:'#7fe3ff','stroke-opacity':0,'stroke-width':4,filter:'url(#gl)'},g);
+  p.body=E('path',{fill:'url(#water)'},g); p.layers=E('g',{},g);
+  p.top=E('ellipse',{cx:o.cx,rx:o.rx-2,ry:o.ry-2,fill:'#9beaff','fill-opacity':.38,stroke:'#c9f4ff','stroke-opacity':.85,'stroke-width':3},g);
+  p.rip=E('g',{},g); p.st=E('path',{fill:'#9beaff','fill-opacity':.55},g); p.stc=E('path',{fill:'none',stroke:'#e6fbff','stroke-opacity':.7,'stroke-width':3,'stroke-dasharray':'26 22'},g);
+  E('path',{d:`M${o.cx-o.rx} ${o.top}V${o.bot}A${o.rx} ${o.ry} 0 0 0 ${o.cx+o.rx} ${o.bot}V${o.top}`,fill:'url(#glass)',stroke:'#cfe2ff','stroke-opacity':.7,'stroke-width':3},g);
+  E('path',{d:`M${o.cx-o.rx} ${o.top}A${o.rx} ${o.ry} 0 0 0 ${o.cx+o.rx} ${o.top}`,fill:'none',stroke:'#cfe2ff','stroke-opacity':.8,'stroke-width':3},g);
+  E('rect',{x:o.cx-o.rx+o.rx*0.1,y:o.top+30,width:Math.max(8,o.rx*0.07),height:o.bot-o.top-60,rx:8,fill:'#fff','fill-opacity':.10},g);
+  p.sx=o.left?o.cx-o.rx*0.32:o.cx+o.rx*0.32; p.y0=o.top-(o.pu?o.pu-80:70);
+  E('path',{d:o.left?`M-100 ${o.top-(o.pu||150)}H${p.sx-30}a30 30 0 0 1 30 30V${p.y0+8}`:`M1180 ${o.top-(o.pu||150)}H${p.sx+30}a30 30 0 0 0 -30 30V${p.y0+8}`,fill:'none',stroke:'url(#pipe)','stroke-width':o.pw||44},g);
+  E('rect',{x:p.sx-(o.pw||44)*0.6,y:p.y0,width:(o.pw||44)*1.2,height:16,rx:4,fill:'#c3d2ea'},g);
+  p.o=o; return p; }
+function water(p,h,t,flow,ph=0){ const o=p.o, py=(o.bot-o.top)/5, ly=o.bot-Math.min(h,4.85)*py;
+  p.body.setAttribute('d',`M${o.cx-o.rx+2} ${ly}V${o.bot}A${o.rx-2} ${o.ry-2} 0 0 0 ${o.cx+o.rx-2} ${o.bot}V${ly}A${o.rx-2} ${o.ry-2} 0 0 1 ${o.cx-o.rx+2} ${ly}Z`);
+  p.top.setAttribute('cy',ly);
+  p.rip.innerHTML=''; if(flow>0) for(let i=0;i<3;i++){ const q=((t*0.9+i/3+ph)%1), rr=12+q*o.rx*0.7; E('ellipse',{cx:p.sx,cy:ly,rx:Math.min(rr,o.rx-10),ry:Math.min(rr*o.ry/o.rx,o.ry-6),fill:'none',stroke:'#e6fbff','stroke-opacity':(1-q)*0.7*flow,'stroke-width':2.5},p.rip); }
+  const wv=y=>4*Math.sin(y*0.05-t*9+ph*6); let L='',R=''; for(let y=p.y0+16;y<=ly;y+=10){ const w=(o.pw||44)*0.24-3*(y-p.y0)/(ly-p.y0+1); L+=`${p.sx-w+wv(y)} ${y} `; R=`${p.sx+w+wv(y)} ${y} `+R; }
+  p.st.setAttribute('d',flow>0?'M'+L+'L'+R+'Z':''); p.st.setAttribute('fill-opacity',.55*flow);
+  p.stc.setAttribute('d',flow>0?`M${p.sx} ${p.y0+16}V${ly}`:''); p.stc.setAttribute('stroke-dashoffset',-t*260); p.stc.setAttribute('stroke-opacity',.7*flow);
+  return ly; }
+const M=tank(main,{cx:CX,rx:RX,ry:RY,top:TOP,bot:BOT});
+/* labels on the main tank */
+const rG=E('g',{opacity:0},main), rLine=E('line',{x1:CX,y1:TOP,y2:TOP,stroke:'#fff','stroke-width':6,'stroke-linecap':'round'},rG);
+E('circle',{cx:CX,cy:TOP,r:7,fill:'#fff'},rG); const rTxt=E('text',{x:CX-RX/2,y:TOP-22,fill:'#fff','font-size':56,'font-weight':700,'text-anchor':'middle','font-family':'Plex'},rG); rTxt.textContent='r = 2 m';
+const ruler=E('g',{opacity:0},main);
+for(let m=0;m<=5;m++){ E('line',{x1:CX-RX-40,x2:CX-RX-14,y1:yOf(m),y2:yOf(m),stroke:'#7fe3ff','stroke-width':4},ruler); E('text',{x:CX-RX-50,y:yOf(m)+15,fill:'#7fe3ff','font-size':44,'font-weight':700,'text-anchor':'end','font-family':'Plex'},ruler).textContent=m; }
+E('line',{x1:CX-RX-27,x2:CX-RX-27,y1:yOf(0),y2:yOf(5),stroke:'#7fe3ff','stroke-width':3,'stroke-opacity':.6},ruler);
+E('text',{x:CX-RX-10,y:yOf(5)-64,fill:'#7fe3ff','font-size':40,'text-anchor':'end','font-family':'Plex'},ruler).textContent='h (m)';
+const hl=E('line',{x1:CX-RX-40,x2:CX+RX,stroke:'#ffc94a','stroke-width':3,'stroke-dasharray':'10 8',opacity:0},main);
+const flowB=E('g',{opacity:0},main); E('rect',{x:650,y:TOP+60,width:390,height:64,rx:16,fill:'rgba(5,13,31,.85)',stroke:'#ffc94a','stroke-width':3},flowB);
+E('text',{x:845,y:TOP+104,fill:'#ffc94a','font-size':36,'font-weight':700,'text-anchor':'middle','font-family':'Plex'},flowB).textContent='dV/dt = 4π m³/min';
+const upA=E('g',{opacity:0,filter:'url(#gg)'},main), upP=E('path',{fill:'none',stroke:'#ffc94a','stroke-width':8,'stroke-linecap':'round','stroke-linejoin':'round'},upA);
+const upT=E('text',{fill:'#ffc94a','font-size':84,'font-weight':700,'font-family':'Plex','text-anchor':'middle'},upA); upT.textContent='';
+/* derivative split shot: name the two rates on the object itself */
+const rateL=E('g',{opacity:0},main);
+const rhP=E('path',{fill:'none',stroke:'#ffc94a','stroke-width':9,'stroke-linecap':'round','stroke-linejoin':'round',filter:'url(#gg)'},rateL);
+const rhT=E('text',{fill:'#ffc94a','font-size':66,'font-weight':700,'font-family':'Plex','text-anchor':'middle'},rateL); rhT.textContent='dh/dt';
+const rvT=E('text',{x:M.sx+40,y:TOP+90,fill:'#ffc94a','font-size':66,'font-weight':700,'font-family':'Plex'},rateL); rvT.textContent='dV/dt';
+/* ================= top view disc (morphs out of the water surface) ================= */
+const tv=E('g',{opacity:0},W);
+const disc=E('ellipse',{fill:'url(#disc)',stroke:'#c9f4ff','stroke-width':4},tv);
+const dR=E('line',{stroke:'#fff','stroke-width':6,'stroke-linecap':'round'},tv), dC=E('circle',{r:8,fill:'#fff'},tv);
+const dRt=E('text',{fill:'#fff','font-size':62,'font-weight':700,'text-anchor':'middle','font-family':'Plex'},tv); dRt.textContent='r';
+const dRip=E('g',{},tv);
+const dA=E('text',{fill:'#ffffff','font-size':76,'font-weight':700,'text-anchor':'middle','font-family':'Plex',stroke:'#05203a','stroke-width':10,'paint-order':'stroke'},tv); dA.textContent='πr² = 4π m²';
+/* ================= comparison: A (r) vs B (2r) ================= */
+const cmp=E('g',{opacity:0},W);
+const A=tank(E('g',{},cmp),{cx:250,rx:112,ry:31,top:520,bot:1040,pw:30,left:1,pu:105}), B=tank(E('g',{},cmp),{cx:690,rx:224,ry:62,top:520,bot:1040,pw:30,pu:105});
+const lab=(x,txt)=>{ const t=E('text',{x,y:400-150,fill:'#fff','font-size':46,'font-weight':700,'text-anchor':'middle','font-family':'Plex'},cmp); t.textContent=txt; return t; };
+const rateA=E('g',{},cmp), rateB=E('g',{},cmp);
+const chipSVG=(g,x,txt,col)=>{ g.innerHTML=''; E('rect',{x:x-170,y:1066,width:340,height:86,rx:20,fill:'rgba(5,13,31,.85)',stroke:col,'stroke-width':3},g); E('text',{x,y:1126,fill:col,'font-size':52,'font-weight':700,'text-anchor':'middle','font-family':'Plex'},g).textContent=txt; };
+const rA=E('g',{},cmp), rB=E('g',{},cmp);
+E('line',{x1:250,y1:520,x2:362,y2:520,stroke:'#fff','stroke-width':5},rA); E('text',{x:306,y:496,fill:'#fff','font-size':54,'font-weight':700,'text-anchor':'middle','font-family':'Plex'},rA).textContent='r';
+E('line',{x1:690,y1:520,x2:914,y2:520,stroke:'#fff','stroke-width':5},rB); E('text',{x:846,y:496,fill:'#fff','font-size':54,'font-weight':700,'text-anchor':'middle','font-family':'Plex'},rB).textContent='2r';
+const quarter=E('text',{x:690,y:760,fill:'#ffc94a','font-size':150,'font-weight':700,'text-anchor':'middle','font-family':'Plex',filter:'url(#gg)',opacity:0},cmp); quarter.textContent='× ¼';
+
+function render(t){
+  $('b1').style.transform=`translate(${-160+60*Math.sin(t*.2)}px,${220+50*Math.cos(t*.16)}px)`;
+  $('b2').style.transform=`translate(${520+60*Math.cos(t*.18)}px,${1000+50*Math.sin(t*.22)}px)`;
+  /* ---- main tank scenes (0 → C6) ---- */
+  const hM=hMain(t), flowOn=t<tE()?1:cl(1-(t-tE())/0.3);
+  const ly=water(M,hM,t,flowOn);
+  /* camera keyframes [t, scale, focusX, focusY] */
+  const K=[[0,2.5,M.sx-10,yOf(hMain(0))-60],[2.4,2.5,M.sx-10,yOf(hMain(2.4))-60],[C(1)+0.2,1.12,560,650],[C(2)-0.3,1.12,560,650],
+           [C(3)+0.2,1,540,740],[C(4)-0.2,1,540,740],[C(4)+0.5,0.78,470,434],[CE(4)+0.2,0.78,470,434],[C(5)+0.3,0.93,520,805],[C(6)-0.4,0.93,520,805],[C(6)+0.4,1,540,800],[50,1,540,800]];
+  let k=0; while(k<K.length-2&&t>=K[k+1][0]) k++; const [ta,sa,xa,ya]=K[k],[tb,sb,xb,yb]=K[k+1], u=eio(cl((t-ta)/Math.max(.001,tb-ta)));
+  const s=lerp(sa,sb,u), fx=lerp(xa,xb,u), fy=lerp(ya,yb,u);
+  /* top-view morph factor: 0 = side, 1 = top view (C2 … C3) */
+  const tvk=eio(ramp(t,C(2)-0.2,0.9))*(1-eio(ramp(t,C(3)-0.1,0.9)));
+  /* equation close-up dims the tank (C4) ; comparison replaces it (C6) */
+  const dim=0;
+  const gone=eio(ramp(t,C(6)-0.2,0.8));
+  main.setAttribute('transform',`translate(540 800) scale(${s*(1-0.12*gone)}) translate(${-fx-260*gone} ${-fy})`);
+  main.setAttribute('opacity',(1-tvk)*(1-0.82*dim)*(1-gone)); main.style.filter=dim>0.01?`blur(${dim*6}px)`:'';
+  /* r + flow + ruler + up arrow */
+  rG.setAttribute('opacity',ramp(t,C(1),0.5)); rLine.setAttribute('x2',CX-RX*eo(ramp(t,C(1)+0.1,0.6)));
+  flowB.setAttribute('opacity',0); $('flw').style.opacity=ramp(t,C(1)+1.6,0.5)*cl((C(2)-0.2-t)/0.3)+win(t,C(6)+0.6,C(8),.3,.4);
+  rateL.setAttribute('opacity',win(t,C(4)+1.7,CE(4)+0.4,.4,.4)); rhP.setAttribute('d',`M${CX-120} ${ly-24}v-130m-26 30l26 -30l26 30`); rhT.setAttribute('x',CX-120); rhT.setAttribute('y',ly-180);
+  ruler.setAttribute('opacity',ramp(t,C(5)-0.2,0.5)); hl.setAttribute('opacity',ramp(t,C(5),0.4)); hl.setAttribute('y1',ly); hl.setAttribute('y2',ly);
+  const ua=win(t,0.6,C(1)+0.4,.4,.4); upA.setAttribute('opacity',ua); upP.setAttribute('d',`M${CX-90} ${ly-20}v-120m-22 26l22 -26l22 26`); upT.setAttribute('x',CX-90); upT.setAttribute('y',ly-170);
+  /* layers: discs stacking inside the column while "الحجم" is said */
+  M.layers.innerHTML=''; const lk=win(t,C(3)-0.2,CE(3)+0.5,.4,.5);
+  if(lk>0){ const n=Math.floor((BOT-ly)/24); for(let i=0;i<n;i++){ const yy=BOT-i*24, a=lk*cl((t-C(3)+0.2)*3-i*0.12); E('ellipse',{cx:CX,cy:yy,rx:RX-4,ry:RY-4,fill:'none',stroke:'#e6fbff','stroke-opacity':a*0.55,'stroke-width':2.5},M.layers); } }
+  M.base.setAttribute('fill-opacity',0.2*win(t,C(3),CE(3)+0.4)); M.base.setAttribute('stroke-opacity',win(t,C(3),CE(3)+0.4));
+  /* ---- top view: the surface ellipse opens into a disc ---- */
+  tv.setAttribute('opacity',cl(tvk*1.4)); const scx=lerp(CX,540,tvk), scy=lerp(800+(ly-800)*1,820,tvk), srx=lerp(RX,370,tvk), sry=lerp(RY,370,tvk);
+  disc.setAttribute('cx',scx); disc.setAttribute('cy',scy); disc.setAttribute('rx',srx); disc.setAttribute('ry',sry);
+  const rk=eo(ramp(t,C(2)+0.6,0.6)), ang=-0.9*eio(ramp(t,C(2)+1.4,3.0)), grow=1+0.04*ramp(t,C(2),4.5); disc.setAttribute('rx',srx*grow); disc.setAttribute('ry',sry*grow);
+  dC.setAttribute('cx',scx); dC.setAttribute('cy',scy); dR.setAttribute('x1',scx); dR.setAttribute('y1',scy); dR.setAttribute('x2',scx+srx*grow*rk*Math.cos(ang)); dR.setAttribute('y2',scy+sry*grow*rk*Math.sin(ang));
+  dRip.innerHTML=''; if(tvk>0.5) for(let i=0;i<3;i++){ const q=((t*0.5+i/3)%1); E('circle',{cx:scx,cy:scy,r:20+q*srx*grow*0.95,fill:'none',stroke:'#e6fbff','stroke-opacity':(1-q)*0.45,'stroke-width':3},dRip); }
+  dRt.setAttribute('x',scx+srx*grow*0.5*Math.cos(ang)+30*Math.sin(-ang)); dRt.setAttribute('y',scy+sry*grow*0.5*Math.sin(ang)-24); dRt.setAttribute('opacity',rk); dA.setAttribute('x',scx); dA.setAttribute('y',scy+150); dA.setAttribute('opacity',ramp(t,C(2)+1.8,0.5));
+  /* ---- comparison ---- */
+  const cin=eio(ramp(t,C(6)-0.1,0.8)); cmp.setAttribute('opacity',cin); const shr=eio(ramp(t,C(8)-0.1,0.7)), sc=1-0.2*shr; cmp.setAttribute('transform',`translate(${(1-cin)*120-20} 0) translate(540 250) scale(${sc}) translate(-540 -250)`);
+  const mc=Mcmp(t), fl=t<tC1()?1:cl(1-(t-tC1())/0.3), ce=t>=C(6)-0.3?1:0;
+  let lyA=null,lyB=null; if(ce){ lyA=water(A,0.3+mc,t,fl*cl((t-tC0()+0.4)/0.4)); lyB=water(B,0.3+mc/4,t,fl*cl((t-tC0()+0.4)/0.4),0.37); }
+  window.STATE={t,minMain:Mmain(t),hMain:hM,lyMain:ly,minCmp:mc,hA:0.3+mc,hB:0.3+mc/4,lyA,lyB,pxPerM_A:(A.o.bot-A.o.top)/5,pxPerM_B:(B.o.bot-B.o.top)/5,rA:2,rB:4,Q:4*Math.PI};
+  const show=ramp(t,C(7)-0.6,0.5); rateA.setAttribute('opacity',show); rateB.setAttribute('opacity',show);
+  chipSVG(rateA,262,'1 m/min','#ffc94a'); chipSVG(rateB,690,'¼ m/min','#ffc94a');
+  quarter.setAttribute('opacity',win(t,C(7)+2.0,C(8)+0.2,.35,.5)); quarter.setAttribute('transform',`translate(690 640) scale(${0.7+0.3*eo(ramp(t,C(7)+2.0,0.5))}) translate(-690 -640)`);
+  
+  /* ---- chips: clock + time-lapse badge ---- */
+  const clkOn=ramp(t,C(1)+0.6,0.4)*cl((C(4)-t)/0.3)+win(t,C(5),C(6)-0.2,.3,.3)+win(t,C(6)+0.6,C(8),.3,.4);
+  $('clk').style.opacity=clkOn; $('lap').style.opacity=clkOn;
+  const minutes=t<C(6)?Mmain(t):mc; $('clk').textContent='t = '+minutes.toFixed(2)+' min   ⏩×'+(t<tL()?3:24);
+  $('lap').textContent='تسريع ×'+(t<tL()?3:24);
+  /* ---- hook ---- */
+  const hk=$('hook'); hk.style.opacity=cl((C(1)-t)/0.45);
+  [...hk.children].forEach((e,i)=>{ const q=eo(ramp(t,0.2+i*1.1,0.6)); e.style.opacity=q; e.style.transform=`translateY(${(1-q)*34}px)`; e.style.filter=`blur(${(1-q)*8}px)`; });
+  /* ---- equations: one at a time ---- */
+  [['eV',C(3)+0.4,C(4)-0.1],['eD1',C(4),C(4)+1.7],['eD2',C(4)+1.7,CE(4)+0.5],['eS',C(5)+0.1,C(6)-0.1],['eA',C(7)+0.1,C(8)-0.1],['eR',C(8)+0.6,C(9)-0.1],['eQ',C(9),46]].forEach(([id,a,b])=>{ const e=$(id), o=win(t,a,b,.4,.3), q=eo(ramp(t,a,.55)); e.style.opacity=o; e.style.transform=`translateY(${(1-q)*34}px) scale(${.94+.06*q+Math.min(0.03,0.01*Math.max(0,t-a))})`; e.style.filter=`blur(${(1-q)*8}px)`; });
+  $('eD2t').style.opacity=ramp(t,C(4)+2.4,0.4);
+  /* ---- captions (single explanatory line) ---- */
+  let ci=-1; CUES.forEach((c,i)=>{ if(t>=c[0]-0.1&&t<c[0]+c[1]+0.35) ci=i; }); const cap=$('cap'), txt=ci>0?CAPS[ci]:'';
+  if(cap.dataset.t!==txt){ cap.dataset.t=txt; cap.innerHTML=txt?txt.split('\n').map(l=>`<span>${l.replace(/πr²|4π m³\/min|r = 2 m|2r|r²/g,m=>`<b dir="ltr" style="color:#7fe3ff">${m}</b>`)}</span>`).join('<br>'):''; }
+  cap.style.opacity=txt?cl((t-CUES[ci][0]+0.1)/0.25):0;
+  $('brand').style.opacity=ramp(t,C(9)+0.3,0.6);
+  $('fade').style.opacity=t<0.3?1-t/0.3:t>44.9?(t-44.9)/0.6:0;
+}
+window.render=render; render(0);
+</script></body></html>

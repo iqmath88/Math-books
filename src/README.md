@@ -54,3 +54,6 @@ node tools/reel-render.cjs tools/reels/ladder.html out.mp4 [--preview 3,8,17]
 - الصورة: `node tools/reel-render.cjs tools/reels/tank-rates.html video.mp4`
 - الصوت والدمج: `VOICE=… tools/reels/tank-rates-audio/build-audio.sh video.mp4 out.mp4`
 - النسخة المحسّنة v2: `tools/reels/tank-rates-v2.html` و `tools/reels/tank-rates-v2-audio/` (منظر علوي للقرص، اشتقاق بلقطة قريبة، مقارنة خزانين r و 2r بالتدفق نفسه).
+- النسخة v3: `tools/reels/tank-rates-v3.html` (الصوت نفسه في `tank-rates-v2-audio/`).
+- فحص آلي لأي ريلز: `node tools/reel-validate.cjs tools/reels/tank-rates-v3.html --step 0.1`
+  يفحص المنطقة الآمنة للنصوص، وتداخل النصوص، وتغطية الترجمة أو المعادلة للرسم، ونسبة ارتفاع الماء 4:1 من حالة المحاكاة نفسها.
