@@ -68,3 +68,8 @@ node tools/reel-render.cjs tools/reels/ladder.html out.mp4 [--preview 3,8,17]
 - الصوت: `VOICE=…/vits-piper-ar_JO-SA_dii-high tools/reels/ladder-3d-audio/build-audio.sh video.mp4 out.mp4`
 - التحقق الرياضي والحركي: `node tools/reels/ladder-3d.check.cjs` (طول السلّم، x²+y²=100، الإشارات، dy/dt و dθ/dt عددياً)
 - أدوات الريلز لم تعد تحتاج خادماً محلياً: الملفات تُقدَّم للصفحة مباشرة (BASE اختياري).
+
+### «السلّم المنزلق» v2 — نسختان من مشروع واحد
+- `tools/reels/ladder-v2.html` (الكاملة 120.7 ث مع الزاوية) و `tools/reels/ladder-v2.html?short` (المختصرة 66.7 ث).
+- الصوت والتوقيت: `tools/reels/ladder-v2-audio/` (المفاتيح والنصوص في `narration.txt`، و`mix.py` يكتب `ladder-v2.timeline.<mode>.js`).
+- التحقق: `node tools/reels/ladder-v2.check.cjs [full|short]` و `node tools/reel-validate.cjs "tools/reels/ladder-v2.html?short" --step 0.1`.
