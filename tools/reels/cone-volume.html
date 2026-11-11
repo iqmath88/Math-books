@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<title>ريلز · المخروط</title>
+<link rel="stylesheet" href="../../v2/lib/katex/katex.min.css">
+<script src="../../v2/lib/katex/katex.min.js"></script>
+<script type="importmap">{"imports":{"three":"./vendor/three-0.170.0.module.min.js"}}</script>
+<style>
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-ar-500.woff2) format("woff2");font-weight:500;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-ar-700.woff2) format("woff2");font-weight:700;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-lat-500.woff2) format("woff2");font-weight:500;unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-lat-700.woff2) format("woff2");font-weight:700;unicode-range:U+0000-00FF,U+2000-206F}
+:root{--cy:#38d6ff;--lc:#8ce9ff;--au:#ffc94a;--ink:#f4f8ff;--mute:#93a6c9}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:clip;background:#040b1c}
+body{position:relative;contain:paint;font-family:Plex,system-ui,sans-serif;color:var(--ink)}
+#bg{position:absolute;inset:0;background:radial-gradient(900px 700px at 50% 42%,#123466 0%,#0a1c3d 40%,#050d20 75%,#030816 100%)}
+.blob{position:absolute;border-radius:50%;filter:blur(110px);mix-blend-mode:screen;pointer-events:none}
+#b1{width:760px;height:760px;background:radial-gradient(circle,rgba(56,214,255,.30),rgba(56,214,255,0) 70%)}
+#b2{width:640px;height:640px;background:radial-gradient(circle,rgba(255,201,74,.18),rgba(255,201,74,0) 70%)}
+canvas#gl{position:absolute;inset:0;width:1080px;height:1920px}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 44%,transparent 52%,rgba(0,0,0,.6) 100%);pointer-events:none}
+.head{position:absolute;left:90px;right:180px;top:200px;text-align:center;opacity:0}
+.head .h{font-size:78px;font-weight:700;line-height:1.25;text-shadow:0 8px 30px rgba(0,0,0,.7)}
+.head .s{font-size:52px;font-weight:500;color:#dbe6fb;margin-top:10px}
+.eq{position:absolute;left:90px;right:180px;top:1160px;height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;opacity:0;direction:ltr}
+.eq .k{font-size:80px;color:#fff;white-space:nowrap}
+.row{display:flex;align-items:center;gap:18px;direction:ltr;white-space:nowrap}
+.unit{font-size:62px;font-weight:700;color:#fff;direction:rtl}
+.box{padding:6px 30px;border-radius:22px;border:4px solid var(--au);background:rgba(255,201,74,.08);box-shadow:0 0 50px rgba(255,201,74,.25)}
+.lbl{position:absolute;opacity:0;font-weight:700;white-space:nowrap;transform:translate(-50%,-50%);text-shadow:0 2px 14px rgba(0,0,0,.9);direction:ltr}
+#cap{position:absolute;left:116px;right:206px;bottom:390px;text-align:center;font-size:54px;line-height:1.35;font-weight:700}
+#cap span{white-space:nowrap;display:inline-block;margin:3px 0;background:rgba(3,8,20,.72);padding:4px 22px;border-radius:16px}
+#fade{position:absolute;inset:0;background:#000;pointer-events:none}
+#brand{position:absolute;left:90px;right:180px;top:1395px;text-align:center;font-size:34px;color:var(--mute);opacity:0}
+#brand b{background:linear-gradient(90deg,var(--cy),var(--au));-webkit-background-clip:text;color:transparent}
+</style></head><body>
+<div id="bg"></div><div class="blob" id="b1"></div><div class="blob" id="b2"></div>
+<canvas id="gl" width="1080" height="1920"></canvas>
+<!-- headlines (one at a time) -->
+<div class="head" id="hA"><div class="h">لماذا يختلف <span style="color:var(--au)">الحجم</span>؟</div><div class="s">القاعدة نفسها… والارتفاع نفسه</div></div>
+<div class="head" id="hB"><div class="h"><span style="color:var(--lc)">3</span> مخروطات = <span style="color:var(--au)">أسطوانة</span></div></div>
+<div class="head" id="hZ"><div class="h">المخروط = <span style="color:var(--au)">⅓</span> الأسطوانة</div><div class="s">حجماً، عند تساوي القاعدة والارتفاع</div></div>
+<!-- 3D-anchored labels (positioned every frame) -->
+<div class="lbl chip" id="Lbase" style="font-size:50px;color:var(--lc);direction:rtl">القاعدة</div>
+<div class="lbl chip" id="Lapex" style="font-size:50px;color:#fff;direction:rtl">الرأس</div>
+<div class="lbl chip" id="Lh" style="font-size:60px;color:var(--au)">h</div>
+<div class="lbl chip" id="Lr" style="font-size:60px;color:var(--au)">r</div>
+<div class="lbl chip" id="Ll" style="font-size:60px;color:#ff9f7a">l</div>
+<div class="lbl chip" id="Lt1" style="font-size:48px;color:var(--au)">⅓</div>
+<div class="lbl chip" id="Lt2" style="font-size:48px;color:var(--au)">⅔</div>
+<div class="lbl chip" id="Lcount" style="font-size:96px;color:var(--lc)">1</div>
+<div class="lbl chip" id="LA" style="font-size:54px;color:var(--lc)">πr²</div>
+<!-- equations -->
+<div class="eq" id="eL"><div class="k" data-tex="l=\sqrt{r^2+h^2}\;>\;h" style="font-size:72px"></div></div>
+<div class="eq" id="eT"><div class="k" data-tex="V_{\text{cone}}=\tfrac13\,V_{\text{cyl}}" style="font-size:84px"></div></div>
+<div class="eq" id="eV"><div class="k"><span id="v0" data-tex="V="></span><span id="v3" data-tex="\tfrac13\,"></span><span id="v1" data-tex="{\color{#8ce9ff}\pi r^2}"></span><span id="v2" data-tex="\,{\color{#ffc94a}h}"></span></div></div>
+<div class="eq" id="eX"><div class="k" id="eX1" data-tex="V=\tfrac13\times\pi\times 3^2\times 6" style="font-size:70px"></div><div class="row box" id="eX2"><span class="k" data-tex="V=18\pi" style="font-size:70px;color:#ffc94a"></span><span class="unit">سم³</span><span class="k" data-tex="\approx 56.5" style="font-size:50px;color:#dbe6fb"></span></div></div>
+<div class="eq" id="eF"><div class="k" data-tex="V_{\text{cone}}=\tfrac13\,{\color{#8ce9ff}\pi r^2}\,{\color{#ffc94a}h}" style="font-size:84px"></div></div>
+<div id="cap"></div>
+<div id="brand"><b>الرياضيات الحيّة</b> · الأستاذ فائز الحمداني</div>
+<div id="vig"></div><div id="fade"></div>
+<script type="module">
+import * as THREE from 'three';
+/* ---------------- timing (narration cues: [start, length]) ---------------- */
+const CUES=window.CUES||[[0.5,5.494],[6.594,5.084],[12.078,4.388],[17.067,5.031],[22.698,0.954],[24.651,1.087],[26.739,2.31],[29.848,3.194],[33.642,4.061],[38.303,3.898],[42.701,5.735],[49.236,4.311]];
+const CAPS=['','للمخروط قاعدة دائرية، ورأس،\nوارتفاع عمودي على القاعدة','الراسم l: من الرأس إلى الحافة\nوهو أطول من الارتفاع h','نملأ المخروط ونسكبه في أسطوانة\nلها القاعدة والارتفاع نفسهما','المرة الأولى','المرة الثانية','والثالثة… فتمتلئ الأسطوانة!','حجم المخروط =\nثلث حجم الأسطوانة','الحجم = مساحة القاعدة\n× الارتفاع ÷ 3','مثال: r = 3 سم ، h = 6 سم','الحجم = 18π سم³',''];
+window.DURATION=54.8;
+const C=i=>CUES[i][0], CE=i=>CUES[i][0]+CUES[i][1];
+document.querySelectorAll('[data-tex]').forEach(e=>katex.render(e.dataset.tex,e,{throwOnError:false}));
+const $=id=>document.getElementById(id);
+const cl=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)), lerp=(a,b,k)=>a+(b-a)*k, eio=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2, eo=u=>1-Math.pow(1-u,3);
+const ramp=(t,a,d)=>cl((t-a)/d), win=(t,a,b,fi=.45,fo=.4)=>cl((t-a)/fi)*cl((b-t)/fo);
+
+/* ---------------- geometry facts (cm) ---------------- */
+const R=3, H=6, SL=Math.hypot(R,H);            /* slant l = √45 = 3√5 ≈ 6.708 */
+const VCONE=Math.PI*R*R*H/3, VCYL=Math.PI*R*R*H; /* 18π and 54π */
+
+/* ---------------- renderer / scene ---------------- */
+const renderer=new THREE.WebGLRenderer({canvas:$('gl'),antialias:true,alpha:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(1); renderer.setSize(1080,1920,false); renderer.setClearColor(0x000000,0);
+const scene=new THREE.Scene(), cam=new THREE.PerspectiveCamera(32,1080/1920,0.1,500);
+cam.setViewOffset(1080,1920,0,255,1080,1920);   /* lens shift: subject centred at y≈705, leaving the lower band for equations and captions */
+scene.add(new THREE.AmbientLight(0x9fc4ff,0.55));
+const key=new THREE.DirectionalLight(0xffffff,1.4); key.position.set(6,12,10); scene.add(key);
+const rim=new THREE.DirectionalLight(0x38d6ff,1.1); rim.position.set(-8,4,-10); scene.add(rim);
+
+/* fresnel rim shader: glowing silhouette edges on a translucent body */
+const fres=(col,pow=2.2,inten=1.6)=>new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending,
+  uniforms:{c:{value:new THREE.Color(col)},p:{value:pow},k:{value:inten},o:{value:1}},
+  vertexShader:`varying vec3 n; varying vec3 v; void main(){ vec4 mv=modelViewMatrix*vec4(position,1.); n=normalize(normalMatrix*normal); v=normalize(-mv.xyz); gl_Position=projectionMatrix*mv; }`,
+  fragmentShader:`uniform vec3 c; uniform float p; uniform float k; uniform float o; varying vec3 n; varying vec3 v; void main(){ float f=pow(1.-abs(dot(normalize(n),normalize(v))),p); gl_FragColor=vec4(c*(0.06+f*k)*o,1.); }`});
+const glass=col=>new THREE.MeshPhysicalMaterial({color:col,transparent:true,opacity:0.16,roughness:0.15,metalness:0,side:THREE.DoubleSide,depthWrite:false});
+const water=()=>new THREE.MeshStandardMaterial({color:0x1279d6,emissive:0x0b55b8,emissiveIntensity:0.9,transparent:true,opacity:0.85,roughness:0.25,depthWrite:false});
+const lineMat=(col,op=1)=>new THREE.LineBasicMaterial({color:col,transparent:true,opacity:op});
+const dashMat=col=>new THREE.LineDashedMaterial({color:col,dashSize:0.28,gapSize:0.18,transparent:true});
+const circle=(r,y,col,op=1)=>{ const pts=[]; for(let i=0;i<=128;i++){ const a=i/128*Math.PI*2; pts.push(new THREE.Vector3(r*Math.cos(a),y,r*Math.sin(a))); } return new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),lineMat(col,op)); };
+const seg=(a,b,mat)=>{ const g=new THREE.BufferGeometry().setFromPoints([a,b]); const l=new THREE.Line(g,mat); if(mat.isLineDashedMaterial) l.computeLineDistances(); return l; };
+/* tube segment for thick, visible dimension lines */
+const tube=(a,b,col,rad=0.045)=>{ const m=new THREE.Mesh(new THREE.CylinderGeometry(rad,rad,1,12),new THREE.MeshBasicMaterial({color:col,transparent:true})); const d=new THREE.Vector3().subVectors(b,a); m.scale.y=d.length(); m.position.copy(a).addScaledVector(d,0.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.clone().normalize()); return m; };
+
+/* floor glow */
+const fc=document.createElement('canvas'); fc.width=fc.height=256; { const x=fc.getContext('2d'), g=x.createRadialGradient(128,128,0,128,128,128); g.addColorStop(0,'rgba(80,190,255,.55)'); g.addColorStop(.5,'rgba(40,110,200,.18)'); g.addColorStop(1,'rgba(0,0,0,0)'); x.fillStyle=g; x.fillRect(0,0,256,256); }
+const floorMat=new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(fc),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending});
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(26,26),floorMat); floor.rotation.x=-Math.PI/2; floor.position.y=-0.02; scene.add(floor);
+
+/* ----- cone: upright, base at y=0, apex at y=H (local) ----- */
+const coneGeo=new THREE.ConeGeometry(R,H,128,1,false); coneGeo.translate(0,H/2,0);
+const cone=new THREE.Group(); scene.add(cone);
+const coneBody=new THREE.Mesh(coneGeo,glass(0x6fdcff)), coneRim=new THREE.Mesh(coneGeo,fres(0x38d6ff,2.4,1.9));
+cone.add(coneBody,coneRim, circle(R,0,0x8ce9ff,0.95));
+const baseDisc=new THREE.Mesh(new THREE.CircleGeometry(R*0.995,128),new THREE.MeshBasicMaterial({color:0x38d6ff,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false}));
+baseDisc.rotation.x=-Math.PI/2; baseDisc.position.y=0.01; cone.add(baseDisc);
+const apexDot=new THREE.Mesh(new THREE.SphereGeometry(0.16,24,16),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0})); apexDot.position.y=H; cone.add(apexDot);
+/* liquid in the cone: a similar sub-cone sharing the apex (honest volume ∝ s³) */
+const coneLiq=new THREE.Mesh(new THREE.ConeGeometry(R*0.985,H*0.985,96,1,false).translate(0,H*0.985/2,0),water()); cone.add(coneLiq);
+/* dimensions (local to the cone; r and l go to the rim point on +x) */
+const dims=new THREE.Group(); cone.add(dims);
+const dH=tube(new THREE.Vector3(0,0,0),new THREE.Vector3(0,H,0),0xffc94a), dR=tube(new THREE.Vector3(0,0,0),new THREE.Vector3(R,0,0),0xffc94a), dL=tube(new THREE.Vector3(R,0,0),new THREE.Vector3(0,H,0),0xff9f7a,0.04);
+const ra=new THREE.Group(); ra.add(seg(new THREE.Vector3(0.45,0,0),new THREE.Vector3(0.45,0.45,0),lineMat(0xffc94a)),seg(new THREE.Vector3(0.45,0.45,0),new THREE.Vector3(0,0.45,0),lineMat(0xffc94a)));
+dims.add(dH,dR,dL,ra);
+/* ----- cylinder ----- */
+const cylGeo=new THREE.CylinderGeometry(R,R,H,128,1,true); cylGeo.translate(0,H/2,0);
+const cyl=new THREE.Group(); scene.add(cyl);
+cyl.add(new THREE.Mesh(cylGeo,glass(0x6fdcff)),new THREE.Mesh(cylGeo,fres(0x38d6ff,2.6,1.7)),circle(R,0,0x8ce9ff,0.95),circle(R,H,0x8ce9ff,0.95));
+const cylLiq=new THREE.Mesh(new THREE.CylinderGeometry(R*0.985,R*0.985,1,96).translate(0,0.5,0),water()); cyl.add(cylLiq); const surfRing=circle(R*0.985,0,0xe6fbff,0.95); cyl.add(surfRing);
+const thirds=new THREE.Group(); thirds.add(circle(R*1.01,H/3,0xffc94a,0.9),circle(R*1.01,2*H/3,0xffc94a,0.9)); cyl.add(thirds);
+/* stream from the cone's apex into the cylinder */
+const stream=new THREE.Mesh(new THREE.CylinderGeometry(0.11,0.07,1,16).translate(0,-0.5,0),new THREE.MeshStandardMaterial({color:0x8ce9ff,emissive:0x1683b5,emissiveIntensity:0.8,transparent:true,opacity:0.85}));
+scene.add(stream);
+const setOp=(g,o)=>g.traverse(m=>{ if(m.material){ if(m.material.uniforms) m.material.uniforms.o.value=o; else { if(m.userData.op===undefined) m.userData.op=m.material.opacity; m.material.opacity=m.userData.op*o; } } m.visible=o>0.003; });
+
+/* ---------------- simulation: three equal pours (volume-honest) ---------------- */
+const P=[[C(4)-0.15,1.4],[C(5)-0.15,1.4],[C(6)-0.15,1.4]];   /* [start, duration] of each pour */
+const FILL0=[C(3)+1.5,1.2];                                     /* first filling of the cone */
+function pourState(t){
+  let poured=0, inCone=0, active=-1;
+  if(t>=FILL0[0]) inCone=VCONE*eio(ramp(t,FILL0[0],FILL0[1]));
+  P.forEach(([s,d],k)=>{ const u=eio(ramp(t,s,d)); if(t>=s){ poured+=VCONE*u; inCone=VCONE*(1-u); if(t<s+d) active=k; }
+    if(k<2&&t>=s+d){ const r0=s+d+0.1, rd=P[k+1][0]-0.05-r0; inCone=VCONE*eio(ramp(t,r0,Math.max(0.2,rd))); } });
+  if(t>=P[2][0]+P[2][1]) inCone=VCONE*eio(ramp(t,C(7)+0.6,1.0));   /* refilled once more for the side-by-side shot */
+  return {poured, inCone, active, level:poured/(Math.PI*R*R)};  /* level from V = πr²·y */
+}
+
+/* ---------------- camera rig ---------------- */
+const tgt=new THREE.Vector3();
+function rig(t){ /* [time, dist, elev°, azim°, tx, ty] */
+  const K=[[0,30,14,-30,0,3.1,200],[2.6,31,12,-12,0,3.1,200],[3.6,46,11,0,0,3.0,170],[C(1)-0.3,46,11,6,0,3.0,170],[C(1)+0.6,28,16,-14,0.3,3.0,255],[C(2)-0.2,28,12,-4,0.4,3.0,255],[CE(2)+0.2,27,10,0,0.4,3.0,255],
+    [C(3)+1.2,46,10,-16,0,6.3,130],[C(7)-0.2,42,13,16,0,6.3,130],[C(7)+0.9,48,10,0,0,3.0,255],[C(8)-0.2,48,10,-4,0,3.0,255],[C(8)+0.6,31,18,-10,0.3,3.0,255],[CE(9),31,16,8,0.3,3.0,255],[C(10)+0.4,32,14,-6,0.3,3.0,255],
+    [C(11)-0.3,32,12,0,0.3,3.0,255],[C(11)+0.8,44,11,0,0,3.0,150],[60,44,11,10,0,3.0,150]];
+  let k=0; while(k<K.length-2&&t>=K[k+1][0]) k++; const a=K[k], b=K[k+1], u=eio(cl((t-a[0])/Math.max(.001,b[0]-a[0]))), L=i=>lerp(a[i],b[i],u);
+  const d=L(1), el=L(2)*Math.PI/180, az=L(3)*Math.PI/180; tgt.set(L(4),L(5),0);
+  cam.position.set(tgt.x+d*Math.cos(el)*Math.sin(az),tgt.y+d*Math.sin(el),tgt.z+d*Math.cos(el)*Math.cos(az)); cam.lookAt(tgt); cam.setViewOffset(1080,1920,0,L(6),1080,1920); cam.updateMatrixWorld(); }
+const proj=v=>{ const p=v.clone().project(cam); return {x:(p.x+1)/2*1080,y:(1-p.y)/2*1920}; };
+const place=(id,v,o,dx=0,dy=0)=>{ const e=$(id), p=proj(v); e.style.left=(p.x+dx)+'px'; e.style.top=(p.y+dy)+'px'; e.style.opacity=o; };
+
+function render(t){
+  $('b1').style.transform=`translate(${-140+60*Math.sin(t*.2)}px,${300+50*Math.cos(t*.16)}px)`;
+  $('b2').style.transform=`translate(${520+60*Math.cos(t*.18)}px,${980+50*Math.sin(t*.22)}px)`;
+  rig(t);
+  const S=pourState(t);
+  /* ---- object choreography ---- */
+  /* hook: cone alone, then the cylinder slides in beside it */
+  const hookIn=eio(ramp(t,2.2,1.2))*(1-eio(ramp(t,C(1)-0.6,0.8)));
+  const flip=eio(ramp(t,C(3),1.4))*(1-eio(ramp(t,C(7)+0.1,1.2)));      /* 0 upright, 1 inverted above the cylinder */
+  const side=eio(ramp(t,C(7)+0.1,1.2))*(1-eio(ramp(t,C(8)-0.2,0.8)))+eio(ramp(t,C(11)-0.3,1.0)); /* side-by-side layout */
+  const spin=t<C(1)?t*0.45:(t>C(8)-0.2&&t<C(11)?0.12*Math.sin(t*0.6):0.25*Math.sin(t*0.3));
+  const SX=3.35;
+  cone.position.set(-SX*cl(hookIn+side)*(1-flip),lerp(0,2*H+0.6,flip),0); cone.rotation.set(Math.PI*flip,spin*(1-flip),0);
+  const cylOn=cl(hookIn+eio(ramp(t,C(3)+1.6,1.0))*(1-eio(ramp(t,C(8)-0.2,0.6)))+eio(ramp(t,C(11)-0.3,0.8)));
+  cyl.position.set(t<C(2)?lerp(11,SX,hookIn):(flip>0.02?0:SX*cl(side)),0,0);
+  cyl.rotation.y=spin*0.5; setOp(cyl,cylOn);
+  /* liquids */
+  const s=Math.cbrt(S.inCone/VCONE);                       /* sub-cone scale: V ∝ s³ */
+  coneLiq.visible=s>0.01; coneLiq.scale.setScalar(Math.max(s,0.001)); coneLiq.position.y=H*0.985*(1-s)*1; /* apex stays at the container apex (local y = H) */
+  coneLiq.position.y=(H*0.985)*(1-s)+ (H-H*0.985);
+  const lvl=t>=C(8)-0.2&&t<C(11)-0.3?0:S.level+ (t>=C(11)-0.3?0:0);
+  cylLiq.visible=lvl>0.005; cylLiq.scale.y=Math.max(lvl,0.001); surfRing.position.y=lvl; surfRing.visible=lvl>0.02&&cylOn>0.05;
+  setOp(thirds,ramp(t,C(3)+2.6,0.6)*cl((C(8)-0.3-t)/0.4));
+  /* stream */
+  const pouring=S.active>=0, sOp=pouring?cl(Math.min((t-P[S.active][0])/0.15,(P[S.active][0]+P[S.active][1]-t)/0.15)):0;
+  const apexW=new THREE.Vector3(0,H,0).applyMatrix4(cone.matrixWorld.compose(cone.position,cone.quaternion.setFromEuler(cone.rotation),cone.scale));
+  const surf=lvl+0.01; stream.visible=sOp>0.01; stream.position.set(apexW.x,apexW.y,0); stream.scale.y=Math.max(0.01,apexW.y-surf); stream.material.opacity=0.85*sOp;
+  /* anatomy */
+  baseDisc.material.opacity=0.42*win(t,C(1)+0.6,C(2)+0.4,.4,.5)+0.42*win(t,C(8)+0.8,CE(8)+0.6,.4,.5);
+  apexDot.material.opacity=win(t,C(1)+1.9,CE(2)+0.3,.3,.5);
+  const hOn=win(t,C(1)+2.8,CE(2)+0.4,.4,.4)+win(t,C(8)+1.8,CE(10)+0.6,.4,.4), rOn=win(t,C(2)+0.4,CE(2)+0.4,.4,.4)+win(t,C(9)+0.2,CE(10)+0.6,.4,.4), lOn=win(t,C(2)+0.9,CE(2)+0.4,.4,.4);
+  setOp(dH,hOn); setOp(dR,rOn); setOp(dL,lOn); setOp(ra,hOn);
+  setOp(coneRim,1);
+  /* ---- render ---- */
+  cone.updateMatrixWorld(true); cyl.updateMatrixWorld(true); renderer.render(scene,cam);
+  /* ---- labels anchored to 3D points ---- */
+  const W=v=>v.clone().applyMatrix4(cone.matrixWorld);
+  place('Lbase',W(new THREE.Vector3(0,0,R)),win(t,C(1)+0.6,C(2)-0.1,.4,.4),0,70);
+  place('Lapex',W(new THREE.Vector3(0,H,0)),win(t,C(1)+1.9,C(2)-0.1,.3,.4),0,-62);
+  place('Lh',W(new THREE.Vector3(0,H*0.42,0)),hOn,-44,0); place('Lr',W(new THREE.Vector3(R*0.5,0,0)),rOn,0,52); place('Ll',W(new THREE.Vector3(R*0.62,H*0.42,0)),lOn,40,-10);
+  $('Lh').textContent=t>C(9)?'h = 6':'h'; $('Lr').textContent=t>C(9)?'r = 3':'r';
+  const Wc=v=>v.clone().applyMatrix4(cyl.matrixWorld), tOn=ramp(t,C(3)+2.6,0.6)*cl((C(7)+0.3-t)/0.4);
+  place('Lt1',Wc(new THREE.Vector3(R+0.3,H/3,0)),tOn,44,0); place('Lt2',Wc(new THREE.Vector3(R+0.3,2*H/3,0)),tOn,44,0);
+  const cnt=P.filter(([a])=>t>=a).length; $('Lcount').textContent=cnt||''; place('Lcount',Wc(new THREE.Vector3(-R-0.3,H*0.55,0)),cnt?win(t,P[0][0],C(7)+0.2,.3,.4):0,-70,0);
+  place('LA',W(new THREE.Vector3(0,0,R*0.2)),win(t,C(8)+0.8,CE(8)+0.6,.4,.4),0,6);
+  /* ---- headlines, equations, captions ---- */
+  [['hA',0.2,C(1)-0.2],['hB',C(6)+0.6,C(7)+0.4],['hZ',C(11)+0.2,60]].forEach(([id,a,b])=>{ const e=$(id), o=win(t,a,b,.5,.4), q=eo(ramp(t,a,.6)); e.style.opacity=o; e.style.transform=`translateY(${(1-q)*-30}px)`; e.style.filter=`blur(${(1-q)*8}px)`; });
+  [['eL',C(2)+1.6,C(3)],['eT',C(7)+0.4,C(8)-0.1],['eV',C(8)+0.6,C(9)-0.1],['eX',C(10),C(11)-0.2],['eF',C(11)+0.9,60]].forEach(([id,a,b])=>{ const e=$(id), o=win(t,a,b,.45,.35), q=eo(ramp(t,a,.55)); e.style.opacity=o; e.style.transform=`translateY(${(1-q)*30}px) scale(${.95+.05*q+Math.min(.02,.006*Math.max(0,t-a))})`; });
+  /* formula assembled with the narration: "مساحة القاعدة" → "في الارتفاع" → "مقسوماً على ثلاثة" */
+  $('v1').style.opacity=ramp(t,C(8)+0.8,0.35); $('v2').style.opacity=ramp(t,C(8)+1.9,0.35); $('v3').style.opacity=ramp(t,C(8)+2.8,0.35);
+  $('eX2').style.opacity=ramp(t,C(10)+3.4,0.45); $('eX2').style.transform=`scale(${.85+.15*eo(ramp(t,C(10)+3.4,0.5))})`;
+  let ci=-1; CUES.forEach((c,i)=>{ if(t>=c[0]-0.1&&t<c[0]+c[1]+0.35) ci=i; });
+  const txt=ci>0?CAPS[ci]:'', cap=$('cap');
+  if(cap.dataset.t!==txt){ cap.dataset.t=txt; cap.innerHTML=txt?txt.split('\n').map(l=>`<span>${l.replace(/[rhl] = \d سم|\b[rhl]\b|18π سم³|V/g,m=>`<b dir="ltr" style="color:#ffc94a">${m}</b>`)}</span>`).join('<br>'):''; }
+  cap.style.opacity=txt?cl((t-CUES[ci][0]+0.1)/0.25):0;
+  $('brand').style.opacity=ramp(t,C(11)+1.0,0.6);
+  $('fade').style.opacity=t<0.4?1-t/0.4:t>54.2?(t-54.2)/0.6:0;
+  const box3=new THREE.Box3(), figs=[];
+  [['cone',cone,1],['cylinder',cyl,cylOn]].forEach(([n,g,o])=>{ if(o<0.5) return; box3.setFromObject(g,true); const xs=[],ys=[];
+    for(const x of [box3.min.x,box3.max.x]) for(const y of [box3.min.y,box3.max.y]) for(const z of [box3.min.z,box3.max.z]){ const p=proj(new THREE.Vector3(x,y,z)); xs.push(p.x); ys.push(p.y); }
+    figs.push({name:n,x0:Math.min(...xs),y0:Math.min(...ys),x1:Math.max(...xs),y1:Math.max(...ys)}); });
+  window.FIGS=figs;
+  window.STATE={t,poured:S.poured,inCone:S.inCone,level:S.level,s,VCONE,VCYL,R,H,SL,pourActive:S.active,coneVolFromScale:Math.PI*(R*s)**2*(H*s)/3};
+}
+window.render=render; window.READY=true; render(0);
+</script></body></html>

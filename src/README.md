@@ -57,3 +57,8 @@ node tools/reel-render.cjs tools/reels/ladder.html out.mp4 [--preview 3,8,17]
 - النسخة v3: `tools/reels/tank-rates-v3.html` (الصوت نفسه في `tank-rates-v2-audio/`).
 - فحص آلي لأي ريلز: `node tools/reel-validate.cjs tools/reels/tank-rates-v3.html --step 0.1`
   يفحص المنطقة الآمنة للنصوص، وتداخل النصوص، وتغطية الترجمة أو المعادلة للرسم، ونسبة ارتفاع الماء 4:1 من حالة المحاكاة نفسها.
+
+### «المخروط» (ريلز ثلاثي الأبعاد 54.8 ث بصوت نسائي)
+- الصورة (Three.js 0.170 منسوخة في `tools/reels/vendor/`): `node tools/reel-render.cjs tools/reels/cone-volume.html video.mp4` (~8 دقائق لأن WebGL يُرسم برمجياً)
+- الصوت: `VOICE=…/vits-piper-ar_JO-SA_dii-high tools/reels/cone-volume-audio/build-audio.sh video.mp4 out.mp4`
+  (صوت Piper «dii» النسائي، رخصة CC BY-NC-SA 4.0 — للاستعمال غير التجاري مع ذكر المصدر).

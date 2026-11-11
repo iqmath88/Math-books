@@ -24,6 +24,7 @@ const BASE=process.env.BASE||'http://localhost:8770/math-books/';
     document.querySelectorAll('#hook > div').forEach((e,i)=>push(e,'hook'+i));
     document.querySelectorAll('svg text').forEach(e=>{ if((e.textContent||'').trim()) push(e,'svgtext:'+e.textContent.trim()); });
     const figs=[]; document.querySelectorAll('svg > g').forEach((g,i)=>{ const o=vis(g); if(o<0.6) return; const r=g.getBoundingClientRect(); if(r.width>50) figs.push({i,x0:r.left,y0:r.top,x1:r.right,y1:r.bottom}); });
+    (window.FIGS||[]).forEach((f,k)=>figs.push({i:'3d:'+f.name,x0:f.x0,y0:f.y0,x1:f.x1,y1:f.y1}));
     return {boxes,figs,state:window.STATE||null};
   },t);
   if(r.state) states.push(r.state);
