@@ -21,6 +21,9 @@ canvas#gl{position:absolute;inset:0;width:1080px;height:1920px}
 .head .h{font-size:76px;font-weight:700;line-height:1.25;text-shadow:0 8px 30px rgba(0,0,0,.75)}
 .head .s{font-size:50px;font-weight:500;color:#dbe6fb;margin-top:8px}
 .card{position:absolute;left:90px;right:180px;top:1110px;opacity:0;background:rgba(6,16,38,.82);border:2px solid rgba(140,233,255,.35);border-radius:28px;padding:22px 30px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.card .bt{font-size:44px;line-height:1.62;font-weight:500;color:#e8efff}
+.card .bt b,.card .bt span{transition:none;border-radius:10px;padding:0 6px}
+#book{top:820px}
 .card .t{font-size:40px;font-weight:700;color:var(--mute);margin-bottom:10px}
 .card .r{display:flex;justify-content:space-between;align-items:center;font-size:48px;font-weight:700;margin:6px 0}
 .card .r .v{direction:ltr}
@@ -47,6 +50,7 @@ canvas#gl{position:absolute;inset:0;width:1080px;height:1920px}
 <div class="head" id="hA"><div class="h">هل تنزل <span style="color:var(--lc)">القمة</span><br>بسرعة <span style="color:var(--au)">القاعدة</span>؟</div></div>
 <div class="head" id="hQ"><div class="h" style="font-size:64px">مثال 4 · ص 94</div><div class="s">سلّم ينزلق</div></div>
 <!-- the book's data -->
+<div class="card" id="book"><div class="t">نص السؤال — مثال 4 ص 94</div><div class="bt">سلم طوله <b id="b1" dir="ltr">10m</b> يستند طرفه الأسفل على أرض أفقية وطرفه العلوي على حائط رأسي، فإذا انزلق الطرف الأسفل مبتعداً عن الحائط بمعدل <b id="b2" dir="ltr">2 m/s</b> عندما يكون الطرف الأسفل على بعد <b id="b3" dir="ltr">8m</b> عن الحائط جد: <span id="b4">1) معدل انزلاق الطرف العلوي.</span> <span id="b5">2) سرعة تغير الزاوية بين السلم والأرض.</span></div></div>
 <div class="card" id="data"><div class="t">المعطيات (من الكتاب)</div>
  <div class="r" id="d1"><span>طول السلّم</span><span class="v" style="color:#fff">L = 10 m</span></div>
  <div class="r" id="d2"><span>سرعة القاعدة</span><span class="v" style="color:var(--au)">dx/dt = 2 m/s</span></div>
@@ -144,7 +148,7 @@ const aB=arrow(0xffc94a), aT=arrow(0x8ce9ff);
 /* ================= camera ================= */
 const tgt=new THREE.Vector3();
 function rig(t){ /* [time, dist, elev°, azim°, tx, ty, lensShiftY] */
-  const K=[[0,34,10,24,4.4,5.0,250],[CE(0),40,12,16,4.6,4.8,250],[C(1)+0.6,34,12,20,4.4,4.6,330],[CE(2),34,12,10,4.4,4.6,330],
+  const K=[[0,34,10,24,4.4,5.0,250],[CE(0),40,12,16,4.6,4.8,250],[C(1)+0.6,40,12,20,4.4,4.6,560],[C(2)+3.6,40,12,14,4.4,4.6,560],[C(2)+4.6,34,12,12,4.4,4.6,330],[CE(2),34,12,10,4.4,4.6,330],
     [C(3)+0.4,38,0,0,3.75,4.6,300],[C(4)+0.2,38,0,0,3.75,4.6,300],[C(5)+0.2,46,0,0,3.9,4.6,560],[C(8)-0.3,46,0,0,3.9,4.6,560],[C(8)+0.3,38,0,0,3.75,4.6,300],[C(9)-0.2,38,0,0,3.75,4.6,300],
     [C(9)+0.4,54,0,0,3.9,4.6,600],[C(11)-0.3,54,0,0,3.9,4.6,600],[C(11)+0.5,46,2,0,3.9,4.4,620],[CE(11),46,2,0,3.9,4.4,620],
     [C(12)-0.2,40,12,22,4.8,5.0,260],[CE(12)+0.3,42,12,12,4.9,5.0,260],[C(13)+0.6,48,4,6,3.9,5.0,600],[200,48,4,0,3.9,5.0,600]];
@@ -187,8 +191,11 @@ function render(t){
   $('cx').textContent='dx/dt = +2.00 m/s'; $('cy').textContent='dy/dt = '+(dy<0?'−':'+')+Math.abs(dy).toFixed(2)+' m/s';
   /* headline, data card */
   [['hA',0.2,C(1)-0.2],['hQ',C(1)+0.2,CE(2)+0.3]].forEach(([id,a,b])=>{ const e=$(id), o=win(t,a,b,.5,.4), k=eo(ramp(t,a,.6)); e.style.opacity=o; e.style.transform=`translateY(${(1-k)*-30}px)`; });
-  const dOn=win(t,C(1)+0.3,CE(2)+0.3,.5,.4); $('data').style.opacity=dOn;
-  [['d1',C(1)+1.6],['d2',C(1)+4.2],['d3',C(2)+5.4],['d4',C(2)+0.4]].forEach(([id,a])=>{ const k=eo(ramp(t,a,.45)); $(id).style.opacity=0.25+0.75*k; $(id).style.transform=`translateX(${(1-k)*-20}px)`; });
+  const bOn=win(t,C(1)+0.2,C(2)+4.0,.5,.45); $('book').style.opacity=bOn; $('book').style.transform=`translateY(${(1-eo(ramp(t,C(1)+0.2,.6)))*30}px)`;
+  const hl=(id,a,col)=>{ const k=ramp(t,a,.35); $(id).style.background=`rgba(${col},${0.28*k})`; $(id).style.color=k>0.5?'#fff':''; };
+  hl('b1',C(1)+2.2,'255,255,255'); hl('b2',C(1)+5.6,'255,201,74'); hl('b4',C(2)+0.4,'140,233,255'); hl('b5',C(2)+2.6,'255,159,122'); hl('b3',C(2)+5.6,'255,201,74');
+  const dOn=win(t,C(2)+4.1,CE(2)+0.3,.5,.4); $('data').style.opacity=dOn;
+  [['d1',C(2)+4.2],['d2',C(2)+4.5],['d3',C(2)+4.8],['d4',C(2)+5.1]].forEach(([id,a])=>{ const k=eo(ramp(t,a,.45)); $(id).style.opacity=0.25+0.75*k; $(id).style.transform=`translateX(${(1-k)*-20}px)`; });
   /* equations */
   [['e1',C(4),C(5)],['e2',C(5),C(6)],['e3',C(6),C(8)],['e4',C(8),C(9)],['e5',C(9),C(11)],['e6',C(11),CE(11)+0.15]].forEach(([id,a,b])=>{ const e=$(id), o=win(t,a,b,.45,.35), k=eo(ramp(t,a,.55)); e.style.opacity=o; e.style.transform=`translateY(${(1-k)*30}px) scale(${.95+.05*k+Math.min(.025,.006*Math.max(0,t-a))})`; });
   $('e2b').style.opacity=ramp(t,C(5)+1.7,0.45); $('e3n').style.opacity=ramp(t,C(7),0.45);
