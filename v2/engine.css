@@ -106,7 +106,10 @@ h2{font-size:clamp(23px,2.3vw,30px);line-height:1.35;margin:4px 0 10px;font-weig
 .ex-q{font-size:1.05em}
 .sn{position:absolute;inset-inline-end:16px;top:14px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;background:var(--surface2);color:var(--muted)}
 .step.on .sn{background:var(--accent);color:#fff}
-.mathline{direction:ltr;text-align:right;margin:6px 0 2px;font-size:1.06em;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.mathline{direction:ltr;text-align:center;margin:10px 0 6px;font-size:1.06em;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.tex.blk{display:block;text-align:center;margin:8px 0;direction:ltr;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.tex.blk .katex-display,.big .katex-display{margin:0}
+.tex.rows .katex-display>.katex{text-align:left}
 .why2{color:var(--ink2);font-size:.95em}
 .result{border-color:var(--ok)!important}
 .result .lbl{color:var(--ok)}

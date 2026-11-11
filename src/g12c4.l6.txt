@@ -39,101 +39,142 @@ xp: لماذا لا تؤثر C في التكامل المحدد؟
 | $\big[F(x)+C\big]_a^b=\big(F(b)+C\big)-\big(F(a)+C\big)=F(b)-F(a)$ : الثابت يُحذف.
 rel: » فحص كل تكامل غير محدد: **مشتقة الجواب = الدالة تحت التكامل**
 --- مثال 1
->>> xs6
+>>> xs6 .book
 k: مثال 1 · ص 179
 p: أوجد $\int f(x)\,dx$ اذا علمت أن:
-p: **a)** $f(x)=3x^2+2x+1$ **b)** $f(x)=\cos x+x^{-2}$ **c)** $f(x)=x+\sec x\tan x$ **d)** $f(x)=\sin(2x+4)$
->>> xs6 #1 :: a , b
-p: **الحل:**
-$$\text{a)}\ \int(3x^2+2x+1)\,dx=\frac{3x^3}{3}+\frac{2x^2}{2}+x+c=x^3+x^2+x+c
-xp: في b : القوة سالبة
+p: **a)** $f(x)=3x^2+2x+1$ ، **b)** $f(x)=\cos x+x^{-2}$ ، **c)** $f(x)=x+\sec x\tan x$ ، **d)** $f(x)=\sin(2x+4)$
+>>> xs6 #1
+p: **a)** $f(x)=3x^2+2x+1$
+$$\begin{aligned}\int(3x^2+2x+1)\,dx&=\frac{3x^3}{3}+\frac{2x^2}{2}+x+c\\&=x^3+x^2+x+c\end{aligned}
+xp: القاعدة المستعملة
+| $\int x^n\,dx=\dfrac{x^{n+1}}{n+1}+c$ لكل حدّ: نضيف 1 للأس ونقسم على الأس الجديد.
+>>> xs6 #2
+p: **b)** $f(x)=\cos x+x^{-2}$
+$$\begin{aligned}\int(\cos x+x^{-2})\,dx&=\sin x+\frac{x^{-1}}{-1}+c\\&=\sin x-\frac1x+c\end{aligned}
+xp: القوة السالبة
 | $x^{-2}$ : نضيف 1 للأس $-2+1=-1$ ونقسم على $-1$ ، و $x^{-1}=\dfrac1x$
-$$\text{b)}\ \int(\cos x+x^{-2})\,dx=\sin x+\frac{x^{-1}}{-1}+c=\sin x-\frac1x+c
->>> xs6 #2 :: c , d
-$$\text{c)}\ \int(x+\sec x\tan x)\,dx=\frac{x^2}{2}+\sec x+c
-$$\text{d)}\ \int\sin(2x+4)\,dx=\frac{-1}{2}\cos(2x+4)+c
-xp: تحقق من d بالاشتقاق
-| $\dfrac{d}{dx}\left[-\tfrac12\cos(2x+4)\right]=-\tfrac12\cdot\big(-\sin(2x+4)\big)\cdot2=\sin(2x+4)$ ✓
+>>> xs6 #3
+p: **c)** $f(x)=x+\sec x\tan x$
+$$\int(x+\sec x\tan x)\,dx=\frac{x^2}{2}+\sec x+c
+xp: لماذا sec x؟
+| لأن $\dfrac{d}{dx}\sec x=\sec x\tan x$ ، فالدالة المقابلة لـ $\sec x\tan x$ هي $\sec x$.
+>>> xs6 #4 !
+p: **d)** $f(x)=\sin(2x+4)$
+$$\int\sin(2x+4)\,dx=\frac{-1}{2}\cos(2x+4)+c
+xp: تحقق بالاشتقاق
+| $\dfrac{d}{dx}\left[-\tfrac12\cos(2x+4)\right]$
+| $$=-\tfrac12\cdot\big(-\sin(2x+4)\big)\cdot2=\sin(2x+4)\ ✓
 --- مثال 2 : قاعدة القوة
->>> sub
+>>> sub .book
 k: مثال 2 · ص 180
 p: جد التكاملات لكل مما يأتي:
+p: **a.** $\int(x^2+3)^2(2x)\,dx$ ، **b.** $\int(3x^2+8x+5)^6(3x+4)\,dx$ ، **c.** $\int\sin^4x\cos x\,dx$ ، **d.** $\int\tan^6x\sec^2x\,dx$
+rel: $\displaystyle\int[f(x)]^n f'(x)\,dx=\frac{[f(x)]^{n+1}}{n+1}+c\ ,\ n\ne-1$
+>>> sub #1
 p: **a.** $\int(x^2+3)^2(2x)\,dx$
 p: **الحل:** لنفرض أن $f(x)=x^2+3$ $\therefore\ f'(x)=2x$
 let: نفرض
 | $f(x)$ ; ما داخل القوس ; $x^2+3$
 | $f'(x)$ ; مشتقته ; $2x$ موجودة خارج القوس ✓
 | $n$ ; الأس ; $2$
-rel: $\displaystyle\int[f(x)]^n f'(x)\,dx=\frac{[f(x)]^{n+1}}{n+1}+c\ ,\ n\ne-1$
-$$\int(x^2+3)^2(2x)\,dx=\int[f(x)]^2f'(x)\,dx=\frac13[f(x)]^3+c=\frac13(x^2+3)^3+c
-xp: كيف نعرف أن القاعدة تنطبق؟
-| ما خارج القوس $(2x)$ هو بالضبط مشتقة ما داخله $(x^2+3)$ ، فالتكامل على صورة السطر الرابع في الجدول بـ $n=2$.
-| » **فحص بالاشتقاق:** $\dfrac{d}{dx}\tfrac13(x^2+3)^3=(x^2+3)^2(2x)$ ✓
->>> sub
+$$\begin{aligned}\int(x^2+3)^2(2x)\,dx&=\int[f(x)]^2f'(x)\,dx\\&=\frac13[f(x)]^3+c\\&=\frac13(x^2+3)^3+c\end{aligned}
+xp: فحص بالاشتقاق
+| $\dfrac{d}{dx}\tfrac13(x^2+3)^3=\tfrac13\cdot3(x^2+3)^2\cdot2x=(x^2+3)^2(2x)$ ✓
+>>> sub #2
 p: **b.** $\int(3x^2+8x+5)^6(3x+4)\,dx$
 p: نفرض أن: $f(x)=3x^2+8x+5\Rightarrow f'(x)=6x+8$
 xp: لماذا نضرب ونقسم على 2؟
 | الموجود $(3x+4)$ والمطلوب $(6x+8)=2(3x+4)$ ، فنضرب داخل التكامل في 2 ونقسم خارجه على 2 فلا تتغير القيمة.
-$$\therefore\ \int(3x^2+8x+5)^6(3x+4)\,dx=\frac12\int(3x^2+8x+5)^6(6x+8)\,dx
-$$\frac12\int[f(x)]^6f'(x)\,dx=\frac12\times\frac{[f(x)]^7}{7}+c=\frac{1}{14}(3x^2+8x+5)^7+c
->>> sub
+$$\begin{aligned}&\int(3x^2+8x+5)^6(3x+4)\,dx\\&=\frac12\int(3x^2+8x+5)^6(6x+8)\,dx\\&=\frac12\int[f(x)]^6f'(x)\,dx\\&=\frac12\times\frac{[f(x)]^7}{7}+c\\&=\frac{1}{14}(3x^2+8x+5)^7+c\end{aligned}
+>>> sub #3
 p: **c.** $\int\sin^4x\cos x\,dx$
 p: نفرض أن: $f(x)=\sin x\Rightarrow f'(x)=\cos x$
-$$\therefore\ \int\sin^4x\cos x\,dx=\int[f(x)]^4\cdot f'(x)\,dx=\frac{[f(x)]^5}{5}+c=\frac15\sin^5x+c
+$$\begin{aligned}\int\sin^4x\cos x\,dx&=\int[f(x)]^4\cdot f'(x)\,dx\\&=\frac{[f(x)]^5}{5}+c\\&=\frac15\sin^5x+c\end{aligned}
+>>> sub #4 !
 p: **d.** $\int\tan^6x\sec^2x\,dx$
 p: نفرض أن: $f(x)=\tan x\Rightarrow f'(x)=\sec^2x$
-$$\therefore\ \int\tan^6x\sec^2x\,dx=\int[f(x)]^6f'(x)\,dx=\frac{[f(x)]^7}{7}+c=\frac17\tan^7x+c
+$$\begin{aligned}\int\tan^6x\sec^2x\,dx&=\int[f(x)]^6f'(x)\,dx\\&=\frac{[f(x)]^7}{7}+c\\&=\frac17\tan^7x+c\end{aligned}
 --- [4−6−1] المثلثية التربيعية
->>> sin2
+>>> sin2 .book
 k: [4−6−1] · ص 181
 h2: تكامل الدوال المثلثية التربيعية
 law: قواعد
-| 1. $\int\sec^2\theta\,d\theta=\tan\theta+c$
-| 2. $\int\csc^2\theta\,d\theta=-\cot\theta+c$
-| 3. $\int\tan^2\theta\,d\theta=\int(\sec^2\theta-1)\,d\theta=\int\sec^2\theta\,d\theta-\int d\theta=\tan\theta-\theta+c$
-| 4. $\int\cot^2\theta\,d\theta=\int(\csc^2\theta-1)\,d\theta=-\cot\theta-\theta+c$
-| 5. $\int\sin^2\theta\,d\theta=\int\dfrac{1-\cos2\theta}{2}\,d\theta=\tfrac12\int d\theta-\tfrac14\int\cos2\theta(2)\,d\theta=\tfrac12\theta-\tfrac14\sin2\theta+c$
-| 6. $\int\cos^2\theta\,d\theta=\int\dfrac{1+\cos2\theta}{2}\,d\theta=\tfrac12\theta+\tfrac14\sin2\theta+c$
+| $$\int\sec^2\theta\,d\theta=\tan\theta+c
+| $$\int\csc^2\theta\,d\theta=-\cot\theta+c
+| $$\begin{aligned}\int\tan^2\theta\,d\theta&=\int(\sec^2\theta-1)\,d\theta\\&=\int\sec^2\theta\,d\theta-\int d\theta\\&=\tan\theta-\theta+c\end{aligned}
+| $$\begin{aligned}\int\cot^2\theta\,d\theta&=\int(\csc^2\theta-1)\,d\theta\\&=-\cot\theta-\theta+c\end{aligned}
+| $$\begin{aligned}\int\sin^2\theta\,d\theta&=\int\frac{1-\cos2\theta}{2}\,d\theta\\&=\frac12\int d\theta-\frac14\int\cos2\theta(2)\,d\theta\\&=\frac12\theta-\frac14\sin2\theta+c\end{aligned}
+| $$\begin{aligned}\int\cos^2\theta\,d\theta&=\int\frac{1+\cos2\theta}{2}\,d\theta\\&=\frac12\theta+\frac14\sin2\theta+c\end{aligned}
 xp: من أين تأتي هذه التحويلات؟
 | من المتطابقات: $1+\tan^2\theta=\sec^2\theta$ ، $1+\cot^2\theta=\csc^2\theta$ ، $\cos2\theta=1-2\sin^2\theta=2\cos^2\theta-1$
 | فالرسم يبيّن أن $\sin^2\theta$ و $\tfrac{1-\cos2\theta}{2}$ منحنى واحد.
 --- أمثلة
->>> xs6
+>>> xs6 .book
 k: أمثلة · ص 181
 p: جد تكاملات كل مما يأتي:
-$$1.\ \int9\sin3x\,dx=3\int3\sin3x\,dx=-3\cos3x+c
-$$2.\ \int x^2\sin x^3\,dx=\frac13\int3x^2\sin x^3\,dx=-\frac13\cos x^3+c
-xp: في 2 : لماذا 3x²؟
+p: الأمثلة 1 – 13 تحت هذا العنوان، كل مثال في خطوة: السؤال أولاً، ثم الحل سطراً بعد سطر كما في الكتاب.
+>>> xs6 #1
+p: **1.** $\int9\sin3x\,dx$
+$$\begin{aligned}\int9\sin3x\,dx&=3\int3\sin3x\,dx\\&=-3\cos3x+c\end{aligned}
+xp: لماذا 3 · 3؟
+| مشتقة $3x$ هي $3$ ، فنكتب $9=3\times3$ : ثلاثة تخرج أمام التكامل، وثلاثة تبقى لتكمل المشتقة.
+>>> xs6 #2
+p: **2.** $\int x^2\sin x^3\,dx$
+$$\begin{aligned}\int x^2\sin x^3\,dx&=\frac13\int3x^2\sin x^3\,dx\\&=-\frac13\cos x^3+c\end{aligned}
+xp: لماذا 3x²؟
 | مشتقة $x^3$ هي $3x^2$ ، فنكمل المشتقة بضرب وقسمة على 3 ثم نطبق $\int\sin u\,du=-\cos u$.
->>> xs6
-$$3.\ \int\sqrt{1-\sin2x}\,dx=\int\sqrt{\sin^2x-2\sin x\cos x+\cos^2x}\,dx=\int\sqrt{(\sin x-\cos x)^2}\,dx
-$$=\pm\int(\sin x-\cos x)\,dx=\pm(\cos x+\sin x)+c
+>>> xs6 #3
+p: **3.** $\int\sqrt{1-\sin2x}\,dx$
+$$\begin{aligned}&\int\sqrt{1-\sin2x}\,dx\\&=\int\sqrt{\sin^2x-2\sin x\cos x+\cos^2x}\,dx\\&=\int\sqrt{(\sin x-\cos x)^2}\,dx\\&=\pm\int(\sin x-\cos x)\,dx\\&=\pm(\cos x+\sin x)+c\end{aligned}
 xp: خطوتان مختصرتان في الكتاب
 | $1=\sin^2x+\cos^2x$ و $\sin2x=2\sin x\cos x$ ، فما تحت الجذر مربع كامل.
 | $\int(\sin x-\cos x)\,dx=-\cos x-\sin x=-(\cos x+\sin x)$ ؛ ولأن أمامها $\pm$ فالنتيجة تُكتب $\pm(\cos x+\sin x)+c$.
->>> xs6
-$$4.\ \int\sin^4x\,dx=\int\frac{(1-\cos2x)^2}{4}\,dx=\frac14\int dx-\frac14\int2\cos2x\,dx+\frac14\int\cos^22x\,dx
-$$=\frac14\int dx-\frac14\int2\cos2x\,dx+\frac18\int dx+\frac{1}{32}\int4\cos4x\,dx
-$$=\frac14x-\frac14\sin2x+\frac18x+\frac{1}{32}\sin4x+c=\frac38x-\frac14\sin2x+\frac1{32}\sin4x+c
+>>> xs6 #4
+p: **4.** $\int\sin^4x\,dx$
+$$\begin{aligned}\int\sin^4x\,dx&=\int\frac{(1-\cos2x)^2}{4}\,dx\\&=\frac14\int dx-\frac14\int2\cos2x\,dx\\&\qquad+\frac14\int\cos^22x\,dx\\&=\frac14\int dx-\frac14\int2\cos2x\,dx\\&\qquad+\frac18\int dx+\frac{1}{32}\int4\cos4x\,dx\\&=\frac14x-\frac14\sin2x\\&\qquad+\frac18x+\frac{1}{32}\sin4x+c\\&=\frac38x-\frac14\sin2x+\frac1{32}\sin4x+c\end{aligned}
 xp: كيف ظهر 1/8 و 1/32؟
+| $\sin^4x=(\sin^2x)^2=\left(\dfrac{1-\cos2x}{2}\right)^2=\dfrac{1-2\cos2x+\cos^22x}{4}$
 | $\cos^22x=\dfrac{1+\cos4x}{2}$ ⇐ $\tfrac14\cos^22x=\tfrac18+\tfrac18\cos4x$ ، و $\tfrac18\cos4x=\tfrac1{32}(4\cos4x)$
->>> xs6
+| $\tfrac14x+\tfrac18x=\tfrac38x$
+>>> xs6 #5
 k: ص 182
-$$5.\ \int(\sin x-\cos x)^7(\cos x+\sin x)\,dx=\frac{(\sin x-\cos x)^8}{8}+c
-$$6.\ \int\frac{1+\tan^2x}{\tan^3x}\,dx=\int\tan^{-3}x\sec^2x\,dx=\frac{\tan^{-2}x}{-2}+c=\frac{-1}{2\tan^2x}+c
-$$7.\ \int\cos^3x\,dx=\int\cos x(1-\sin^2x)\,dx=\int\cos x\,dx-\int\sin^2x\cos x\,dx=\sin x-\frac{\sin^3x}{3}+c
-xp: لماذا تنجح 5 و 6؟
-| في 5: مشتقة $(\sin x-\cos x)$ هي $(\cos x+\sin x)$. في 6: $1+\tan^2x=\sec^2x$ وهي مشتقة $\tan x$.
->>> xs6
-$$8.\ \int\frac{\tan x}{\cos^2x}\,dx=\int\tan x\sec^2x\,dx=\frac{\tan^2x}{2}+c
-$$9.\ \int\sin6x\cos^23x\,dx=\int(2\sin3x\cos3x)\cos^23x\,dx=2\int\cos^33x\sin3x\,dx=\frac{-2}{3}\times\frac{\cos^43x}{4}+c=-\frac16\cos^43x+c
-xp: في 9 : من أين −2/3؟
-| مشتقة $\cos3x$ هي $-3\sin3x$ ، فنكتب $2\int\cos^33x\sin3x\,dx=-\tfrac23\int\cos^33x(-3\sin3x)\,dx=-\tfrac23\cdot\tfrac{\cos^43x}{4}$
->>> xs6
-$$10.\ \int\frac{\cos4x}{\cos2x-\sin2x}\,dx=\int\frac{\cos^22x-\sin^22x}{\cos2x-\sin2x}\,dx=\int\frac{(\cos2x-\sin2x)(\cos2x+\sin2x)}{\cos2x-\sin2x}\,dx
-$$=\int(\cos2x+\sin2x)\,dx=\frac12\sin2x-\frac12\cos2x+c
-$$11.\ \int\sin^23x\,dx=\frac12x-\frac1{12}\sin6x+c
-$$12.\ \int\cot^25x\,dx=-\frac15\cot5x-x+c\qquad13.\ \int\tan^27x\,dx=\frac17\tan7x-x+c
+p: **5.** $\int(\sin x-\cos x)^7(\cos x+\sin x)\,dx$
+$$\begin{aligned}&\int(\sin x-\cos x)^7(\cos x+\sin x)\,dx\\&=\frac{(\sin x-\cos x)^8}{8}+c\end{aligned}
+xp: لماذا تنجح؟
+| مشتقة $(\sin x-\cos x)$ هي $(\cos x+\sin x)$ وهي موجودة خارج القوس، فهي قاعدة القوة بـ $n=7$.
+>>> xs6 #6
+p: **6.** $\displaystyle\int\frac{1+\tan^2x}{\tan^3x}\,dx$
+$$\begin{aligned}\int\frac{1+\tan^2x}{\tan^3x}\,dx&=\int\tan^{-3}x\sec^2x\,dx\\&=\frac{\tan^{-2}x}{-2}+c\\&=\frac{-1}{2\tan^2x}+c\end{aligned}
+xp: لماذا تنجح؟
+| $1+\tan^2x=\sec^2x$ وهي مشتقة $\tan x$ ، و $\dfrac{1}{\tan^3x}=\tan^{-3}x$.
+>>> xs6 #7
+p: **7.** $\int\cos^3x\,dx$
+$$\begin{aligned}\int\cos^3x\,dx&=\int\cos x(1-\sin^2x)\,dx\\&=\int\cos x\,dx-\int\sin^2x\cos x\,dx\\&=\sin x-\frac{\sin^3x}{3}+c\end{aligned}
+xp: لماذا نكتب cos³x هكذا؟
+| $\cos^3x=\cos x\cdot\cos^2x=\cos x(1-\sin^2x)$ ، فيظهر $\cos x$ وهي مشتقة $\sin x$.
+>>> xs6 #8
+p: **8.** $\displaystyle\int\frac{\tan x}{\cos^2x}\,dx$
+$$\begin{aligned}\int\frac{\tan x}{\cos^2x}\,dx&=\int\tan x\sec^2x\,dx\\&=\frac{\tan^2x}{2}+c\end{aligned}
+>>> xs6 #9
+p: **9.** $\int\sin6x\cos^23x\,dx$
+$$\begin{aligned}&\int\sin6x\cos^23x\,dx\\&=\int(2\sin3x\cos3x)\cos^23x\,dx\\&=2\int\cos^33x\sin3x\,dx\\&=\frac{-2}{3}\times\frac{\cos^43x}{4}+c\\&=-\frac16\cos^43x+c\end{aligned}
+xp: من أين −2/3؟
+| مشتقة $\cos3x$ هي $-3\sin3x$ ، فنكتب:
+| $$\begin{aligned}&2\int\cos^33x\sin3x\,dx\\&=-\frac23\int\cos^33x(-3\sin3x)\,dx\\&=-\frac23\cdot\frac{\cos^43x}{4}\end{aligned}
+>>> xs6 #10
+p: **10.** $\displaystyle\int\frac{\cos4x}{\cos2x-\sin2x}\,dx$
+$$\begin{aligned}&\int\frac{\cos4x}{\cos2x-\sin2x}\,dx\\&=\int\frac{\cos^22x-\sin^22x}{\cos2x-\sin2x}\,dx\\&=\int\frac{(\cos2x-\sin2x)(\cos2x+\sin2x)}{\cos2x-\sin2x}\,dx\\&=\int(\cos2x+\sin2x)\,dx\\&=\frac12\sin2x-\frac12\cos2x+c\end{aligned}
+xp: الفكرة
+| $\cos4x=\cos^22x-\sin^22x$ (ضعف الزاوية)، ثم فرق مربعين يختصر مع المقام.
+>>> xs6 #11 !
+p: الأمثلة **11** و **12** و **13**:
+$$11.\quad\int\sin^23x\,dx=\frac12x-\frac1{12}\sin6x+c
+$$12.\quad\int\cot^25x\,dx=-\frac15\cot5x-x+c
+$$13.\quad\int\tan^27x\,dx=\frac17\tan7x-x+c
+xp: الخطوات المختصرة في الكتاب
+| **11:** $\sin^23x=\dfrac{1-\cos6x}{2}$ ⇐ $\tfrac12x-\tfrac12\cdot\tfrac16\sin6x$
+| **12:** $\cot^25x=\csc^25x-1$ ⇐ $-\tfrac15\cot5x-x$
+| **13:** $\tan^27x=\sec^27x-1$ ⇐ $\tfrac17\tan7x-x$
 --- تمارين (4−6)
 >>> xs6
 k: تمارين · ص 183

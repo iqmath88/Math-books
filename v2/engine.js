@@ -71,7 +71,41 @@ function T(s){
 const LN=x=>x.startsWith('» ')?`<span class="xpl">${T(x.slice(2))}</span>`:x.startsWith('$$')&&!x.slice(2).includes('$$')?`<span class="big tex" data-tex="${esc(x.slice(2).trim()).replace(/"/g,'&quot;')}"></span>`:T(x);
 const lines=p=>p.lines.map(LN).join('<br>');
 const MAC={"\\cf":"\\htmlClass{tk-f}{#1}","\\cch":"\\htmlClass{tk-chord}{#1}","\\ctn":"\\htmlClass{tk-tan}{#1}","\\ccc":"\\htmlClass{tk-c}{#1}","\\cin":"\\htmlClass{tk-int}{#1}","\\cok":"\\htmlClass{tk-ok}{#1}","\\cbad":"\\htmlClass{tk-bad}{#1}","\\R":"R"};
-function typeset(r){ $$('.tex',r).forEach(el=>{ try{ katex.render(el.dataset.tex,el,{trust:true,strict:false,throwOnError:false,displayMode:false,macros:{...MAC}}); el.classList.add('m'); el.setAttribute('dir','ltr'); }catch(e){ el.textContent=el.dataset.tex; } }); }
+/* ---- professional equation layout ----
+   display lines (.mathline, .big) are typeset in display style; a line too wide for the screen is first broken into
+   aligned rows (at top-level ⇒ ∴ ∵, else at the 2nd, 3rd … "="), then scaled down (≥ 72 %), and only then scrolls.
+   An inline formula that would wrap inside Arabic text is moved to its own centred line instead. */
+const KOPT={trust:true,strict:false,throwOnError:false};
+function topSplit(t,re){ const parts=[]; let d=0,cur='',i=0;
+  while(i<t.length){ const c=t[i];
+    if(c==='\\'){ const m=(t.slice(i).match(/^\\[A-Za-z]+|^\\[\s\S]/)||['\\'])[0]; if(d===0&&re.test(m)&&cur.trim()){ parts.push(cur); cur=''; } cur+=m; i+=m.length; continue; }
+    if(c==='{') d++; else if(c==='}') d--;
+    if(d===0&&re.test(c)&&cur.trim()&&parts.length<99){ parts.push(cur); cur=''; }
+    cur+=c; i++; }
+  parts.push(cur); return parts.map(x=>x.replace(/^(\s|\\[;,:!]|\\q?quad)+|(\s|\\[;,:!]|\\q?quad)+$/g,'')).filter(x=>x); }
+function rowsOf(t,lvl){ if(/\\begin|\\\\/.test(t)) return null;
+  /* level 1: statements separated by ; \quad \qquad, then each at ⇒ ∴ ∵ ; level 2: also break long rows before the 2nd, 3rd … "=" */
+  let rows=[]; topSplit(t,/^(;|\\qquad|\\quad)$/).map(x=>x.replace(/^;/,'').replace(/(\\[,;]|\s)*;?$/,'')).filter(x=>x.trim()).forEach(seg=>{
+    topSplit(seg,/^\\(Rightarrow|Longrightarrow|implies|therefore|because|Leftrightarrow|Longleftrightarrow|leftrightarrow|iff)$/).forEach(r=>rows.push(r)); });
+  if(lvl>1){ const out=[]; rows.forEach(r=>{ const e=topSplit(r,/^=$/); if(e.length>2&&r.length>40){ out.push(e[0]+e[1]); e.slice(2).forEach(x=>out.push(x)); } else out.push(r); }); rows=out; }
+  if(rows.length<2){ const e=topSplit(t,/^=$/); if(e.length>2) return '\\begin{aligned}'+e[0]+e.slice(1).map(x=>'&'+x).join('\\\\[2pt]')+'\\end{aligned}'; return null; }
+  return '\\begin{aligned}'+rows.map(x=>'&'+x).join('\\\\[3pt]')+'\\end{aligned}'; }
+const avail=el=>{ if(getComputedStyle(el).display!=='inline'){ const cs=getComputedStyle(el); return el.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight); } let n=el.parentElement; while(n&&getComputedStyle(n).display==='inline') n=n.parentElement; if(!n) return 0; const cs=getComputedStyle(n); return n.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight); };
+const kw=el=>{ const k=el.querySelector('.katex-html')||el; return k.scrollWidth||k.getBoundingClientRect().width; };
+function fitOne(el){ const W=avail(el); if(W<40) return; const tex=el.dataset.tex, disp=el.classList.contains('mathline')||el.classList.contains('big')||el.classList.contains('blk');
+  if(!disp){ const k=el.querySelector('.katex'); if(!k) return; const rs=k.getClientRects(); if(rs.length<=1&&kw(el)<=W) return;
+    el.classList.add('blk'); }
+  if(el.dataset.fitW==String(W)) return; el.dataset.fitW=W; el.style.fontSize='';
+  const R=t=>{ try{ katex.render(t,el,{...KOPT,displayMode:true,macros:{...MAC}}); }catch(e){ el.textContent=t; } };
+  R(tex); el.classList.remove('rows'); if(kw(el)<=W+1) return;
+  for(const lv of [1,2]){ const rows=rowsOf(tex,lv); if(rows){ R(rows); el.classList.add('rows'); if(kw(el)<=W+1) return; } }
+  const f=Math.max(0.72,W/kw(el)); el.style.fontSize=(f*100).toFixed(1)+'%'; }
+const fitRO=typeof ResizeObserver!=='undefined'?new ResizeObserver(es=>es.forEach(e=>e.target.querySelectorAll('.tex.m').forEach(fitOne))):null;
+const refitAll=()=>{ document.querySelectorAll('.tex.m').forEach(el=>{ delete el.dataset.fitW; fitOne(el); }); };
+if(document.fonts){ document.fonts.ready.then(refitAll); document.fonts.addEventListener&&document.fonts.addEventListener('loadingdone',refitAll); }
+function typeset(r){ $$('.tex',r).forEach(el=>{ const disp=el.classList.contains('mathline')||el.classList.contains('big');
+    try{ katex.render(el.dataset.tex,el,{...KOPT,displayMode:disp,macros:{...MAC}}); el.classList.add('m'); el.setAttribute('dir','ltr'); }catch(e){ el.textContent=el.dataset.tex; } });
+  if(fitRO){ const seen=new Set(); $$('.tex.m',r).forEach(el=>{ let n=el.parentElement; while(n&&n!==r&&getComputedStyle(n).display==='inline') n=n.parentElement; if(n&&!seen.has(n)){ seen.add(n); fitRO.observe(n); } }); } }
 
 const extra=(p,id)=>(p.hints?`<button type="button" class="btn ghost small" data-hint>💡 تلميح <bdi>1/${p.hints.length}</bdi></button>`:'')+(p.gen?`<button type="button" class="btn ghost small" data-gen="${esc(p.gen)}">↻ تمرين مشابه</button>`:'');
 const extraBox=p=>(p.hints?`<div class="hints">${p.hints.map(x=>`<p class="hn" hidden>${T(x)}</p>`).join('')}</div>`:'')+(p.gen?'<div class="genbox" hidden></div>':'');
