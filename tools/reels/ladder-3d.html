@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<title>ريلز · السلّم المنزلق ثلاثي الأبعاد</title>
+<link rel="stylesheet" href="../../v2/lib/katex/katex.min.css">
+<script src="../../v2/lib/katex/katex.min.js"></script>
+<script type="importmap">{"imports":{"three":"./vendor/three-0.170.0.module.min.js"}}</script>
+<style>
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-ar-500.woff2) format("woff2");font-weight:500;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-ar-700.woff2) format("woff2");font-weight:700;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-lat-500.woff2) format("woff2");font-weight:500;unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-lat-700.woff2) format("woff2");font-weight:700;unicode-range:U+0000-00FF,U+2000-206F}
+:root{--cy:#38d6ff;--lc:#8ce9ff;--au:#ffc94a;--ink:#f4f8ff;--mute:#93a6c9;--neg:#ff7b8a}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:clip;background:#040b1c}
+body{position:relative;contain:paint;font-family:Plex,system-ui,sans-serif;color:var(--ink)}
+#bg{position:absolute;inset:0;background:radial-gradient(1000px 800px at 45% 40%,#123466 0%,#0a1c3d 42%,#050d20 75%,#030816 100%)}
+canvas#gl{position:absolute;inset:0;width:1080px;height:1920px}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 42%,transparent 55%,rgba(0,0,0,.55) 100%);pointer-events:none}
+.head{position:absolute;left:90px;right:180px;top:200px;text-align:center;opacity:0}
+#hA{top:1290px}
+.head .h{font-size:76px;font-weight:700;line-height:1.25;text-shadow:0 8px 30px rgba(0,0,0,.75)}
+.head .s{font-size:50px;font-weight:500;color:#dbe6fb;margin-top:8px}
+.card{position:absolute;left:90px;right:180px;top:1110px;opacity:0;background:rgba(6,16,38,.82);border:2px solid rgba(140,233,255,.35);border-radius:28px;padding:22px 30px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.card .t{font-size:40px;font-weight:700;color:var(--mute);margin-bottom:10px}
+.card .r{display:flex;justify-content:space-between;align-items:center;font-size:48px;font-weight:700;margin:6px 0}
+.card .r .v{direction:ltr}
+.eq{position:absolute;left:90px;right:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;opacity:0;direction:ltr}
+.eq .k{font-size:80px;color:#fff;white-space:nowrap}
+.lo{top:1150px;height:220px}
+.hi{top:880px;height:500px}
+.box{padding:10px 34px;border-radius:24px;border:4px solid var(--au);background:rgba(255,201,74,.08);box-shadow:0 0 50px rgba(255,201,74,.25)}
+.note{direction:rtl;font-size:44px;font-weight:700;color:var(--lc);white-space:nowrap}
+.lbl{position:absolute;opacity:0;font-weight:700;white-space:nowrap;transform:translate(-50%,-50%);text-shadow:0 2px 14px rgba(0,0,0,.95);direction:ltr}
+.chip{position:absolute;direction:ltr;font-size:42px;font-weight:700;padding:4px 20px;border-radius:16px;background:rgba(5,13,31,.8);border:2px solid rgba(255,255,255,.16);white-space:nowrap;opacity:0}
+#cx{right:180px;top:200px;color:var(--au);border-color:rgba(255,201,74,.6)} #cy{right:180px;top:272px;color:var(--lc);border-color:rgba(140,233,255,.6)} #cs{right:180px;top:344px;color:var(--mute);font-size:34px;direction:rtl}
+#steps{position:absolute;left:90px;right:180px;top:1080px;opacity:0;display:flex;flex-direction:column;gap:18px}
+#steps .s{display:flex;align-items:center;gap:22px;font-size:54px;font-weight:700;opacity:0}
+#steps .n{display:inline-grid;place-items:center;width:78px;height:78px;border-radius:50%;background:var(--au);color:#071226;font-size:44px;flex:none}
+#cap{position:absolute;left:116px;right:206px;bottom:390px;text-align:center;font-size:54px;line-height:1.35;font-weight:700}
+#cap span{white-space:nowrap;display:inline-block;margin:3px 0;background:rgba(3,8,20,.74);padding:4px 22px;border-radius:16px}
+#brand{position:absolute;left:90px;right:180px;top:1480px;text-align:center;font-size:34px;color:var(--mute);opacity:0}
+#brand b{background:linear-gradient(90deg,var(--cy),var(--au));-webkit-background-clip:text;color:transparent}
+#fade{position:absolute;inset:0;background:#000;pointer-events:none}
+</style></head><body>
+<div id="bg"></div>
+<canvas id="gl" width="1080" height="1920"></canvas>
+<div class="head" id="hA"><div class="h">هل تنزل <span style="color:var(--lc)">القمة</span><br>بسرعة <span style="color:var(--au)">القاعدة</span>؟</div></div>
+<div class="head" id="hQ"><div class="h" style="font-size:64px">مثال 4 · ص 94</div><div class="s">سلّم ينزلق</div></div>
+<!-- the book's data -->
+<div class="card" id="data"><div class="t">المعطيات (من الكتاب)</div>
+ <div class="r" id="d1"><span>طول السلّم</span><span class="v" style="color:#fff">L = 10 m</span></div>
+ <div class="r" id="d2"><span>سرعة القاعدة</span><span class="v" style="color:var(--au)">dx/dt = 2 m/s</span></div>
+ <div class="r" id="d3"><span>اللحظة المطلوبة</span><span class="v" style="color:var(--au)">x = 8 m</span></div>
+ <div class="r" id="d4"><span>المطلوب</span><span class="v" style="color:var(--lc)">dy/dt = ? ،  dθ/dt = ?</span></div></div>
+<!-- 3D-anchored labels -->
+<div class="lbl" id="Lx" style="font-size:62px;color:var(--au)">x</div>
+<div class="lbl" id="Ly" style="font-size:62px;color:var(--lc)">y</div>
+<div class="lbl" id="LL" style="font-size:56px;color:#fff">L = 10</div>
+<div class="lbl" id="Lth" style="font-size:54px;color:#ff9f7a">θ</div>
+<div class="lbl" id="Lvb" style="font-size:44px;color:var(--au)">2 m/s</div>
+<div class="lbl" id="Lvt" style="font-size:44px;color:var(--lc)"></div>
+<div class="chip" id="cx"></div><div class="chip" id="cy"></div><div class="chip" id="cs">تصوير بطيء ×½</div>
+<!-- equations: one dominant at a time -->
+<div class="eq lo" id="e1"><div class="k" data-tex="{\color{#ffc94a}x}^2+{\color{#8ce9ff}y}^2=10^2"></div></div>
+<div class="eq hi" id="e2"><div class="k" data-tex="\frac{d}{dt}\big(x^2+y^2\big)=\frac{d}{dt}\big(100\big)" style="font-size:64px"></div><div class="k" id="e2b" data-tex="2x\,{\color{#ffc94a}\dfrac{dx}{dt}}+2y\,{\color{#8ce9ff}\dfrac{dy}{dt}}={\color{#ff7b8a}0}" style="font-size:74px"></div></div>
+<div class="eq hi" id="e3"><div class="k" data-tex="{\color{#8ce9ff}\dfrac{dy}{dt}}={\color{#ff7b8a}-}\,\dfrac{x}{y}\,{\color{#ffc94a}\dfrac{dx}{dt}}" style="font-size:104px"></div><div class="note" id="e3n">السالب ⇐ <span style="color:#ff7b8a">y يتناقص</span></div></div>
+<div class="eq lo" id="e4"><div class="k" data-tex="y=\sqrt{100-64}=6" style="font-size:74px"></div></div>
+<div class="eq hi" id="e5"><div class="k" data-tex="\dfrac{dy}{dt}=-\dfrac{8}{6}\,(2)" style="font-size:84px"></div><div class="k box" id="e5b" data-tex="{\color{#8ce9ff}\dfrac{dy}{dt}=-\dfrac{8}{3}\ \text{m/s}}\approx-2.67" style="font-size:56px"></div></div>
+<div class="eq hi" id="e6" style="top:905px;height:440px;gap:10px"><div class="k" data-tex="\sin\theta=\dfrac{y}{10}\;\Rightarrow\;\cos\theta\,\dfrac{d\theta}{dt}=\dfrac{1}{10}\,\dfrac{dy}{dt}" style="font-size:46px"></div><div class="k" id="e6b" data-tex="\dfrac{8}{10}\,\dfrac{d\theta}{dt}=\dfrac{1}{10}\Big(-\dfrac{8}{3}\Big)" style="font-size:62px"></div><div class="k box" id="e6c" data-tex="\dfrac{d\theta}{dt}=-\dfrac{1}{3}\ \text{rad/s}" style="font-size:66px;border-color:#ff9f7a"></div></div>
+<div id="steps"><div class="s"><span class="n">1</span>نربط الكميات: <span dir="ltr" style="color:#fff">x² + y² = L²</span></div><div class="s"><span class="n">2</span>نشتق بالنسبة للزمن <span dir="ltr">t</span></div><div class="s"><span class="n">3</span>نعوّض بالمعطيات</div></div>
+<div id="cap"></div>
+<div id="brand"><b>الرياضيات الحيّة</b> · الأستاذ فائز الحمداني · السادس العلمي</div>
+<div id="vig"></div><div id="fade"></div>
+<script type="module">
+import * as THREE from 'three';
+const CUES=window.CUES||[[0.4,7.769],[8.769,7.726],[16.895,8.215],[25.81,7.196],[33.505,4.154],[38.259,5.64],[44.399,4.704],[49.603,5.103],[55.307,4.682],[60.489,6.705],[67.994,2.632],[71.226,9.121],[80.947,5.978],[87.525,8.441]];
+const CAPS=['','','','المثلث القائم: x و y و L','مبرهنة فيثاغورس','نشتق بالنسبة للزمن t\nومشتقة الثابت 100 صفر','نعزل dy/dt','الإشارة السالبة:\nارتفاع القمة يتناقص','نجد y في لحظة x = 8','نعوّض القيم','القمة أسرع من القاعدة','سرعة تغيّر الزاوية θ','سرعة القاعدة ثابتة…\nوالقمة تتسارع',''];
+window.DURATION=97.4;
+const C=i=>CUES[i][0], CE=i=>CUES[i][0]+CUES[i][1];
+document.querySelectorAll('[data-tex]').forEach(e=>katex.render(e.dataset.tex,e,{throwOnError:false}));
+const $=id=>document.getElementById(id);
+const cl=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)), lerp=(a,b,k)=>a+(b-a)*k, eio=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2, eo=u=>1-Math.pow(1-u,3);
+const ramp=(t,a,d)=>cl((t-a)/d), win=(t,a,b,fi=.45,fo=.4)=>cl((t-a)/fi)*cl((b-t)/fo);
+
+/* ================= the book's example (ص 94) =================
+   L = 10 m (constant), dx/dt = +2 m/s, asked at x = 8 m:  y = 6,  dy/dt = −x/y·dx/dt = −8/3 m/s,
+   sinθ = y/10 ⇒ cosθ·dθ/dt = (1/10)dy/dt ⇒ dθ/dt = −1/3 rad/s.
+   Motion: x(t) follows dx/dt = 2 m/s of story-time; on screen it is played at ×½ (labelled). y = √(L² − x²) every frame. */
+const L=10, VX=2, SLOW=0.5;
+function xAt(t){
+  if(t<0.6) return 1.2;
+  if(t<CE(0)+0.4) return Math.min(8, 1.2+VX*SLOW*(t-0.6));          /* hook: slides at 2 m/s (shown ×½) and stops at x = 8 */
+  if(t<C(12)-0.3) return 8;                                          /* the asked instant, frozen while we solve */
+  if(t<C(12)+0.6) return lerp(8,4,eio(ramp(t,C(12)-0.3,0.9)));       /* reset to x = 4 for the replay */
+  if(t<C(13)) return Math.min(9.6, 4+VX*SLOW*(t-(C(12)+0.6)));      /* replay at 2 m/s (×½) */
+  return lerp(Math.min(9.6,4+VX*SLOW*(C(13)-(C(12)+0.6))),8,eio(ramp(t,C(13),1.2)));   /* back to the asked instant for the summary */
+}
+const yOf=x=>Math.sqrt(L*L-x*x), dyOf=x=>-x/yOf(x)*VX, thOf=x=>Math.atan2(yOf(x),x);
+
+/* ================= three.js ================= */
+const renderer=new THREE.WebGLRenderer({canvas:$('gl'),antialias:true,alpha:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(1); renderer.setSize(1080,1920,false); renderer.setClearColor(0,0); renderer.localClippingEnabled=true;
+const scene=new THREE.Scene(), cam=new THREE.PerspectiveCamera(30,1080/1920,0.1,500);
+scene.add(new THREE.AmbientLight(0xa8c4ff,0.6));
+const key=new THREE.DirectionalLight(0xffffff,1.5); key.position.set(10,14,12); scene.add(key);
+const rimL=new THREE.DirectionalLight(0x38d6ff,0.9); rimL.position.set(-6,8,-8); scene.add(rimL);
+/* wall (x ≤ 0) and floor (y ≤ 0): the ladder is clipped by both planes, so it can never pass through them */
+const clipWall=new THREE.Plane(new THREE.Vector3(1,0,0),0), clipFloor=new THREE.Plane(new THREE.Vector3(0,1,0),0);
+const tex=(draw)=>{ const c=document.createElement('canvas'); c.width=c.height=512; draw(c.getContext('2d')); const t=new THREE.CanvasTexture(c); t.wrapS=t.wrapT=THREE.RepeatWrapping; t.colorSpace=THREE.SRGBColorSpace; return t; };
+const wallTex=tex(x=>{ x.fillStyle='#1b2c52'; x.fillRect(0,0,512,512); x.strokeStyle='rgba(140,180,255,.22)'; x.lineWidth=4; for(let r=0;r<8;r++){ x.beginPath(); x.moveTo(0,r*64); x.lineTo(512,r*64); x.stroke(); for(let c=0;c<4;c++){ const o=(r%2)*64; x.beginPath(); x.moveTo(c*128+o,r*64); x.lineTo(c*128+o,r*64+64); x.stroke(); } } });
+wallTex.repeat.set(2,5);
+const wall=new THREE.Mesh(new THREE.BoxGeometry(0.7,12,7),new THREE.MeshStandardMaterial({map:wallTex,roughness:0.9})); wall.position.set(-0.35,6,0); scene.add(wall);
+const floorTex=tex(x=>{ x.fillStyle='#0f1d3c'; x.fillRect(0,0,512,512); x.strokeStyle='rgba(56,214,255,.18)'; x.lineWidth=3; for(let i=0;i<=8;i++){ x.beginPath(); x.moveTo(i*64,0); x.lineTo(i*64,512); x.stroke(); x.beginPath(); x.moveTo(0,i*64); x.lineTo(512,i*64); x.stroke(); } });
+floorTex.repeat.set(3,2);
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(14,7),new THREE.MeshStandardMaterial({map:floorTex,roughness:0.95})); floor.rotation.x=-Math.PI/2; floor.position.set(6.3,0,0); scene.add(floor);
+const edge=(a,b,col,op=1)=>{ const l=new THREE.Line(new THREE.BufferGeometry().setFromPoints([a,b]),new THREE.LineBasicMaterial({color:col,transparent:true,opacity:op})); scene.add(l); return l; };
+edge(new THREE.Vector3(0,0,-3.5),new THREE.Vector3(0,0,3.5),0x8ce9ff,0.8); edge(new THREE.Vector3(0,0,1.2),new THREE.Vector3(0,11.6,1.2),0x8ce9ff,0.25);
+/* ladder: two rails + 9 rungs, rebuilt from (x, y) each frame */
+const metal=new THREE.MeshStandardMaterial({color:0xdfe7f5,metalness:0.6,roughness:0.32,emissive:0x16233d,clippingPlanes:[clipWall,clipFloor]});
+const railGeo=new THREE.BoxGeometry(0.13,1,0.2), rungGeo=new THREE.CylinderGeometry(0.05,0.05,1,12);
+const ladder=new THREE.Group(); scene.add(ladder);
+const rails=[new THREE.Mesh(railGeo,metal),new THREE.Mesh(railGeo,metal)], rungs=[...Array(9)].map(()=>new THREE.Mesh(rungGeo,metal));
+rails.forEach(r=>ladder.add(r)); rungs.forEach(r=>ladder.add(r));
+const W2=0.42;   /* half-width of the ladder (z) */
+const dotT=new THREE.Mesh(new THREE.SphereGeometry(0.17,24,16),new THREE.MeshBasicMaterial({color:0x38d6ff})), dotB=new THREE.Mesh(new THREE.SphereGeometry(0.17,24,16),new THREE.MeshBasicMaterial({color:0xffc94a}));
+scene.add(dotT,dotB);
+/* math overlay in the plane z = ZF (front of the ladder) */
+const ZF=W2+0.25;
+const tube=(col,rad=0.055)=>{ const m=new THREE.Mesh(new THREE.CylinderGeometry(rad,rad,1,14),new THREE.MeshBasicMaterial({color:col,transparent:true})); scene.add(m); return m; };
+const setTube=(m,a,b)=>{ const d=new THREE.Vector3().subVectors(b,a); m.scale.set(1,Math.max(d.length(),1e-3),1); m.position.copy(a).addScaledVector(d,0.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.clone().normalize()); };
+const tX=tube(0xffc94a), tY=tube(0x8ce9ff), tL=tube(0xffffff,0.04);
+const triMat=new THREE.MeshBasicMaterial({color:0x38d6ff,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false});
+const triGeo=new THREE.BufferGeometry(); triGeo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(9),3)); const tri=new THREE.Mesh(triGeo,triMat); scene.add(tri);
+const raMat=new THREE.LineBasicMaterial({color:0xffffff,transparent:true}); const ra=new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0.55,0,ZF),new THREE.Vector3(0.55,0.55,ZF),new THREE.Vector3(0,0.55,ZF)]),raMat); scene.add(ra);
+const arcGeo=new THREE.BufferGeometry(); const arc=new THREE.Line(arcGeo,new THREE.LineBasicMaterial({color:0xff9f7a,transparent:true})); scene.add(arc);
+/* velocity arrows (same scale for both: 0.75 m of arrow per 1 m/s) */
+const KV=0.75;
+const arrow=col=>{ const g=new THREE.Group(), m=new THREE.MeshBasicMaterial({color:col,transparent:true}); const sh=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.07,1,14),m), hd=new THREE.Mesh(new THREE.ConeGeometry(0.2,0.42,20),m); g.add(sh,hd); g.userData={sh,hd,m}; scene.add(g); return g; };
+const setArrow=(g,from,dir,len,op)=>{ const {sh,hd,m}=g.userData; const d=dir.clone().normalize(), body=Math.max(len-0.42,0.01);
+  sh.scale.set(1,body,1); sh.position.copy(from).addScaledVector(d,body/2); sh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d);
+  hd.position.copy(from).addScaledVector(d,body+0.21); hd.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d); m.opacity=op; g.visible=op>0.01; };
+const aB=arrow(0xffc94a), aT=arrow(0x8ce9ff);
+
+/* ================= camera ================= */
+const tgt=new THREE.Vector3();
+function rig(t){ /* [time, dist, elev°, azim°, tx, ty, lensShiftY] */
+  const K=[[0,34,10,24,4.4,5.0,250],[CE(0),40,12,16,4.6,4.8,250],[C(1)+0.6,34,12,20,4.4,4.6,330],[CE(2),34,12,10,4.4,4.6,330],
+    [C(3)+0.4,38,0,0,3.75,4.6,300],[C(4)+0.2,38,0,0,3.75,4.6,300],[C(5)+0.2,46,0,0,3.9,4.6,560],[C(8)-0.3,46,0,0,3.9,4.6,560],[C(8)+0.3,38,0,0,3.75,4.6,300],[C(9)-0.2,38,0,0,3.75,4.6,300],
+    [C(9)+0.4,54,0,0,3.9,4.6,600],[C(11)-0.3,54,0,0,3.9,4.6,600],[C(11)+0.5,46,2,0,3.9,4.4,620],[CE(11),46,2,0,3.9,4.4,620],
+    [C(12)-0.2,40,12,22,4.8,5.0,260],[CE(12)+0.3,42,12,12,4.9,5.0,260],[C(13)+0.6,48,4,6,3.9,5.0,600],[200,48,4,0,3.9,5.0,600]];
+  let k=0; while(k<K.length-2&&t>=K[k+1][0]) k++; const a=K[k], b=K[k+1], u=eio(cl((t-a[0])/Math.max(.001,b[0]-a[0]))), F=i=>lerp(a[i],b[i],u);
+  /* slow breathing dolly + drifting key light: never a frozen frame, geometry untouched */
+  const d=F(1)*(1+0.03*Math.sin(t*0.42)), el=F(2)*Math.PI/180, az=F(3)*Math.PI/180; tgt.set(F(4),F(5),0);
+  key.position.set(10*Math.cos(t*0.12)+2,14,12*Math.sin(t*0.12)+4);
+  cam.position.set(tgt.x+d*Math.cos(el)*Math.sin(az),tgt.y+d*Math.sin(el),tgt.z+d*Math.cos(el)*Math.cos(az)); cam.lookAt(tgt); cam.setViewOffset(1080,1920,0,F(6),1080,1920); cam.updateMatrixWorld(); }
+const proj=v=>{ const p=v.clone().project(cam); return {x:(p.x+1)/2*1080,y:(1-p.y)/2*1920}; };
+const place=(id,v,o,dx=0,dy=0)=>{ const e=$(id), p=proj(v); e.style.left=(p.x+dx)+'px'; e.style.top=(p.y+dy)+'px'; e.style.opacity=o; };
+
+function render(t){
+  rig(t);
+  const x=xAt(t), y=yOf(x), dy=dyOf(x), th=thOf(x);
+  /* ladder pose: contact points B = (x,0), T = (0,y) — rails follow the segment, clipped at the wall and the floor */
+  const B=new THREE.Vector3(x,0,0), T=new THREE.Vector3(0,y,0), dir=new THREE.Vector3().subVectors(T,B), len=dir.length(), u=dir.clone().normalize();
+  const q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),u);
+  rails.forEach((r,i)=>{ r.scale.set(1,len+0.6,1); r.position.copy(B).addScaledVector(u,len/2); r.position.z=(i?1:-1)*W2; r.quaternion.copy(q); });
+  rungs.forEach((r,i)=>{ const p=B.clone().addScaledVector(u,len*(i+1)/10); r.position.copy(p); r.scale.set(1,2*W2,1); r.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),new THREE.Vector3(0,0,1)); });
+  dotT.position.set(0,y,W2); dotB.position.set(x,0,W2);
+  /* math overlay */
+  const mOn=ramp(t,C(3)+0.3,0.6)*cl((C(12)-0.4-t)/0.4)+ramp(t,C(13)+0.5,0.6);
+  setTube(tX,new THREE.Vector3(0,0,ZF),new THREE.Vector3(x,0,ZF)); setTube(tY,new THREE.Vector3(0,0,ZF),new THREE.Vector3(0,y,ZF)); setTube(tL,new THREE.Vector3(x,0,ZF),new THREE.Vector3(0,y,ZF));
+  [tX,tY,tL].forEach(m=>{ m.material.opacity=mOn; m.visible=mOn>0.01; }); raMat.opacity=mOn; ra.visible=mOn>0.01;
+  const P=triGeo.attributes.position.array; P.set([0,0,ZF-0.01, x,0,ZF-0.01, 0,y,ZF-0.01]); triGeo.attributes.position.needsUpdate=true; triMat.opacity=0.16*mOn;
+  const thOn=win(t,C(11)+0.2,CE(11)+0.4,.4,.4); const ap=[]; for(let i=0;i<=40;i++){ const a=Math.PI-th*i/40; ap.push(new THREE.Vector3(x+1.3*Math.cos(a),1.3*Math.sin(a),ZF)); } arcGeo.setFromPoints(ap); arc.material.opacity=thOn; arc.visible=thOn>0.01;
+  /* arrows: bottom constant 2 m/s, top |dy/dt| — same scale, capped above the floor */
+  const vOn=win(t,0.8,CE(0)+0.2,.4,.4)+win(t,C(10)-0.2,CE(10)+0.3,.4,.4)+win(t,C(12)+0.5,CE(12)+0.3,.4,.4);
+  setArrow(aB,new THREE.Vector3(x+0.25,0.45,W2+0.3),new THREE.Vector3(1,0,0),VX*KV,vOn);
+  const lt=Math.min(Math.abs(dy)*KV,Math.max(0.5,y-0.4)); setArrow(aT,new THREE.Vector3(-0.0+0.3,y-0.1,W2+0.3),new THREE.Vector3(0,-1,0),lt,vOn);
+  renderer.render(scene,cam);
+  /* labels */
+  place('Lx',new THREE.Vector3(x/2,0,ZF),mOn,0,-46); place('Ly',new THREE.Vector3(0,y/2,ZF),mOn,18,0); $('Ly').style.transform='translate(0,-50%)'; place('LL',new THREE.Vector3(x/2,y/2,ZF),mOn*cl((C(13)-t)/0.4)+0,70,-34);
+  $('Lx').textContent=(t>C(8)+0.6&&t<C(12))?'x = 8':'x'; $('Ly').textContent=(t>C(8)+2.6&&t<C(12))?'y = 6':'y';
+  place('Lth',new THREE.Vector3(x-1.9,0.55,ZF),thOn,0,0);
+  place('Lvb',new THREE.Vector3(x+0.1,1.25,W2+0.3),vOn,-100,0); place('Lvt',new THREE.Vector3(0.3,y-0.1-lt/2,W2+0.3),vOn,150,0); $('Lvt').textContent=Math.abs(dy).toFixed(2)+' m/s';
+  /* chips: live rates */
+  const chOn=win(t,0.8,CE(0)+0.3,.3,.3)+win(t,C(12)+0.5,CE(12)+0.3,.3,.4);
+  $('cx').style.opacity=chOn; $('cy').style.opacity=chOn; $('cs').style.opacity=chOn;
+  $('cx').textContent='dx/dt = +2.00 m/s'; $('cy').textContent='dy/dt = '+(dy<0?'−':'+')+Math.abs(dy).toFixed(2)+' m/s';
+  /* headline, data card */
+  [['hA',0.2,C(1)-0.2],['hQ',C(1)+0.2,CE(2)+0.3]].forEach(([id,a,b])=>{ const e=$(id), o=win(t,a,b,.5,.4), k=eo(ramp(t,a,.6)); e.style.opacity=o; e.style.transform=`translateY(${(1-k)*-30}px)`; });
+  const dOn=win(t,C(1)+0.3,CE(2)+0.3,.5,.4); $('data').style.opacity=dOn;
+  [['d1',C(1)+1.6],['d2',C(1)+4.2],['d3',C(2)+5.4],['d4',C(2)+0.4]].forEach(([id,a])=>{ const k=eo(ramp(t,a,.45)); $(id).style.opacity=0.25+0.75*k; $(id).style.transform=`translateX(${(1-k)*-20}px)`; });
+  /* equations */
+  [['e1',C(4),C(5)],['e2',C(5),C(6)],['e3',C(6),C(8)],['e4',C(8),C(9)],['e5',C(9),C(11)],['e6',C(11),CE(11)+0.15]].forEach(([id,a,b])=>{ const e=$(id), o=win(t,a,b,.45,.35), k=eo(ramp(t,a,.55)); e.style.opacity=o; e.style.transform=`translateY(${(1-k)*30}px) scale(${.95+.05*k+Math.min(.025,.006*Math.max(0,t-a))})`; });
+  $('e2b').style.opacity=ramp(t,C(5)+1.7,0.45); $('e3n').style.opacity=ramp(t,C(7),0.45);
+  $('e5b').style.opacity=ramp(t,C(9)+3.2,0.45); $('e5b').style.transform=`scale(${.85+.15*eo(ramp(t,C(9)+3.2,.5))})`;
+  $('e6b').style.opacity=ramp(t,C(11)+3.6,0.45); $('e6c').style.opacity=ramp(t,C(11)+6.4,0.45);
+  /* closing steps */
+  $('steps').style.opacity=ramp(t,C(13),0.4); [...document.querySelectorAll('#steps .s')].forEach((s,i)=>{ const k=eo(ramp(t,C(13)+[0.9,3.4,5.7][i],.5)); s.style.opacity=k; s.style.transform=`translateX(${(1-k)*-30}px)`; });
+  /* captions */
+  let ci=-1; CUES.forEach((c,i)=>{ if(t>=c[0]-0.1&&t<c[0]+c[1]+0.35) ci=i; });
+  const txt=ci>=0?CAPS[ci]:'', cap=$('cap');
+  if(cap.dataset.t!==txt){ cap.dataset.t=txt; cap.innerHTML=txt?txt.split('\n').map(l=>`<span>${l.replace(/dy\/dt|x = 8|\b[xyL]\b|θ|2.67 > 2|100/g,m=>`<b dir="ltr" style="color:#ffc94a">${m}</b>`)}</span>`).join('<br>'):''; }
+  cap.style.opacity=txt?cl((t-CUES[ci][0]+0.1)/0.25):0;
+  $('brand').style.opacity=ramp(t,CE(13)+0.2,0.5);
+  $('fade').style.opacity=t<0.4?1-t/0.4:t>96.8?(t-96.8)/0.6:0;
+  /* state for validation */
+  const railLen=(()=>{ const tp=new THREE.Vector3(0,y,0), bp=new THREE.Vector3(x,0,0); return tp.distanceTo(bp); })();
+  { const pts=[new THREE.Vector3(0,0,0),new THREE.Vector3(x,0,W2),new THREE.Vector3(0,y,W2),new THREE.Vector3(x,0,-W2),new THREE.Vector3(0,y,-W2)].map(proj);
+    window.FIGS=[{name:'ladder+triangle',x0:Math.min(...pts.map(p=>p.x)),y0:Math.min(...pts.map(p=>p.y)),x1:Math.max(...pts.map(p=>p.x)),y1:Math.max(...pts.map(p=>p.y))}]; }
+  window.STATE={t,x,y,dy,th,L,ladderLength:railLen,pyth:x*x+y*y,topZ:y,bottomX:x,arrowRatio:lt/(VX*KV)};
+}
+window.render=render; render(0);
+</script></body></html>

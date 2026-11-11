@@ -5,9 +5,15 @@
    Physics (only if the page exposes window.STATE with hA/hB): same Q, r and 2r ⇒ rise rates 4:1. */
 const {chromium}=require('playwright');
 const page=process.argv[2], si=process.argv.indexOf('--step'), STEP=si>0?+process.argv[si+1]:0.25;
-const BASE=process.env.BASE||'http://localhost:8770/math-books/';
+const BASE=process.env.BASE||'http://reel.local/';
+/* serve the repo through request interception (no local web server needed) */
+const LOCAL='http://reel.local/';
+async function serveRepo(pg){ const fs=require('fs'), path=require('path'), root=path.join(__dirname,'..');
+  const T={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.woff2':'font/woff2','.woff':'font/woff','.ttf':'font/ttf','.json':'application/json','.png':'image/png','.svg':'image/svg+xml','.jpg':'image/jpeg'};
+  await pg.route(LOCAL+'**',r=>{ const u=new URL(r.request().url()), f=path.join(root,decodeURIComponent(u.pathname)); if(!f.startsWith(root)||!fs.existsSync(f)) return r.fulfill({status:404,body:'not found'}); r.fulfill({status:200,contentType:T[path.extname(f)]||'application/octet-stream',body:fs.readFileSync(f)}); }); }
 (async()=>{
  const b=await chromium.launch(), pg=await b.newPage({viewport:{width:1080,height:1920}});
+ if(!process.env.BASE) await serveRepo(pg);
  await pg.goto(BASE+page); await pg.evaluate(()=>document.fonts.ready); await pg.waitForTimeout(300);
  const D=await pg.evaluate(()=>window.DURATION);
  const SAFE={x0:90,x1:900,y0:180,y1:1540}, issues=[], seen=new Set(); let frames=0;
@@ -20,7 +26,7 @@ const BASE=process.env.BASE||'http://localhost:8770/math-books/';
     const push=(e,name)=>{ const o=vis(e); if(o<0.6) return; const r=e.getBoundingClientRect(); if(r.width<2||r.height<2) return; boxes.push({name,x0:r.left,y0:r.top,x1:r.right,y1:r.bottom,o}); };
     document.querySelectorAll('#cap span').forEach(e=>push(e,'caption'));
     document.querySelectorAll('.eq').forEach(e=>{ if(vis(e)>=0.6) e.querySelectorAll(':scope > *').forEach((k,i)=>push(k,'eq#'+e.id+(i?'-'+i:''))); });
-    document.querySelectorAll('.chip,#brand').forEach(e=>push(e,'chip#'+e.id));
+    document.querySelectorAll('.chip,#brand,.lbl').forEach(e=>push(e,(e.classList.contains('lbl')?'label#':'chip#')+e.id));
     document.querySelectorAll('#hook > div').forEach((e,i)=>push(e,'hook'+i));
     document.querySelectorAll('svg text').forEach(e=>{ if((e.textContent||'').trim()) push(e,'svgtext:'+e.textContent.trim()); });
     const figs=[]; document.querySelectorAll('svg > g').forEach((g,i)=>{ const o=vis(g); if(o<0.6) return; const r=g.getBoundingClientRect(); if(r.width>50) figs.push({i,x0:r.left,y0:r.top,x1:r.right,y1:r.bottom}); });

@@ -62,3 +62,9 @@ node tools/reel-render.cjs tools/reels/ladder.html out.mp4 [--preview 3,8,17]
 - الصورة (Three.js 0.170 منسوخة في `tools/reels/vendor/`): `node tools/reel-render.cjs tools/reels/cone-volume.html video.mp4` (~8 دقائق لأن WebGL يُرسم برمجياً)
 - الصوت: `VOICE=…/vits-piper-ar_JO-SA_dii-high tools/reels/cone-volume-audio/build-audio.sh video.mp4 out.mp4`
   (صوت Piper «dii» النسائي، رخصة CC BY-NC-SA 4.0 — للاستعمال غير التجاري مع ذكر المصدر).
+
+### «السلّم المنزلق» (مثال 4 ص 94، ثلاثي الأبعاد 97 ث بصوت نسائي)
+- الصورة: `node tools/reel-render.cjs tools/reels/ladder-3d.html video.mp4` (~15 دقيقة)
+- الصوت: `VOICE=…/vits-piper-ar_JO-SA_dii-high tools/reels/ladder-3d-audio/build-audio.sh video.mp4 out.mp4`
+- التحقق الرياضي والحركي: `node tools/reels/ladder-3d.check.cjs` (طول السلّم، x²+y²=100، الإشارات، dy/dt و dθ/dt عددياً)
+- أدوات الريلز لم تعد تحتاج خادماً محلياً: الملفات تُقدَّم للصفحة مباشرة (BASE اختياري).
