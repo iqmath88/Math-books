@@ -1,6 +1,7 @@
 /* Render a hand-made reel page (tools/reels/*.html, exposes window.render(t) and window.DURATION) to MP4.
    usage: node tools/reel-render.cjs tools/reels/ladder.html out.mp4            (1080×1920, 30 fps)
           node tools/reel-render.cjs tools/reels/ladder.html out.mp4 --preview 3,8,17   (JPEG stills only)
+          node tools/reel-render.cjs tools/reels/ice.html proof.mp4 --range 0,12        (only seconds 0–12, e.g. a proof-of-motion)
    BASE (env) optional; by default the repo is served to the page by request interception. */
 const {chromium}=require('playwright'), fs=require('fs'), {spawn}=require('child_process');
 const [page,out]=process.argv.slice(2), A=process.argv, pi=A.indexOf('--preview'), PRE=pi>0?A[pi+1].split(',').map(Number):null;
@@ -19,7 +20,7 @@ async function serveRepo(pg){ const fs=require('fs'), path=require('path'), root
  const part=out.replace(/\.mp4$/,'.part.mp4');
  const ff=spawn('ffmpeg',['-y','-loglevel','error','-f','image2pipe','-framerate',String(FPS),'-c:v','mjpeg','-i','-','-c:v','libx264','-preset','veryfast','-crf','18','-pix_fmt','yuv420p','-movflags','+faststart','-f','mp4',part]);
  const done=new Promise((ok,no)=>ff.on('exit',c=>c===0?ok():no(new Error('ffmpeg '+c))));
- const n=Math.round(D*FPS);
- for(let f=0;f<n;f++){ await pg.evaluate(t=>render(t),f/FPS); const buf=await pg.screenshot({type:'jpeg',quality:92}); if(!ff.stdin.write(buf)) await new Promise(r=>ff.stdin.once('drain',r)); }
- ff.stdin.end(); await done; fs.renameSync(part,out); await b.close(); console.log('wrote',out,n,'frames');
+ const ri=A.indexOf('--range'), [r0,r1]=ri>0?A[ri+1].split(',').map(Number):[0,D], f0=Math.round(r0*FPS), n=Math.round(Math.min(r1,D)*FPS);
+ for(let f=f0;f<n;f++){ await pg.evaluate(t=>render(t),f/FPS); const buf=await pg.screenshot({type:'jpeg',quality:92}); if(!ff.stdin.write(buf)) await new Promise(r=>ff.stdin.once('drain',r)); }
+ ff.stdin.end(); await done; fs.renameSync(part,out); await b.close(); console.log('wrote',out,n-f0,'frames');
 })();

@@ -78,3 +78,8 @@ node tools/reel-render.cjs tools/reels/ladder.html out.mp4 [--preview 3,8,17]
 - الصورة: `node tools/reel-render.cjs tools/reels/shadow.html video.mp4` (~15–20 دقيقة)
 - الصوت: `VOICE=…/vits-piper-ar_JO-SA_dii-high tools/reels/shadow-audio/build-audio.sh video.mp4 out.mp4` (إعدادات الصوت B؛ `mix.py` يكتب `shadow.timeline.full.js`)
 - التحقق الحركي: `node tools/reels/shadow.check.cjs` (H و h ثابتان، y = x/3 في كل إطار، استقامة المصباح–الرأس–طرف الظل، dx/dt=30 و dy/dt=10 وسرعة الطرف 40 م/د بزمن حقيقي)
+
+### «مكعب مغطى بالجليد» (مثال 3 ص 93 — ثلاثي الأبعاد 98.7 ث بصوت نسائي «B»)
+- الصورة: `node tools/reel-render.cjs tools/reels/ice.html video.mp4` (اختبار حركة قصير: `--range 0,12`)
+- الصوت: `VOICE=…/vits-piper-ar_JO-SA_dii-high tools/reels/ice-audio/build-audio.sh video.mp4 out.mp4` (`mix.py` يكتب `ice.timeline.full.js`)
+- التحقق الحركي: `node tools/reels/ice.check.cjs` (حرف المكعب 8 ثابت، L = 8 + 2x من المجسمات نفسها، V = L³ − 8³، dV/dτ = −6 بالزمن الحقيقي، dx/dτ = −1/L² و −0.01 عند x = 1، وعوامل التسريع المعروضة ×10 و ×2.5 و ×8)
