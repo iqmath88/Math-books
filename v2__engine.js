@@ -454,6 +454,7 @@ function draw(){
   const ch=$('#chips'); ch.innerHTML=chips.map(([c,l,v])=>`<span class="chip"><i style="background:var(--${c})"></i>${esc(iso(l))} <b>${esc(v)}</b></span>`).join('');
   const lg=$('#legend'); lg.hidden=!legend.length; lg.innerHTML=legend.map(([c,l])=>`<span><i style="background:${c}"></i>${esc(iso(l))}</span>`).join('');
   const hh=$('#hint'); hh.textContent=iso(hint); hh.className='hint'+(hintOk?' ok':'');
+  document.dispatchEvent(new CustomEvent('mathbooks:scene-update',{detail:{name:currentSceneId,value:P}}));
 }
 
 /* geometry figure language (grade 9): F={pts:{A:[x,y]}, el:[{t,…,s (first step), h (glow steps), c, d, l}], names} */
@@ -509,8 +510,10 @@ function loop(){ raf=0; let more=false; if(from&&t<1){ t+=1/36; more=true; } els
   draw(); if(more) raf=requestAnimationFrame(loop); }
 const kick=()=>{ if(!raf) raf=requestAnimationFrame(loop); };
 function syncSlider(){ const s=cur&&cur.sl, w=$('#sl'); w.hidden=!s; if(!s) return; const i=$('#slI'); i.min=s.min; i.max=s.max; i.step=s.step||'any'; i.value=P; $('#slL').textContent=s.lab||''; $('#slV').textContent=(s.fmt||fmt)(P); }
+let currentSceneId="";
+window.MathBooksSceneState=()=>({name:currentSceneId,value:P});
 function go(name){ const sc=B.S[name]; if(!sc||sc===cur) return; const red=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  from=cur&&!red?cur:null; t=0; cur=sc; cDrag=null; sweepT=0; svg.style.touchAction=sc.pick?'none':''; svg.style.cursor=sc.pick?'grab':''; if(sc.sl){ const sl=sc.sl; P=sl.v??sl.min; playing=!!sl.play&&!red; const u0=Math.min(1,Math.max(0,(P-sl.min)/((sl.max-sl.min)||1))); playT=Math.acos(1-2*u0)/(sl.speed||.6); } syncSlider(); kick(); }
+  from=cur&&!red?cur:null; t=0; cur=sc; currentSceneId=name; cDrag=null; sweepT=0; svg.style.touchAction=sc.pick?'none':''; svg.style.cursor=sc.pick?'grab':''; if(sc.sl){ const sl=sc.sl; P=sl.v??sl.min; playing=!!sl.play&&!red; const u0=Math.min(1,Math.max(0,(P-sl.min)/((sl.max-sl.min)||1))); playT=Math.acos(1-2*u0)/(sl.speed||.6); } syncSlider(); kick(); }
 function size(){ const r=box.getBoundingClientRect(); W=r.width; H=r.height; draw(); }
 new ResizeObserver(size).observe(box);
 $('#slI').addEventListener('input',e=>{ playing=false; P=+e.target.value; $('#slV').textContent=(cur.sl.fmt||fmt)(P); draw(); });

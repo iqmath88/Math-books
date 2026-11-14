@@ -9,7 +9,7 @@ if(!box||!svg||!slider)return;
 const scenes={rCone:{type:'cone'},rTank:{type:'tank'},rTankB:{type:'tank'},rTankB2:{type:'tank'}};
 let current=null, sceneValue=0, yaw=-.57,elev=.38, mode3d=true, raf=0, dragging=null;
 const style=document.createElement('style');
-style.textContent=`#solid3d{position:absolute;inset:0;width:100%;height:100%;display:none;touch-action:pan-y;cursor:grab;z-index:1}#solid3d.active{display:block}#solid3d:active{cursor:grabbing}#solidControls{display:none;gap:7px;align-items:center;flex-wrap:wrap;padding:7px 9px;border:1px solid var(--line);border-radius:10px;margin:6px 0;background:var(--surface2,#f7f8fa);color:var(--ink);font-size:12px}#solidControls.active{display:flex}#solidControls button{font:inherit;min-height:34px;border-radius:8px;border:1px solid var(--line);padding:5px 9px;background:var(--surface,#fff);color:var(--ink);cursor:pointer}#solidControls button[aria-pressed="true"]{background:#235b86;color:white}#solidDetails{flex-basis:100%;font-size:12px;line-height:1.7;color:var(--ink2,var(--ink))}#solidControls button:focus-visible{outline:2px solid #3477c1;outline-offset:2px}@media(prefers-reduced-motion:reduce){#solid3d{scroll-behavior:auto}}`;
+style.textContent=`#solid3d{position:absolute;inset:0;width:100%;height:100%;display:none;touch-action:pan-y;cursor:grab;z-index:1}#solid3d.active{display:block;visibility:visible}#solid3d:active{cursor:grabbing}#solidControls{display:none;gap:7px;align-items:center;flex-wrap:wrap;padding:7px 9px;border:1px solid var(--line);border-radius:10px;margin:6px 0;background:var(--surface2,#f7f8fa);color:var(--ink);font-size:12px}#solidControls.active{display:flex}#solidControls button{font:inherit;min-height:34px;border-radius:8px;border:1px solid var(--line);padding:5px 9px;background:var(--surface,#fff);color:var(--ink);cursor:pointer}#solidControls button[aria-pressed="true"]{background:#235b86;color:white}#solidDetails{flex-basis:100%;font-size:12px;line-height:1.7;color:var(--ink2,var(--ink))}#solidControls button:focus-visible{outline:2px solid #3477c1;outline-offset:2px}@media(prefers-reduced-motion:reduce){#solid3d{scroll-behavior:auto}}`;
 document.head.append(style);
 const canvas=document.createElement('canvas');canvas.id='solid3d';canvas.setAttribute('aria-label','مجسم تفاعلي يمكن تدويره بالسحب');canvas.setAttribute('role','img');
 box.append(canvas);
@@ -76,16 +76,24 @@ function paint(){if(!current||!mode3d)return;
  const pos=pr([0,G.h,0]);ctx.fillStyle='#0d729f';ctx.font='bold 13px system-ui';ctx.fillText('h = '+f(G.h)+' '+G.unit,Math.max(60,Math.min(w-60,pos[0]+42)),Math.max(42,Math.min(h-22,pos[1]-20)));
 }
 function draw(){if(raf)cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{raf=0;paint();});}
-for(const [name,info] of Object.entries(scenes)){const sc=B.S[name];if(!sc||typeof sc.draw!=='function')continue;const old=sc.draw;sc.draw=function(A){old.call(this,A);current={name,type:info.type,scene:this};sceneValue=A.p;updateVisibility();};}
-// Other scenes must restore the original SVG automatically. Track each scene draw with wrappers.
-for(const [name,sc] of Object.entries(B.S)){
- if(scenes[name]||typeof sc.draw!=='function')continue;
- const old=sc.draw;sc.draw=function(A){if(current){current=null;updateVisibility();}old.call(this,A);};
-}
+// Explicit event bridge from the V2 rendering engine; independent of scene function wrapping.
+let lastScene='';
+document.addEventListener('mathbooks:scene-update',e=>{
+ const name=e.detail?.name||'', value=Number(e.detail?.value);
+ const info=scenes[name];
+ if(!info){if(current){current=null;lastScene='';updateVisibility();}return;}
+ if(!current||lastScene!==name){current={name,type:info.type,scene:B.S[name]};lastScene=name;mode3d=true;updateVisibility();}
+ sceneValue=Number.isFinite(value)?value:Number(slider.value);
+ draw();
+});
+// Sync the scene already selected before this enhancement script was loaded.
+const bootScene=window.MathBooksSceneState?.();
+if(bootScene?.name)document.dispatchEvent(new CustomEvent('mathbooks:scene-update',{detail:bootScene}));
 // Touch drag and mouse orbit, keeping the existing slider as the sole source of simulation state.
 canvas.addEventListener('pointerdown',e=>{if(!current)return;dragging={id:e.pointerId,x:e.clientX,y:e.clientY};canvas.setPointerCapture(e.pointerId);});
 canvas.addEventListener('pointermove',e=>{if(!dragging||dragging.id!==e.pointerId)return;const dx=e.clientX-dragging.x,dy=e.clientY-dragging.y;if(Math.abs(dx)+Math.abs(dy)>0){yaw+=dx*.009;elev=Math.max(.12,Math.min(1.2,elev+dy*.007));dragging.x=e.clientX;dragging.y=e.clientY;draw();}});
 const stop=e=>{if(dragging&&e.pointerId===dragging.id)dragging=null;};canvas.addEventListener('pointerup',stop);canvas.addEventListener('pointercancel',stop);
 slider.addEventListener('input',()=>{if(current){sceneValue=Number(slider.value);draw();}});
-new ResizeObserver(draw).observe(box);
+if(window.ResizeObserver)new ResizeObserver(draw).observe(box);
+window.addEventListener("resize",draw);
 })();
