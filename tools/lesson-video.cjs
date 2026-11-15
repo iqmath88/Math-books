@@ -83,20 +83,23 @@ const lesson=fromKey.split('-')[0];
     const units=[];
     [...c.children].forEach(ch=>{ if(/^(حرّك|اسحب|شغّل)/.test(ch.textContent.trim())) return;
       box.append(ch); units.push(ch); });
-    return {box,units,scene:st.dataset.scene}; });
+    return {box,units,scene:st.dataset.scene,result:st.classList.contains('result')}; });
   window.FILM={built,read,labels,
    card(html){ const c=D.getElementById('fCard'); c.hidden=!html; c.innerHTML=html||''; },
    setup(i){ const S=D.querySelector('#fS'), b=built[i]; S.innerHTML=''; S.append(b.box); D.getElementById('fQ').hidden=i===0;
      /* fit: shrink the font until the whole step fits */
-     let fs=VERT?34:30; b.box.style.setProperty('--fs',fs+'px'); while(b.box.scrollHeight>S.clientHeight-52&&fs>17){ fs--; b.box.style.setProperty('--fs',fs+'px'); }
+     let fs=VERT?34:30; b.box.style.setProperty('--fs',fs+'px'); b.box.style.transform=''; while(b.box.scrollHeight>S.clientHeight-52&&fs>15){ fs--; b.box.style.setProperty('--fs',fs+'px'); }
+     /* still too tall: scale the whole step down rather than cut its end */
+     if(b.box.scrollHeight>S.clientHeight-52){ const k=(S.clientHeight-52)/b.box.scrollHeight; b.box.style.transformOrigin='top center'; b.box.style.transform=`scale(${k.toFixed(3)})`; }
      D.querySelectorAll('#fBot .dots span').forEach((s,j)=>s.className=j<i?'done':j===i?'on':'');
      b.units.forEach(u=>{ u.classList.add('u'); u.style.opacity=0; });
      let t=0.5; b.times=b.units.map(u=>{ const s=t; t+=read(u); return s; }); b.len=t+2.2;
-     if(b.scene) LB.go(b.scene); return b.len; },
+     /* a result step («!») holds the drawing at the book's instant, like the app does */
+     if(b.scene) LB.go(b.scene,b.result); return b.len; },
    at(i,t){ const b=built[i]; D.querySelector('#fS').style.opacity=Math.min(1,t/0.35); b.units.forEach((u,j)=>{ const k=Math.max(0,Math.min(1,(t-b.times[j])/0.5)); u.style.opacity=k; u.style.transform=`translateY(${(1-k)*14}px)`; }); }
   };
   dispatchEvent(new Event('resize'));
-  return {n:steps.length, title:D.getElementById('crB').textContent, no:L.no, grade:B.grade, chapter:B.chapter, kick, qTitle:q.querySelector('h1,h2')?.textContent||''};
+  return {n:steps.length, title:D.getElementById('crB').textContent, no:L.no, grade:B.grade, chapter:B.chapter, kick, qTitle:[...q.querySelectorAll('h1,h2')].at(-1)?.textContent||''};
  },{fromKey,toKey,SUB,NEXT,VERT});
  await pg.clock.runFor(500);
 

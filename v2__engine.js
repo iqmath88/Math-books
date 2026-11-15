@@ -59,7 +59,7 @@ function parse(src){
 
 /* inline: $tex$, $$tex$$ (display), [[cls:text]], **bold** */
 function T(s){
-  if(s==null) return ''; const keep=[], ph=i=>String.fromCharCode(0xE000+i);
+  if(s==null) return ''; s=glue(String(s)); const keep=[], ph=i=>String.fromCharCode(0xE000+i);
   s=String(s).replace(/\$\$([^$]+)\$\$/g,(_,t)=>{ keep.push(`<span class="big tex" data-tex="${esc(t).replace(/"/g,'&quot;')}"></span>`); return ph(keep.length-1); })
    .replace(/\$([^$]+)\$/g,(_,t)=>{ keep.push(`<span class="tex" data-tex="${esc(t).replace(/"/g,'&quot;')}"></span>`); return ph(keep.length-1); });
   s=s.replace(/\[\[(\w+):([^\]]+)\]\]/g,'<span class="tag $1">$2</span>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');
@@ -68,8 +68,20 @@ function T(s){
     const mm=r.match(/^([^A-Za-z0-9(\[√−+\-|]*)([\s\S]*?)([\s.،:؛]*)$/); return mm[1]+(mm[2]?`<bdi dir="ltr">${mm[2]}</bdi>`:'')+mm[3]; }));
   return s.replace(/[-]/g,c=>keep[c.charCodeAt(0)-0xE000]);
 }
+const glue=x=>x.replace(/\$\s+([.،:؛])(?=\s|$)/g,'$\u00a0$1');
 const LN=x=>x.startsWith('» ')?`<span class="xpl">${T(x.slice(2))}</span>`:x.startsWith('$$')&&!x.slice(2).includes('$$')?`<span class="big tex" data-tex="${esc(x.slice(2).trim()).replace(/"/g,'&quot;')}"></span>`:T(x);
-const lines=p=>p.lines.map(LN).join('<br>');
+/* solution lines may carry the same blocks as a worked example:
+   «let> س ; المعنى ; القيمة» rows → a «نفرض» table;  «main> عنوان» / «aux> عنوان» followed by $$ lines (or «+ نص») → relation boxes */
+const bigLine=x=>`<div class="mathline tex" data-tex="${esc(x.slice(2).trim()).replace(/"/g,'&quot;')}"></div>`;
+const rbox=(k,sub,body)=>`<div class="rbox ${k}"><div class="rh"><b>${k==='main'?'العلاقة الرئيسية':'العلاقة المساعدة'}</b>${sub?`<span>${T(sub)}</span>`:''}</div>${body}</div>`;
+const letTable=(rows,title)=>`<div class="let"><div class="lh"><b>${title?T(title):'نفرض'}</b><span class="xl">توضيح</span></div><div class="lg">${rows.map(x=>{ const c=x.replace(/\s;\s*$/,'').split(' ; '); return `<div class="lr"><span class="ls">${T(c[0]||'')}</span><span class="lm">${T(c[1]||'')}</span><span class="lv">${T(c[2]||'')}</span></div>`; }).join('')}</div></div>`;
+const lines=p=>{ const L=p.lines; let h='', i=0;
+  while(i<L.length){ const x=L[i];
+    if(x.startsWith('let> ')){ const rows=[]; while(i<L.length&&L[i].startsWith('let> ')) rows.push(L[i++].slice(5)); h+=letTable(rows); continue; }
+    const m=x.match(/^(main|aux)>\s?(.*)$/);
+    if(m){ i++; let body=''; while(i<L.length&&(L[i].startsWith('$$')||L[i].startsWith('+ '))){ body+=L[i].startsWith('+ ')?`<p>${T(L[i].slice(2))}</p>`:bigLine(L[i]); i++; } h+=rbox(m[1],m[2],body); continue; }
+    if(h&&!h.endsWith('</div>')) h+='<br>'; h+=LN(x); i++; }
+  return h; };
 const MAC={"\\cf":"\\htmlClass{tk-f}{#1}","\\cch":"\\htmlClass{tk-chord}{#1}","\\ctn":"\\htmlClass{tk-tan}{#1}","\\ccc":"\\htmlClass{tk-c}{#1}","\\cin":"\\htmlClass{tk-int}{#1}","\\cok":"\\htmlClass{tk-ok}{#1}","\\cbad":"\\htmlClass{tk-bad}{#1}","\\R":"R"};
 /* ---- professional equation layout ----
    display lines (.mathline, .big) are typeset in display style; a line too wide for the screen is first broken into
@@ -93,7 +105,9 @@ function rowsOf(t,lvl){ if(/\\begin|\\\\/.test(t)) return null;
 const avail=el=>{ if(getComputedStyle(el).display!=='inline'){ const cs=getComputedStyle(el); return el.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight); } let n=el.parentElement; while(n&&getComputedStyle(n).display==='inline') n=n.parentElement; if(!n) return 0; const cs=getComputedStyle(n); return n.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight); };
 const kw=el=>{ const k=el.querySelector('.katex-html')||el; return k.scrollWidth||k.getBoundingClientRect().width; };
 function fitOne(el){ const W=avail(el); if(W<40) return; const tex=el.dataset.tex, disp=el.classList.contains('mathline')||el.classList.contains('big')||el.classList.contains('blk');
-  if(!disp){ const k=el.querySelector('.katex'); if(!k) return; const rs=k.getClientRects(); if(rs.length<=1&&kw(el)<=W) return;
+  if(!disp){ const k=el.querySelector('.katex'); if(!k) return; if(el.closest('.lv,.ls,.lm,td,th,.chip')) return;
+    /* a short formula that merely sits at a line end stays inline; only a long one (≥ 45 % of the line) gets its own line */
+    const rs=k.getClientRects(); if((rs.length<=1&&kw(el)<=W)||kw(el)<0.45*W) return;
     el.classList.add('blk'); }
   if(el.dataset.fitW==String(W)) return; el.dataset.fitW=W; el.style.fontSize='';
   const R=t=>{ try{ katex.render(t,el,{...KOPT,displayMode:true,macros:{...MAC}}); }catch(e){ el.textContent=t; } };
@@ -124,8 +138,7 @@ function stepHTML(st,les,si,ki){
       case 'xp': h+=`<div class="xp"><span class="xl">${p.v?T(p.v):'خطوة توضيحية'}</span><div>${p.lines.map(x=>`<p>${LN(x)}</p>`).join('')}</div></div>`; break;
       case 'let': h+=`<div class="let"><div class="lh"><b>${p.v?T(p.v):'نفرض'}</b><span class="xl">توضيح</span></div><div class="lg">${p.lines.map(x=>{ const c=x.replace(/\s;\s*$/,'').split(' ; '); return `<div class="lr"><span class="ls">${T(c[0]||'')}</span><span class="lm">${T(c[1]||'')}</span><span class="lv">${T(c[2]||'')}</span></div>`; }).join('')}</div></div>`; break;
       case 'rel': { const ex=p.v.startsWith('» '); h+=`<div class="rel${ex?' rx':''}"><span>${T(ex?p.v.slice(2):p.v)}</span></div>`; break; }
-      case 'main': case 'aux': { const big=x=>x.startsWith('$$')&&!x.slice(2).includes('$$')?`<div class="mathline tex" data-tex="${esc(x.slice(2).trim()).replace(/"/g,'&quot;')}"></div>`:`<p>${LN(x)}</p>`;
-        h+=`<div class="rbox ${p.k}"><div class="rh"><b>${p.k==='main'?'العلاقة الرئيسية':'العلاقة المساعدة'}</b>${p.v?`<span>${T(p.v)}</span>`:''}</div>${p.lines.map(big).join('')}</div>`; break; }
+      case 'main': case 'aux': h+=rbox(p.k,p.v,p.lines.map(x=>x.startsWith('$$')&&!x.slice(2).includes('$$')?bigLine(x):`<p>${LN(x)}</p>`).join('')); break;
       case 'tnote': h+=`<div class="tnote"><b>للمدرّس:</b> ${lines(p)}</div>`; break;
       case 'note': h+=`<div class="note">${lines(p)}</div>`; break;
       case 'err': h+=`<div class="err"><b>تنبيه على خطأ في الكتاب:</b> ${lines(p)}</div>`; break;
