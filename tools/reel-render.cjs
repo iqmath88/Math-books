@@ -1,11 +1,11 @@
 /* Render a hand-made reel page (tools/reels/*.html, exposes window.render(t) and window.DURATION) to MP4.
-   usage: node tools/reel-render.cjs tools/reels/ladder.html out.mp4            (1080×1920, 30 fps; --size 1920x1080 for landscape)
+   usage: node tools/reel-render.cjs tools/reels/ladder.html out.mp4            (1080×1920, 30 fps; --size 1920x1080 for landscape, --fps 60)
           node tools/reel-render.cjs tools/reels/ladder.html out.mp4 --preview 3,8,17   (JPEG stills only)
           node tools/reel-render.cjs tools/reels/ice.html proof.mp4 --range 0,12        (only seconds 0–12, e.g. a proof-of-motion)
    BASE (env) optional; by default the repo is served to the page by request interception. */
 const {chromium}=require('playwright'), fs=require('fs'), {spawn}=require('child_process');
 const [page,out]=process.argv.slice(2), A=process.argv, pi=A.indexOf('--preview'), PRE=pi>0?A[pi+1].split(',').map(Number):null;
-const BASE=process.env.BASE||'http://reel.local/', FPS=30;
+const BASE=process.env.BASE||'http://reel.local/', fi=A.indexOf('--fps'), FPS=fi>0?+A[fi+1]:30;
 /* serve the repo through request interception (no local web server needed) */
 const LOCAL='http://reel.local/';
 async function serveRepo(pg){ const fs=require('fs'), path=require('path'), root=path.join(__dirname,'..');

@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ريلز · الفكرة 1 · الخزان</title>
+<link rel="stylesheet" href="../../v2/lib/katex/katex.min.css">
+<script src="../../v2/lib/katex/katex.min.js"></script>
+<script src="timeline.js"></script>
+<script type="importmap">{"imports":{"three":"../lib/three-0.170.0.module.min.js"}}</script>
+<style>
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-ar-500.woff2) format("woff2");font-weight:500;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-ar-700.woff2) format("woff2");font-weight:700;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-lat-500.woff2) format("woff2");font-weight:500;unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-lat-700.woff2) format("woff2");font-weight:700;unicode-range:U+0000-00FF,U+2000-206F}
+/* identity: deep navy · electric blue = variables · turquoise = relations · gold = results · warm white = text */
+:root{--navy:#040a1c;--eb:#4da6ff;--tq:#2ee6c8;--au:#f5c66b;--ww:#fff4e2;--co:#ff9b85;--mute:#93a6c9}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#02050d;overflow:hidden;height:100%}
+body{font-family:Plex,system-ui,sans-serif;color:var(--ww)}
+#stage{position:absolute;left:0;top:0;width:1080px;height:1920px;overflow:hidden;transform-origin:0 0;background:radial-gradient(1000px 900px at 50% 30%,#12305e 0%,#0a1a3c 40%,#040a1c 75%,#02050d 100%)}
+canvas#gl{position:absolute;inset:0;width:1080px;height:1920px}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 36%,transparent 52%,rgba(0,0,0,.62) 100%);pointer-events:none}
+.lbl{position:absolute;opacity:0;font-weight:700;white-space:nowrap;transform:translate(-50%,-50%);text-shadow:0 3px 16px rgba(0,0,0,.95);direction:ltr;pointer-events:none}
+.chip{position:absolute;opacity:0;direction:ltr;white-space:nowrap;transform:translate(-50%,-50%);font-size:40px;font-weight:700;padding:6px 22px;border-radius:18px;background:rgba(4,10,26,.86);border:2px solid currentColor;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+#tag{position:absolute;left:90px;right:180px;top:232px;text-align:center;font-size:32px;font-weight:700;color:var(--mute);opacity:0;letter-spacing:.5px}
+#tag b{color:var(--tq)}
+#hook{position:absolute;left:90px;right:180px;top:1180px;text-align:center;font-size:84px;font-weight:700;line-height:1.25;opacity:0;text-shadow:0 10px 40px rgba(0,0,0,.8)}
+#hook em{font-style:normal;color:var(--au)}
+#eqL{position:absolute;inset:0;pointer-events:none}
+.tk{position:absolute;left:0;top:0;white-space:nowrap;direction:ltr;transform-origin:50% 50%;will-change:transform,opacity}
+#meas{position:absolute;left:-5000px;top:0;visibility:hidden}
+#meas .row{display:flex;align-items:center;justify-content:center;gap:18px;direction:ltr;white-space:nowrap}
+#meas .col{display:flex;flex-direction:column;align-items:center;gap:30px;width:810px}
+.box{padding:6px 26px;border-radius:22px;border:4px solid var(--au);background:rgba(245,198,107,.08);box-shadow:0 0 50px rgba(245,198,107,.3)}
+#cap{position:absolute;left:90px;right:180px;top:1440px;text-align:center;font-size:44px;font-weight:700;line-height:1.3}
+#cap span{display:inline-block;background:rgba(3,8,20,.72);padding:6px 24px;border-radius:16px}
+#mid{position:absolute;left:90px;right:180px;top:1180px;text-align:center;opacity:0}
+#mid .a{font-size:70px;font-weight:700} #mid .a em{font-style:normal;color:var(--tq)} #mid .a b{color:var(--au)}
+#brand{position:absolute;left:90px;right:180px;top:1330px;text-align:center;opacity:0}
+#brand .n{font-size:62px;font-weight:700;background:linear-gradient(90deg,var(--eb),var(--tq),var(--au));-webkit-background-clip:text;background-clip:text;color:transparent}
+#brand .s{font-size:30px;color:var(--mute);margin-top:6px}
+#tl{position:absolute;left:90px;top:300px;font-size:28px;font-weight:700;color:var(--mute);opacity:0;direction:rtl}
+#fade{position:absolute;inset:0;background:#02050d;pointer-events:none}
+#play{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);font:inherit;font-size:20px;font-weight:700;color:#04122b;background:var(--tq);border:0;border-radius:14px;min-height:48px;padding:0 26px;cursor:pointer;z-index:9}
+body.render #play{display:none}
+</style></head><body>
+<div id="stage">
+ <canvas id="gl" width="1080" height="1920"></canvas>
+ <div id="vig"></div>
+ <div id="tag">[3−1] · <b>الفكرة 1: قانون شكل هندسي</b> · مثال 1 ص 92</div>
+ <div id="tl"></div>
+ <div class="lbl" id="Lb1" style="font-size:48px;color:var(--ww)">2 m</div>
+ <div class="lbl" id="Lb2" style="font-size:48px;color:var(--ww)">2 m</div>
+ <div class="lbl" id="Lh" style="font-size:56px;color:var(--eb)">h</div>
+ <div class="lbl" id="LA" style="font-size:46px;color:var(--tq)">A</div>
+ <div class="chip" id="Cq" style="color:var(--co)">dV/dt = −0.4 m³/h</div>
+ <div class="chip" id="Ch" style="color:var(--eb)">dh/dt = ?</div>
+ <div class="chip" id="Cl" style="color:var(--au);font-size:34px;direction:rtl"></div>
+ <div class="lbl" id="R1" style="font-size:34px;color:var(--au)">−10 cm</div>
+ <div class="lbl" id="R2" style="font-size:34px;color:var(--au)">−10 cm</div>
+ <div class="lbl" id="R3" style="font-size:34px;color:var(--au)">−10 cm</div>
+ <div id="hook">كم ينخفض الماء<br><em>كل ساعة؟</em></div>
+ <div id="eqL"></div>
+ <div id="mid"><div class="a">قاعدة <em>ثابتة</em> ⇐ معدل <b>ثابت</b></div></div>
+ <div id="brand"><div class="n">الرياضيات الحية</div><div class="s">السادس العلمي · المعدلات المرتبطة بالزمن</div></div>
+ <div id="cap"><span></span></div>
+ <div id="meas"></div>
+ <div id="fade"></div>
+</div>
+<button id="play">▶ معاينة مع الصوت</button>
+<audio id="aud" src="audio/reel-mix.m4a" preload="auto"></audio>
+<script type="module">
+import * as THREE from 'three';
+const $=id=>document.getElementById(id);
+const RENDER=new URLSearchParams(location.search).has('render'); if(RENDER) document.body.classList.add('render');
+const TLm={}; window.TL.forEach(([k,s,d])=>TLm[k]={s,d}); const S=k=>TLm[k].s, E=k=>TLm[k].s+TLm[k].d;
+const DUR=window.TL_END; window.DURATION=DUR;
+const cl=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)), lerp=(a,b,k)=>a+(b-a)*k;
+const eio=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2, eo=u=>1-Math.pow(1-u,3);
+/* anticipation + follow-through: dips slightly back, overshoots slightly, settles */
+const back=u=>{ const c=1.4; return 1+(c+1)*Math.pow(u-1,3)+c*Math.pow(u-1,2); };
+const ramp=(t,a,d)=>cl((t-a)/d), win=(t,a,b,fi=.5,fo=.5)=>cl((t-a)/fi)*cl((b-t)/fo);
+
+/* ================= the book's example (مثال 1 ص 92) — one source of truth =================
+   square base, side a = 2 m ⇒ A = 4 m² (constant) · dV/dτ = −0.4 m³/h (leak) · V = A·h = 4h
+   ⇒ dV/dτ = 4·dh/dτ ⇒ dh/dτ = −0.4/4 = −0.1 m/h (−10 cm every hour, at every instant).
+   Not given in the book (drawing only): tank height 2.4 m, starting level 2 m, time-lapse rates (shown on screen). */
+const a=2, A=a*a, Q=-0.4, H=2.4, h0=2.0, DHDT=Q/A;
+/* real time τ (hours) as a function of film time t: three draining windows, frozen otherwise */
+const W=[[0.0,6.0,4.0],   /* 4 h in 6 s = ×2400, as written on screen */
+ [S('r3')+0.9,S('r3')+3.9,1.0],[S('y1')+0.6,S('y1')+6.6,3.0]];   /* [t0,t1,hours] */
+function tau(t){ let x=0; for(const [t0,t1,hr] of W) x+=hr*cl((t-t0)/(t1-t0)); return x; }
+const hAt=t=>h0+DHDT*tau(t);
+const flowing=t=>W.some(([t0,t1])=>t>t0&&t<t1);
+
+/* ================= three.js ================= */
+const R=new THREE.WebGLRenderer({canvas:$('gl'),antialias:true,alpha:true,preserveDrawingBuffer:true});
+R.setPixelRatio(1); R.setSize(1080,1920,false); R.setClearColor(0,0);
+const scene=new THREE.Scene(), cam=new THREE.PerspectiveCamera(36,1080/1920,.05,200);
+const hemi=new THREE.HemisphereLight(0xbfdcff,0x0a1830,.7); scene.add(hemi);
+const key=new THREE.DirectionalLight(0xffffff,1.5); scene.add(key);
+const rim=new THREE.DirectionalLight(0x4da6ff,.9); rim.position.set(-5,3,-4); scene.add(rim);
+const goldL=new THREE.PointLight(0xf5c66b,0,12); goldL.position.set(0,3.2,2.2); scene.add(goldL);
+/* coordinate-grid floor */
+const fc=document.createElement('canvas'); fc.width=fc.height=512; { const x=fc.getContext('2d'); x.fillStyle='#0c1d3f'; x.fillRect(0,0,512,512); x.strokeStyle='rgba(77,166,255,.16)'; x.lineWidth=2; for(let i=0;i<=16;i++){ x.beginPath(); x.moveTo(i*32,0); x.lineTo(i*32,512); x.stroke(); x.beginPath(); x.moveTo(0,i*32); x.lineTo(512,i*32); x.stroke(); } }
+const ft=new THREE.CanvasTexture(fc); ft.wrapS=ft.wrapT=THREE.RepeatWrapping; ft.repeat.set(5,5); ft.colorSpace=THREE.SRGBColorSpace;
+const floorM=new THREE.MeshStandardMaterial({map:ft,roughness:.9,transparent:true}); const floor=new THREE.Mesh(new THREE.CircleGeometry(10,64),floorM); floor.rotation.x=-Math.PI/2; floor.position.y=-.36; scene.add(floor);
+/* a few slow light particles at several depths (parallax with the camera) */
+const PN=70, pg=new THREE.BufferGeometry(), pp=new Float32Array(PN*3); for(let i=0;i<PN;i++){ const r=4+((i*37)%60)/6, th=i*2.399; pp[i*3]=r*Math.cos(th); pp[i*3+1]=-.2+((i*53)%70)/12; pp[i*3+2]=r*Math.sin(th)-2; }
+pg.setAttribute('position',new THREE.BufferAttribute(pp,3)); const dust=new THREE.Points(pg,new THREE.PointsMaterial({color:0x9fd2ff,size:.05,transparent:true,opacity:.45,depthWrite:false})); scene.add(dust);
+/* stand, glass tank, water */
+const standM=new THREE.MeshStandardMaterial({color:0x22324f,metalness:.5,roughness:.5,transparent:true}); const stand=new THREE.Mesh(new THREE.BoxGeometry(2.3,.34,2.3),standM); stand.position.y=-.19; scene.add(stand);
+const glassM=new THREE.MeshPhysicalMaterial({color:0xcfe8ff,transparent:true,opacity:.13,roughness:.05,clearcoat:1,side:THREE.DoubleSide,depthWrite:false});
+const glass=new THREE.Mesh(new THREE.BoxGeometry(a,H,a),glassM); glass.position.y=H/2; scene.add(glass);
+const edgeM=new THREE.LineBasicMaterial({color:0xd8f1ff,transparent:true,opacity:.85}); const edges=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(a,H,a)),edgeM); edges.position.y=H/2; scene.add(edges);
+const waterM=new THREE.MeshPhysicalMaterial({color:0x2f8de0,transparent:true,opacity:.62,roughness:.15,emissive:0x0b3a77,emissiveIntensity:.35,depthWrite:false});
+const water=new THREE.Mesh(new THREE.BoxGeometry(1,1,1),waterM); scene.add(water);
+const wEdgeM=new THREE.LineBasicMaterial({color:0x2ee6c8,transparent:true,opacity:0}); const wEdge=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1,1,1)),wEdgeM); scene.add(wEdge);
+const surfM=new THREE.MeshBasicMaterial({color:0x8fd8ff,transparent:true,opacity:.35,depthWrite:false,side:THREE.DoubleSide}); const surf=new THREE.Mesh(new THREE.PlaneGeometry(a*.996,a*.996),surfM); surf.rotation.x=-Math.PI/2; scene.add(surf);
+const baseM=new THREE.MeshBasicMaterial({color:0x2ee6c8,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide}); const baseA=new THREE.Mesh(new THREE.PlaneGeometry(a,a),baseM); baseA.rotation.x=-Math.PI/2; baseA.position.y=.012; scene.add(baseA);
+const layerM=new THREE.MeshBasicMaterial({color:0xf5c66b,transparent:true,opacity:0,depthWrite:false,depthTest:false}); const layer=new THREE.Mesh(new THREE.BoxGeometry(a*1.003,1,a*1.003),layerM); layer.renderOrder=8; scene.add(layer);
+const layerEM=new THREE.LineBasicMaterial({color:0xffe3a0,transparent:true,opacity:0}); const layerE=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1,1,1)),layerEM); scene.add(layerE);
+/* payoff: one gold ring per hour, at the level reached */
+const rings=[0,1,2].map(()=>{ const m=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(a*1.03,a*1.03)),new THREE.LineBasicMaterial({color:0xf5c66b,transparent:true,opacity:0})); m.rotation.x=-Math.PI/2; scene.add(m); return m; });
+/* tap, stream, puddle */
+const tapM=new THREE.MeshStandardMaterial({color:0xb8c4d6,metalness:.8,roughness:.3,transparent:true}); const tap=new THREE.Mesh(new THREE.CylinderGeometry(.07,.07,.32,20),tapM); tap.rotation.x=Math.PI/2; tap.position.set(0,.12,a/2+.14); scene.add(tap);
+const drops=[...Array(26)].map(()=>{ const m=new THREE.Mesh(new THREE.SphereGeometry(.035,10,8),new THREE.MeshBasicMaterial({color:0x8fd8ff,transparent:true})); scene.add(m); return m; });
+const pudM=new THREE.MeshStandardMaterial({color:0x2f8de0,transparent:true,opacity:.45,roughness:.1,depthWrite:false}); const puddle=new THREE.Mesh(new THREE.CircleGeometry(1,48),pudM); puddle.rotation.x=-Math.PI/2; puddle.position.set(0,-.35,a/2+.75); scene.add(puddle);
+/* leak arrow (cone + shaft) */
+const arrM=new THREE.MeshBasicMaterial({color:0xff9b85,transparent:true,opacity:0,depthTest:false});
+const arr=new THREE.Group(); { const sh=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,.5,12),arrM), hd=new THREE.Mesh(new THREE.ConeGeometry(.09,.2,16),arrM); sh.position.y=.25; hd.position.y=.6; arr.add(sh,hd); arr.rotation.x=Math.PI/2; arr.position.set(0,.12,a/2+.32); arr.renderOrder=9; scene.add(arr); }
+/* measure tubes */
+const tube=(col,r=.022)=>{ const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,1,10),new THREE.MeshBasicMaterial({color:col,transparent:true,depthTest:false})); m.renderOrder=9; scene.add(m); return m; };
+const setT=(m,p,q,op)=>{ const d=new THREE.Vector3().subVectors(q,p); m.scale.set(1,Math.max(d.length(),1e-3),1); m.position.copy(p).addScaledVector(d,.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.clone().normalize()); m.material.opacity=op; m.visible=op>.01&&d.length()>1e-3; };
+const mB1=tube(0xfff4e2), mB2=tube(0xfff4e2), mH=tube(0x4da6ff,.028), mL=tube(0xf5c66b,.032);
+const V3=(x,y,z)=>new THREE.Vector3(x,y,z);
+
+/* ================= camera: keys [t, dist, elev°, azim°, targetY, shiftY px (tank higher in frame)] ================= */
+const KEYS=[[0,11,6,70,1.0,260],[0.5,10,8,62,1.0,260],[S('h1')+2.5,8.0,20,36,1.0,300],[S('p1')-0.4,8.2,22,32,1.0,330],
+ [S('p1')+.4,7.4,38,30,.6,330],[S('p2')+.5,6.8,14,8,.5,330],[S('p3'),7.6,18,40,1.0,330],
+ [S('t1')-0.4,8.0,20,34,1.0,330],[S('t1')+1.6,9.6,34,30,1.0,360],[S('t2'),9.2,48,32,.5,360],[S('r1'),9.4,30,30,1.0,360],
+ [S('r2'),9.2,26,28,1.0,360],[S('r3'),6.6,18,30,1.45,330],[S('s1'),8.6,24,30,1.1,360],[S('s3')+1,8.8,24,32,1.1,360],
+ [S('y1')-0.3,7.6,14,24,1.2,-160],[S('y1')+6.6,7.2,16,40,1.1,-160],[S('e1')-0.3,8.4,20,48,1.1,260],[DUR-1.2,10.4,8,64,1.0,260],[DUR,11,6,70,1.0,260]];
+const tgt=new THREE.Vector3();
+function rig(t){ let k=0; while(k<KEYS.length-2&&t>=KEYS[k+1][0]) k++; const p=KEYS[k], q=KEYS[k+1], u=eio(cl((t-p[0])/Math.max(.001,q[0]-p[0]))), F=i=>lerp(p[i],q[i],u);
+  const d=F(1)*1.75, el=F(2)*Math.PI/180, az=(F(3)+2*Math.sin(t*.21))*Math.PI/180; tgt.set(0,F(4),0);
+  cam.position.set(d*Math.cos(el)*Math.sin(az),tgt.y+d*Math.sin(el),d*Math.cos(el)*Math.cos(az)); cam.lookAt(tgt);
+  cam.setViewOffset(1080,1920,0,F(5),1080,1920); cam.updateMatrixWorld(); }
+const proj=v=>{ const p=v.clone().project(cam); return {x:(p.x+1)/2*1080,y:(1-p.y)/2*1920}; };
+const place=(id,v,o,dx=0,dy=0,sc=1)=>{ const e=$(id), p=proj(v); e.style.left=(p.x+dx)+'px'; e.style.top=(p.y+dy)+'px'; e.style.opacity=o; e.style.transform=`translate(-50%,-50%) scale(${sc})`; return {x:p.x+dx,y:p.y+dy}; };
+
+/* ================= equations with transform matching =================
+   Each state is a list of rows of tokens [key, tex, color].  Tokens that keep their key between two states slide
+   from the old place to the new one (cross-fading if the symbol itself changes: V → dV/dt).  `from` sends a new
+   token in from a point of the 3D scene (a measure, the leak, the ruler): the symbol literally leaves the object.
+   `into` lists old tokens that collapse into a new one (−0.4 and 4 → the fraction). */
+const C={V:'#ff9b85',h:'#4da6ff',k:'#2ee6c8',w:'#fff4e2',g:'#f5c66b'};
+const col=(c,tx)=>`{\\color{${c}}${tx}}`;
+const ST=[
+ {t:S('t1')+1.2, y:1250, s:1, rows:[[['V','V',C.V],['e1','=',C.w],['A','A',C.k],['h','h',C.h]]], from:{V:'water',A:'base',h:'hl'}},
+ {t:S('t2')+.4, y:1220, s:1, rows:[[['V','V',C.V],['e1','=',C.w],['A','A',C.k],['h','h',C.h]],[['A2','A',C.k],['e2','=',C.w],['b1','(2)',C.w],['b2','(2)',C.w],['e3','=',C.w],['four','4',C.k],['m2','\\text{m}^2',C.k]]], from:{A2:'base',b1:'b1',b2:'b2'}},
+ {t:S('r1')+.2, y:1250, s:1, rows:[[['V','V',C.V],['e1','=',C.w],['four','4',C.k],['h','h',C.h]]], box:'all'},
+ {t:S('r2')+.2, y:1250, s:1, rows:[[['dL','\\dfrac{d}{dt}',C.w],['V','V',C.V],['e1','=',C.w],['dR','\\dfrac{d}{dt}',C.w],['pl','(',C.w],['four','4',C.k],['h','h',C.h],['pr',')',C.w]]]},
+ {t:S('r2')+.9, y:1250, s:1, rows:[[['V','\\dfrac{dV}{dt}',C.V],['e1','=',C.w],['four','4',C.k],['h','\\dfrac{dh}{dt}',C.h]]], into:{V:['dL'],h:['dR','pl','pr']}},
+ {t:S('s1')+.6, y:1250, s:1, rows:[[['q','-0.4',C.V],['e1','=',C.w],['four','4',C.k],['h','\\dfrac{dh}{dt}',C.h]]], from:{q:'leak'}, into:{q:['V']}},
+ {t:S('s2')+.5, y:1250, s:1, rows:[[['h','\\dfrac{dh}{dt}',C.h],['e1','=',C.w],['fr','\\dfrac{-0.4}{4}',C.w]]], into:{fr:['q','four']}},
+ {t:S('s3')+.25, y:1250, s:1.08, rows:[[['h','\\dfrac{dh}{dt}',C.h],['e1','=',C.w],['res','-0.1\\ \\text{m/h}',C.g]]], into:{res:['fr']}, box:'res'},
+ {t:S('y1')-.3, y:470, s:.72, rows:[[['h','\\dfrac{dh}{dt}',C.h],['e1','=',C.w],['res','-0.1\\ \\text{m/h}',C.g]]], box:'res'},
+ {t:S('e1')-.3, y:470, s:.72, rows:[], },
+];
+const meas=$('meas'), eqL=$('eqL'), TR=.75;
+const els={};   /* `${state}:${key}` → element */
+ST.forEach((st,si)=>{ const colD=document.createElement('div'); colD.className='col'; st.rows.forEach(r=>{ const rw=document.createElement('div'); rw.className='row';
+  r.forEach(([k,tx,c])=>{ const sp=document.createElement('span'); sp.dataset.k=k; katex.render(col(c,tx),sp,{throwOnError:false}); sp.style.fontSize='92px'; if(st.box===k) sp.classList.add('box'); rw.append(sp);
+    const e=sp.cloneNode(true); e.className='tk'+(st.box===k?' box':''); e.style.opacity=0; eqL.append(e); els[si+':'+k]=e; });
+  colD.append(rw); }); if(st.box==='all') colD.firstChild&&colD.firstChild.classList.add('box'); meas.append(colD); st.col=colD; });
+let LAY=null;
+function measure(){ LAY=ST.map(st=>{ const c=st.col.getBoundingClientRect(), cx=c.left+c.width/2, cy=c.top+c.height/2, m={};
+  st.col.querySelectorAll('[data-k]').forEach(sp=>{ const r=sp.getBoundingClientRect(); m[sp.dataset.k]={x:540+(r.left+r.width/2-cx)*st.s, y:st.y+(r.top+r.height/2-cy)*st.s, w:r.width, h:r.height}; });
+  return m; }); }
+function eqFrame(t,anch){
+  if(!LAY) measure();
+  let c=-1; ST.forEach((st,i)=>{ if(t>=st.t) c=i; });
+  Object.values(els).forEach(e=>{ e.style.opacity=0; });
+  if(c<0) return;
+  const st=ST[c], u=cl((t-st.t)/TR), ue=eio(u), ub=back(u), prev=c>0?ST[c-1]:null, Lp=c>0?LAY[c-1]:{}, Lc=LAY[c];
+  const put=(e,p,o,s)=>{ e.style.opacity=o; e.style.transform=`translate(${p.x-e.offsetWidth/2}px,${p.y-e.offsetHeight/2}px) scale(${s})`; };
+  const into=st.into||{}, from=st.from||{};
+  /* incoming tokens */
+  for(const k in Lc){ const e=els[c+':'+k], to=Lc[k]; let fr=null, s0=st.s;
+    if(Lp[k]) { fr=Lp[k]; s0=prev.s; } else if(into[k]&&Lp[into[k][0]]) { fr=Lp[into[k][0]]; s0=prev.s; } else if(from[k]&&anch[from[k]]) { fr=anch[from[k]]; s0=.45; }
+    if(fr){ const same=Lp[k]&&prev.rows.flat().find(x=>x[0]===k)[1]===st.rows.flat().find(x=>x[0]===k)[1];
+      put(e,{x:lerp(fr.x,to.x,ue),y:lerp(fr.y,to.y,ue)},same?1:ue,lerp(s0,st.s,ue)*(from[k]&&!Lp[k]?(.9+.1*ub):1)); }
+    else put(e,{x:to.x,y:to.y+30*(1-ue)},ue,st.s*(.92+.08*ub));
+  }
+  /* outgoing tokens of the previous state (only during the transition) */
+  if(prev&&u<1) for(const k in Lp){ const e=els[(c-1)+':'+k]; if(!e) continue;
+    const sameTx=Lc[k]&&prev.rows.flat().find(x=>x[0]===k)[1]===st.rows.flat().find(x=>x[0]===k)[1]; if(sameTx) continue;
+    let to=Lc[k]; if(!to){ for(const nk in into) if(into[nk].includes(k)) to=Lc[nk]; }
+    const p=Lp[k]; if(to) put(e,{x:lerp(p.x,to.x,ue),y:lerp(p.y,to.y,ue)},1-ue,lerp(prev.s,st.s,ue)); else put(e,{x:p.x,y:p.y-30*ue},1-ue,prev.s); }
+}
+
+/* ================= captions (one short line per narration beat) ================= */
+const CAP={p1:'القاعدة مربعة · الضلع 2 m',p2:'تسرّب ⇐ الحجم يتناقص ⇐ إشارة سالبة',p3:'المطلوب: dh/dt',t1:'الماء = متوازي سطوح',t2:'A = 2 × 2 = 4 m² ثابتة',
+ r1:'العلاقة الرئيسية: V = 4h',r2:'نشتق بالنسبة للزمن t',r3:'كل ساعة: طبقة حجمها 4 × سُمكها',s1:'نعوّض dV/dt = −0.4',s2:'نقسم الطرفين على 4',s3:'',y1:'السالب = انخفاض · 10 cm كل ساعة',e1:''};
+const capBidi=s=>s.replace(/([A-Za-z0-9][A-Za-z0-9 =×·/²³.−\-]*[A-Za-z0-9²³?])/g,'<bdi dir="ltr">$1</bdi>');
+
+/* ================= frame ================= */
+function render(t){
+  rig(t);
+  const h=hAt(t), V=A*h, fl=flowing(t);
+  /* hook: darkness → a light sweep reveals the tank */
+  const lit=eo(cl((t-.1)/1.6)), endDim=cl((t-(DUR-1.4))/1.2);
+  key.intensity=1.6*lit*(1-endDim); key.position.set(6*Math.cos(1.2+lit*1.1),7,6*Math.sin(1.2+lit*1.1)); hemi.intensity=.7*lit*(1-endDim); rim.intensity=.9*(.3+.7*lit);
+  /* transformation: glass → turquoise wireframe model, back to the real tank for the payoff */
+  const mdl=cl((t-S('t1')+.4)/1.4)*(1-cl((t-S('y1')+.4)/1.2));
+  glassM.opacity=.13*(1-mdl); edgeM.color.setRGB(lerp(.85,.18,mdl),lerp(.95,.9,mdl),lerp(1,.78,mdl)); edgeM.opacity=.85;
+  wEdgeM.opacity=mdl; waterM.opacity=lerp(.62,.28,mdl); waterM.emissiveIntensity=lerp(.35,.15,mdl);
+  standM.opacity=tapM.opacity=1-.85*mdl; floorM.opacity=1-.5*mdl;
+  water.scale.set(a*.994,h,a*.994); water.position.y=h/2; wEdge.scale.set(a*.998,h,a*.998); wEdge.position.y=h/2; surf.position.y=h+.002;
+  drops.forEach((m,i)=>{ const ph=((t*1.7)+i/drops.length)%1; m.visible=fl; if(!fl) return; m.position.set(Math.sin(i*7.1)*.02,.12-ph*ph*.9,a/2+.3+ph*.45); m.material.opacity=.9*(1-ph*.5); });
+  const lost=A*(h0-h); puddle.scale.setScalar(.25+.45*Math.sqrt(Math.max(0,lost))); pudM.opacity=.45*(1-.85*mdl);
+  dust.rotation.y=t*.02; dust.material.opacity=.45*lit;
+  /* shot 2: givens drawn on the object */
+  const g1=cl((t-S('p1')-.3)/.7), g1o=g1*(1-cl((t-S('t2')-.4)/.5));   /* the "2 m" labels leave to become (2)(2) */
+  const e1=eo(g1);
+  setT(mB1,V3(-a/2,.03,a/2+.14),V3(-a/2+a*e1,.03,a/2+.14),g1*(1-cl((t-S('y1')+.4)/.6)));
+  setT(mB2,V3(a/2+.14,.03,a/2),V3(a/2+.14,.03,a/2-a*e1),g1*(1-cl((t-S('y1')+.4)/.6)));
+  const gq=cl((t-S('p2')-.6)/.6), gqo=gq*(1-cl((t-S('t1')+.4)/.6)), gqb=cl((t-S('s1')+.2)/.4)*(1-cl((t-S('s1')-.9)/.4));
+  arrM.opacity=Math.max(gqo,gqb); arr.scale.setScalar(.6+.4*eo(gq));
+  const gh=cl((t-S('p3')-.2)/.6);
+  setT(mH,V3(-a/2-.16,0,a/2),V3(-a/2-.16,h*eo(gh),a/2),gh);
+  const ba=cl((t-S('t2')-.2)/.6)*(1-cl((t-S('r1')-1)/.8)); baseM.opacity=.4*ba;
+  /* r3: one hour leaves as one layer (thickness 0.1 m) */
+  const L0=W[1][0], L1=W[1][1], ly=win(t,S('r3')-.1,S('s1')+.4,.5,.6), hTop=h0+DHDT*4, hL=Math.abs(DHDT);
+  layer.scale.set(1,Math.max(.002,t<L0?hL:hTop-h),1); layer.position.y=t<L0?hTop-hL/2:(h+hTop)/2; layerM.opacity=.5*ly*(t>L1?0:1);
+  layerE.scale.set(a*1.005,hL,a*1.005); layerE.position.y=hTop-hL/2; layerEM.opacity=ly;
+  setT(mL,V3(a/2+.18,hTop-hL,a/2),V3(a/2+.18,hTop,a/2),ly);
+  /* payoff: three hours, three equal steps of 10 cm */
+  const P0=W[2][0], P1=W[2][1], hP=h0+DHDT*5, pay=win(t,S('y1')-.2,S('e1')+1.2,.4,.8);
+  goldL.intensity=3*win(t,S('s3'),S('s3')+2.4,.3,1)+2*pay;
+  rings.forEach((m,i)=>{ const tk=P0+(i+1)*(P1-P0)/3; m.position.y=hP-.1*(i+1); m.material.opacity=pay*cl((t-tk+.15)/.3); });
+  if(!window.NO_GL) R.render(scene,cam);
+  /* anchors for symbols that leave the scene */
+  const anch={water:proj(V3(0,h/2,a/2)), base:proj(V3(0,.02,0)), hl:proj(V3(-a/2-.16,h/2,a/2)), b1:proj(V3(0,.03,a/2+.14)), b2:proj(V3(a/2+.14,.03,0)), leak:proj(V3(0,.12,a/2+.7))};
+  anch.hl.x-=50; anch.b1.y+=52; anch.b2.x+=64; anch.leak.y+=125;
+  /* floating labels */
+  place('Lb1',V3(0,.03,a/2+.14),g1o,0,52,.9+.1*back(g1)); place('Lb2',V3(a/2+.14,.03,0),g1o,64,30,.9+.1*back(g1));
+  place('Lh',V3(-a/2-.16,h/2,a/2),gh*(1-cl((t-S('y1')+.4)/.4))+cl((t-S('y1')+.2)/.4)*pay,-50,0);
+  place('LA',V3(0,.03,0),ba*(1-cl((t-S('t2')-.4)/.4)),0,0);
+  const cq=place('Cq',V3(0,.12,a/2+.7),gqo,0,125,.85+.15*back(gq));
+  place('Ch',V3(-a/2-.16,h*eo(gh),a/2),gh*(1-cl((t-S('t1')+.4)/.6)),-40,-70,.85+.15*back(gh));
+  $('Cl').innerHTML=t<L1?'طبقة سُمكها <bdi dir=ltr>Δh</bdi> ⇐ حجمها <bdi dir=ltr>4·Δh</bdi>':'ساعة: <bdi dir=ltr>Δh = 0.1 m</bdi> ⇐ <bdi dir=ltr>4 × 0.1 = 0.4 m³</bdi>';
+  place('Cl',V3(0,hTop,a/2),ly,0,-90);
+  ['R1','R2','R3'].forEach((id,i)=>place(id,V3(a/2+.1,hP-.1*(i+1),a/2),rings[i].material.opacity,120,0));
+  /* type layers */
+  $('tag').style.opacity=win(t,S('p1')-.2,S('e1')-.4,.5,.5);
+  const ho=cl((t-.25)/.5)*(1-cl((t-S('p1')+.6)/.4)); $('hook').style.opacity=ho; $('hook').style.filter=`blur(${(1-eo(cl((t-.25)/.6)))*12}px)`; $('hook').style.transform=`scale(${1.08-.08*eo(cl((t-.25)/.9))})`;
+  $('tl').style.opacity=fl?1:0; $('tl').textContent=t<W[0][1]+.1?'زمن مسرَّع ×'+Math.round(W[0][2]*3600/(W[0][1]-W[0][0]))+' · t = '+tau(t).toFixed(1)+' h':'t = '+tau(t).toFixed(1)+' h';
+  eqFrame(t,anch);
+  let ck=null; window.TL.forEach(([k,s,d])=>{ if(t>=s-.15&&t<s+d+.45) ck=k; }); const tx=ck?(CAP[ck]||''):''; const cs=$('cap').firstChild;
+  if(cs.dataset.k!==tx){ cs.dataset.k=tx; cs.innerHTML=capBidi(tx); } $('cap').style.opacity=tx?1:0;
+  $('mid').style.opacity=win(t,S('e1')-.2,DUR-.9,.5,.5); $('mid').style.transform=`translateY(${20*(1-eo(cl((t-S('e1')+.2)/.6)))}px)`;
+  $('brand').style.opacity=win(t,S('e1')+1.0,DUR-.6,.6,.5);
+  $('fade').style.opacity=t<.1?1:Math.max(cl(1-(t-.1)/.4)*0,endDim*.9);
+  window.STATE={t,h,V,tau:tau(t),flowing:fl,mdl};
+}
+window.render=render;
+
+/* ================= preview player ================= */
+const aud=$('aud'); let playing=false;
+function fit(){ const st=$('stage'); if(RENDER) return; const k=Math.min(innerWidth/1080,innerHeight/1920); st.style.transform=`translate(${(innerWidth-1080*k)/2}px,${(innerHeight-1920*k)/2}px) scale(${k})`; }
+function tick(){ if(!playing) return; const t=aud.currentTime; render(Math.min(t,DUR)); if(aud.ended){ playing=false; $('play').textContent='↺ إعادة'; return; } requestAnimationFrame(tick); }
+$('play').onclick=()=>{ if(playing){ aud.pause(); playing=false; $('play').textContent='▶ متابعة'; } else { if(aud.ended) aud.currentTime=0; aud.play(); playing=true; $('play').textContent='⏸ إيقاف'; tick(); } };
+addEventListener('resize',fit); fit();
+document.fonts.ready.then(()=>{ measure(); render(RENDER?0:S('r1')+1); }); render(0);
+</script>
+</body></html>
