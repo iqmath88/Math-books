@@ -1,5 +1,8 @@
 /* Film part of a v2 lesson as an MP4 (1920×1080, 30 fps, silent).
-   usage: node tools/lesson-video.cjs <book> <fromKey> <toKey> <out.mp4> [--sub "مثال 1"] [--next "..."] [--end "الفكرة"] [--vertical] [--preview]
+   usage: node tools/lesson-video.cjs <book> <fromKey> <toKey> <out.mp4> [--sub "مثال 1"] [--next "..."] [--end "الفكرة"] [--vertical] [--preview] [--sol] [--narr narration.json]
+     --sol: an exercise's solution is filmed too, on its own page(s) after the question
+     --narr: {"<step key>" | "<key>#sol1": "spoken text"} — each page lasts at least as long as its narration
+       (≈ 2 words/s + 1.2 s); <out>.timeline.json lists every page's start time and narration
      --vertical: 1080×1920 for reels/stories (drawing on top, steps below, bottom kept clear for the app's captions)
      e.g. node tools/lesson-video.cjs g12c3 rates-3-0 rates-3-4 tank.mp4 --sub "مثال 1"
    BASE (env) defaults to http://localhost:8770/math-books/ — serve the repo's parent folder first.
@@ -7,19 +10,20 @@
    frame is exact. Step text appears piece by piece; one MP4 per step, joined with -c copy. */
 const {chromium}=require('playwright'), fs=require('fs'), path=require('path'), {spawn,execFileSync}=require('child_process');
 const A=process.argv.slice(2), opt=k=>{ const i=A.indexOf(k); return i>=0?A[i+1]:null; };
-const [book,fromKey,toKey,out]=A; const SUB=opt('--sub')||'', NEXT=opt('--next')||'', END=opt('--end')||'', PREVIEW=A.includes('--preview'), VERT=A.includes('--vertical');
+const [book,fromKey,toKey,out]=A; const SUB=opt('--sub')||'', NEXT=opt('--next')||'', END=opt('--end')||'', PREVIEW=A.includes('--preview'), VERT=A.includes('--vertical'), SOL=A.includes('--sol');
+const NARR=opt('--narr')?JSON.parse(fs.readFileSync(opt('--narr'),'utf8')):{};
 const BASE=process.env.BASE||'http://localhost:8770/math-books/', FPS=30, Wd=VERT?1080:1920, Ht=VERT?1920:1080;
 if(!book||!fromKey||!toKey||!out){ console.error('usage: node tools/lesson-video.cjs <book> <fromKey> <toKey> <out.mp4> [--sub ..] [--next ..] [--preview]'); process.exit(1); }
 const lesson=fromKey.split('-')[0];
 
 (async()=>{
- const b=await chromium.launch(), pg=await b.newPage({viewport:{width:Wd,height:Ht}});
+ const b=await chromium.launch(), pg=await b.newPage({viewport:{width:Wd,height:Ht}}); if(process.env.VDEBUG) pg.on('console',m=>console.log(m.text()));
  await pg.addInitScript(()=>{ try{ localStorage.setItem('lb-theme','light'); localStorage.setItem('lb-role','student'); }catch(e){} });
  await pg.clock.install({time:new Date('2026-01-01T00:00:00')});
  await pg.goto(`${BASE}v2/${book}.html#l=${lesson}`);
  for(let i=0;i<30;i++){ await pg.clock.runFor(100); if(await pg.$('.step .katex')) break; await pg.waitForTimeout(100); }
  await pg.evaluate(()=>document.fonts.ready);
- const segs=await pg.evaluate(({fromKey,toKey,SUB,NEXT,VERT})=>{
+ const segs=await pg.evaluate(({fromKey,toKey,SUB,NEXT,VERT,SOL,NARR})=>{
   const B=window.BOOK, L=LB.LES.find(l=>location.hash.includes('l='+l.id)), all=[...document.querySelectorAll('.story .step')];
   const i0=all.findIndex(s=>s.dataset.key===fromKey), i1=all.findIndex(s=>s.dataset.key===toKey), steps=all.slice(i0,i1+1);
   const D=document, mk=(t,c,h='')=>{ const e=D.createElement(t); if(c) e.className=c; e.innerHTML=h; return e; };
@@ -70,11 +74,9 @@ const lesson=fromKey.split('-')[0];
    <div id="fR"><div id="fQ" hidden><b class="h">${qTitle}</b>${qText}</div><div id="fS"><div class="in"></div></div></div>
    <div id="fBot"><span>إعداد وتصميم: الأستاذ فائز الحمداني</span><div class="dots"></div></div>
    <div id="fCard" hidden></div>`));
-  const labels=steps.map((s,i)=>i===0?'السؤال':(s.querySelector(':scope > .lbl')?.textContent.trim()||'خطوة '+i));
-  D.querySelector('#fBot .dots').innerHTML=labels.map(l=>`<span>${esc(l)}</span>`).join('');
   const read=e=>{ const n=(e.innerText||'').replace(/\s+/g,' ').length; return Math.min(6.5,Math.max(1.8,0.75+n*0.05)); };
   /* build each step's content once, keep it detached */
-  const built=steps.map((st,i)=>{ const c=st.cloneNode(true);
+  const built0=steps.map((st,i)=>{ const c=st.cloneNode(true);
     c.querySelectorAll('.tadd,.tform,.tx,.hints,.genbox,.fb,.selfrow,.mk,button,input,.exams[hidden],.tnote').forEach(e=>e.remove());
     const box=mk('div','in'); const sn=c.querySelector(':scope > .sn')?.textContent, lb=c.querySelector(':scope > .lbl')?.innerHTML;
     if(i===0){ const ch=mk('div','chips'); c.querySelectorAll('.kind').forEach(k=>ch.append(k)); box.append(ch); }
@@ -83,7 +85,20 @@ const lesson=fromKey.split('-')[0];
     const units=[];
     [...c.children].forEach(ch=>{ if(/^(حرّك|اسحب|شغّل)/.test(ch.textContent.trim())) return;
       box.append(ch); units.push(ch); });
-    return {box,units,scene:st.dataset.scene,result:st.classList.contains('result')}; });
+    const sol=box.querySelector('.sol'); if(sol){ sol.remove(); units.splice(0,units.length,...units.filter(u=>u.isConnected&&box.contains(u))); }
+    return {box,units,scene:st.dataset.scene,result:st.classList.contains('result'),key:st.dataset.key,label:i===0?'السؤال':(lb?lb.replace(/<[^>]+>/g,'').trim():'')||'خطوة '+i,sol:SOL&&sol&&sol.textContent.trim()?sol:null}; });
+  /* --sol: the hidden solution becomes page(s) of its own: block parts stay whole, inline runs split at <br>, pages filled to the panel height */
+  const pages=[]; const Sm=D.querySelector('#fS');
+  built0.forEach(b=>{ pages.push(b); if(!b.sol) return;
+    const parts=[]; let cur=null; [...b.sol.childNodes].forEach(n=>{ if(n.nodeType===1&&/^(DIV|P|TABLE)$/.test(n.tagName)){ cur=null; parts.push(n); } else if(n.nodeName==='BR'){ cur=null; } else { if(!cur){ cur=mk('p','solp'); parts.push(cur); } cur.append(n); } });
+    if(parts[0]&&/^\s*الحل:?\s*$/.test(parts[0].textContent)) parts.shift();   /* the page header already says «الحل» */
+    const limit=(Sm.clientHeight-60)*0.78; let page=null, k=0;
+    const open=()=>{ k++; const box=mk('div','in'); box.style.setProperty('--fs','27px'); box.append(mk('div','hd',`<span class="n">✎</span><span>الحل${k>1?' (تابع)':''}</span>`)); page={box,units:[],scene:b.scene,result:true,key:b.key+'#sol'+k,label:k>1?'الحل (تابع)':'الحل'}; pages.push(page); Sm.innerHTML=''; Sm.append(box); };
+    open(); parts.forEach(u=>{ page.box.append(u); if(page.box.scrollHeight>limit&&page.units.length){ u.remove(); open(); page.box.append(u); } page.units.push(u); });
+    Sm.innerHTML=''; });
+  const built=pages;
+  const labels=built.map(b=>b.label);
+  D.querySelector('#fBot .dots').innerHTML=labels.map(l=>`<span>${esc(l)}</span>`).join('');
   window.FILM={built,read,labels,
    card(html){ const c=D.getElementById('fCard'); c.hidden=!html; c.innerHTML=html||''; },
    setup(i){ const S=D.querySelector('#fS'), b=built[i]; S.innerHTML=''; S.append(b.box); D.getElementById('fQ').hidden=i===0;
@@ -94,13 +109,15 @@ const lesson=fromKey.split('-')[0];
      D.querySelectorAll('#fBot .dots span').forEach((s,j)=>s.className=j<i?'done':j===i?'on':'');
      b.units.forEach(u=>{ u.classList.add('u'); u.style.opacity=0; });
      let t=0.5; b.times=b.units.map(u=>{ const s=t; t+=read(u); return s; }); b.len=t+2.2;
+     /* narration sets a floor: ≈ 2 words per second + breathing room; units spread over the spoken time */
+     const say=NARR[b.key]; if(say){ const need=say.trim().split(/\s+/).length/2.0+1.4; if(need>b.len){ const k=(need-2.2)/(t||1); b.times=b.times.map(x=>x*k); b.len=need; } }
      /* a result step («!») holds the drawing at the book's instant, like the app does */
      if(b.scene) LB.go(b.scene,b.result); return b.len; },
    at(i,t){ const b=built[i]; D.querySelector('#fS').style.opacity=Math.min(1,t/0.35); b.units.forEach((u,j)=>{ const k=Math.max(0,Math.min(1,(t-b.times[j])/0.5)); u.style.opacity=k; u.style.transform=`translateY(${(1-k)*14}px)`; }); }
   };
   dispatchEvent(new Event('resize'));
-  return {n:steps.length, title:D.getElementById('crB').textContent, no:L.no, grade:B.grade, chapter:B.chapter, kick, qTitle:[...q.querySelectorAll('h1,h2')].at(-1)?.textContent||''};
- },{fromKey,toKey,SUB,NEXT,VERT});
+  return {n:built.length, keys:built.map(b=>b.key), title:D.getElementById('crB').textContent, no:L.no, grade:B.grade, chapter:B.chapter, kick, qTitle:[...q.querySelectorAll('h1,h2')].at(-1)?.textContent||''};
+ },{fromKey,toKey,SUB,NEXT,VERT,SOL,NARR});
  await pg.clock.runFor(500);
 
  const tmp=fs.mkdtempSync(path.join(require('os').tmpdir(),'lessonvid-')); const files=[];
@@ -114,10 +131,12 @@ const lesson=fromKey.split('-')[0];
  const ttl=`<div class="k">الرياضيات الحيّة · ${segs.grade} · ${segs.chapter}</div><div class="t">${/^\d/.test(segs.no)?'['+segs.no+']':segs.no} ${segs.title}</div><div class="s">${SUB}${segs.qTitle?' · '+segs.qTitle:''}</div><div class="m">${segs.kick}</div><div class="a">إعداد وتصميم: الأستاذ فائز الحمداني</div>`;
  await pg.evaluate(h=>FILM.card(h),ttl); await segment('s00',3.2,async t=>{ if(t>2.7) await pg.evaluate(o=>document.getElementById('fCard').style.opacity=o,1-(t-2.7)/0.5); });
  await pg.evaluate(()=>FILM.card(''));
- for(let i=0;i<segs.n;i++){ const len=await pg.evaluate(i=>FILM.setup(i),i); await segment('s'+String(i+1).padStart(2,'0'),len,t=>pg.evaluate(([i,t])=>FILM.at(i,t),[i,t])); }
+ const TL=[{page:'title',start:0,len:3.2}]; let clock=3.2;
+ for(let i=0;i<segs.n;i++){ const len=await pg.evaluate(i=>FILM.setup(i),i); TL.push({page:segs.keys[i],start:+clock.toFixed(2),len:+len.toFixed(2),narration:NARR[segs.keys[i]]||''}); clock+=Math.round(len*FPS)/FPS; await segment('s'+String(i+1).padStart(2,'0'),len,t=>pg.evaluate(([i,t])=>FILM.at(i,t),[i,t])); }
  const end=`<div class="k">${segs.no?'['+segs.no+'] ':''}${segs.title} · ${SUB}</div>${END?`<div class="t" style="font-size:64px">${END}</div>`:''}${NEXT?`<div class="s" style="font-size:34px">التالي: ${NEXT}</div>`:''}<div class="m">iqmath88.github.io/Math-books</div><div class="a">إعداد وتصميم: الأستاذ فائز الحمداني</div>`;
  await pg.evaluate(h=>{ FILM.card(h); document.getElementById('fCard').style.opacity=0; },end);
  await segment('s99',3.5,async t=>pg.evaluate(o=>document.getElementById('fCard').style.opacity=o,Math.min(1,t/0.5)));
+ TL.push({page:'end',start:+clock.toFixed(2),len:3.5}); fs.writeFileSync(out.replace(/\.mp4$/,'')+'.timeline.json',JSON.stringify(TL,null,1));
  await b.close();
  if(!PREVIEW){ fs.writeFileSync(path.join(tmp,'list.txt'),files.map(f=>`file '${f}'`).join('\n'));
    execFileSync('ffmpeg',['-y','-loglevel','error','-f','concat','-safe','0','-i',path.join(tmp,'list.txt'),'-c','copy','-movflags','+faststart',out]);
