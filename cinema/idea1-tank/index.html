@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>الفكرة 1 · خزان يتسرب منه الماء</title>
+<link rel="stylesheet" href="../../v2/lib/katex/katex.min.css">
+<script src="../../v2/lib/katex/katex.min.js"></script>
+<script src="timeline.js"></script>
+<script type="importmap">{"imports":{"three":"../lib/three-0.170.0.module.min.js"}}</script>
+<style>
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-ar-500.woff2) format("woff2");font-weight:500;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-ar-700.woff2) format("woff2");font-weight:700;unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-lat-500.woff2) format("woff2");font-weight:500;unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:Plex;src:url(../../v2/lib/fonts/plex-lat-700.woff2) format("woff2");font-weight:700;unicode-range:U+0000-00FF,U+2000-206F}
+:root{--navy:#071a36;--cy:#38d6ff;--lc:#8ce9ff;--au:#ffc94a;--rd:#ff8f8f;--ink:#f4f8ff;--mute:#9db0cf;--panel:rgba(6,18,42,.82)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#02060f;overflow:hidden}
+body{font-family:Plex,system-ui,sans-serif;color:var(--ink)}
+/* the whole film is a 1920×1080 stage, scaled to the screen (iPad, smart board, laptop) */
+#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden;background:radial-gradient(1100px 800px at 32% 40%,#163a6b 0%,#0a1c3d 45%,#040b1d 80%)}
+canvas#gl{position:absolute;inset:0;width:1920px;height:1080px}
+.lbl{position:absolute;opacity:0;font-weight:700;white-space:nowrap;transform:translate(-50%,-50%);text-shadow:0 2px 12px rgba(0,0,0,.95);direction:ltr;pointer-events:none}
+#top{position:absolute;top:0;left:0;right:0;height:84px;display:flex;align-items:center;justify-content:space-between;padding:0 48px;background:linear-gradient(180deg,rgba(2,8,20,.85),transparent)}
+#top .t{font-size:30px;font-weight:700} #top .t small{font-size:22px;color:var(--mute);font-weight:500;margin-inline-start:14px}
+#top .sc{font-size:22px;color:var(--au);font-weight:700}
+#side{position:absolute;top:96px;right:40px;width:720px;bottom:120px;display:flex;flex-direction:column;gap:16px}
+.card{background:var(--panel);border:1.5px solid rgba(140,233,255,.28);border-radius:22px;padding:18px 24px;box-shadow:0 18px 50px rgba(0,0,0,.4);opacity:0}
+.card h3{font-size:22px;color:var(--mute);margin-bottom:6px;font-weight:700}
+#book .bt{font-size:27px;line-height:1.7}
+#book b{border-radius:8px;padding:0 6px;transition:none}
+.row{display:flex;justify-content:space-between;align-items:center;gap:14px;font-size:27px;font-weight:700;padding:6px 10px;border-radius:12px;opacity:.25}
+.row .v{direction:ltr;white-space:nowrap}
+.eqs{display:flex;flex-direction:column;align-items:center;gap:12px;direction:ltr}
+.eq{font-size:46px;opacity:0;white-space:nowrap}
+.tag{direction:rtl;font-size:20px;font-weight:700;border-radius:99px;padding:2px 14px;display:inline-block}
+.main{border:3px solid var(--au);background:rgba(255,201,74,.08);border-radius:18px;padding:4px 26px}
+.boxr{border:3px solid var(--lc);background:rgba(56,214,255,.1);border-radius:18px;padding:4px 26px;box-shadow:0 0 40px rgba(56,214,255,.25)}
+#q{position:absolute;left:280px;top:150px;width:860px;text-align:center;font-size:52px;font-weight:700;line-height:1.35;opacity:0;text-shadow:0 6px 30px rgba(0,0,0,.8)}
+#cap{position:absolute;left:60px;width:1060px;top:96px;text-align:center;font-size:30px;font-weight:700;opacity:0}
+#cap span{background:rgba(3,8,20,.78);padding:6px 20px;border-radius:14px;display:inline-block}
+.chip{position:absolute;direction:ltr;font-size:26px;font-weight:700;padding:4px 16px;border-radius:14px;background:rgba(5,13,31,.85);border:1.5px solid rgba(255,255,255,.18);white-space:nowrap;opacity:0}
+#c1{left:60px;top:100px;color:var(--lc)} #c2{left:60px;top:150px} #c3{left:60px;top:200px;color:var(--mute);font-size:21px;direction:rtl}
+#bar{position:fixed;left:0;right:0;bottom:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:linear-gradient(0deg,rgba(2,8,20,.95),rgba(2,8,20,.6));direction:rtl}
+#bar button{font:inherit;font-size:16px;font-weight:700;color:var(--ink);background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.2);border-radius:12px;min-height:44px;padding:0 14px;cursor:pointer;touch-action:manipulation}
+#bar button.on{background:var(--cy);color:#04122b;border-color:var(--cy)}
+#bar button:disabled{opacity:.35;cursor:default}
+#bar .stg{display:flex;gap:6px;flex-wrap:wrap}
+#bar .stg button{font-size:15px;padding:0 10px}
+#seek{flex:1;min-width:140px;height:44px;accent-color:var(--cy)}
+#hx{display:none;align-items:center;gap:8px;font-size:16px;font-weight:700;color:var(--au)} #hx input{width:180px;height:44px;accent-color:var(--au)}
+body.render #bar{display:none}
+#fade{position:absolute;inset:0;background:#000;pointer-events:none;opacity:0}
+</style></head><body>
+<div id="stage">
+ <canvas id="gl" width="1920" height="1080"></canvas>
+ <div id="top"><div class="t">[3−1] المعدلات المرتبطة · الفكرة 1: قانون شكل هندسي<small>مثال 1 · ص 92</small></div><div class="sc" id="scn"></div></div>
+ <div id="q">الماء ينخفض…<br>بأيّ معدل؟ وهل يتغيّر مع الزمن؟</div>
+ <div class="lbl" id="Lb1" style="font-size:34px;color:var(--au)">2 m</div>
+ <div class="lbl" id="Lb2" style="font-size:34px;color:var(--au)">2 m</div>
+ <div class="lbl" id="Lh" style="font-size:40px;color:var(--lc)">h</div>
+ <div class="lbl" id="Lq" style="font-size:30px;color:var(--rd)">dV/dt = −0.4 m³/h</div>
+ <div class="lbl" id="LA" style="font-size:34px;color:#fff">A = 4 m²</div>
+ <div class="lbl" id="Ld" style="font-size:28px;color:var(--au);direction:rtl"></div>
+ <div class="lbl" id="LH" style="font-size:20px;color:var(--mute)">ارتفاع الخزان غير معطى (للرسم فقط)</div>
+ <div class="chip" id="c1"></div><div class="chip" id="c2"></div><div class="chip" id="c3"></div>
+ <div id="side">
+  <div class="card" id="book"><h3>مثال 1 · ص 92 · نص الكتاب</h3><div class="bt">خزان مملوء بالماء على شكل متوازي سطوح مستطيلة قاعدته مربعة طول ضلعها <b id="k1" dir="ltr">2m</b> يتسرب منه الماء بمعدل <b id="k2" dir="ltr">0.4m³/h</b> جد <b id="k3">معدل تغير انخفاض الماء</b> في الخزان عند أي زمن t .</div></div>
+  <div class="card" id="giv"><h3>المعطيات والمطلوب</h3>
+   <div class="row" id="g1"><span>ضلع القاعدة (ثابت)</span><span class="v" style="color:var(--au)">2 m</span></div>
+   <div class="row" id="g2"><span>معدل تغيّر الحجم (تسرّب ⇐ سالب)</span><span class="v" style="color:var(--rd)">dV/dt = −0.4 m³/h</span></div>
+   <div class="row" id="g3"><span>المطلوب: معدل تغيّر الارتفاع h</span><span class="v" style="color:var(--lc)">dh/dt = ?</span></div>
+  </div>
+  <div class="card" id="mod"><h3 id="modh">العلاقة الرئيسية · قانون الحجم</h3><div class="eqs">
+   <div class="eq" id="m1" data-tex="V=A\,h"></div>
+   <div class="eq" id="m2" data-tex="A=(2)(2)=4\ \text{m}^2" style="font-size:38px;color:#dbe6fb"></div>
+   <div class="eq main" id="m3" data-tex="V=4h"></div>
+   <div class="eq" id="m4" style="font-size:24px"><span class="tag" style="color:var(--mute);border:1.5px solid rgba(157,176,207,.5)">متغير واحد h ⇐ لا نحتاج علاقة مساعدة</span></div>
+  </div></div>
+  <div class="card" id="sol"><h3>نشتق الطرفين بالنسبة لـ t ، ثم نعوّض</h3><div class="eqs">
+   <div class="eq" id="d1" data-tex="\dfrac{dV}{dt}=4\,\dfrac{dh}{dt}" style="font-size:44px"></div>
+   <div class="eq" id="d2" data-tex="{\color{#ff8f8f}-0.4}=4\,\dfrac{dh}{dt}" style="font-size:42px"></div>
+   <div class="eq boxr" id="d3" data-tex="\dfrac{dh}{dt}=\dfrac{-0.4}{4}=-0.1\ \text{m/h}" style="font-size:42px"></div>
+  </div></div>
+ </div>
+ <div id="cap"><span></span></div>
+ <div id="fade"></div>
+</div>
+ <div id="bar">
+  <button id="bPlay">▶ تشغيل</button><button id="bRe">↺ إعادة</button>
+  <div class="stg" id="stg"></div>
+  <label id="hx">h <input type="range" id="hIn" min="0.3" max="2.2" step="0.01" value="1.5"><b id="hV" dir="ltr"></b></label>
+  <input type="range" id="seek" min="0" max="1000" value="0" aria-label="الزمن">
+  <button id="bGiv" class="on">المعطيات</button><button id="bFs">⛶</button>
+ </div>
+<audio id="aud" src="audio/narration.m4a" preload="auto"></audio>
+<script type="module">
+import * as THREE from 'three';
+const $=id=>document.getElementById(id);
+const RENDER=new URLSearchParams(location.search).has('render'); if(RENDER) document.body.classList.add('render');
+document.querySelectorAll('[data-tex]').forEach(e=>katex.render(e.dataset.tex,e,{throwOnError:false}));
+const TLm={}; window.TL.forEach(([k,s,d])=>TLm[k]={s,d}); const S=k=>TLm[k].s, E=k=>TLm[k].s+TLm[k].d;
+const DUR=window.TL_END; window.DURATION=DUR;
+const cl=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)), lerp=(a,b,k)=>a+(b-a)*k, eio=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2, eo=u=>1-Math.pow(1-u,3);
+const ramp=(t,a,d)=>cl((t-a)/d), win=(t,a,b,fi=.5,fo=.5)=>cl((t-a)/fi)*cl((b-t)/fo);
+
+/* ============ the book's example — one source of truth ============
+   square base, side a = 2 m ⇒ A = 4 m² (constant).  dV/dτ = −0.4 m³/h (τ = real time in hours).
+   V = A·h ⇒ dV/dτ = A·dh/dτ ⇒ dh/dτ = −0.4/4 = −0.1 m/h, the same at every instant.
+   The tank's own height is not given: H = 2.4 m is for drawing only (labelled on screen).
+   Draining shots are time-lapses: 1 s of film = 20 min (scene 1) / one hour in 3 s (scene 4), shown on screen. */
+const a=2, A=a*a, Q=-0.4, H=2.4, h0=2.0;
+const DHDT=Q/A;                                   /* −0.1 m/h */
+const STAGES=[['المشكلة',0],['المعطيات',S('s2a')-0.6],['النموذج',S('s3a')-0.6],['الحل',S('s4a')-0.6],['التفسير',null],['التثبيت',null]];
+/* real-time map τ(t) in hours: flowing in scene 1 (×1 h per s) and in scene 4 (one hour shown as one layer) */
+const F1=1/3, T1=S('s2a')-0.8, L0=S('s4b')+1.0, L1=L0+3.0;
+function tau(t){ let x=Math.min(t,T1)*F1; if(t>L0) x+=Math.min(t-L0,L1-L0)/(L1-L0)*1.0; return x; }
+let explore=null;   /* scene 3: the student may drag h (geometry only, not time) */
+const hAt=t=>explore!=null?explore:h0+DHDT*tau(t);
+const flowing=t=>(t<T1)||(t>L0&&t<L1);
+
+/* ============ three.js scene ============ */
+const R=new THREE.WebGLRenderer({canvas:$('gl'),antialias:true,alpha:true,preserveDrawingBuffer:true});
+R.setPixelRatio(RENDER?1:Math.min(2,devicePixelRatio)); R.setSize(1920,1080,false); R.setClearColor(0,0);
+const scene=new THREE.Scene(), cam=new THREE.PerspectiveCamera(32,1920/1080,.05,200);
+scene.add(new THREE.HemisphereLight(0xbfdcff,0x0a1830,.75));
+const key=new THREE.DirectionalLight(0xffffff,1.5); key.position.set(4,7,5); scene.add(key);
+const rim=new THREE.DirectionalLight(0x38d6ff,.8); rim.position.set(-5,3,-4); scene.add(rim);
+/* floor */
+const fc=document.createElement('canvas'); fc.width=fc.height=512; { const x=fc.getContext('2d'); x.fillStyle='#0f2347'; x.fillRect(0,0,512,512); x.strokeStyle='rgba(56,214,255,.14)'; x.lineWidth=2; for(let i=0;i<=16;i++){ x.beginPath(); x.moveTo(i*32,0); x.lineTo(i*32,512); x.stroke(); x.beginPath(); x.moveTo(0,i*32); x.lineTo(512,i*32); x.stroke(); } }
+const ft=new THREE.CanvasTexture(fc); ft.wrapS=ft.wrapT=THREE.RepeatWrapping; ft.repeat.set(4,4); ft.colorSpace=THREE.SRGBColorSpace;
+const floor=new THREE.Mesh(new THREE.CircleGeometry(9,64),new THREE.MeshStandardMaterial({map:ft,roughness:.9})); floor.rotation.x=-Math.PI/2; floor.position.y=-.36; scene.add(floor);
+/* stand + tank (glass) — tank interior: x,z ∈ [−1,1], y ∈ [0,H] */
+const stand=new THREE.Mesh(new THREE.BoxGeometry(2.3,.34,2.3),new THREE.MeshStandardMaterial({color:0x22324f,metalness:.5,roughness:.5})); stand.position.y=-.19; scene.add(stand);
+const glass=new THREE.Mesh(new THREE.BoxGeometry(a,H,a),new THREE.MeshPhysicalMaterial({color:0xcfe8ff,transparent:true,opacity:.12,roughness:.05,metalness:0,clearcoat:1,side:THREE.DoubleSide,depthWrite:false})); glass.position.y=H/2; scene.add(glass);
+const edges=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(a,H,a)),new THREE.LineBasicMaterial({color:0xd8f1ff,transparent:true,opacity:.85})); edges.position.y=H/2; scene.add(edges);
+/* water = a box A × h; its top face is the free surface */
+const water=new THREE.Mesh(new THREE.BoxGeometry(1,1,1),new THREE.MeshPhysicalMaterial({color:0x2f8de0,transparent:true,opacity:.62,roughness:.15,metalness:.05,emissive:0x0b3a77,emissiveIntensity:.35,depthWrite:false})); scene.add(water);
+const surf=new THREE.Mesh(new THREE.PlaneGeometry(a*.996,a*.996),new THREE.MeshBasicMaterial({color:0x8fd8ff,transparent:true,opacity:.35,depthWrite:false,side:THREE.DoubleSide})); surf.rotation.x=-Math.PI/2; scene.add(surf);
+/* base highlight (area A) and the "one hour" layer */
+const baseA=new THREE.Mesh(new THREE.PlaneGeometry(a,a),new THREE.MeshBasicMaterial({color:0xffc94a,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide})); baseA.rotation.x=-Math.PI/2; baseA.position.y=.012; scene.add(baseA);
+const layer=new THREE.Mesh(new THREE.BoxGeometry(a*1.002,1,a*1.002),new THREE.MeshBasicMaterial({color:0xffc94a,transparent:true,opacity:0,depthWrite:false,depthTest:false})); layer.renderOrder=8; scene.add(layer);
+const layerE=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1,1,1)),new THREE.LineBasicMaterial({color:0xffe08a,transparent:true,opacity:0})); scene.add(layerE);
+/* tap + stream (deterministic droplets) */
+const tap=new THREE.Mesh(new THREE.CylinderGeometry(.07,.07,.32,20),new THREE.MeshStandardMaterial({color:0xb8c4d6,metalness:.8,roughness:.3})); tap.rotation.x=Math.PI/2; tap.position.set(0,.12,a/2+.14); scene.add(tap);
+const drops=[...Array(26)].map(()=>{ const m=new THREE.Mesh(new THREE.SphereGeometry(.035,10,8),new THREE.MeshBasicMaterial({color:0x8fd8ff,transparent:true})); scene.add(m); return m; });
+const puddle=new THREE.Mesh(new THREE.CircleGeometry(1,48),new THREE.MeshStandardMaterial({color:0x2f8de0,transparent:true,opacity:.45,roughness:.1,depthWrite:false})); puddle.rotation.x=-Math.PI/2; puddle.position.set(0,-.35,a/2+.75); scene.add(puddle);
+/* measure lines */
+const tube=(col,r=.018)=>{ const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,1,10),new THREE.MeshBasicMaterial({color:col,transparent:true,depthTest:false})); m.renderOrder=9; scene.add(m); return m; };
+const setT=(m,p,q,op)=>{ const d=new THREE.Vector3().subVectors(q,p); m.scale.set(1,Math.max(d.length(),1e-3),1); m.position.copy(p).addScaledVector(d,.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.clone().normalize()); m.material.opacity=op; m.visible=op>.01; };
+const mB1=tube(0xffc94a,.022), mB2=tube(0xffc94a,.022), mH=tube(0x8ce9ff,.026), mL=tube(0xffc94a,.03);
+const V3=(x,y,z)=>new THREE.Vector3(x,y,z);
+
+/* camera keys [t, distance, elevation°, azimuth°, targetY, shiftX(px, keeps the tank left of the side panel)] */
+const KEYS=[[0,8.0,22,38,1.1,330],[T1,7.6,20,26,1.0,330],[S('s2a'),6.8,34,30,.7,330],[S('s2b'),6.4,16,10,.5,330],[S('s2c'),7.0,18,42,1.0,330],
+ [S('s3a'),7.4,22,30,1.1,330],[S('s3b'),7.0,40,34,.7,330],[S('s3c'),7.4,22,30,1.1,330],[S('s4a'),7.0,18,24,1.2,330],[S('s4b'),6.0,18,30,1.2,330],[S('s4c')+5,6.2,20,34,1.15,330],[DUR,6.4,20,30,1.1,330]];
+const tgt=new THREE.Vector3();
+function rig(t){ let k=0; while(k<KEYS.length-2&&t>=KEYS[k+1][0]) k++; const p=KEYS[k], q=KEYS[k+1], u=eio(cl((t-p[0])/Math.max(.001,q[0]-p[0]))), F=i=>lerp(p[i],q[i],u);
+  const d=F(1)*(1+.02*Math.sin(t*.4)), el=F(2)*Math.PI/180, az=(F(3)+3*Math.sin(t*.17))*Math.PI/180; tgt.set(0,F(4),0);
+  cam.position.set(d*Math.cos(el)*Math.sin(az),tgt.y+d*Math.sin(el),d*Math.cos(el)*Math.cos(az)); cam.lookAt(tgt); cam.setViewOffset(1920,1080,F(5),0,1920,1080); cam.updateMatrixWorld(); }
+const proj=v=>{ const p=v.clone().project(cam); return {x:(p.x+1)/2*1920,y:(1-p.y)/2*1080}; };
+const place=(id,v,o,dx=0,dy=0)=>{ const e=$(id), p=proj(v); e.style.left=(p.x+dx)+'px'; e.style.top=(p.y+dy)+'px'; e.style.opacity=o; };
+const show=(id,o)=>{ const e=$(id); e.style.opacity=o; if(e.classList.contains('card')) e.style.display=o>.002?'':'none'; };
+let showGiv=true;
+
+const CAP={s1a:'خزان قاعدته مربعة · يتسرّب منه الماء',s1b:'',s2a:'ضلع القاعدة 2 m',s2b:'تسرّب ⇐ الحجم يتناقص ⇐ dV/dt سالب',s2c:'المطلوب: dh/dt',s3a:'الماء = متوازي سطوح قاعدته قاعدة الخزان',s3b:'الحجم = مساحة القاعدة × الارتفاع',s3c:'العلاقة الرئيسية: V = 4h',s4a:'نشتق بالنسبة للزمن t',s4b:'كل ساعة: طبقة حجمها 4 × سُمكها',s4c:'النتيجة: dh/dt = −0.1 m/h'};
+
+function render(t){ rig(t);
+  const h=hAt(t), V=A*h, fl=flowing(t)&&explore==null;
+  water.scale.set(a*.994,h,a*.994); water.position.y=h/2; surf.position.y=h+.002;
+  /* stream from the tap (only while water is really leaving) */
+  drops.forEach((m,i)=>{ const ph=((t*1.6)+i/drops.length)%1, on=fl?1:0; m.visible=on>0; if(!on) return; const y=.12-ph*ph*.9, z=a/2+.3+ph*.45; m.position.set(Math.sin(i*7.1)*.02,y,z); m.material.opacity=.9*(1-ph*.5); });
+  const lost=A*(h0-h); puddle.scale.setScalar(.25+.45*Math.sqrt(Math.max(0,lost))); puddle.material.opacity=lost>0?.45:0;
+  /* scene 2 & 3 highlights */
+  const gb=win(t,S('s2a'),S('s3c')+2,.5,.6), gq=win(t,S('s2b')+.6,S('s3a'),.5,.6), gh=win(t,S('s2c')+.4,DUR,.5,.5);
+  setT(mB1,V3(-a/2,.03,a/2+.12),V3(a/2,.03,a/2+.12),gb); setT(mB2,V3(a/2+.12,.03,a/2),V3(a/2+.12,.03,-a/2),gb);
+  setT(mH,V3(-a/2-.14,0,a/2),V3(-a/2-.14,h,a/2),gh);
+  const ba=win(t,S('s3b')+2.0,S('s4a'),.6,.6); baseA.material.opacity=.45*ba;
+  /* scene 4: one hour leaves as one layer (thickness |dh/dt|·1 h = 0.1 m) */
+  const ly=win(t,S('s4b')-.2,DUR,.5,.5), hL=Math.abs(DHDT)*1.0, hTop=t>L0?h0+DHDT*tau(L0):h, done=cl((t-L0)/(L1-L0));
+  const lyTop=hTop, lyBot=hTop-hL; const remain=Math.max(0,lyTop-Math.max(lyBot,h)); const th=t>L0?hL*(1-done)+0.0001:hL;
+  layer.scale.set(1,Math.max(.002,t>L0?Math.max(0.002,lyTop-h):hL),1); layer.position.y=t>L0?(h+lyTop)/2:hTop-hL/2; layer.material.opacity=.42*ly*(t>L1?0:1);
+  layerE.scale.set(a*1.004,hL,a*1.004); layerE.position.y=lyTop-hL/2; layerE.material.opacity=ly;
+  setT(mL,V3(-a/2-.34,lyBot,a/2),V3(-a/2-.34,lyTop,a/2),ly);
+  if(!window.NO_GL) R.render(scene,cam);   /* check.cjs samples the math without drawing */
+  /* labels */
+  place('Lb1',V3(0,.03,a/2+.12),gb,0,34); place('Lb2',V3(a/2+.12,.03,0),gb,40,26);
+  place('Lh',V3(-a/2-.14,h/2,a/2),gh,-34,0);
+  place('Lq',V3(0,.12,a/2+.3),gq,0,80);
+  place('LA',V3(0,.03,0),ba,0,0);
+  $('Ld').innerHTML=t<S('s4c')+9?'طبقة سُمكها <bdi dir=ltr>Δh</bdi> ⇐ حجمها <bdi dir=ltr>4·Δh</bdi>':'في ساعة: <bdi dir=ltr>Δh = 0.1 m</bdi> ⇐ الحجم <bdi dir=ltr>4 × 0.1 = 0.4 m³</bdi>';
+  place('Ld',V3(0,lyTop,a/2),ly,0,-44);
+  place('LH',V3(0,H+.05,-a/2),win(t,S('s2c')+2,S('s3a'),.5,.5)*.9,0,-22);
+  /* chips: live state; τ only while real draining is shown */
+  const ch=explore!=null?1:Math.max(win(t,1.2,T1+.6,.4,.4),win(t,L0-.4,DUR,.4,.4));
+  show('c1',ch); show('c2',ch); show('c3',ch);
+  $('c1').textContent=`h = ${h.toFixed(3)} m`; $('c2').textContent=`V = ${V.toFixed(2)} m³ · t = ${tau(t).toFixed(1)} h`;
+  $('c3').textContent=explore!=null?'استكشاف هندسي — ليس زمناً':t<L0-1?'زمن مسرَّع: كل ثانية = 20 دقيقة':'ساعة واحدة كاملة في 3 ثوانٍ';
+  /* question (scene 1) */
+  const qo=win(t,S('s1b')+.2,S('s2a')-.8,.6,.6); $('q').style.opacity=qo;
+  /* side panel */
+  show('book',win(t,S('s1b')+5.5,S('s3a')-.2,.6,.5));
+  const go=showGiv?win(t,S('s2a')-.2,S('s4a')+.2,.5,.5):0; show('giv',go);
+  [['g1',S('s2a')+.6],['g2',S('s2b')+1.0],['g3',S('s2c')+.8]].forEach(([id,s])=>{ const k=ramp(t,s,.5); $(id).style.opacity=.25+.75*k; $(id).style.background=`rgba(${id==='g3'?'56,214,255':id==='g2'?'255,143,143':'255,201,74'},${.14*k*win(t,s,s+6,.3,.8)})`; });
+  [['k1',S('s2a')+.6,'255,201,74'],['k2',S('s2b')+1.0,'255,143,143'],['k3',S('s2c')+.8,'56,214,255']].forEach(([id,s,c])=>$(id).style.background=`rgba(${c},${.32*ramp(t,s,.4)})`);
+  show('mod',win(t,S('s3a')+.4,DUR+5,.5,.5));
+  show('m1',ramp(t,S('s3b')+.8,.5)); show('m2',ramp(t,S('s3b')+5.0,.5)); show('m3',ramp(t,S('s3c')+.4,.5)); show('m4',ramp(t,S('s3c')+5.2,.5));
+  show('sol',win(t,S('s4a')+.2,DUR+5,.5,.5));
+  show('d1',ramp(t,S('s4a')+3.2,.5)); show('d2',ramp(t,S('s4c')+1.0,.5)); show('d3',ramp(t,S('s4c')+6.6,.5));
+  /* caption = the current narration's key phrase */
+  let ck=null; window.TL.forEach(([k,s,d])=>{ if(t>=s-.1&&t<s+d+.6) ck=k; }); const tx=ck?CAP[ck]:''; const cs=$('cap').firstChild;
+  if(cs.textContent!==tx) cs.textContent=tx; $('cap').style.opacity=tx?1:0;
+  /* stage label */
+  let si=0; STAGES.forEach(([n,s],i)=>{ if(s!=null&&t>=s) si=i; }); $('scn').textContent=`المشهد ${si+1} · ${STAGES[si][0]}`; document.querySelectorAll('#stg button').forEach((b,i)=>b.classList.toggle('on',i===si));
+  $('fade').style.opacity=t<.4?1-t/.4:t>DUR-.6?(t-DUR+.6)/.6:0;
+  window.STATE={t,h,V,A,tau:tau(t),flowing:fl,dhdt:DHDT,explore};
+}
+window.render=render;
+
+/* ============ player (iPad / smart board) ============ */
+const aud=$('aud'); let T=0, playing=false, last=0;
+const stg=$('stg'); STAGES.forEach(([n,s],i)=>{ const b=document.createElement('button'); b.textContent=`${i+1} ${n}`; if(s==null){ b.disabled=true; b.title='في المرحلة التالية'; } else b.onclick=()=>seek(s); stg.append(b); });
+function seek(t){ T=cl(t,0,DUR); explore=null; aud.currentTime=T; $('seek').value=T/DUR*1000; render(T); syncExplore(); }
+function setPlay(on){ playing=on; $('bPlay').textContent=on?'⏸ إيقاف':'▶ تشغيل'; $('bPlay').classList.toggle('on',on); if(on){ explore=null; aud.currentTime=T; aud.play().catch(()=>{}); last=performance.now(); requestAnimationFrame(tick); } else aud.pause(); syncExplore(); }
+function tick(now){ if(!playing) return; T=aud.paused||aud.ended?T+(now-last)/1000:aud.currentTime; last=now; if(T>=DUR){ T=DUR; setPlay(false); }
+  $('seek').value=T/DUR*1000; render(T); if(playing) requestAnimationFrame(tick); }
+function syncExplore(){ const inModel=!playing&&T>=S('s3a')-.6&&T<S('s4a')-.6; $('hx').style.display=inModel?'flex':'none'; }
+$('bPlay').onclick=()=>setPlay(!playing); $('bRe').onclick=()=>{ seek(0); setPlay(true); };
+$('seek').oninput=e=>{ setPlay(false); seek(e.target.value/1000*DUR); syncExplore(); };
+$('hIn').oninput=e=>{ explore=+e.target.value; $('hV').textContent=explore.toFixed(2)+' m'; render(T); };
+$('bGiv').onclick=()=>{ showGiv=!showGiv; $('bGiv').classList.toggle('on',showGiv); render(T); };
+$('bFs').onclick=()=>{ const d=document; d.fullscreenElement?d.exitFullscreen():d.documentElement.requestFullscreen?.(); };
+addEventListener('keydown',e=>{ if(e.code==='Space'){ e.preventDefault(); setPlay(!playing); } });
+function fit(){ const st=$('stage'); if(RENDER){ st.style.transform='none'; return; } const bh=$('bar').offsetHeight, k=Math.min(innerWidth/1920,(innerHeight-bh)/1080);
+  st.style.transform=`translate(${(innerWidth-1920*k)/2}px,${Math.max(0,(innerHeight-bh-1080*k)/2)}px) scale(${k})`; }
+addEventListener('resize',fit); fit();
+document.fonts.ready.then(()=>render(0)); render(0);
+</script>
+</body></html>
