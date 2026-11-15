@@ -180,7 +180,7 @@ D.body.innerHTML=`<header>
   <div class="top"><span class="title" id="figTitle"></span><span id="chips" style="display:contents"></span></div>
   <div class="legend" id="legend" hidden></div>
   <div class="svgbox" id="box"><svg class="g" id="svg" dir="ltr" aria-hidden="true"></svg></div>
-  <label class="sl" id="sl" hidden><span id="slL"></span><input type="range" id="slI"><b id="slV"></b></label>
+  <label class="sl" id="sl" hidden><button type="button" id="slP" class="slp" aria-label="تشغيل الحركة أو إيقافها"></button><span id="slL"></span><input type="range" id="slI"><b id="slV"></b></label>
   <div class="hint" id="hint"></div>
  </div></aside>
 </div>`;
@@ -507,24 +507,36 @@ function drawNL(N,A){ const c=A.col, W=A.W, H=A.H, [x0,x1]=N.w, rows=N.rows, X=v
 let W2Xg=null, curA=0, curB=1;
 function loop(){ raf=0; let more=false; if(from&&t<1){ t+=1/36; more=true; } else if(from){ from=null; }
   if(cur&&cur.sweep){ sweepT+=.03; more=true; }
-  if(cur&&cur.sl&&playing){ const s=cur.sl; playT+=1/60; const u=(Math.sin(playT*(s.speed||.6)-Math.PI/2)+1)/2; P=s.min+(s.max-s.min)*u; syncSlider(); more=true; }
+  if(cur&&cur.sl&&playing){ const s=cur.sl, now=performance.now(), dt=Math.min(.05,(now-(loop.last||now))/1000)||1/60; loop.last=now;
+    if(s.rate){ /* constant rate in slider units per second (sign = direction); restarts from the beginning, never runs backwards */
+      if(loop.hold>0){ loop.hold-=dt; } else { P+=s.rate*dt; if(s.rate>0&&P>=s.max){ P=s.max; loop.hold=.8; loop.wrap=s.min; } else if(s.rate<0&&P<=s.min){ P=s.min; loop.hold=.8; loop.wrap=s.max; } }
+      if(loop.hold<=0&&loop.wrap!=null){ P=loop.wrap; loop.wrap=null; } }
+    else { playT+=dt; const u=(Math.sin(playT*(s.speed||.6)-Math.PI/2)+1)/2; P=s.min+(s.max-s.min)*u; }
+    syncSlider(); more=true; } else loop.last=0;
   if(cur&&cur.anim) more=true;
   draw(); if(more) raf=requestAnimationFrame(loop); }
 const kick=()=>{ if(!raf) raf=requestAnimationFrame(loop); };
 function syncSlider(){ const s=cur&&cur.sl, w=$('#sl'); w.hidden=!s; if(!s) return; const i=$('#slI'); i.min=s.min; i.max=s.max; i.step=s.step||'any'; i.value=P; $('#slL').textContent=s.lab||''; $('#slV').textContent=(s.fmt||fmt)(P); }
 let currentSceneId="";
 window.MathBooksSceneState=()=>({name:currentSceneId,value:P});
-function go(name){ const sc=B.S[name]; if(!sc||sc===cur) return; const red=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  from=cur&&!red?cur:null; t=0; cur=sc; currentSceneId=name; cDrag=null; sweepT=0; svg.style.touchAction=sc.pick?'none':''; svg.style.cursor=sc.pick?'grab':''; if(sc.sl){ const sl=sc.sl; P=sl.v??sl.min; playing=!!sl.play&&!red; const u0=Math.min(1,Math.max(0,(P-sl.min)/((sl.max-sl.min)||1))); playT=Math.acos(1-2*u0)/(sl.speed||.6); } syncSlider(); kick(); }
+let stepHold=false;
+/* a slider scene moves if it asks to (play:1), or by default in books that opt in (BOOK.autoplay) — never if play:0 */
+const wantPlay=sc=>!!sc.sl&&(sc.sl.play===0||sc.sl.play===false?false:(!!sc.sl.play||!!B.autoplay))&&!stepHold&&!matchMedia('(prefers-reduced-motion: reduce)').matches;
+function setPlay(on){ playing=on; if(on&&cur&&cur.sl){ const sl=cur.sl, u0=Math.min(1,Math.max(0,(P-sl.min)/((sl.max-sl.min)||1))); playT=Math.acos(1-2*u0)/(sl.speed||.6); } syncPlay(); if(on) kick(); }
+function syncPlay(){ const b=$('#slP'); if(!b) return; b.textContent=playing?'⏸':'▶'; b.title=playing?'إيقاف الحركة':'تشغيل الحركة'; b.classList.toggle('on',playing); }
+function go(name,hold){ if(hold!==undefined) stepHold=hold; const sc=B.S[name]; if(!sc) return;
+  if(sc===cur){ if(sc.sl){ if(stepHold&&playing){ P=sc.sl.v??P; syncSlider(); setPlay(false); draw(); } else if(!stepHold&&!playing&&wantPlay(sc)) setPlay(true); } return; } const red=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  from=cur&&!red?cur:null; t=0; cur=sc; currentSceneId=name; cDrag=null; sweepT=0; svg.style.touchAction=sc.pick?'none':''; svg.style.cursor=sc.pick?'grab':''; if(sc.sl){ const sl=sc.sl; P=sl.v??sl.min; playing=wantPlay(sc); const u0=Math.min(1,Math.max(0,(P-sl.min)/((sl.max-sl.min)||1))); playT=Math.acos(1-2*u0)/(sl.speed||.6); } syncSlider(); syncPlay(); kick(); }
+$('#slP').addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); setPlay(!playing); });
 function size(){ const r=box.getBoundingClientRect(); W=r.width; H=r.height; draw(); }
 new ResizeObserver(size).observe(box);
-$('#slI').addEventListener('input',e=>{ playing=false; P=+e.target.value; $('#slV').textContent=(cur.sl.fmt||fmt)(P); draw(); });
+$('#slI').addEventListener('input',e=>{ playing=false; syncPlay(); P=+e.target.value; $('#slV').textContent=(cur.sl.fmt||fmt)(P); draw(); });
 let dragging=false;
 const setC=e=>{ if(!W2Xg) return; const r=svg.getBoundingClientRect(); const x=W2Xg(e.clientX-r.left); const lo=Math.min(curA,curB)+.01*(curB-curA), hi=Math.max(curA,curB)-.01*(curB-curA); cDrag=Math.max(lo,Math.min(hi,x)); draw(); };
 let lastA=null;
-const objDrag=e=>{ const r=svg.getBoundingClientRect(), s=cur.sl, v=cur.pick(lastA,e.clientX-r.left,e.clientY-r.top); if(v==null||!isFinite(v)) return; playing=false; P=Math.max(s.min,Math.min(s.max,v)); syncSlider(); draw(); };
+const objDrag=e=>{ const r=svg.getBoundingClientRect(), s=cur.sl, v=cur.pick(lastA,e.clientX-r.left,e.clientY-r.top); if(v==null||!isFinite(v)) return; playing=false; syncPlay(); P=Math.max(s.min,Math.min(s.max,v)); syncSlider(); draw(); };
 svg.addEventListener('pointerdown',e=>{ if(!cur) return; if(cur.pick&&cur.sl&&lastA){ dragging=true; svg.setPointerCapture(e.pointerId); objDrag(e); return; } if(cur.drag){ dragging=true; svg.setPointerCapture(e.pointerId); setC(e); } else if(cur.sl&&cur.slx&&W2Xg){ dragging=true; svg.setPointerCapture(e.pointerId); slDrag(e); } });
-const slDrag=e=>{ const r=svg.getBoundingClientRect(); const x=W2Xg(e.clientX-r.left), s=cur.sl; playing=false; P=Math.max(s.min,Math.min(s.max,x)); syncSlider(); draw(); };
+const slDrag=e=>{ const r=svg.getBoundingClientRect(); const x=W2Xg(e.clientX-r.left), s=cur.sl; playing=false; syncPlay(); P=Math.max(s.min,Math.min(s.max,x)); syncSlider(); draw(); };
 svg.addEventListener('pointermove',e=>{ if(!dragging) return; if(cur.pick&&lastA) objDrag(e); else if(cur.drag) setC(e); else if(cur.slx) slDrag(e); });
 svg.addEventListener('pointerup',()=>dragging=false); svg.addEventListener('pointercancel',()=>dragging=false);
 
@@ -532,7 +544,7 @@ svg.addEventListener('pointerup',()=>dragging=false); svg.addEventListener('poin
 function hiStage(si){ $$('a',outline).forEach((a,i)=>{ a.classList.toggle('on',i===si); a.classList.toggle('done',i<si); }); let k=''; for(let j=si;j>=0&&!k;j--) k=secs[j]?.dataset.stg||''; $$('#stages button').forEach(b=>b.classList.toggle('on',b.dataset.stg===k)); }
 function pick(){ if(!curLes||!steps.length||performance.now()<lockPick) return; const narrow=innerWidth<=820, line=narrow?$('.fig').getBoundingClientRect().bottom+innerHeight*.06:innerHeight*.45;
   let best=steps[0], bd=1e9; if(scrollY>40) for(const s of steps){ const r=s.getBoundingClientRect(); const d=r.top<=line&&r.bottom>=line?0:Math.min(Math.abs(r.top-line),Math.abs(r.bottom-line)); if(d<bd){ bd=d; best=s; } }
-  if(best!==active){ active?.classList.remove('on'); active=best; best.classList.add('on'); if(best.dataset.scene) go(best.dataset.scene); }
+  if(best!==active){ active?.classList.remove('on'); active=best; best.classList.add('on'); if(best.dataset.scene) go(best.dataset.scene,best.classList.contains('result')); }
   const si=secs.indexOf(best.closest('.sec')); hiStage(si); $$('a',outline).forEach((a,i)=>{ a.classList.toggle('on',i===si); a.classList.toggle('done',i<si); });
   const h=root, pr=Math.min(100,h.scrollTop/Math.max(1,h.scrollHeight-innerHeight)*100); $('#prog').style.width=pr+'%';
   if(si>=secs.length-1&&!ST.seen[curLes.id]){ ST.seen[curLes.id]=1; save(); } }
@@ -546,7 +558,7 @@ const bP=$('#bPresent');
 bP.onclick=()=>{ const on=root.classList.toggle('present'); bP.setAttribute('aria-pressed',on); setTimeout(()=>{ size(); active&&active.scrollIntoView({block:'center'}); },60); };
 /* keyboard / clicker: activate the next step explicitly (scrolling alone cannot move past the first steps) */
 let lockPick=0;
-function activate(st,jump){ if(!st) return; if(st!==active){ active?.classList.remove('on'); active=st; st.classList.add('on'); if(st.dataset.scene) go(st.dataset.scene); } hiStage(secs.indexOf(st.closest('.sec'))); lockPick=performance.now()+900; st.scrollIntoView({block:'center',behavior:jump?'instant':'smooth'}); }
+function activate(st,jump){ if(!st) return; if(st!==active){ active?.classList.remove('on'); active=st; st.classList.add('on'); if(st.dataset.scene) go(st.dataset.scene,st.classList.contains('result')); } hiStage(secs.indexOf(st.closest('.sec'))); lockPick=performance.now()+900; st.scrollIntoView({block:'center',behavior:jump?'instant':'smooth'}); }
 addEventListener('keydown',e=>{ if(e.target.matches('input,textarea')||!curLes||e.ctrlKey||e.metaKey||e.altKey) return; const i=steps.indexOf(active);
   if(['ArrowDown','PageDown','ArrowLeft',' '].includes(e.key)&&!(e.key===' '&&e.target.matches('button'))){ e.preventDefault(); activate(steps[Math.min(steps.length-1,i+1)]); }
   if(['ArrowUp','PageUp','ArrowRight'].includes(e.key)){ e.preventDefault(); activate(steps[Math.max(0,i-1)]); }

@@ -32,14 +32,14 @@ for(const name of names){
       ns('text',{x:right-8,y:top-11,'text-anchor':'end',fill:A.col.tan,'font-size':11,'font-weight':700},'dy/dt = '+fmt(m.dy,2)+' ↓');
     }
   };
-  /* The enhanced toolbar owns playback; the original built-in slider remains the source of truth. */
-  if(scene.sl)scene.sl.play=0;
+  /* v1.32: playback is owned by the engine (▶/⏸ beside the slider, constant dx/dt = 2 m/s like every related-rates scene);
+     this panel keeps the live readouts only. */
 }
 const panel=document.createElement('div');panel.id='rrMotion';panel.hidden=true;
 panel.setAttribute('aria-label','أدوات حركة مسألة السلم');
 panel.innerHTML=`<div class="rr-row"><button id="rrPlay" type="button" aria-label="تشغيل حركة السلم">▶ تشغيل</button><button id="rrReset" type="button">↺ إعادة</button><label>سرعة الحركة <select id="rrSpeed" aria-label="سرعة الحركة"><option value="0.5">½×</option><option value="1" selected>1×</option><option value="1.5">1½×</option><option value="2">2×</option></select></label></div><div class="rr-values" aria-live="off"><span id="rrX"></span><span id="rrY"></span><span id="rrDY"></span><span id="rrTH"></span></div><div id="rrExplain" class="rr-explain"></div>`;
 const style=document.createElement('style');style.textContent=`#rrMotion{padding:10px 12px;margin-top:8px;border:1px solid var(--line);border-radius:12px;background:var(--surface2,#f4f5f6);color:var(--ink);font-size:12px;line-height:1.65}#rrMotion[hidden]{display:none!important}#rrMotion .rr-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}#rrMotion button,#rrMotion select{font:inherit;border:1px solid var(--line);border-radius:8px;background:var(--surface,#fff);color:var(--ink);padding:6px 9px;min-height:34px;cursor:pointer}#rrMotion label{display:inline-flex;align-items:center;gap:5px}#rrMotion .rr-values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin-top:8px;font-variant-numeric:tabular-nums}#rrMotion .rr-values span{border-radius:7px;padding:4px 6px;background:var(--surface,#fff);white-space:normal}#rrMotion .rr-explain{margin-top:7px;color:var(--ink2);line-height:1.8}#rrMotion .rr-row button:focus-visible,#rrMotion select:focus-visible{outline:2px solid var(--accent,#2563eb);outline-offset:2px}@media(max-width:380px){#rrMotion .rr-values{grid-template-columns:1fr}}`;
-document.head.append(style);const hint=$('#hint');if(!hint)return;hint.after(panel);
+style.textContent+='#rrPlay,#rrReset,#rrMotion label:has(#rrSpeed){display:none!important}';document.head.append(style);const hint=$('#hint');if(!hint)return;hint.after(panel);
 const slider=$('#slI'), title=$('#figTitle'), play=$('#rrPlay');
 const stop=()=>{playing=false;play.textContent='▶ تشغيل';play.setAttribute('aria-label','تشغيل حركة السلم');if(raf){cancelAnimationFrame(raf);raf=0;}previous=0;};
 const isLadder=()=>Object.hasOwn(base,active)&&title&&/سلّم|سلم/.test(title.textContent||'');
@@ -71,5 +71,6 @@ slider.addEventListener('input',()=>{if(playing&&!internalUpdate)stop();refresh(
 /* Scene titles update when the scrollytelling engine advances. */
 let lastTitle=title.textContent;new MutationObserver(()=>{const current=title.textContent;if(current!==lastTitle){lastTitle=current;stop();}queueMicrotask(refresh);}).observe(title,{childList:true,characterData:true,subtree:true});
 const obs=new MutationObserver(()=>refresh());obs.observe($('#sl'),{attributes:true,attributeFilter:['hidden']});
+document.addEventListener('mathbooks:scene-update',()=>{ if(isLadder()) refresh(); });
 refresh();
 })();
