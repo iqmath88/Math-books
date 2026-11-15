@@ -37,19 +37,19 @@ function parse(src){
     if(!st) continue;
     if(s.startsWith('| ')||s==='|'){ if(box) box.lines.push(s.slice(2)); continue; }
     const m=s.match(/^([a-z0-9*]+):\s?(.*)$/);
-    if(m&&['k','p','h1','h2','lead','law','note','err','ask','o','o*','why','prac','sol','self','ok','tbl','tbh','html','fig','xp','hint','miss','gen','tnote','let','rel'].includes(m[1])){
+    if(m&&['k','p','h1','h2','lead','law','note','err','ask','o','o*','why','prac','sol','self','ok','tbl','tbh','html','fig','xp','hint','miss','gen','tnote','let','rel','main','aux'].includes(m[1])){
       const [ ,key,val]=m; flushList();
       if(key==='o'||key==='o*'){ const q=st.parts.findLast(p=>p.k==='ask'); if(q){ if(key==='o*') q.ans=q.o.length; q.o.push(val); } continue; }
       if(key==='hint'||key==='miss'||key==='gen'){ const q=st.parts.findLast(p=>p.k==='prac'||p.k==='self'); if(q){ if(key==='gen') q.gen=val.trim(); else if(key==='hint') (q.hints=q.hints||[]).push(val); else { const i=val.indexOf(';'); (q.miss=q.miss||[]).push([val.slice(0,i).trim(),val.slice(i+1).trim()]); } } continue; }
       if(key==='ok'){ const q=st.parts.findLast(p=>p.k==='prac'||p.k==='self'); if(q) q.ok=val; continue; }
       if(key==='tbl'||key==='tbh'){ let t=st.parts.at(-1); if(!t||t.k!=='tbl'){ t={k:'tbl',rows:[]}; st.parts.push(t); } t.rows.push({h:key==='tbh',c:val.split('|').map(x=>x.trim())}); continue; }
       const p={k:key,v:val,lines:val?[val]:[]};
-      if(key==='law'||key==='xp'||key==='let'){ p.lines=[]; }
+      if(key==='law'||key==='xp'||key==='let'||key==='main'||key==='aux'){ p.lines=[]; }
       if(key==='prac'){ const [ans,ph]=val.split(';').map(x=>x.trim()); p.ans=ans; p.ph=ph||'الجواب'; p.lines=[]; }
       if(key==='self'){ p.lines=[]; }
       if(key==='ask'){ p.o=[]; p.ans=0; }
       if(key==='sol'||key==='why'){ const q=st.parts.findLast(x=>['prac','self','ask'].includes(x.k)); if(q){ q[key]=p; } }
-      st.parts.push(p); box=['law','note','err','sol','why','self','html','lead','xp','tnote','let'].includes(key)?p:null; continue; }
+      st.parts.push(p); box=['law','note','err','sol','why','self','html','lead','xp','tnote','let','main','aux'].includes(key)?p:null; continue; }
     if(s.startsWith('$$')){ flushList(); st.parts.push({k:'m',v:s.slice(2).trim()}); box=null; continue; }
     if(s.startsWith('- ')){ if(!list){ list={k:'ul',items:[]}; st.parts.push(list); } list.items.push(s.slice(2)); box=null; continue; }
     flushList(); st.parts.push({k:'p',v:s}); box=null;
@@ -124,6 +124,8 @@ function stepHTML(st,les,si,ki){
       case 'xp': h+=`<div class="xp"><span class="xl">${p.v?T(p.v):'خطوة توضيحية'}</span><div>${p.lines.map(x=>`<p>${LN(x)}</p>`).join('')}</div></div>`; break;
       case 'let': h+=`<div class="let"><div class="lh"><b>${p.v?T(p.v):'نفرض'}</b><span class="xl">توضيح</span></div><div class="lg">${p.lines.map(x=>{ const c=x.replace(/\s;\s*$/,'').split(' ; '); return `<div class="lr"><span class="ls">${T(c[0]||'')}</span><span class="lm">${T(c[1]||'')}</span><span class="lv">${T(c[2]||'')}</span></div>`; }).join('')}</div></div>`; break;
       case 'rel': { const ex=p.v.startsWith('» '); h+=`<div class="rel${ex?' rx':''}"><span>${T(ex?p.v.slice(2):p.v)}</span></div>`; break; }
+      case 'main': case 'aux': { const big=x=>x.startsWith('$$')&&!x.slice(2).includes('$$')?`<div class="mathline tex" data-tex="${esc(x.slice(2).trim()).replace(/"/g,'&quot;')}"></div>`:`<p>${LN(x)}</p>`;
+        h+=`<div class="rbox ${p.k}"><div class="rh"><b>${p.k==='main'?'العلاقة الرئيسية':'العلاقة المساعدة'}</b>${p.v?`<span>${T(p.v)}</span>`:''}</div>${p.lines.map(big).join('')}</div>`; break; }
       case 'tnote': h+=`<div class="tnote"><b>للمدرّس:</b> ${lines(p)}</div>`; break;
       case 'note': h+=`<div class="note">${lines(p)}</div>`; break;
       case 'err': h+=`<div class="err"><b>تنبيه على خطأ في الكتاب:</b> ${lines(p)}</div>`; break;
@@ -300,7 +302,7 @@ const css=n=>getComputedStyle(root).getPropertyValue('--'+n).trim();
 let W=0,H=0, cur=null, from=null, t=1, raf=0, cDrag=null, sweepT=0, P=0, playing=false, playT=0, T0=performance.now();
 const ease=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2, lerp=(a,b,k)=>a+(b-a)*k;
 const fmt=(v,d=2)=>{ if(!isFinite(v)) return '—'; let r=Math.round(v*10**d)/10**d; if(Math.abs(r)<1e-9) r=0; return (r<0?'−':'')+String(Math.abs(r)); };
-function el(tag,attrs,parent){ const e=D.createElementNS(NS,tag); for(const k in attrs) if(attrs[k]!==undefined) e.setAttribute(k,attrs[k]); (parent||svg).appendChild(e); return e; }
+function el(tag,attrs,parent){ const e=D.createElementNS(NS,tag); for(const k in attrs) if(attrs[k]!==undefined) e.setAttribute(k,(k==='width'||k==='height'||k==='r')&&typeof attrs[k]==='number'&&attrs[k]<0?0:attrs[k]); (parent||svg).appendChild(e); return e; }
 function niceStep(range,px,min){ for(const s of [.05,.1,.2,.25,.5,1,2,2.5,5,10,20,25,50,100,200,500]) if(px*s/range>=min) return s; return 1000; }
 const fnOf=sc=>sc.f?{f:sc.f,d:sc.d,d2:sc.d2,dom:sc.dom,brk:sc.brk}:(B.F&&B.F[sc.fn])||null;
 const nd=(f,x,p)=>{ const h=1e-4; return (f(x+h,p)-f(x-h,p))/(2*h); };
@@ -454,6 +456,7 @@ function draw(){
   const ch=$('#chips'); ch.innerHTML=chips.map(([c,l,v])=>`<span class="chip"><i style="background:var(--${c})"></i>${esc(iso(l))} <b>${esc(v)}</b></span>`).join('');
   const lg=$('#legend'); lg.hidden=!legend.length; lg.innerHTML=legend.map(([c,l])=>`<span><i style="background:${c}"></i>${esc(iso(l))}</span>`).join('');
   const hh=$('#hint'); hh.textContent=iso(hint); hh.className='hint'+(hintOk?' ok':'');
+  document.dispatchEvent(new CustomEvent('mathbooks:scene-update',{detail:{name:currentSceneId,value:P}}));
 }
 
 /* geometry figure language (grade 9): F={pts:{A:[x,y]}, el:[{t,…,s (first step), h (glow steps), c, d, l}], names} */
@@ -509,8 +512,10 @@ function loop(){ raf=0; let more=false; if(from&&t<1){ t+=1/36; more=true; } els
   draw(); if(more) raf=requestAnimationFrame(loop); }
 const kick=()=>{ if(!raf) raf=requestAnimationFrame(loop); };
 function syncSlider(){ const s=cur&&cur.sl, w=$('#sl'); w.hidden=!s; if(!s) return; const i=$('#slI'); i.min=s.min; i.max=s.max; i.step=s.step||'any'; i.value=P; $('#slL').textContent=s.lab||''; $('#slV').textContent=(s.fmt||fmt)(P); }
+let currentSceneId="";
+window.MathBooksSceneState=()=>({name:currentSceneId,value:P});
 function go(name){ const sc=B.S[name]; if(!sc||sc===cur) return; const red=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  from=cur&&!red?cur:null; t=0; cur=sc; cDrag=null; sweepT=0; svg.style.touchAction=sc.pick?'none':''; svg.style.cursor=sc.pick?'grab':''; if(sc.sl){ const sl=sc.sl; P=sl.v??sl.min; playing=!!sl.play&&!red; const u0=Math.min(1,Math.max(0,(P-sl.min)/((sl.max-sl.min)||1))); playT=Math.acos(1-2*u0)/(sl.speed||.6); } syncSlider(); kick(); }
+  from=cur&&!red?cur:null; t=0; cur=sc; currentSceneId=name; cDrag=null; sweepT=0; svg.style.touchAction=sc.pick?'none':''; svg.style.cursor=sc.pick?'grab':''; if(sc.sl){ const sl=sc.sl; P=sl.v??sl.min; playing=!!sl.play&&!red; const u0=Math.min(1,Math.max(0,(P-sl.min)/((sl.max-sl.min)||1))); playT=Math.acos(1-2*u0)/(sl.speed||.6); } syncSlider(); kick(); }
 function size(){ const r=box.getBoundingClientRect(); W=r.width; H=r.height; draw(); }
 new ResizeObserver(size).observe(box);
 $('#slI').addEventListener('input',e=>{ playing=false; P=+e.target.value; $('#slV').textContent=(cur.sl.fmt||fmt)(P); draw(); });

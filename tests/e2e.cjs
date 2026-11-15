@@ -96,13 +96,13 @@ async function page(b,vp='board',o={}){ const ctx=o.ctx||await b.newContext({vie
   rec('T22','وسوم «وزاري»: إضافة المدرّس للسنة والدور، الحفظ، الإظهار للطالب، قائمة الفصل، الحذف',ok,JSON.stringify(r)+' '+errs.join('|')); await ctx.close(); }
  /* T23 solution template (lesson 3-1): «نفرض» tables, framed relations, worksheet companion + generator */
  if(want('T23')){ const {ctx,pg,errs}=await page(b,'phone'); await pg.goto(BASE+'v2/g12c3.html#l=rates'); await pg.waitForSelector('.let'); const r={};
-  r.let=await pg.$$eval('.let',x=>x.length); r.rel=await pg.$$eval('.rel',x=>x.length); r.kerr=await pg.$$eval('.katex-error',x=>x.length); r.ow=await pg.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
+  r.let=await pg.$$eval('.let',x=>x.length); r.rel=await pg.$$eval('.rel',x=>x.length); r.main=await pg.$$eval('.rbox.main',x=>x.length); r.aux=await pg.$$eval('.rbox.aux',x=>x.length); r.kerr=await pg.$$eval('.katex-error',x=>x.length); r.ow=await pg.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
   const st=await pg.evaluateHandle(()=>[...document.querySelectorAll('.step.enr')].find(s=>/2018/.test(s.textContent))); const p=await st.$('.prac');
   await (await p.$('input')).fill('0.1'); await (await p.$('.btn')).click(); r.miss=/يتسرب/.test(await p.evaluate(x=>x.nextElementSibling.textContent));
   await (await p.$('input')).fill('-0.1'); await (await p.$('.btn')).click(); r.ok=/صحيح/.test(await p.evaluate(x=>x.nextElementSibling.textContent));
   r.gen=await pg.evaluate(()=>{ let ok=0; for(let i=0;i<40;i++){ const q=BOOK.G.gTank(); const m=q.q.match(/ضلعها \$(\d+)\\,m\$.*?بمعدل \$([\d.]+)\\,m\^3/); if(!m) return 'parse'; const v=(+m[2])/(m[1]*m[1])*(/يتسرب/.test(q.q)?-1:1); if(Math.abs(v-(+q.ans))<1e-9) ok++; } return ok; });
-  const ok=r.let===6&&r.rel===10&&r.kerr===0&&r.ow<=0&&r.miss&&r.ok&&r.gen===40&&!errs.length;
-  rec('T23','قالب الحل في الدرس 3−1: جداول «نفرض»، العلاقة المؤطرة، سؤال الورقة الوزاري ومولّده',ok,JSON.stringify(r)+' '+errs.join('|')); await ctx.close(); }
+  const ok=r.let===6&&r.main===7&&r.aux===5&&r.kerr===0&&r.ow<=0&&r.miss&&r.ok&&r.gen===40&&!errs.length;
+  rec('T23','قالب الحل في الدرس 3−1: جداول «نفرض»، صندوقا العلاقة الرئيسية والمساعدة، سؤال الورقة الوزاري ومولّده',ok,JSON.stringify(r)+' '+errs.join('|')); await ctx.close(); }
  if(want('T12')){ const {ctx,pg}=await page(b); await pg.goto(BASE+'v2/g12c4.html#l=ftc'); await pg.waitForSelector('.step'); await pg.click('#bTools').catch(()=>{}); const z=await pg.$('[data-tool="zoom"],#bZoom');
   let ok=false; if(z){ const f0=await pg.evaluate(()=>parseFloat(getComputedStyle(document.querySelector('.story')).fontSize)); await z.click(); const f1=await pg.evaluate(()=>parseFloat(getComputedStyle(document.querySelector('.story')).fontSize)); ok=f1>f0; }
   rec('T12','تكبير النص والمعادلات في التصميم الجديد',ok,z?'':'لا يوجد زر تكبير'); await ctx.close(); }
@@ -131,8 +131,8 @@ async function page(b,vp='board',o={}){ const ctx=o.ctx||await b.newContext({vie
  /* T16 offline after first visit */
  if(want('T16')){ const ctx=await b.newContext({viewport:VIEWPORTS.ipad}); const {pg}=await page(b,'ipad',{ctx,offline:1}); await pg.goto(BASE); await pg.waitForFunction(()=>navigator.serviceWorker&&navigator.serviceWorker.controller,null,{timeout:15000}).catch(()=>{});
   const ctl=await pg.evaluate(()=>!!navigator.serviceWorker.controller); await pg.waitForTimeout(1500); await ctx.setOffline(true); const out={ctl};
-  for(const u of ['','index.html','v2/g12c4.html','v2/g12c3.html','ch5.html','g9c5.html']){ try{ const r=await pg.goto(BASE+u,{timeout:8000}); out[u||'/']=r&&r.ok()?'ok':'fail'; }catch(e){ out[u||'/']='ERR'; } }
-  try{ await pg.goto(BASE+'v2/g12c4.html#l=ln',{timeout:8000}); await pg.waitForSelector('.step .katex',{timeout:5000}); out.lessonKatex='ok'; out.fonts=await pg.evaluate(()=>document.fonts.check('16px KaTeX_Main')); }catch(e){ out.lessonKatex='fail'; }
+  for(const u of ['','index.html','v2__g12c4.html','v2__g12c3.html','ch5.html','g9c5.html']){ try{ const r=await pg.goto(BASE+u,{timeout:8000}); out[u||'/']=r&&r.ok()?'ok':'fail'; }catch(e){ out[u||'/']='ERR'; } }
+  try{ await pg.goto(BASE+'v2__g12c4.html#l=ln',{timeout:8000}); await pg.waitForSelector('.step .katex',{timeout:5000}); out.lessonKatex='ok'; out.fonts=await pg.evaluate(()=>document.fonts.check('16px KaTeX_Main')); }catch(e){ out.lessonKatex='fail'; }
   rec('T16','العمل دون إنترنت بعد أول زيارة (فعلياً مع قطع الاتصال)',ctl&&Object.values(out).every(v=>v===true||v==='ok'),JSON.stringify(out)); await ctx.close(); }
  /* T17 update delivery: a new release must reach the user without closing every tab */
  if(want('T17')){ const root=process.env.UPD_ROOT; if(!root){ rec('T17','وصول التحديث الجديد للمستخدم',null,'UPD_ROOT not set'); } else {

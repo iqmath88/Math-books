@@ -58,6 +58,8 @@ def build(cid):
         src=re.sub(r'^@@xr (.+)$',lambda m:'\n'.join('\n'.join(xr[k]).strip() for k in m.group(1).split()),src,flags=re.M)
     js=f"/* {m['grade']} · {m['chapter']} · {m['title']} — مولَّد من المصدر، لا تعدّله يدوياً */\n(function(){{\n\"use strict\";\n{sc}\nwindow.BOOK=Object.assign({json.dumps(dict(id=cid,**m),ensure_ascii=False)},{{S,F:typeof F!=='undefined'?F:{{}},G:typeof GEN!=='undefined'?GEN:{{}},src:{json.dumps(src,ensure_ascii=False)}}});\n}})();\n"
     open(OUT+cid+'.js','w').write(js)
+    # chapter add-ons loaded after the engine (3D solids, ladder motion overlay — see v2/*.js)
+    extra=''.join(f'\n<script src="{x}"></script>' for x in EXTRA.get(cid,[]))
     html=f'''<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -76,10 +78,11 @@ def build(cid):
 <body>
 <noscript>هذا الكتاب يحتاج إلى تفعيل JavaScript.</noscript>
 <script src="{cid}.js"></script>
-<script src="engine.js"></script>
+<script src="engine.js"></script>{extra}
 </body>
 </html>
 '''
     open(OUT+cid+'.html','w').write(html)
     print(cid, len(js), 'bytes', len(parts),'parts')
+EXTRA={'g12c3':['related-rates-motion.js','solids3d.js']}
 for c in (sys.argv[1:] or META): build(c)
