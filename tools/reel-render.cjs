@@ -5,7 +5,7 @@
    BASE (env) optional; by default the repo is served to the page by request interception. */
 const {chromium}=require('playwright'), fs=require('fs'), {spawn}=require('child_process');
 const [page,out]=process.argv.slice(2), A=process.argv, pi=A.indexOf('--preview'), PRE=pi>0?A[pi+1].split(',').map(Number):null;
-const BASE=process.env.BASE||'http://reel.local/', FPS=30;
+const BASE=process.env.BASE||'http://reel.local/', FPS=Number(process.env.FPS)||30;   /* FPS=60 for the studio reels */
 /* serve the repo through request interception (no local web server needed) */
 const LOCAL='http://reel.local/';
 async function serveRepo(pg){ const fs=require('fs'), path=require('path'), root=path.join(__dirname,'..');
@@ -15,6 +15,7 @@ async function serveRepo(pg){ const fs=require('fs'), path=require('path'), root
  const b=await chromium.launch(), pg=await b.newPage({viewport:{width:1080,height:1920}});
  if(!process.env.BASE) await serveRepo(pg);
  await pg.goto(BASE+page); await pg.evaluate(()=>document.fonts.ready); await pg.waitForTimeout(300);
+ await pg.waitForFunction(()=>typeof window.render==='function'&&window.READY!==false,null,{timeout:30000});   /* studio pages set READY=false until fonts + layout are measured */
  const D=await pg.evaluate(()=>window.DURATION);
  if(PRE){ for(const t of PRE){ await pg.evaluate(t=>render(t),t); await pg.screenshot({path:out.replace(/\.mp4$/,'')+`.t${t}.jpg`,type:'jpeg',quality:85}); } await b.close(); return; }
  const part=out.replace(/\.mp4$/,'.part.mp4');

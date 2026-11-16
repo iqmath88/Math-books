@@ -1,0 +1,20 @@
+{
+  "note": "times = cue name + offset (s). drip: t0 = fall time √(2·0.26/9.8) = 0.230 s, period 0.42 s — identical to the droplets in scene.html.",
+  "events": [
+    ["impact", 0.05, 0],
+    ["whoosh", "hook2", -0.3],
+    ["whoosh", "base", -0.45],
+    ["tick", "two", 0.15],
+    ["tick", "two", 0.30],
+    ["whoosh", "idea", -0.25],
+    ["tick", "law", 0.55],
+    ["tick", "A", 1.55],
+    ["tick", "H", 1.30],
+    ["tick", "s1", 0.55],
+    ["tick", "s2", 0.55],
+    ["whoosh", "res", -0.1],
+    ["impact", "four", 0],
+    ["chime", "four", 0.02]
+  ],
+  "drip": {"t0": 0.230, "period": 0.42, "density": 0.55}
+}
