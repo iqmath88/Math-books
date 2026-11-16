@@ -24,7 +24,7 @@ export function createEq(root, { size = 112 } = {}) {
   }
   /* place an actor: centre (x, y), uniform scale s, opacity o, glow 0..1 (colour of the glow = its own colour) */
   function put(id, { x, y, s = 1, o = 1, glow = 0, blur = 0 }) {
-    const a = A[id], e = a.el;
+    const a = A[id], e = a.el; a.last = { x, y, s, o, glow };
     e.style.opacity = o; e.style.transform = `translate(${x - a.w / 2}px,${y - a.h / 2}px) scale(${s})`;
     e.style.filter = (glow > 0.01 ? `drop-shadow(0 0 ${8 + 26 * glow}px currentColor)` : '') + (blur > .05 ? ` blur(${blur}px)` : '') || 'none';
   }

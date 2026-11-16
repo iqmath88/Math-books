@@ -9,8 +9,10 @@ export const M = {
   side: 2, A: 4, dVdt: -0.4, dhdt: -0.4 / 4,
   H: 2.2, h0: 1.85,
 };
-/* video time t (s) → story time τ (h). Piecewise-constant time-lapse (×1800 then ×720): the clock on screen shows τ. */
-export const LAPSE = [[0, 0.5], [9.5, 0.2]];
+/* video time t (s) → story time τ (h): piecewise-constant time-lapse; the clock on screen always shows τ.
+   Fast while the problem is posed, slow during the algebra, 1 h per second in the "10 cm every hour" act, slow again. */
+export let LAPSE = [[0, 0.35]];
+export function setLapse(C) { LAPSE = [[0, 0.35], [C.idea, 0.08], [C.real - 0.3, 1.0], [C.real + 3.7, 0.08]]; }
 export function tau(t) {
   let T = 0;
   for (let i = 0; i < LAPSE.length; i++) {

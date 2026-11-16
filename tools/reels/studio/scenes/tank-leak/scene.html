@@ -37,9 +37,14 @@ body{position:relative;contain:paint;font-family:Plex,system-ui,sans-serif;color
 #LA{font-size:50px;color:var(--cyan);padding:2px 14px;border-radius:14px;background:rgba(5,14,34,.55)}
 #LA i{font-family:KaTeX_Math,serif}
 #eq{position:absolute;inset:0;pointer-events:none}
+#Lrate{font-size:40px;color:var(--white);padding:8px 20px;border-radius:16px;background:rgba(5,14,34,.72);border:2px solid rgba(46,230,214,.5)}
+#Lar1{font-size:40px;color:var(--blue);padding:4px 14px;border-radius:14px;background:rgba(5,14,34,.72)} #Lar2{font-size:40px;color:var(--gold);padding:2px 14px;border-radius:14px;background:rgba(5,14,34,.6)}
+#Lslab{font-size:40px;color:var(--gold);padding:6px 18px;border-radius:16px;background:rgba(5,14,34,.7);border:2px solid rgba(216,178,90,.5);text-align:center}
+#Lslab small{display:block;font-size:30px;color:var(--white);font-weight:500}
+.sq{font-size:38px;color:var(--cyan);padding:0 12px;border-radius:12px;background:rgba(5,14,34,.55)}
 #frame{position:absolute;left:0;top:0;width:1080px;height:1920px;pointer-events:none}
 #note{position:absolute;left:90px;right:180px;top:1395px;text-align:center;font-size:42px;font-weight:700;color:var(--gold);opacity:0}
-#cap{position:absolute;left:110px;right:200px;top:1468px;text-align:center;font-size:46px;line-height:1.35;font-weight:700}
+#cap{position:absolute;left:100px;right:190px;top:1430px;text-align:center;font-size:40px;line-height:1.35;font-weight:700}
 #cap span{display:inline-block;background:rgba(3,8,20,.66);padding:6px 24px;border-radius:16px}
 #brand{position:absolute;left:90px;right:180px;top:1450px;text-align:center;font-size:38px;font-weight:700;opacity:0;letter-spacing:.5px}
 #brand b{background:linear-gradient(90deg,var(--cyan),var(--gold));-webkit-background-clip:text;color:transparent}
@@ -56,8 +61,11 @@ body{position:relative;contain:paint;font-family:Plex,system-ui,sans-serif;color
 <div class="lbl" id="L2a">2 m</div><div class="lbl" id="L2b">2 m</div>
 <div class="lbl" id="Lh">h</div><div class="lbl" id="LV">V</div>
 <div class="lbl" id="LA"><i>A</i> = 2 × 2 = 4 m²</div>
+<div class="lbl tex" id="Lrate"></div><div class="lbl tex" id="Lar1"></div><div class="lbl" id="Lar2">−0.1 m/h</div>
+<div class="lbl" id="Lslab"><b>1 h</b> → −10 cm<small>2 × 2 × 0.1 = 0.4 m³</small></div>
+<div class="lbl sq" id="LS0">4 m²</div><div class="lbl sq" id="LS1">4 m²</div><div class="lbl sq" id="LS2">4 m²</div>
 <div id="eq"></div>
-<svg id="frame" viewBox="0 0 1080 1920"><rect id="box" fill="none" stroke="#d8b25a" stroke-width="5" rx="28"/></svg>
+<svg id="frame" viewBox="0 0 1080 1920"><rect id="box" fill="none" stroke="#d8b25a" stroke-width="5" rx="28"/><rect id="box2" fill="none" stroke="#d8b25a" stroke-width="5" rx="28"/></svg>
 <div id="note">4 = مساحة القاعدة (m²) — ثابتة</div>
 <div id="cap"></div>
 <div id="brand"><b>الرياضيات الحيّة</b><small>السادس العلمي · المعدلات المرتبطة · مثال 1 ص 92</small></div>
@@ -67,10 +75,11 @@ import * as THREE from 'three';
 import { cl, lerp, eio, eo, back, ramp, win, rng } from '../../core/tl.js';
 import { createStage, tube, setTube, PAL } from '../../core/stage.js';
 import { createEq } from '../../core/eq.js';
-import { M, tau, hAt, VAt } from './model.js';
+import { M, tau, hAt, VAt, setLapse } from './model.js';
 
 window.READY = false;
 const C = window.CUES, D = window.DURATION, LINES = window.LINES, $ = id => document.getElementById(id);
+setLapse(C);
 const S = createStage($('gl')); window.__S = S;
 const { scene, project } = S;
 
@@ -132,18 +141,43 @@ function dimLine(set, a, b, tickDir, k, op) {
   set.forEach(m => { m.material.opacity = op; m.visible = op > .01 && k > .01; });
 }
 
+/* rate arrow on the surface: constant length = constant dh/dt (blue = changing quantity) */
+const arrow = new THREE.Group(); tank.add(arrow);
+const arMat = new THREE.MeshBasicMaterial({ color: BLUE, transparent: true, opacity: 0, toneMapped: false });
+{ const sh = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.42, 16), arMat); sh.position.y = 0.36; arrow.add(sh);
+  const hd = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.18, 24), arMat); hd.rotation.x = Math.PI; hd.position.y = 0.09; arrow.add(hd); }
+/* ruler: 10 cm ticks on the height bracket (result→reality) */
+const ruler = []; for (let i = 0; i <= 21; i++) { const m = tube(THREE, WHITE, i % 5 === 0 ? 0.008 : 0.006); m.material.opacity = 0; tank.add(m); ruler.push(m); }
+/* the water that left in the last hour: a 2 × 2 × 0.1 m slab = 0.4 m³ (gold = result) */
+const slabMat = new THREE.MeshBasicMaterial({ color: 0xd8b25a, transparent: true, opacity: 0, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending });
+const slab = new THREE.Mesh(new THREE.BoxGeometry(2, 0.1, 2), slabMat); tank.add(slab);
+const slabEdge = new THREE.LineSegments(new THREE.EdgesGeometry(slab.geometry), new THREE.LineBasicMaterial({ color: 0xd8b25a, transparent: true, opacity: 0, toneMapped: false })); slab.add(slabEdge);
+/* cross-sections at three heights: the same 4 m² everywhere */
+const SQH = [0.45, 1.15, 1.85];
+const sqs = SQH.map(y => { const m = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.MeshBasicMaterial({ color: 0x2ee6d6, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending })); m.rotation.x = -Math.PI / 2; m.position.y = Y0 + y; tank.add(m);
+  const e = new THREE.LineLoop(rimLine.geometry, new THREE.LineBasicMaterial({ color: 0x2ee6d6, transparent: true, opacity: 0, toneMapped: false })); e.position.y = Y0 + y + .001; tank.add(e); return [m, e]; });
+
 /* ============ equation actors ============ */
 const EQ = createEq($('eq'), { size: 116 });
 EQ.actor('V', 'V', { color: '#3d9bff' }); EQ.actor('eq', '=', { color: '#f6efe4' });
 EQ.actor('A', 'A', { color: '#2ee6d6' }); EQ.actor('h', 'h', { color: '#3d9bff' });
 EQ.actor('p2a', '(2)', { color: '#f6efe4' }); EQ.actor('p2b', '(2)', { color: '#f6efe4' });
 EQ.actor('four', '4', { color: '#d8b25a' });
+/* row 2: the derivative and the solution */
+EQ.actor('ddt', '\\dfrac{d}{dt}', { color: '#2ee6d6', scale: .8 });
+EQ.actor('dV', '\\dfrac{dV}{dt}', { color: '#3d9bff', scale: .82 }); EQ.actor('eq2', '=', { color: '#f6efe4', scale: .82 });
+EQ.actor('four2', '4', { color: '#d8b25a', scale: .82 }); EQ.actor('dh', '\\dfrac{dh}{dt}', { color: '#3d9bff', scale: .82 });
+EQ.actor('n04', '-0.4', { color: '#f6efe4', scale: .82 }); EQ.actor('bar', '\\rule{2.3em}{0.07em}', { color: '#f6efe4', scale: .82 });
+EQ.actor('r01', '-0.1', { color: '#d8b25a', scale: .82 }); EQ.actor('unit', '\\,\\mathrm{m/h}', { color: '#d8b25a', scale: .62 });
+katex.render('\\dfrac{dV}{dt} = -0.4\\ \\mathrm{m^3/h}', $('Lrate'), { throwOnError: false });
+katex.render('\\dfrac{dh}{dt}', $('Lar1'), { throwOnError: false });
 
 /* ============ hook typography: word wipe (RTL: reveals from the right) ============ */
 const hookWords = [...document.querySelectorAll('#hk1 .w'), ...document.querySelectorAll('#hk2 .w')];
 const hookT = [C.hook1 + .05, C.hook1 + .45, C.hook2, C.hook2 + .28, C.hook2 + .62];
 /* captions: narration text without vowel marks */
-const NARR = ['الماء يتسرّب من الخزان، فبأي سرعة ينخفض سطحه؟', 'قاعدته مربعة، ضلعها مترَان', 'وهنا الفكرة:', 'الحجم = مساحة القاعدة × الارتفاع', 'اثنان × اثنان × h', 'إذن: الحجم = 4h'];
+const NARR = ['', 'قاعدته مربعة ضلعها متران، والماء يتسرّب بمعدل 0.4 m³ في الساعة', 'وهنا الفكرة:', 'الحجم = مساحة القاعدة × الارتفاع', 'اثنان × اثنان × h', 'إذن: الحجم = 4h',
+  'نشتق الطرفين بالنسبة إلى الزمن', 'الحجم يتناقص، فمعدل تغيّره سالب 0.4', 'نعوّض', 'نقسم على 4…', 'فينخفض السطح بمعدل 0.1 متر في الساعة', 'أي 10 سنتيمترات كل ساعة، بمعدل ثابت', 'لأن مساحة المقطع ثابتة: 4 m² عند كل ارتفاع', 'انتبه للوحدة: متر في الساعة (m/h)'];
 /* film grain (seeded, 12 fixed frames) */
 const G = $('grain').getContext('2d'), grainFrames = [];
 { const R = rng(3); for (let f = 0; f < 12; f++) { const im = G.createImageData(540, 960); for (let i = 0; i < im.data.length; i += 4) { const v = R() * 255; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; } grainFrames.push(im); } }
@@ -154,10 +188,17 @@ const CAM = [
   [C.hook2 + 1.3,   { r: 11.6, el: 18, az: 31, tx: 0, ty: 1.0, tz: 0, fov: 36, sy: 0.02 }],             // dolly-in + orbit
   [C.base - 0.1,    { r: 11.2, el: 17, az: 29, tx: 0, ty: 0.95, tz: 0, fov: 36, sy: 0.02 }],
   [C.two + 0.9,     { r: 10.6, el: 14, az: 33, tx: 0.0, ty: 0.6, tz: 0.2, fov: 36, sy: 0.06 }],     // lower and closer on the base edges
-  [C.idea + 0.05,   { r: 10.6, el: 14.5, az: 32, tx: 0.0, ty: 0.6, tz: 0.2, fov: 36, sy: 0.06 }],
+  [C.leak + 0.1,    { r: 10.6, el: 14.5, az: 32, tx: 0.0, ty: 0.6, tz: 0.2, fov: 36, sy: 0.06 }],
+  [C.rate + 0.8,    { r: 8.6,  el: 12, az: 18, tx: 0.45, ty: 0.45, tz: 0.9, fov: 36, sy: 0.08 }],   // track to the leaking valve
+  [C.idea - 0.1,    { r: 8.8,  el: 13, az: 20, tx: 0.4, ty: 0.5, tz: 0.8, fov: 36, sy: 0.08 }],
   [C.law + 0.5,     { r: 13.2, el: 40, az: 30, tx: 0, ty: 0.9, tz: 0, fov: 36, sy: 0.30 }],          // crane up: tank to the upper frame
   [C.res,           { r: 13.0, el: 38, az: 22, tx: 0, ty: 0.9, tz: 0, fov: 36, sy: 0.30 }],
-  [D,               { r: 13.6, el: 36, az: 13, tx: 0, ty: 0.9, tz: 0, fov: 36, sy: 0.30 }],          // slow orbit on the result
+  [C.diff + 0.6,    { r: 13.6, el: 36, az: 16, tx: 0, ty: 0.9, tz: 0, fov: 36, sy: 0.31 }],
+  [C.real - 0.6,    { r: 13.8, el: 33, az: 6,  tx: 0, ty: 0.9, tz: 0, fov: 36, sy: 0.31 }],          // slow orbit through the algebra
+  [C.real + 0.6,    { r: 12.4, el: 7,  az: 4,  tx: 0, ty: 1.0, tz: 0, fov: 36, sy: 0.27 }],          // RESULT→REALITY: eye level, ruler
+  [C.why - 0.1,     { r: 12.4, el: 8,  az: 9,  tx: 0, ty: 1.0, tz: 0, fov: 36, sy: 0.27 }],
+  [C.why + 1.2,     { r: 13.0, el: 26, az: 18, tx: 0, ty: 1.0, tz: 0, fov: 36, sy: 0.29 }],          // rise: cross-sections read as squares
+  [D,               { r: 13.6, el: 24, az: 26, tx: 0, ty: 1.0, tz: 0, fov: 36, sy: 0.29 }],
 ];
 
 const put = (el, p, o, s = 1) => { el.style.opacity = o; el.style.transform = `translate(${p.x}px,${p.y}px) translate(-50%,-50%) scale(${s})`; };
@@ -201,8 +242,9 @@ window.render = function (t) {
   /* ---- 3D-anchored labels ---- */
   const pF = project(V3(0, Y0, 1 + OFF + .02)), pR = project(V3(1 + OFF + .02, Y0, 0));
   const lab2 = eo(ramp(t, C.two - .05, .45));
-  put($('L2a'), { x: pF.x, y: pF.y + 46 }, lab2 * (t < C.s1 ? 1 : 0), lerp(.6, 1, back(ramp(t, C.two - .05, .5))));
-  put($('L2b'), { x: pR.x + 30, y: pR.y + 34 }, lab2 * (t < C.s2 ? 1 : 0), lerp(.6, 1, back(ramp(t, C.two + .05, .5))));
+  const away = 1 - win(t, C.leak, C.idea + .3, .4, .4);   /* hidden while the camera visits the valve */
+  put($('L2a'), { x: pF.x, y: pF.y + 46 }, lab2 * away * (t < C.s1 ? 1 : 0), lerp(.6, 1, back(ramp(t, C.two - .05, .5))));
+  put($('L2b'), { x: pR.x + 30, y: pR.y + 34 }, lab2 * away * (t < C.s2 ? 1 : 0), lerp(.6, 1, back(ramp(t, C.two + .05, .5))));
   const pH = project(V3(-1 - OFF - .1, Y0 + h / 2, 1)), pHtop = project(V3(-1 - OFF, Y0 + h, 1));
   put($('Lh'), { x: pH.x - 34, y: pH.y }, cl(ramp(t, C.H + .1, .35)) * (t < C.H + .75 ? 1 : 0));
   const pV = project(V3(0, Y0 + h * .45, 1.02));
@@ -213,7 +255,7 @@ window.render = function (t) {
   /* ---- HUD: story clock + live depth (bottom during acts 1–2, glides to the top when the formula takes the stage) ---- */
   const hudUp = eio(ramp(t, C.idea + .1, 1.0)), hudO = cl(ramp(t, 1.2, .5));
   $('clk').textContent = `t = ${T.toFixed(1)} h`; $('hv').textContent = `h = ${h.toFixed(2)} m`;
-  const hy = lerp(1395, 196, hudUp);
+  const hy = lerp(1290, 196, hudUp);
   Object.assign($('clk').style, { left: '90px', top: hy + 'px', opacity: hudO });
   Object.assign($('hv').style, { left: '360px', top: hy + 'px', opacity: hudO * (h > 0 ? 1 : 0) });
 
@@ -249,12 +291,67 @@ window.render = function (t) {
     box.setAttribute('x', x0); box.setAttribute('y', y0); box.setAttribute('width', x1 - x0); box.setAttribute('height', y1 - y0);
     const u = eio(ramp(t, C.four, .8)); box.setAttribute('stroke-dasharray', per); box.setAttribute('stroke-dashoffset', per * (1 - u)); box.style.opacity = u > 0 ? 1 : 0;
     box.style.filter = `drop-shadow(0 0 ${14 * u}px rgba(216,178,90,.8))`; }
-  $('note').style.opacity = eo(ramp(t, C.four + .7, .5)); $('note').style.transform = `translateY(${(1 - eo(ramp(t, C.four + .7, .5))) * 18}px)`;
+  $('note').style.opacity = eo(ramp(t, C.four + .4, .4)) * (1 - ramp(t, C.diff - .2, .4)); $('note').style.transform = `translateY(${(1 - eo(ramp(t, C.four + .7, .5))) * 18}px)`;
+
+  /* ---- ACT 4–6: derivative → substitution → division → result ---- */
+  const CY2 = 1300, u1 = eio(ramp(t, C.diff - .05, .8)), Y1 = lerp(CY, 1108, u1), S1 = lerp(1, .6, u1);
+  /* row 1 (V = 4h) steps up and shrinks to make room for the derivative; it stays visible as the reason for row 2 */
+  const P1 = {}; for (const id of ['V', 'eq', 'four', 'h']) { const L = EQ.A[id].last; if (!L) continue;
+    const P = { x: CX + (L.x - CX) * S1, y: Y1 + (L.y - CY) * S1 }; P1[id] = P; if (u1 > 0) EQ.put(id, { ...L, ...P, s: L.s * S1 }); }
+  if (u1 > 0) { const x = +box.getAttribute('x'), y = +box.getAttribute('y'), w = +box.getAttribute('width'), hh = +box.getAttribute('height');
+    box.setAttribute('x', CX + (x - CX) * S1); box.setAttribute('y', Y1 + (y - CY) * S1); box.setAttribute('width', w * S1); box.setAttribute('height', hh * S1); box.style.opacity = (+box.style.opacity) * lerp(1, .55, u1); }
+  /* d/dt sweeps across both sides of V = 4h */
+  { const u = eio(ramp(t, C.diff + .5, 1.6)); EQ.put('ddt', { x: lerp(CX - 300, CX + 300, u), y: Y1 - 4, o: win(t, C.diff + .35, C.d1 + .1, .3, .35), glow: 1 }); }
+  const R4 = EQ.layout(['dV', 'eq2', 'four2', 'dh'], CX, CY2, 26, { dh: -14 });
+  const R5 = EQ.layout(['n04', 'eq2', 'four2', 'dh'], CX, CY2, 26, { eq2: 16, dh: -14 });
+  const fracW = Math.max(EQ.A.n04.w, EQ.A.bar.w), R6w = EQ.A.dh.w + 26 + EQ.A.eq2.w + 26 + fracW, x6 = CX - R6w / 2;
+  const R6 = { dh: { x: x6 + EQ.A.dh.w / 2, y: CY2 }, eq2: { x: x6 + EQ.A.dh.w + 26 + EQ.A.eq2.w / 2, y: CY2 } }; const fx = x6 + R6w - fracW / 2;
+  Object.assign(R6, { n04: { x: fx, y: CY2 - 58 }, bar: { x: fx, y: CY2 + 4 }, four2: { x: fx, y: CY2 + 62 } });
+  const R7 = EQ.layout(['dh', 'eq2', 'r01', 'unit'], CX, CY2, 24, { unit: -12 });
+  const m45 = eio(ramp(t, C.div + .1, .9)), m67 = eio(ramp(t, C.ansv - .15, .6));
+  const m5 = eio(ramp(t, C.sub2 + .2, .6));
+  const lay2 = id => { const a = R4[id] || R5[id], b = R5[id] || a, c = R6[id] || b, d = R7[id] || R7.r01; return EQ.mix(EQ.mix(EQ.mix(a, b, m5), c, m45), d, m67); };
+  /* each symbol is born from its parent in V = 4h (Transform Matching) */
+  for (const [id, par, cue] of [['dV', 'V', C.d1], ['eq2', 'eq', C.d2], ['four2', 'four', C.d2 + .2], ['dh', 'h', C.d3]]) {
+    const u = eio(ramp(t, cue - .05, .65)), from = P1[par] || lay2(id);
+    let o = cl(ramp(t, cue - .05, .2)), s = lerp(.6, 1, u), glow = 1 - u;
+    if (id === 'dV') { const out = ramp(t, C.sub2 + .35, .35); o *= 1 - out; s *= 1 - .4 * out; }
+    if (id === 'four2') { const f = ramp(t, C.ansv + .1, .3); o *= 1 - f; s *= lerp(1, .85, m45); }
+    if (id === 'dh') glow = Math.max(glow, win(t, C.ans - .05, C.ans + .9, .15, .4));
+    EQ.put(id, { ...(u < 1 ? EQ.arc(from, lay2(id), u, -60) : lay2(id)), s, o, glow });
+  }
+  /* −0.4 leaves the rate chip on "سالب أربعة أعشار" and takes dV/dt's place */
+  const pN = project(NZ); const chip = t < C.law ? { x: pN.x - 70, y: pN.y + 96 } : { x: Math.min(pN.x + 190, 780), y: pN.y + 30 };   /* act 5: beside the valve, clear of V = 4h */
+  { const u = eio(ramp(t, C.sub2 - .05, .75)); const p = u < 1 ? EQ.arc(chip, R5.n04, u, 150) : lay2('n04');
+    EQ.put('n04', { ...p, s: lerp(.55, 1, u) * lerp(1, .85, m45), o: cl(ramp(t, C.sub2 - .05, .15)) * (1 - ramp(t, C.ansv + .1, .3)), glow: Math.max(1 - u, win(t, C.m04 - .05, C.m04 + 1, .1, .4) * 0) }); }
+  { const u = eio(ramp(t, C.div + .45, .5)); const a = EQ.A.bar; EQ.put('bar', { ...R6.bar, s: 1, o: u * (1 - ramp(t, C.ansv + .1, .3)) }); a.el.style.transform += ` scaleX(${u})`; }
+  /* −0.4 / 4 fuses into −0.1 m/h */
+  { const u = ramp(t, C.ansv + .15, .5); EQ.put('r01', { ...R7.r01, s: lerp(.4, 1, back(u)), o: cl(u * 2), glow: .4 + .6 * win(t, C.ansv, C.ansv + 1.4, .2, .6) });
+    const v = ramp(t, C.ansv + .7, .45); EQ.put('unit', { ...R7.unit, s: lerp(.6, 1, back(v)) * (1 + .22 * win(t, C.unit, C.unit + 1.3, .15, .5)), o: cl(v * 2), glow: win(t, C.unit, C.unit + 1.6, .15, .6) }); }
+  { const a = R7.dh, b = R7.unit, x0 = a.x - EQ.A.dh.w / 2 - 36, x1 = b.x + EQ.A.unit.w / 2 + 36, y0 = CY2 - 108, y1 = CY2 + 108, per = 2 * (x1 - x0 + y1 - y0), box2 = $('box2');
+    box2.setAttribute('x', x0); box2.setAttribute('y', y0); box2.setAttribute('width', x1 - x0); box2.setAttribute('height', y1 - y0);
+    const u = eio(ramp(t, C.ansv + 1.0, .8)); box2.setAttribute('stroke-dasharray', per); box2.setAttribute('stroke-dashoffset', per * (1 - u)); box2.style.opacity = u > 0 ? 1 : 0;
+    box2.style.filter = `drop-shadow(0 0 ${(10 + 14 * win(t, C.unit, C.unit + 1.4, .2, .5)) * u}px rgba(216,178,90,.85))`; }
+  /* rate chip at the valve: given data (act 2), recalled when the sign is discussed (act 5) */
+  put($('Lrate'), chip, Math.max(win(t, C.rate - .05, C.idea + .2, .35, .35), win(t, C.m04 - .2, C.sub2 + .5, .3, .3)), 1 + .08 * win(t, C.m04, C.m04 + 1.2, .15, .4));
+  $('Lrate').style.boxShadow = `0 0 ${30 * win(t, C.m04, C.m04 + 1.6, .2, .5)}px rgba(46,230,214,.8)`;
+  /* the arrow: same length all the time — the rate does not change */
+  { const o = cl(ramp(t, C.d3, .5)); arMat.opacity = o; arrow.position.set(0, Y0 + h + 0.02, 0); arrow.visible = o > .01;
+    const pa = project(V3(0.2, Y0 + h + 0.62, 0)); put($('Lar1'), { x: pa.x - 120, y: pa.y }, o * (1 - ramp(t, C.ansv + .8, .3)));
+    put($('Lar2'), { x: pa.x - 170, y: pa.y }, ramp(t, C.ansv + .9, .4)); }
+  /* ---- ACT 7: result → reality ---- */
+  { const o = cl(ramp(t, C.real - .2, .6)) * (1 - .6 * ramp(t, C.why + .3, .6)), x = -1 - OFF, z = 1;
+    ruler.forEach((m, i) => { const y = Y0 + i * 0.1, L = i % 5 === 0 ? .2 : .11, k = eo(ramp(t, C.real - .2 + i * .03, .4)); setTube(THREE, m, V3(x, y, z), V3(x - L * k, y, z)); m.material.opacity = o; m.visible = o > .01 && y <= Y0 + M.H + 1e-6; });
+    const so = win(t, C.cm - .25, C.why + .6, .4, .6); slabMat.opacity = .16 * so; slabEdge.material.opacity = .9 * so; slab.visible = so > .01;
+    slab.position.set(0, Y0 + h + 0.05, 0);   /* the layer the water occupied one hour ago: h(τ−1) − h(τ) = 0.1 m */
+    const ps = project(V3(-1.05, Y0 + h + .05, 1.05)); put($('Lslab'), { x: Math.max(ps.x - 40, 250), y: ps.y - 92 }, so);
+    sqs.forEach(([m, e], i) => { const k = win(t, C.sq - .2 + i * .35, D, .4, .5); m.material.opacity = .16 * k; e.material.opacity = .95 * k;
+      const pq = project(V3(1.0, Y0 + SQH[i], 1.0)); put($(`LS${i}`), { x: pq.x + 70, y: pq.y }, k); }); }
 
   /* ---- captions (one line at a time, follow the narration lines) ---- */
   let ci = -1; LINES.forEach(([s, d], i) => { if (i > 0 && t >= s - .1 && t < s + d + .25) ci = i; });   /* line 1 is carried by the hook typography */
   const capEnd = LINES[LINES.length - 1][0] + LINES[LINES.length - 1][1] + .25;
-  $('cap').innerHTML = ci >= 0 ? `<span>${NARR[ci].replace(/(h|4h)/g, '<b dir="ltr" style="color:#3d9bff">$1</b>')}</span>` : '';
+  $('cap').innerHTML = ci >= 0 ? `<span>${NARR[ci].replace(/(4h|\bh\b|m\/h|m³|m²|0\.4|0\.1)/g, '<b dir="ltr" style="color:#3d9bff">$1</b>')}</span>` : '';
   $('cap').style.opacity = ci >= 0 ? 1 : 0;
   /* ---- end lockup + loop-friendly fade (the reel opens from the same dark navy) ---- */
   $('brand').style.opacity = eo(ramp(t, capEnd + .1, .5)); $('brand').style.transform = `translateY(${(1 - eo(ramp(t, capEnd + .1, .5))) * 20}px)`;
