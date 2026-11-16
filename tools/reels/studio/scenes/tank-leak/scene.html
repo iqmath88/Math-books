@@ -177,7 +177,7 @@ const hookWords = [...document.querySelectorAll('#hk1 .w'), ...document.querySel
 const hookT = [C.hook1 + .05, C.hook1 + .45, C.hook2, C.hook2 + .28, C.hook2 + .62];
 /* captions: narration text without vowel marks */
 const NARR = ['', 'قاعدته مربعة ضلعها متران، والماء يتسرّب بمعدل 0.4 m³ في الساعة', 'وهنا الفكرة:', 'الحجم = مساحة القاعدة × الارتفاع', 'اثنان × اثنان × h', 'إذن: الحجم = 4h',
-  'نشتق الطرفين بالنسبة إلى الزمن', 'الحجم يتناقص، فمعدل تغيّره سالب 0.4', 'نعوّض', 'نقسم على 4…', 'فينخفض السطح بمعدل 0.1 متر في الساعة', 'أي 10 سنتيمترات كل ساعة، بمعدل ثابت', 'لأن مساحة المقطع ثابتة: 4 m² عند كل ارتفاع', 'انتبه للوحدة: متر في الساعة (m/h)'];
+  'نشتق الطرفين بالنسبة إلى الزمن', 'الحجم يتناقص، فمعدل تغيّره سالب 0.4', 'نضع القيمة', 'نقسم على 4…', 'فينخفض السطح بمعدل 0.1 متر في الساعة', 'أي 10 سنتيمترات كل ساعة، بمعدل ثابت', 'لأن مساحة المقطع ثابتة: 4 m² عند كل ارتفاع', 'انتبه للوحدة: متر في الساعة (m/h)'];
 /* film grain (seeded, 12 fixed frames) */
 const G = $('grain').getContext('2d'), grainFrames = [];
 { const R = rng(3); for (let f = 0; f < 12; f++) { const im = G.createImageData(540, 960); for (let i = 0; i < im.data.length; i += 4) { const v = R() * 255; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; } grainFrames.push(im); } }

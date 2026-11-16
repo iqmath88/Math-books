@@ -1,91 +1,92 @@
 {
  "source": "كتاب الرياضيات — السادس العلمي، الفصل 3، البند 3−1 المعدلات المرتبطة، الفكرة 1 (قانون شكل هندسي)، مثال 1 ص 92 — src/g12c3.l1.txt (step rTank…rTank4)",
  "voice": "ar_JO-kareem-medium (Piper / VITS, adult male)",
- "format": "One entry per line of speech. {key} before a word = a sync cue that fires when that word starts (word timing comes from the engine's phoneme alignment, not from guesses). Text is fully voweled. 'emo' picks a prosody preset in core/voice.py; 'gap' = silence after the line (s). Performance notes live only in 'show' and are never sent to the engine.",
- "tail": 2.2,
+ "format": "One entry per line. {key}word = sync cue at that word's onset (engine alignment). *word = pitch accent. ‖0.4 = real pause (phrases synthesised separately). ⟨1.2⟩ = slower phrase. rise = question intonation. Text fully voweled; numbers read as on screen (صفر فاصلة أربعة).",
+ "tail": 2.0,
  "lines": [
   {
    "emo": "curiosity",
-   "gap": 0.35,
-   "text": "{hook1}خَزَّانٌ يَتَسَرَّبُ مِنْهُ المَاءُ، {hook2}فَبِأَيِّ سُرْعَةٍ يَنْخَفِضُ سَطْحُهُ؟",
+   "gap": 0.7,
+   "text": "{hook1}خَزَّانٌ يَتَسَرَّبُ مِنْهُ *المَاءُ، ‖0.25 {hook2}فَبِأَيِّ *سُرْعَةٍ يَنْخَفِضُ سَطْحُهُ؟",
+   "rise": true,
    "show": "HOOK — dolly-in, water falling; question wipes in"
   },
   {
    "emo": "focus",
-   "gap": 0.4,
-   "text": "{base}قَاعِدَتُهُ مُرَبَّعَةٌ، {two}ضِلْعُهَا مِتْرَانِ، {leak}وَالمَاءُ يَتَسَرَّبُ مِنْهُ {rate}بِمُعَدَّلِ أَرْبَعَةِ أَعْشَارِ المِتْرِ المُكَعَّبِ فِي السَّاعَةِ.",
+   "gap": 0.6,
+   "text": "{base}قَاعِدَتُهُ مُرَبَّعَةٌ، {two}ضِلْعُهَا *مِتْرَانِ. ‖0.3 {leak}وَالمَاءُ يَتَسَرَّبُ مِنْهُ ‖0.12 ⟨1.06⟩ {rate}بِمُعَدَّلِ *صِفْرٍ فَاصِلَةِ أَرْبَعَةٍ مِتْرٍ مُكَعَّبٍ فِي السَّاعَةِ.",
    "show": "PROBLEM — base outline, 2 m dimensions; rate chip at the valve"
   },
   {
    "emo": "discovery",
-   "gap": 0.15,
-   "text": "{idea}وَهُنَا الفِكْرَةُ:",
+   "gap": 0.5,
+   "text": "{idea}وَهُنَا *الفِكْرَةُ:",
    "show": "crane up, base glows"
   },
   {
    "emo": "focus",
-   "gap": 0.25,
-   "text": "{law}الحَجْمُ يُسَاوِي {A}مِسَاحَةَ القَاعِدَةِ فِي {H}الارْتِفَاعِ،",
+   "gap": 0.3,
+   "text": "{law}الحَجْمُ يُسَاوِي {A}مِسَاحَةَ القَاعِدَةِ ‖0.1 فِي {H}الارْتِفَاعِ،",
    "show": "V, A, h lift off the model"
   },
   {
    "emo": "emphasis",
-   "gap": 0.3,
-   "text": "{s1}اثْنَانِ فِي {s2}اثْنَيْنِ فِي {sh}إِتْشْ.",
+   "gap": 0.4,
+   "text": "⟨1.1⟩ {s1}اثْنَانِ فِي {s2}اثْنَيْنِ فِي {sh}إِتْشْ.",
    "show": "2, 2, h fly into V=(2)(2)h"
   },
   {
    "emo": "satisfaction",
-   "gap": 0.45,
-   "text": "{res}إِذَنْ: الحَجْمُ يُسَاوِي {four}أَرْبَعَةَ إِتْشْ.",
+   "gap": 0.8,
+   "text": "{res}إِذَنْ: الحَجْمُ يُسَاوِي {four}*أَرْبَعَةَ إِتْشْ.",
    "show": "(2)(2) → 4, gold frame"
   },
   {
    "emo": "focus",
-   "gap": 0.35,
-   "text": "{diff}نَشْتَقُّ الطَّرَفَيْنِ بِالنِّسْبَةِ إِلَى الزَّمَنِ: {d1}دِي فِي عَلَى دِي تِي {d2}يُسَاوِي أَرْبَعَةَ، {d3}دِي إِتْشْ عَلَى دِي تِي.",
+   "gap": 0.6,
+   "text": "{diff}نَشْتَقُّ الطَّرَفَيْنِ بِالنِّسْبَةِ إِلَى الزَّمَنِ: ‖0.3 {d1}دِي فِي عَلَى دِي تِي {d2}يُسَاوِي أَرْبَعَةَ، {d3}دِي إِتْشْ عَلَى دِي تِي.",
    "show": "DERIVATIVE — d/dt sweeps both sides; V→dV/dt, h→dh/dt; rate arrow on the surface"
   },
   {
    "emo": "focus",
-   "gap": 0.3,
-   "text": "{neg}الحَجْمُ يَتَنَاقَصُ، {m04}فَمُعَدَّلُ تَغَيُّرِهِ سَالِبُ أَرْبَعَةِ أَعْشَارٍ.",
+   "gap": 0.5,
+   "text": "{neg}الحَجْمُ *يَتَنَاقَصُ، ‖0.15 {m04}فَمُعَدَّلُ تَغَيُّرِهِ *سَالِبُ صِفْرٍ فَاصِلَةِ أَرْبَعَةٍ.",
    "show": "rate chip reappears, −0.4 glows (negative = decreasing)"
   },
   {
    "emo": "emphasis",
-   "gap": 0.3,
-   "text": "{subst}نُعَوِّضُ: {sub2}سَالِبُ أَرْبَعَةِ أَعْشَارٍ يُسَاوِي أَرْبَعَةَ، دِي إِتْشْ عَلَى دِي تِي.",
+   "gap": 0.7,
+   "text": "{subst}نَضَعُ القِيمَةَ: ‖0.2 {sub2}سَالِبُ صِفْرٍ فَاصِلَةِ أَرْبَعَةٍ يُسَاوِي أَرْبَعَةَ، دِي إِتْشْ عَلَى دِي تِي.",
    "show": "SUBSTITUTION — −0.4 flies from the chip into dV/dt's place"
   },
   {
    "emo": "suspense",
-   "gap": 0.45,
-   "text": "{div}نَقْسِمُ عَلَى أَرْبَعَةٍ...",
+   "gap": 1.0,
+   "text": "{div}نَقْسِمُ عَلَى *أَرْبَعَةٍ...",
    "show": "4 slides under −0.4, fraction bar draws, dh/dt moves left"
   },
   {
    "emo": "satisfaction",
-   "gap": 0.45,
-   "text": "{ans}دِي إِتْشْ عَلَى دِي تِي يُسَاوِي {ansv}سَالِبَ عُشْرِ مِتْرٍ فِي السَّاعَةِ.",
+   "gap": 1.2,
+   "text": "{ans}دِي إِتْشْ عَلَى دِي تِي يُسَاوِي ‖0.35 ⟨1.22⟩ {ansv}*سَالِبَ صِفْرٍ فَاصِلَةِ وَاحِدٍ ‖0.12 ⟨1.12⟩ مِتْرٍ فِي السَّاعَةِ.",
    "show": "RESULT — −0.4/4 → −0.1 m/h, gold frame"
   },
   {
    "emo": "discovery",
-   "gap": 0.3,
-   "text": "{real}أَيْ أَنَّ سَطْحَ المَاءِ يَنْخَفِضُ {cm}عَشَرَةَ سَنْتِيمِتْرَاتٍ كُلَّ سَاعَةٍ، {const}بِمُعَدَّلٍ ثَابِتٍ.",
+   "gap": 0.6,
+   "text": "{real}أَيْ أَنَّ سَطْحَ المَاءِ يَنْخَفِضُ {cm}*عَشَرَةَ سَنْتِيمِتْرَاتٍ كُلَّ سَاعَةٍ، ‖0.2 {const}بِمُعَدَّلٍ *ثَابِتٍ.",
    "show": "RESULT→REALITY — side view, ruler with 10 cm ticks; clock steps hour by hour, water drops one tick per hour"
   },
   {
    "emo": "focus",
-   "gap": 0.3,
-   "text": "{why}لِأَنَّ مِسَاحَةَ المَقْطَعِ ثَابِتَةٌ: {sq}أَرْبَعَةُ أَمْتَارٍ مُرَبَّعَةٍ عِنْدَ كُلِّ ارْتِفَاعٍ.",
+   "gap": 0.7,
+   "text": "{why}لِأَنَّ مِسَاحَةَ المَقْطَعِ ثَابِتَةٌ: ‖0.2 {sq}أَرْبَعَةُ أَمْتَارٍ مُرَبَّعَةٍ عِنْدَ *كُلِّ ارْتِفَاعٍ.",
    "show": "ghost 4 m² squares at several heights"
   },
   {
    "emo": "satisfaction",
    "gap": 0.0,
-   "text": "{unit}وَانْتَبِهْ لِلْوَحْدَةِ: مِتْرٌ فِي السَّاعَةِ.",
+   "text": "{unit}وَانْتَبِهْ لِلْوَحْدَةِ: ‖0.15 *مِتْرٌ فِي السَّاعَةِ.",
    "show": "unit m/h highlighted; end lockup; fade to the opening navy (loop)"
   }
  ],

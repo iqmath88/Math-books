@@ -54,9 +54,9 @@ run(*ins, '-filter_complex', ';'.join(fl), '-map', '[s]', '-ac', '1', os.path.jo
 
 # ---------- mix: voice first, pad ducked by the voice, gentle bus glue, loudness for Reels ----------
 run('-i', os.path.join(B, 'voice.wav'), '-i', os.path.join(B, 'music.wav'), '-i', os.path.join(B, 'sfx.wav'), '-filter_complex',
-    '[0:a]afftdn=nf=-30,asplit[v1][v2];[1:a][v2]sidechaincompress=threshold=0.025:ratio=10:attack=15:release=450[pd];'
+    '[0:a]asplit[v1][v2];[1:a][v2]sidechaincompress=threshold=0.03:ratio=4:attack=20:release=600:makeup=1[pd];'
     '[v1]pan=stereo|c0=c0|c1=c0[vs];[pd]aecho=0.6:0.5:23:0.4,pan=stereo|c0=c0|c1=0.85*c0[ps];[2:a]pan=stereo|c0=c0|c1=c0[ss];'
-    '[vs][ps][ss]amix=inputs=3:normalize=0:weights=1 0.35 1,acompressor=threshold=-18dB:ratio=2:attack=10:release=200,'
-    'loudnorm=I=-14:TP=-1.5:LRA=8,alimiter=limit=0.89[m]',
+    '[vs][ps][ss]amix=inputs=3:normalize=0:weights=1 0.9 2.2,acompressor=threshold=-18dB:ratio=2:attack=10:release=200,'
+    'loudnorm=I=-14:TP=-2:LRA=9,alimiter=limit=0.79:level=false[m]',   # AAC adds ~0.5 dB: aim −2 dBTP before encoding
     '-map', '[m]', '-ar', '48000', os.path.join(B, 'mix.wav'))
 print('mix', T, 's,', len(ev), 'sfx events')
