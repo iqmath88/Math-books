@@ -1,0 +1,109 @@
+{
+ "source": "كتاب الرياضيات — السادس العلمي، الفصل 3، البند 3−1 المعدلات المرتبطة، الفكرة 1 (قانون شكل هندسي)، مثال 1 ص 92 — src/g12c3.l1.txt (step rTank…rTank4)",
+ "voice": "ar_JO-kareem-medium (Piper / VITS, adult male) — Iraqi (Baghdadi) dialect written as phonemes",
+ "format": "One entry per line. {key}word = sync cue at that word's onset (engine alignment). *word = pitch accent. ‖0.4 = real pause (phrases synthesised separately). ⟨1.2⟩ = slower phrase. rise = question intonation. Text fully voweled; numbers read as on screen (صفر فاصلة أربعة). /ipa/ words bypass espeak.",
+ "tail": 2.0,
+ "lines": [
+  {
+   "emo": "curiosity",
+   "gap": 0.7,
+   "text": "{hook1}/ʕˈidna/ /χazzˈaːn/ /dajχˈurr/ /mˈinna/ */lmˈaːj/، ‖0.25 {hook2}/ʃɡˈad/ */sarˈiːʕ/ /dajinzˈil/ /mustˈawa/ /lmˈaːj/؟",
+   "rise": true,
+   "show": "HOOK — dolly-in, water falling; question wipes in"
+  },
+  {
+   "emo": "focus",
+   "gap": 0.6,
+   "text": "{base}/qaːʕidˈatah/ /mrabbˈaʕa/، {two}/ðˤˈilʕha/ */mitrˈeːn/. ‖0.3 {leak}/wilmˈaːj/ /dajχˈurr/ /mˈinna/ ‖0.12 ⟨1.06⟩ {rate}/bmuʕˈaddal/ */sˤˈifir/ /fˈaːsˤila/ /ʔarbˈaʕa/ /mˈatir/ /mukˈaʕʕab/ /bissˈaːʕa/.",
+   "show": "PROBLEM — base outline, 2 m dimensions; rate chip at the valve"
+  },
+  {
+   "emo": "discovery",
+   "gap": 0.5,
+   "text": "{idea}/hˈassa/ /ntˈibhli/، /hnˈaː/ */lfˈikra/:",
+   "show": "crane up, base glows"
+  },
+  {
+   "emo": "focus",
+   "gap": 0.3,
+   "text": "{law}/lħˈadʒim/ /jsˈaːwi/ {A}/masˈaːħat/ /lqaːʕˈida/ ‖0.1 /ðˤˈarub/ {H}/lirtifˈaːʕ/،",
+   "show": "V, A, h lift off the model"
+  },
+  {
+   "emo": "emphasis",
+   "gap": 0.4,
+   "text": "⟨1.1⟩ {s1}/θnˈeːn/ /ðˤˈarub/ {s2}/θnˈeːn/ /ðˤˈarub/ {sh}/ʔˈeːtʃ/.",
+   "show": "2, 2, h fly into V=(2)(2)h"
+  },
+  {
+   "emo": "satisfaction",
+   "gap": 0.8,
+   "text": "{res}/jˈaʕni/: /lħˈadʒim/ /jsˈaːwi/ {four}*/ʔarbˈaʕa/ /ʔˈeːtʃ/.",
+   "show": "(2)(2) → 4, gold frame"
+  },
+  {
+   "emo": "focus",
+   "gap": 0.6,
+   "text": "{diff}/hˈassa/ /niʃtˈaqq/ /ltˈarafeːn/ /binnˈisba/ /lizzˈaman/: ‖0.3 {d1}/diː/ /fiː/ /ʕˈala/ /diː/ /tiː/ {d2}/jsˈaːwi/ /ʔarbˈaʕa/، {d3}/diː/ /ʔˈeːtʃ/ /ʕˈala/ /diː/ /tiː/.",
+   "show": "DERIVATIVE — d/dt sweeps both sides; V→dV/dt, h→dh/dt; rate arrow on the surface"
+  },
+  {
+   "emo": "focus",
+   "gap": 0.5,
+   "text": "{neg}/lħˈadʒim/ */dajqˈill/، ‖0.15 {m04}/fmuʕˈaddal/ /taɣajjˈura/ */sˈaːlib/ /sˤˈifir/ /fˈaːsˤila/ /ʔarbˈaʕa/.",
+   "show": "rate chip reappears, −0.4 glows (negative = decreasing)"
+  },
+  {
+   "emo": "emphasis",
+   "gap": 0.7,
+   "text": "{subst}/nʕˈawwiðˤ/: ‖0.2 {sub2}/sˈaːlib/ /sˤˈifir/ /fˈaːsˤila/ /ʔarbˈaʕa/ /jsˈaːwi/ /ʔarbˈaʕa/، /diː/ /ʔˈeːtʃ/ /ʕˈala/ /diː/ /tiː/.",
+   "show": "SUBSTITUTION — −0.4 flies from the chip into dV/dt's place"
+  },
+  {
+   "emo": "suspense",
+   "gap": 1.0,
+   "text": "{div}/nqˈisim/ /ʕˈala/ */ʔarbˈaʕa/...",
+   "show": "4 slides under −0.4, fraction bar draws, dh/dt moves left"
+  },
+  {
+   "emo": "satisfaction",
+   "gap": 1.2,
+   "text": "{ans}/diː/ /ʔˈeːtʃ/ /ʕˈala/ /diː/ /tiː/ /jsˈaːwi/ ‖0.35 ⟨1.22⟩ {ansv}*/sˈaːlib/ /sˤˈifir/ /fˈaːsˤila/ /wˈaːħid/ ‖0.12 ⟨1.12⟩ /mˈatir/ /bissˈaːʕa/.",
+   "show": "RESULT — −0.4/4 → −0.1 m/h, gold frame"
+  },
+  {
+   "emo": "discovery",
+   "gap": 0.6,
+   "text": "{real}/jˈaʕni/ /mustˈawa/ /lmˈaːj/ /jinzˈil/ {cm}*/ʕˈaʃra/ /santiːmatrˈaːt/ /kull/ /sˈaːʕa/، ‖0.2 {const}/wbnˈafs/ /lmuʕˈaddal/ */dˈaːjman/.",
+   "show": "RESULT→REALITY — side view, ruler with 10 cm ticks; clock steps hour by hour, water drops one tick per hour"
+  },
+  {
+   "emo": "focus",
+   "gap": 0.7,
+   "text": "{why}/lˈeːʃ/؟ /liʔˈann/ /masˈaːħat/ /lmˈaqt̪aʕ/ /maː/ /tiɣˈajjar/: ‖0.2 {sq}/ʔarbˈaʕa/ /mˈatir/ /mrˈabbaʕ/ /bˈajj/ */ʔirtifˈaːʕ/.",
+   "show": "ghost 4 m² squares at several heights"
+  },
+  {
+   "emo": "satisfaction",
+   "gap": 0.0,
+   "text": "{unit}/wintˈibih/ /lilwˈaħda/: ‖0.15 */mˈatir/ /bissˈaːʕa/، /mˈuː/ /bilθˈaːnja/.",
+   "show": "unit m/h highlighted; end lockup; fade to the opening navy (loop)"
+  }
+ ],
+ "script_ar": [
+  "عِدنا خزّان دَيخُرّ منّه الماي… شگَد سريع دَينزل مستوى الماي؟",
+  "قاعدته مربّعة، ضلعها مترين. والماي دَيخُرّ منّه بمعدّل صفر فاصلة أربعة متر مكعّب بالساعة.",
+  "هسّه انتبهلي، هنا الفكرة:",
+  "الحجم يساوي مساحة القاعدة ضرب الارتفاع،",
+  "اثنين ضرب اثنين ضرب h.",
+  "يعني: الحجم يساوي أربعة h.",
+  "هسّه نشتق الطرفين بالنسبة للزمن: dV/dt يساوي أربعة dh/dt.",
+  "الحجم دَيقِلّ، فمعدّل تغيّره سالب صفر فاصلة أربعة.",
+  "نعوّض: سالب صفر فاصلة أربعة يساوي أربعة dh/dt.",
+  "نقسم على أربعة…",
+  "dh/dt يساوي سالب صفر فاصلة واحد متر بالساعة.",
+  "يعني مستوى الماي ينزل عشرة سنتيمترات كل ساعة، وبنفس المعدّل دايماً.",
+  "ليش؟ لأن مساحة المقطع ما تتغيّر: أربعة متر مربّع بأي ارتفاع.",
+  "وانتبه للوحدة: متر بالساعة، مو بالثانية."
+ ]
+}

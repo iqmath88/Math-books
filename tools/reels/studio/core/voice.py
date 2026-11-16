@@ -18,6 +18,7 @@ re-scaled around its median by the emotion's range factor, accented words get a 
 at the end and statements settle. Piper/VITS has no SSML or emotion tags, so this is how expression is
 controlled; the performance notes in narration.json never reach the engine.
 
+Dialect: a word written as /ipa/ is sent as phonemes, bypassing espeak (used for the Iraqi narration).
 Pronunciation: espeak-ng (Piper's phonemiser) mis-handles some Arabic (shadda on و/ي, hamzat al-wasl).
 PRON maps such words to hand-written IPA in the phoneme set the voice was trained on.
 """
@@ -79,11 +80,12 @@ def phonemes(voice, words):
     """sentence phoneme lists with PRON overrides applied word by word"""
     sents, cur = [], []
     for i, w in enumerate(words):
-        ipa = PRON.get(w)
+        m = re.fullmatch(r'/([^/]+)/([.،,:؟?!…]*)', w)   # /ipa/ = phonemes written directly (dialect speech)
+        ipa = (m.group(1) + m.group(2).replace('،', ',').replace('؟', '?').replace('…', '...')) if m else PRON.get(w)
         ph = list(ipa) if ipa else sum(voice.phonemize(w), [])
         if cur: cur.append(' ')
         cur += ph
-        if w[-1] in '.؟?!' and i < len(words) - 1: sents.append(cur); cur = []
+        if w.rstrip('/')[-1:] in ('.', '؟', '?', '!') and i < len(words) - 1: sents.append(cur); cur = []
     if cur: sents.append(cur)
     return sents
 
@@ -174,7 +176,7 @@ def norm_ar(s):
     s = re.sub(r'\{\w+\}|‖[\d.]*|⟨[\d.]+⟩|\*', '', s)
     s = re.sub(r'[\u064B-\u0652\u0640]', '', s)
     s = re.sub(r'\d+(?:\.\d+)?', lambda m: ' ' + NUM.get(m.group(0), m.group(0)) + ' ', s)
-    for a, b in (('أ', 'ا'), ('إ', 'ا'), ('آ', 'ا'), ('ة', 'ه'), ('ى', 'ي'), ('ال', '')):
+    for a, b in (('گ', 'ك'), ('ڤ', 'ف'), ('أ', 'ا'), ('إ', 'ا'), ('آ', 'ا'), ('ة', 'ه'), ('ى', 'ي'), ('ال', '')):
         s = s.replace(a, b)
     return re.sub(r'[^\u0621-\u064A]', '', s)
 
@@ -221,7 +223,7 @@ def main():
             if judge:
                 best = None
                 for k in range(a.takes):
-                    tf = f'{f}.take{k}.wav'; d, c = synth_line(voice, L, p, use_emo, tf); sc, hyp = judge(tf, L['text'])
+                    tf = f'{f}.take{k}.wav'; d, c = synth_line(voice, L, p, use_emo, tf); sc, hyp = judge(tf, (N.get('script_ar') or [None] * 99)[i] or L['text'])
                     if best is None or sc > best[0]: best = (sc, d, c, tf, hyp, k)
                 sc, d, c, tf, hyp, k = best; os.replace(tf, f)
                 for k2 in range(a.takes):
