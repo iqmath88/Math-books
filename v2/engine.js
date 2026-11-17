@@ -81,7 +81,9 @@ const LN=x=>x.startsWith('» ')?`<span class="xpl">${T(x.slice(2))}</span>`:x.st
 /* solution lines may carry the same blocks as a worked example:
    «let> س ; المعنى ; القيمة» rows → a «نفرض» table;  «main> عنوان» / «aux> عنوان» followed by $$ lines (or «+ نص») → relation boxes */
 const bigLine=x=>`<div class="mathline tex" data-tex="${esc(x.slice(2).trim()).replace(/"/g,'&quot;')}"></div>`;
-const rbox=(k,sub,body)=>`<div class="rbox ${k}"><div class="rh"><b>${k==='main'?'العلاقة الرئيسية':'العلاقة المساعدة'}</b>${sub?`<span>${T(sub)}</span>`:''}</div>${body}</div>`;
+/* «main: [مبرهنة رول] نص» — a bracketed lead names the box (theorem, law, rule) instead of «العلاقة الرئيسية» */
+const rbox=(k,sub,body)=>{ const m=(sub||'').match(/^\[([^\]]+)\]\s*(.*)$/), lab=m?m[1]:k==='main'?'العلاقة الرئيسية':'العلاقة المساعدة', s2=m?m[2]:sub;
+  return `<div class="rbox ${k}"><div class="rh"><b>${T(lab)}</b>${s2?`<span>${T(s2)}</span>`:''}</div>${body}</div>`; };
 const letTable=(rows,title)=>`<div class="let"><div class="lh"><b>${title?T(title):'نفرض'}</b><span class="xl">توضيح</span></div><div class="lg">${rows.map(x=>{ const c=x.replace(/\s;\s*$/,'').split(' ; '); return `<div class="lr"><span class="ls">${T(c[0]||'')}</span><span class="lm">${T(c[1]||'')}</span><span class="lv">${T(c[2]||'')}</span></div>`; }).join('')}</div></div>`;
 const lines=p=>{ const L=p.lines; let h='', i=0;
   while(i<L.length){ const x=L[i];
