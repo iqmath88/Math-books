@@ -28,7 +28,7 @@ $$\cch{U(\sigma,f)}=M_1(x_1-x_0)+M_2(x_2-x_1)+M_3(x_3-x_2)+M_4(x_4-x_3)
 >>> lu4 !
 law: لاحظ أن:
 | $$U(\sigma,f)\ge L(\sigma,f)
-| $$L(\sigma,f)\le\text{مساحة}\ A\le U(\sigma,f)
+| $L(\sigma,f)$ ≤ مساحة $A$ ≤ $U(\sigma,f)$
 p: $\therefore$ أول قيمة تقريبية لمساحة $A$ وفق التجزئة $\sigma$ تساوي $\dfrac{L(\sigma,f)+U(\sigma,f)}{2}$.
 xp: بالرموز المختصرة
 | إذا كان $h_i=x_i-x_{i-1}$ طول الفترة الجزئية رقم $i$ فإن:

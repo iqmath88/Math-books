@@ -364,3 +364,15 @@ html[data-role="teacher"] .tagtools{display:block}
   .panel .top .chip{flex:none}
   .fig .hint{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 }
+
+/* Arabic words inside a display formula: chunks in reading order (engine arSplit) */
+.tex.mix{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;column-gap:.45em;row-gap:.2em;direction:rtl;text-align:center;margin:.5em 0}
+.tex.mix .ar{font-weight:600}
+.tex.mix .mc .katex{font-size:1.1em}
+.plab{font-weight:700;color:var(--accent,#2563eb);font-family:inherit;white-space:nowrap}
+/* labelled parts a) b) c): one row each */
+.parts{display:block}
+.parts .pstem{display:block;margin-bottom:.25em}
+.parts .prow{display:flex;gap:.6em;align-items:baseline;padding:.15em 0}
+.parts .prow .plab{min-width:1.6em}
+.parts .pbody{flex:1;min-width:0}

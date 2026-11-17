@@ -19,4 +19,6 @@ for(const f of v2){ const s=read(f); const id=f.slice(4,-5);
 for(const f of fs.readdirSync(path.join(root,'v2/lib'),{recursive:true})){ const p='v2/lib/'+f; if(fs.statSync(path.join(root,p)).isFile()&&/\.(woff2|css|js)$/.test(f)) assert.ok(core.includes(flat('lib/'+f)),`v2 asset not precached: ${flat('lib/'+f)}`); }
 for(const m of idx.matchAll(/v2:'([\w-]+)'/g)) assert.ok(core.includes(flat(m[1]+'.html')),`v2 chapter not precached: ${m[1]}`);
 assert.equal(require('node:child_process').spawnSync(process.execPath,[path.join(root,'tools/flatten.cjs'),'--check'],{encoding:'utf8'}).status,0,'flat copy out of date: run node tools/flatten.cjs');
+/* quality gate: every lesson source passes tools/lint_lessons.py (Arabic inside formulas, labels in maths, braces, $) */
+{ const g=require('node:child_process').spawnSync('python3',[path.join(root,'tools/lint_lessons.py')],{encoding:'utf8'}); assert.equal(g.status,0,'quality gate failed:\n'+g.stdout); }
 console.log(`PASS v${ver||'?'}: ${chapters.length} chapters + ${v2.length} v2 chapters, ${core.length} offline files, classroom-v2 linked everywhere`);

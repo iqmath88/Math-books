@@ -23,8 +23,8 @@ WXS='''
 function wxScenes(WXD,S,WXT){ for(const set in WXD) WXD[set].forEach(E=>{ for(let i=0;i<E.st.length;i++){ const F=typeof E.f==='function'?E.f(i):E.f; if(!F) continue;
   S[E.q+'-'+i]={v:[F.x0,F.x1,F.y0,F.y1],eq:F.eq,spec:F,title:(WXT&&WXT[E.q])||('مثال '+E.l),hint:F.hint||''}; } }); }
 '''
-def build(cid):
-    m=META[cid]; sc=open(f'{cid}.scenes.js').read()
+def scenes(cid):
+    sc=open(f'{cid}.scenes.js').read()
     if os.path.exists(CONV+cid+'.xf.json'):
         sc+='\n{ const XF=JSON.parse(%s); for(const k in XF) S["xf-"+k]={fig:XF[k],k:99,title:"تمرين",hint:"حلّ في دفترك ثم أظهر الحل"}; }\n' % json.dumps(open(CONV+cid+'.xf.json').read())
     if '//@G9' in sc:
@@ -32,6 +32,8 @@ def build(cid):
         sc=sc.replace('//@G9','''{ const G9=JSON.parse(%s); const INFV=v=>v==='inf'?Infinity:v==='-inf'?-Infinity:v;
   for(const k in G9.sc){ const o=G9.sc[k]; if(!o) continue; if(o.nl) o.nl.rows.forEach(r=>r.I=r.I.map(x=>x.map(INFV))); if(o.val!==undefined) Object.assign(o,valScene(o)); if(o.figq) o.fig=G9.F[o.figq]; S[k]=o; } }''' % json.dumps(g9))
     if '//@WX' in sc: sc=sc.replace('//@WX',WXS+'{\n'+open(CONV+cid+'.wx.js').read()+'\nwxScenes(WXD,S,WXT);\n}')
+    return sc
+def assemble(cid):
     parts=sorted(glob.glob(f'{cid}.l*.txt'),key=lambda p:int(p.split('.l')[1].split('.')[0]))
     src='\n'.join(open(p).read() for p in parts)
     import re
@@ -56,6 +58,12 @@ def build(cid):
             if line.startswith('// UNUSED'): continue
             if cur: xr[cur].append(line)
         src=re.sub(r'^@@xr (.+)$',lambda m:'\n'.join('\n'.join(xr[k]).strip() for k in m.group(1).split()),src,flags=re.M)
+    return src
+def build(cid):
+    m=META[cid]; sc=scenes(cid); src=assemble(cid)
+    errs,warns=lint(cid,src); te,_=template_lint(cid,src,load_tier()); errs+=te
+    if errs:
+        report(cid,errs,warns); raise SystemExit(f'{cid}: quality gate failed (tools/lint_lessons.py) — fix the lines above')
     js=f"/* {m['grade']} · {m['chapter']} · {m['title']} — مولَّد من المصدر، لا تعدّله يدوياً */\n(function(){{\n\"use strict\";\n{sc}\nwindow.BOOK=Object.assign({json.dumps(dict(id=cid,**m),ensure_ascii=False)},{{S,F:typeof F!=='undefined'?F:{{}},G:typeof GEN!=='undefined'?GEN:{{}},src:{json.dumps(src,ensure_ascii=False)}}});\n}})();\n"
     open(OUT+cid+'.js','w').write(js)
     # chapter add-ons loaded after the engine (3D solids, ladder motion overlay — see v2/*.js)
@@ -83,6 +91,9 @@ def build(cid):
 </html>
 '''
     open(OUT+cid+'.html','w').write(html)
-    print(cid, len(js), 'bytes', len(parts),'parts')
+    print(cid, len(js), 'bytes', len(glob.glob(f'{cid}.l*.txt')),'parts', f'· gate: 0 errors, {len(warns)} warnings')
+import sys as _sys; _sys.path.insert(0,_os.path.join(HERE,'..','tools'))
+from lint_lessons import lint, report, template_lint, load_tier
 EXTRA={'g12c3':['related-rates-motion.js','solids3d.js']}
-for c in (sys.argv[1:] or META): build(c)
+if __name__=='__main__':
+    for c in (sys.argv[1:] or META): build(c)

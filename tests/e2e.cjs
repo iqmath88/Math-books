@@ -156,6 +156,18 @@ async function page(b,vp='board',o={}){ const ctx=o.ctx||await b.newContext({vie
   const cases=[['ln4','2ln2',true],['8⅔','26/3',true],['−3','-3',true],['٤٫٥','9/2',true],['(√2,2),(-√2,2)','(-√2,2),(√2,2)',true],['31π/5','6.2π',true],['e-1','1.718',true],['3','4',false],['2.4','2',false],['1/2+π/6','1.0236',true]];
   const r=await pg.evaluate(c=>c.map(([a,k,exp])=>[a,k,LB.same(LB.nums(a),LB.nums(k))===exp]),cases); const bad=r.filter(x=>!x[2]);
   rec('T19','مدقق الأجوبة الرياضية (كسور، ln، e، π، أرقام عربية)',bad.length===0,bad.map(x=>x[0]+' vs '+x[1]).join(' | ')||cases.length+' حالات'); await ctx.close(); }
+ /* T32 quality gate on screen: every lesson of every chapter at phone width — no KaTeX error, no formula wider than
+    the screen, mixed Arabic/maths lines in reading order (.mix), labelled parts split into rows (.parts) */
+ if(want('T32')){ const {ctx,pg,errs}=await page(b,'phone'); const bad=[]; let nL=0,nMix=0,nParts=0;
+  for(const c of V2){ await pg.goto(BASE+`v2/${c}.html`); await pg.waitForSelector('.lcard'); const ids=await pg.evaluate(()=>LB.LES.map(l=>l.id));
+   for(const id of ids){ await pg.evaluate(id=>location.hash='l='+id,id); await pg.waitForSelector('.step'); await pg.waitForTimeout(250); nL++;
+    const r=await pg.evaluate(()=>{ document.querySelectorAll('.sol').forEach(s=>s.classList.add('show')); const vw=document.documentElement.clientWidth, out=[];
+      document.querySelectorAll('.katex-error').forEach(e=>out.push('katex:'+e.textContent.slice(0,40)));
+      document.querySelectorAll('.story .katex').forEach(k=>{ const r=k.getBoundingClientRect(); if(r.width&&r.right>vw+1&&!k.closest('.tblwrap,[style*="overflow"]')){ const sc=k.closest('.mathline,.big,.blk'); if(!sc||sc.scrollWidth<=sc.clientWidth+1) out.push('wide:'+(k.textContent||'').slice(0,30)); } });
+      if(document.documentElement.scrollWidth>vw+1) out.push('hscroll');
+      return {out,mix:document.querySelectorAll('.tex.mix').length,parts:document.querySelectorAll('.parts').length}; });
+    nMix+=r.mix; nParts+=r.parts; r.out.forEach(x=>bad.push(c+'/'+id+' '+x)); } }
+  rec('T32','بوابة الجودة على الشاشة: لا أخطاء معادلات ولا معادلة أعرض من الهاتف، والأسطر المختلطة بترتيب القراءة',bad.length===0&&!errs.length,`${nL} درساً، ${nMix} سطراً مختلطاً، ${nParts} سؤالاً بفروع; ${bad.slice(0,5).join(' | ')}${errs[0]||''}`); await ctx.close(); }
  /* T20 clear error message instead of a blank page */
  if(want('T20')){ const {ctx,pg}=await page(b); await pg.route('**/v2/g12c4.js',r=>r.abort()); await pg.goto(BASE+'v2/g12c4.html').catch(()=>{}); await pg.waitForTimeout(500);
   const t=await pg.evaluate(()=>document.body.innerText); rec('T20','رسالة واضحة عند فشل تحميل الفصل (بدل صفحة فارغة)',/تعذّر فتح هذا الفصل/.test(t)&&/أعد المحاولة/.test(t),t.slice(0,80)); await ctx.close(); }

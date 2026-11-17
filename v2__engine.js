@@ -58,7 +58,15 @@ function parse(src){
 }
 
 /* inline: $tex$, $$tex$$ (display), [[cls:text]], **bold** */
-function T(s){
+const PARTRE=/(^|\s)(?:\*\*([a-j])\)\*\*|([a-j])\))(?=\s*(?:\$|»|\*\*|[\u0600-\u06FF]))/g;
+/* a line holding two or more labelled parts a) b) c) … is shown as a stem plus one row per part (bidi-safe) */
+function partsHTML(s){ const ms=[...s.matchAll(PARTRE)]; if(ms.length<2) return null;
+  const labs=ms.map(m=>m[2]||m[3]); if(labs.some((l,i)=>i&&l.charCodeAt(0)!==labs[i-1].charCodeAt(0)+1)) return null;
+  const stem=s.slice(0,ms[0].index+ms[0][1].length).trim(); let h=stem?`<span class="pstem">${T1(stem)}</span>`:'';
+  ms.forEach((m,i)=>{ const a=m.index+m[0].length, b=i+1<ms.length?ms[i+1].index:s.length; h+=`<span class="prow"><span class="plab" dir="ltr">${labs[i]})</span><span class="pbody">${T1(s.slice(a,b).trim())}</span></span>`; });
+  return `<span class="parts">${h}</span>`; }
+function T(s){ if(s==null) return ''; const ph=partsHTML(String(s)); return ph||T1(s); }
+function T1(s){
   if(s==null) return ''; s=glue(String(s)); const keep=[], ph=i=>String.fromCharCode(0xE000+i);
   s=String(s).replace(/\$\$([^$]+)\$\$/g,(_,t)=>{ keep.push(`<span class="big tex" data-tex="${esc(t).replace(/"/g,'&quot;')}"></span>`); return ph(keep.length-1); })
    .replace(/\$([^$]+)\$/g,(_,t)=>{ keep.push(`<span class="tex" data-tex="${esc(t).replace(/"/g,'&quot;')}"></span>`); return ph(keep.length-1); });
@@ -117,7 +125,32 @@ function fitOne(el){ const W=avail(el); if(W<40) return; const tex=el.dataset.te
 const fitRO=typeof ResizeObserver!=='undefined'?new ResizeObserver(es=>es.forEach(e=>e.target.querySelectorAll('.tex.m').forEach(fitOne))):null;
 const refitAll=()=>{ document.querySelectorAll('.tex.m').forEach(el=>{ delete el.dataset.fitW; fitOne(el); }); };
 if(document.fonts){ document.fonts.ready.then(refitAll); document.fonts.addEventListener&&document.fonts.addEventListener('loadingdone',refitAll); }
+/* ---- Arabic inside a display formula ----
+   A display line such as  \text{القياس الرئيس للزاوية}\ -\frac{7\pi}{2}\ \text{هو}\ \frac{\pi}{2}  is laid out left-to-right by KaTeX,
+   so an Arabic reader meets its pieces in the wrong order. Such a line is split at its top-level Arabic \text{…} into
+   chunks that flow right-to-left: each formula chunk stays LTR inside, the words sit between them in reading order.
+   A leading \text{a)} label likewise moves to the reading start (the right).  tools/lint-lessons.py rejects lines
+   this cannot fix (Arabic nested in a fraction, an operator dangling at a chunk edge). */
+const AR=/[\u0600-\u06FF]/;
+function arSplit(t){ if(!AR.test(t)&&!/^\s*\\text\{[a-j]\)\}/.test(t)) return null;
+  const out=[]; let d=0,cur='',i=0,lab=null;
+  const flush=()=>{ const m=cur.replace(/^(\s|\\[;,:!> ]|\\q?quad)+|(\s|\\[;,:!> ]|\\q?quad)+$/g,''); if(m) out.push({m}); cur=''; };
+  while(i<t.length){ const c=t[i];
+    if(c==='\\'){ const mm=(t.slice(i).match(/^\\[A-Za-z]+|^\\[\s\S]/)||['\\'])[0];
+      if(d===0&&/^\\(text|textbf|mbox)$/.test(mm)&&t[i+mm.length]==='{'){ let j=i+mm.length+1,dd=1; while(j<t.length&&dd){ if(t[j]==='{') dd++; else if(t[j]==='}') dd--; j++; }
+        const body=t.slice(i+mm.length+1,j-1);
+        if(AR.test(body)){ flush(); out.push({a:body.trim()}); i=j; continue; }
+        if(!out.length&&!cur.trim()&&/^[a-j]\)$/.test(body.trim())){ lab=body.trim(); i=j; continue; } }
+      cur+=mm; i+=mm.length; continue; }
+    if(c==='{') d++; else if(c==='}') d--;
+    cur+=c; i++; }
+  flush(); if(lab) out.unshift({l:lab});
+  return out.some(x=>x.a||x.l)?out:null; }
+function mixRender(el,ch){ el.classList.add('mix'); el.setAttribute('dir','rtl');
+  el.innerHTML=ch.map(x=>x.a?`<span class="ar">${esc(x.a)}</span>`:x.l?`<span class="plab" dir="ltr">${esc(x.l)}</span>`:`<span class="mc" dir="ltr"></span>`).join('');
+  const mcs=el.querySelectorAll('.mc'); let k=0; ch.forEach(x=>{ if(x.m!==undefined){ try{ katex.render('\\displaystyle '+x.m,mcs[k],{...KOPT,displayMode:false,macros:{...MAC}}); }catch(e){ mcs[k].textContent=x.m; } k++; } }); }
 function typeset(r){ $$('.tex',r).forEach(el=>{ const disp=el.classList.contains('mathline')||el.classList.contains('big');
+    const ch=disp&&arSplit(el.dataset.tex); if(ch){ mixRender(el,ch); return; }
     try{ katex.render(el.dataset.tex,el,{...KOPT,displayMode:disp,macros:{...MAC}}); el.classList.add('m'); el.setAttribute('dir','ltr'); }catch(e){ el.textContent=el.dataset.tex; } });
   if(fitRO){ const seen=new Set(); $$('.tex.m',r).forEach(el=>{ let n=el.parentElement; while(n&&n!==r&&getComputedStyle(n).display==='inline') n=n.parentElement; if(n&&!seen.has(n)){ seen.add(n); fitRO.observe(n); } }); } }
 
