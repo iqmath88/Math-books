@@ -339,7 +339,7 @@ html[data-role="teacher"] .tagtools{display:block}
 .rbox{margin:12px 0;border-radius:14px;padding:8px 12px 6px;border:1.5px solid}
 .rbox .rh{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin-bottom:2px}
 .rbox .rh b{font-size:.86em;border-radius:99px;padding:1px 10px}
-.rbox .rh span{font-size:.86em;color:var(--muted)}
+.rbox .rh>span{font-size:.86em;color:var(--muted)}
 .rbox p{margin:4px 0}
 .rbox.main{border-color:#e0c64a;background:color-mix(in srgb,#fff6b8 55%,transparent)}
 .rbox.main .rh b{background:#e0c64a;color:#2d2600}
