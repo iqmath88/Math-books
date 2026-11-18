@@ -13,6 +13,8 @@
  ],
  "g12c4": [
   "regions",
-  "sums"
+  "sums",
+  "defint",
+  "ftc"
  ]
 }
