@@ -1,6 +1,6 @@
 === ln | 4−7 | اللوغارتم الطبيعي | 184–190 | تعريف ln x بالتكامل، مشتقة ln u و eᵘ و aᵘ، والتكاملات ∫ du/u و ∫ eᵘ du.
---- سؤال
->>> ln
+--- @discover اكتشف: دالة تُعرَّف بمساحة
+>>> ln .act
 k: [4−7] · اللوغارتم الطبيعي · The Natural Logarithmic
 h1: دالة تُعرَّف بمساحة
 lead: المساحة تحت $\cf{y=\dfrac1t}$ من $1$ إلى $x$ تعطي عدداً لكل $x>0$. هذا العدد هو $\ctn{\ln x}$.
@@ -11,54 +11,35 @@ o: 1
 o*: 0
 o: غير معرّفة
 why: عندما $x=1$ يتطابق الحدّان فتختفي المساحة: $\ln1=\int_1^1\frac1t\,dt=0$.
---- التعريف
->>> ln
+--- @understand افهم: التعريف والمشتقة والدالة العكسية
+>>> ln .book
 k: ص 184
 p: درسنا دوالاً مألوفة نوعاً ما. فكثيرات الحدود والدوال النسبية وغيرها من الدوال الجبرية تنتج عن عمليات مألوفة في الحساب والجبر، ويمكن مطابقة قيم الدوال المثلثية باحداثيات نقط على دائرة الوحدة. اما الان فندرس دالة اللوغارتم الطبيعي التي تعتمد على حساب التفاضل والتكامل حتى في تعريفها.
->>> ln !
+>>> ln .book
 law: تعريف [4−7−1]
 | يعرَّف لوغارتم $x$ الطبيعي، ويرمز له بـ $(\ln x)$ بأنه:
 | $$\ln x=\int_1^x\frac1t\,dt\;;\quad\forall x>0\qquad\dots\dots(1)
 p: يمثل هذا التكامل لكل $x$ اكبر من 1، المساحة المحدودة من الاعلى بالمنحني $y=\dfrac1t$ ومن الاسفل بالمحور $t$، ومن اليسار بالمستقيم $t=1$ ومن اليمين بالمستقيم $t=x$
 err: تكررت في الكتاب هنا جملة «يعرَّف لوغارتم x الطبيعي، ويرمز له بـ (ln x) بأنه:» في غير موضعها (خطأ في الإخراج الطباعي)، ولم نكررها.
->>> ln
+>>> ln .book
 p: اي اذا كان $x=1$ ، تطابق الحدان الايمن والايسر للمساحة واصبحت المساحة صفراً.
 $$\ln1=\int_1^1\frac1t\,dt=0\qquad\left(\int_a^a f(x)\,dx=0\right)
 p: اما اذا كانت $x$ اصغر من 1 واكبر من الصفر فعندئذ يكون الحد الايسر هو المستقيم $t=x$ ، والحد الايمن هو $t=1$ وفي هذه الحالة يكون التكامل
 $$\ln x=\int_1^x\frac1t\,dt=-\int_x^1\frac1t\,dt
 p: مساويا للقيمة السالبة للمساحة تحت المنحني بين $x$ و 1.
 note: ينسب اول اكتشاف للوغاريتم الطبيعي الى النبيل الاسكتلندي John Napier (1550 – 1617)
---- المشتقة
->>> ln
+>>> ln .book
 k: ص 185
 p: وفي كل الحالات، $x$ عدداً موجباً، فانه يمكن حساب قيمة التكامل المحدد في المعادلة (1) الى اي عدد نرغب فيه من الارقام العشرية كما مر بنا في حساب المساحة تحت المنحني بالتقريب.
 p: وبما ان الدالة $F(x)=\ln x$ معرفة بالتكامل $F(x)=\int_1^x\frac1t\,dt\,,\ \forall x>0$ فانه من المبرهنة الاساسية لحساب التكامل في البند (4−4) نعلم ان: $F'(x)=\dfrac1x$ اي ان:
 $$\cf{\frac{d}{dx}(\ln x)=\frac1x}
->>> ln
+>>> ln .book
 p: كما يمكننا الحصول على صيغة أعم عندما يكون لدينا $\ln u$ حيث $u$ دالة موجبة قابلة للاشتقاق بالنسبة لـ $x$ فقاعدة السلسلة للمشتقات (Chain Rule) تعطينا:
-$$\frac{d}{dx}(\ln u)=\frac{d(\ln u)}{du}\cdot\frac{du}{dx}\qquad\therefore\ \frac{d}{dx}(\ln u)=\frac1u\frac{du}{dx}\;\Rightarrow\;d(\ln u)=\frac1u\,du
->>> ln
-h2: مثال 1
-p: اذا كان $y=\ln(3x^2+4)$ فاوجد $\dfrac{dy}{dx}$
-xp: نحدد u
-| $u=3x^2+4$ ⇐ $\dfrac{du}{dx}=6x$
-$$\frac{dy}{dx}=\frac{1}{3x^2+4}\cdot\frac{d(3x^2+4)}{dx}=\cf{\frac{6x}{3x^2+4}}
-law: قاعدة التكامل
+$$\frac{d}{dx}(\ln u)=\frac{d(\ln u)}{du}\cdot\frac{du}{dx}
+$$\therefore\ \frac{d}{dx}(\ln u)=\frac1u\frac{du}{dx}\;\Rightarrow\;d(\ln u)=\frac1u\,du
+law: قاعدة التكامل · ص 185
 | ان الصيغة $d(\ln u)=\dfrac1u\,du$ تقودنا الى $\displaystyle\int\frac{du}{u}=\ln u+c$ وبشرط ان تكون $u$ موجبة
-rel: $\displaystyle\frac{d}{dx}\ln u=\frac{u'}{u}\quad\Longleftrightarrow\quad\int\frac{u'}{u}\,dx=\ln|u|+c$
->>> ln
-k: مثال 2 · ص 186
-p: جد $\displaystyle\int\frac{\cos\theta\,d\theta}{1+\sin\theta}$
-p: **الحل:** نفرض $u=1+\sin\theta$
-let: نفرض
-| $u$ ; المقام ; $1+\sin\theta$
-| $du$ ; مشتقته ; $\cos\theta\,d\theta$ = البسط ✓
-$$\frac{du}{d\theta}=\cos\theta\Rightarrow du=\cos\theta\,d\theta
-$$\therefore\ \int\frac{\cos\theta\,d\theta}{1+\sin\theta}=\int\frac{du}{u}=\ln|u|+c=\ln|1+\sin\theta|+c
-xp: لماذا القيمة المطلقة؟
-| $\ln$ معرّف للأعداد الموجبة فقط؛ كتابة $|u|$ تضمن ذلك. وهنا $1+\sin\theta\ge0$ دائماً.
---- الدالة الأسية
->>> ex
+>>> ex .book
 k: [4−7−2] · ص 186
 h2: دالة اللوغارتم الطبيعي
 p: لتكن $y=\ln x$ ، لو ابدلنا $x , y$ في مجموعة الازواج المرتبة: $\{(x,y):y=\ln x\,,\ x>0\}$ لحصلنا على دالة نرمز لها
@@ -66,7 +47,7 @@ $$x=\ln^{-1}(y)\,,\qquad y>0,\quad x\in R\qquad x=e^y
 err: الشرطان معكوسان في الكتاب: من $y=\ln x$ يكون $x=\ln^{-1}(y)=e^y$ حيث $y\in R$ و $x>0$ (لأن مجال $\ln$ هو الأعداد الموجبة ومداه $R$).
 p: ويكون مجال $\ln^{-1}(y)$ هو مدى $\ln(x)$
 note: **نتيجة:** الدالة الأسية $e^x$ (اساس $e$) هي عكس دالة اللوغاريتم الطبيعي وتستنتج جميع خواصها من هذه الحقيقة.
->>> ex !
+>>> ex .book
 k: ص 187
 law: مبرهنة [4−7−3]
 | $$\frac{d}{dx}(e^x)=e^x
@@ -76,61 +57,148 @@ xp: الخطوة الوسطى
 | اشتققنا طرفي $x=\ln y$ بالنسبة لـ $x$ اشتقاقاً ضمنياً: مشتقة $x$ هي 1 ، ومشتقة $\ln y$ هي $\dfrac1y\cdot\dfrac{dy}{dx}$
 p: وبصورة عامة
 $$\cf{\frac{d}{dx}(e^u)=e^u\cdot\frac{du}{dx}}
->>> ex
-h2: مثال 3
-p: لتكن $y=e^{\tan x}$ فجد $\dfrac{dy}{dx}$ .
-$$\frac{d(e^{\tan x})}{dx}=e^{\tan x}\cdot\frac{d(\tan x)}{dx}\;\Rightarrow\;\frac{dy}{dx}=e^{\tan x}\cdot\sec^2x
-note: **ملاحظة:** ان صيغة التفاضل $d(e^u)=e^u\dfrac{du}{dx}$ تقودنا الى صيغة التكامل: $\displaystyle\int e^u\,du=e^u+c$
-rel: $\displaystyle\frac{d}{dx}e^u=e^u\,u'\quad\Longleftrightarrow\quad\int e^u\,u'\,dx=e^u+c$
-err: الصواب $d(e^u)=e^u\,du$ أو $\dfrac{d}{dx}(e^u)=e^u\dfrac{du}{dx}$ ؛ كتابة $d(e^u)=e^u\dfrac{du}{dx}$ تخلط بين الصيغتين.
->>> ex
-h2: مثال 4
-p: جد $\int xe^{x^2}\,dx$
-p: **الحل:** نفرض ان: $x^2=u\Rightarrow2x\,dx=du$
-let: نفرض
-| $u$ ; الأس ; $x^2$
-| $du$ ; مشتقته ; $2x\,dx$ والموجود $x\,dx$ ⇐ نضرب ونقسم على 2
-xp: إكمال المشتقة
-| الموجود $x\,dx$ والمطلوب $2x\,dx=du$ ، فنكتب $x\,dx=\tfrac12du$
-$$\therefore\ \int e^{x^2}x\,dx=\frac12\int e^u\,du=\frac12e^u+c=\frac12e^{x^2}+c
-xp: فحص بالاشتقاق
-| $\dfrac{d}{dx}\tfrac12e^{x^2}=\tfrac12e^{x^2}(2x)=xe^{x^2}$ ✓
---- الأساس a
->>> ex
+>>> ex .book
 k: ص 187–188
 law: تعريف [4−7−4]
 | اذا كان $a$ عددا موجباً، فان $a^u=e^{u\ln a}$
 law: مبرهنة [4−7−5]
 | $$\frac{da^u}{dx}=a^u\cdot\frac{du}{dx}\ln a
 p: **البرهان:**
-$$\frac{da^u}{dx}=\frac{d}{dx}\left(e^{u\ln a}\right)=e^{u\ln a}\cdot\frac{d}{dx}(u\ln a)\qquad\therefore\ \frac{da^u}{dx}=a^u\cdot\frac{du}{dx}\cdot\ln a
+$$\frac{da^u}{dx}=\frac{d}{dx}\left(e^{u\ln a}\right)=e^{u\ln a}\cdot\frac{d}{dx}(u\ln a)
+$$\therefore\ \frac{da^u}{dx}=a^u\cdot\frac{du}{dx}\cdot\ln a
 xp: لماذا ln a يخرج كما هو؟
 | $\ln a$ عدد ثابت، فـ $\dfrac{d}{dx}(u\ln a)=\ln a\cdot\dfrac{du}{dx}$ ، و $e^{u\ln a}=a^u$ بالتعريف.
->>> ex
-h2: مثال 5
+--- @learn تعلّم الحل: حدّد u ثم اختر القاعدة
+>>> ln .book
+k: فكرة الحل في هذا الدرس
+h2: حدّد u أولاً
+xp: فكرة الحل في هذا الدرس
+| **1) أين $u$ ؟** داخل $\ln$ ، أو في أس $e$ ، أو في أس $a$ ، أو المقام في التكامل.
+| **2) اشتقاق:** $\ln u\to\dfrac{u'}{u}$ ، $e^u\to e^u\,u'$ ، $a^u\to a^u\,u'\ln a$
+| **3) تكامل:** هل البسط مشتقة المقام؟ ⇐ $\ln|u|$ . هل مشتقة الأس موجودة؟ ⇐ $e^u$ . أكمل المشتقة بثابت فقط.
+| **فحص دائماً:** اشتق الجواب لتعود إلى الدالة.
+>>> ln .book
+k: مثال 1 · ص 185
+h2: مشتقة ln u
+p: اذا كان $y=\ln(3x^2+4)$ فاوجد $\dfrac{dy}{dx}$
+let: المعطيات
+| $y$ ; الدالة ; $\ln(3x^2+4)$
+| $u$ ; ما داخل ln ; $3x^2+4$
+| المطلوب ; ; $\dfrac{dy}{dx}$
+main: [مشتقة ln u] $u$ موجبة
+| $$\frac{d}{dx}(\ln u)=\frac1u\cdot\frac{du}{dx}
+>>> ln #1 :: نحدد u ونشتقها
+$$u=3x^2+4\ \Rightarrow\ \frac{du}{dx}=6x
+>>> ln ! #2 :: نعوّض في القاعدة
+$$\frac{dy}{dx}=\frac{1}{3x^2+4}\cdot\frac{d(3x^2+4)}{dx}
+$$=\cf{\frac{6x}{3x^2+4}}
+xp: فحص سريع
+| النتيجة على صورة $\dfrac{u'}{u}$ : البسط $6x$ مشتقة المقام $3x^2+4$ ✓
+>>> ln .book
+k: مثال 2 · ص 186
+h2: البسط مشتقة المقام
+p: جد $\displaystyle\int\frac{\cos\theta\,d\theta}{1+\sin\theta}$
+let: المعطيات
+| التكامل ; ; $\displaystyle\int\frac{\cos\theta\,d\theta}{1+\sin\theta}$
+| $u$ ; المقام ; $1+\sin\theta$
+| المطلوب ; ; الدالة المقابلة $+c$
+main: [قاعدة ln] البسط مشتقة المقام
+| $$\int\frac{du}{u}=\ln|u|+c
+>>> ln #1 :: نفرض u
+p: **الحل:** نفرض $u=1+\sin\theta$
+$$\frac{du}{d\theta}=\cos\theta\Rightarrow du=\cos\theta\,d\theta
+>>> ln ! #2 :: نكامل ونعيد التعويض
+$$\therefore\ \int\frac{\cos\theta\,d\theta}{1+\sin\theta}=\int\frac{du}{u}=\ln|u|+c
+$$=\ln|1+\sin\theta|+c
+xp: لماذا القيمة المطلقة؟
+| $\ln$ معرّف للأعداد الموجبة فقط؛ كتابة $|u|$ تضمن ذلك. وهنا $1+\sin\theta\ge0$ دائماً.
+| **فحص:** $\dfrac{d}{d\theta}\ln(1+\sin\theta)=\dfrac{\cos\theta}{1+\sin\theta}$ ✓
+>>> ex .book
+k: مثال 3 · ص 187
+h2: مشتقة e^u
+p: لتكن $y=e^{\tan x}$ فجد $\dfrac{dy}{dx}$ .
+let: المعطيات
+| $y$ ; الدالة ; $e^{\tan x}$
+| $u$ ; الأس ; $\tan x$
+| المطلوب ; ; $\dfrac{dy}{dx}$
+main: [مشتقة e^u] الدالة نفسها × مشتقة الأس
+| $$\frac{d}{dx}(e^u)=e^u\cdot\frac{du}{dx}
+>>> ex #1 :: نطبق القاعدة
+$$\frac{d(e^{\tan x})}{dx}=e^{\tan x}\cdot\frac{d(\tan x)}{dx}
+>>> ex ! #2 :: مشتقة tan x
+$$\frac{dy}{dx}=e^{\tan x}\cdot\sec^2x
+xp: من أين sec²x؟
+| $\dfrac{d}{dx}\tan x=\sec^2x$ ، وهي مشتقة الأس $u$ .
+note: **ملاحظة:** ان صيغة التفاضل $d(e^u)=e^u\dfrac{du}{dx}$ تقودنا الى صيغة التكامل: $\displaystyle\int e^u\,du=e^u+c$
+err: الصواب $d(e^u)=e^u\,du$ أو $\dfrac{d}{dx}(e^u)=e^u\dfrac{du}{dx}$ ؛ كتابة $d(e^u)=e^u\dfrac{du}{dx}$ تخلط بين الصيغتين.
+>>> ex .book
+k: مثال 4 · ص 187
+h2: تكامل e^u
+p: جد $\int xe^{x^2}\,dx$
+let: المعطيات
+| التكامل ; ; $\int xe^{x^2}\,dx$
+| $u$ ; الأس ; $x^2$
+| $du$ ; مشتقته ; $2x\,dx$ والموجود $x\,dx$
+main: [تكامل e^u] مشتقة الأس موجودة
+| $$\int e^u\,du=e^u+c
+>>> ex #1 :: نفرض u
+p: **الحل:** نفرض ان: $x^2=u\Rightarrow2x\,dx=du$
+xp: إكمال المشتقة
+| الموجود $x\,dx$ والمطلوب $2x\,dx=du$ ، فنكتب $x\,dx=\tfrac12du$
+>>> ex ! #2 :: نكامل ونعيد التعويض
+$$\therefore\ \int e^{x^2}x\,dx=\frac12\int e^u\,du
+$$=\frac12e^u+c=\frac12e^{x^2}+c
+xp: فحص بالاشتقاق
+| $\dfrac{d}{dx}\tfrac12e^{x^2}=\tfrac12e^{x^2}(2x)=xe^{x^2}$ ✓
+>>> ex .book
+k: مثال 5 · ص 188
+h2: مشتقة a^u
 p: جد $\dfrac{dy}{dx}$ لكل مما يأتي: **a)** $y=3^{2x-5}$ **b)** $y=2^{-x^2}$ **c)** $y=5^{\sin x}$
-$$\text{a)}\ y=3^{2x-5}\Rightarrow\frac{dy}{dx}=3^{2x-5}(2)\cdot\ln3=(2\ln3)\,3^{2x-5}
-$$\text{b)}\ y=2^{-x^2}\Rightarrow\frac{dy}{dx}=2^{-x^2}(-2x)\cdot\ln2=(-2x\ln2)(2^{-x^2})
-$$\text{c)}\ y=5^{\sin x}\Rightarrow\frac{dy}{dx}=5^{\sin x}\cdot\cos x(\ln5)=(\ln5)\cdot5^{\sin x}\cdot\cos x
---- تمارين (4−7) : المشتقات
->>> ex
+let: المعطيات
+| $a$ ; الأساس (a، b، c) ; $3\ ,\ 2\ ,\ 5$
+| $u$ ; الأس (a، b، c) ; $2x-5\ ,\ -x^2\ ,\ \sin x$
+| المطلوب ; ; $\dfrac{dy}{dx}$
+main: [مبرهنة 4−7−5] الدالة × مشتقة الأس × ln الأساس
+| $$\frac{da^u}{dx}=a^u\cdot\frac{du}{dx}\ln a
+>>> ex #1 :: a) الأس خطي
+$$y=3^{2x-5}\Rightarrow\frac{dy}{dx}=3^{2x-5}(2)\cdot\ln3
+$$=(2\ln3)\,3^{2x-5}
+>>> ex #2 :: b) الأس تربيعي
+$$y=2^{-x^2}\Rightarrow\frac{dy}{dx}=2^{-x^2}(-2x)\cdot\ln2
+$$=(-2x\ln2)(2^{-x^2})
+>>> ex ! #3 :: c) الأس مثلثي
+$$y=5^{\sin x}\Rightarrow\frac{dy}{dx}=5^{\sin x}\cdot\cos x(\ln5)
+$$=(\ln5)\cdot5^{\sin x}\cdot\cos x
+xp: تحقق من الصورة
+| في كل جواب ثلاثة عوامل: الدالة نفسها، ومشتقة الأس ($2$ ، $-2x$ ، $\cos x$)، و $\ln$ الأساس ✓
+--- @practice تدرّب: تمارين (4−7) ص 189–190
+>>> ex .book
 k: تمارين · ص 189
 h2: دورك الآن
 p: **1−** جد $\dfrac{dy}{dx}$ لكل مما يأتي:
 p: **a)** $y=\ln3x$ **b)** $y=\ln\left(\dfrac x2\right)$ **c)** $y=\ln(x^2)$ **d)** $y=(\ln x)^2$ **e)** $y=\ln\left(\dfrac1x\right)^3$
 self:
-sol: a) $\dfrac{3}{3x}=\dfrac1x$ b) $\dfrac{1/2}{x/2}=\dfrac1x$ c) $\dfrac{2x}{x^2}=\dfrac2x$
+hint: حدّد $u$ داخل $\ln$ ثم طبّق $\dfrac{u'}{u}$ .
+sol: **الحل:**
+| let> $u$ ; ما داخل ln ; $3x\ ,\ \tfrac x2\ ,\ x^2\ ,\ \dots$
+| main> [مشتقة ln u] $u$ موجبة
+| $$\frac{d}{dx}\ln u=\frac{u'}{u}
+| a) $\dfrac{3}{3x}=\dfrac1x$ b) $\dfrac{1/2}{x/2}=\dfrac1x$ c) $\dfrac{2x}{x^2}=\dfrac2x$
 | d) » قاعدة السلسلة على القوس: $2\ln x\cdot\dfrac1x=\dfrac{2\ln x}{x}$
 | e) » $\ln\left(\tfrac1x\right)^3=\ln x^{-3}=-3\ln x$ ⇐ $-\dfrac3x$
->>> ex
+>>> ex .book
 p: **f)** $y=\ln(2-\cos x)$ **g)** $y=e^{-5x^2+3x+5}$ **h)** $y=9^{\sqrt x}$ **i)** $y=7^{-x/4}$ **j)** $y=x^2e^x$
 self:
-sol: f) $\dfrac{\sin x}{2-\cos x}$ g) $(-10x+3)\,e^{-5x^2+3x+5}$
+hint: $\ln u\to\dfrac{u'}{u}$ ، $e^u\to e^u\,u'$ ، $a^u\to a^u\,u'\ln a$
+sol: **الحل:**
+| let> $u$ ; الداخلية أو الأس (f–i) ; $2-\cos x\ ,\ \dots\ ,\ -\tfrac x4$
+| main> [مشتقة a^u] ومنها $e^u$ عندما $a=e$
+| $$\frac{d}{dx}a^u=a^u\,u'\ln a
+| f) $\dfrac{\sin x}{2-\cos x}$ g) $(-10x+3)\,e^{-5x^2+3x+5}$
 | h) $9^{\sqrt x}\cdot\dfrac{1}{2\sqrt x}\cdot\ln9=\dfrac{\ln3}{\sqrt x}\,9^{\sqrt x}$ » لأن $\ln9=2\ln3$
 | i) $7^{-x/4}\cdot\left(-\tfrac14\right)\ln7$
 | j) » قاعدة الضرب: $2xe^x+x^2e^x=xe^x(x+2)$
---- تمارين (4−7) : التكاملات
->>> t7a
+>>> t7a .book
 p: **2−** جد التكاملات الاتية: **a)** $\displaystyle\int_0^3\frac{1}{x+1}\,dx$
 xp: قالب الحل
 | **نفرض** $u$ (المقام أو الأس) ← **مشتقته موجودة؟** ← $\ln|u|$ أو $e^u$ ← **نعوّض الحدّين** ← **فحص** (تبسيط $\ln$ و $e$ ، أو الإشارة)
@@ -139,115 +207,195 @@ hint: $\int\dfrac{du}{u}=\ln|u|$ مع $u=x+1$
 hint: $\ln1=0$
 gen: gLn
 ok: t7a
-sol: **نفرض:** $u=x+1$ ⇐ $du=dx$ موجودة ✓
+sol: **الحل:**
+| let> $u$ ; المقام ; $x+1$ ⇐ $du=dx$ موجودة ✓
+| main> [قاعدة ln] البسط مشتقة المقام
+| $$\int\frac{du}{u}=\ln|u|+c
 | $\left[\ln|x+1|\right]_0^3=\ln4-\ln1=\ln4$
 | » **فحص:** $\ln4\approx1.39$ موجب لأن الدالة موجبة، وأقل من $3\times1=3$ (أكبر قيمة للدالة × طول الفترة) ✓
->>> t7b
+>>> t7b .book
 p: **b)** $\displaystyle\int_0^4\frac{2x}{x^2+9}\,dx$
 prac: ln(25/9) ; القيمة
 hint: البسط مشتقة المقام.
 gen: gLn
-sol: » البسط $2x$ مشتقة المقام $x^2+9$
+sol: **الحل:**
+| let> $u$ ; المقام ; $x^2+9$ ⇐ $du=2x\,dx$ ✓
+| main> [قاعدة ln] البسط مشتقة المقام
+| $$\int\frac{du}{u}=\ln|u|+c
 | $\left[\ln(x^2+9)\right]_0^4=\ln25-\ln9=\ln\dfrac{25}{9}$
->>> t7c
+>>> t7c .book
 p: **c)** $\displaystyle\int_{\ln3}^{\ln5}e^{2x}\,dx$
 prac: 8 ; القيمة
 hint: $\int e^{2x}dx=\tfrac12e^{2x}$
 hint: $e^{2\ln5}=e^{\ln25}=25$
 miss: 16 ; نسيت المعامل $\tfrac12$.
 gen: gExp
-sol: **نفرض:** $u=2x$ ⇐ $du=2\,dx$ ، فنضرب ونقسم على 2
+sol: **الحل:**
+| let> $u$ ; الأس ; $2x$ ⇐ $du=2\,dx$ ، فنضرب ونقسم على 2
+| main> [تكامل e^u] مشتقة الأس موجودة
+| $$\int e^u\,du=e^u+c
 | $\left[\tfrac12e^{2x}\right]_{\ln3}^{\ln5}=\tfrac12\left(e^{2\ln5}-e^{2\ln3}\right)=\tfrac12(25-9)=8$
 | » لأن $e^{2\ln5}=e^{\ln25}=25$
->>> t7d
+>>> t7d .book
 p: **d)** $\displaystyle\int_0^{\ln2}e^{-x}\,dx$
 prac: 1/2 ; القيمة
 hint: $\int e^{-x}dx=-e^{-x}$
 miss: -1/2 ; انتبه لإشارة الدالة المقابلة $-e^{-x}$.
 gen: gExp
 sol: $\left[-e^{-x}\right]_0^{\ln2}=-e^{-\ln2}+1=-\tfrac12+1=\tfrac12$
->>> t7e
+>>> t7e .book
 p: **e)** $\int_0^1(1+e^x)^2e^x\,dx$
 prac: ((1+e)^3-8)/3 ; القيمة (يمكنك كتابة e)
 hint: $e^x$ مشتقة $(1+e^x)$ : استخدم $\int u^2\,du=\tfrac{u^3}{3}$
-sol: » $e^x$ مشتقة $(1+e^x)$
+sol: **الحل:**
+| let> $u$ ; ما داخل القوس ; $1+e^x$ ⇐ $du=e^x\,dx$ ✓
+| main> [قاعدة القوة] $n=2$
+| $$\int u^n\,du=\frac{u^{n+1}}{n+1}+c
 | $\left[\tfrac{(1+e^x)^3}{3}\right]_0^1=\dfrac{(1+e)^3-2^3}{3}=\dfrac{(1+e)^3-8}{3}$
->>> t7f
+>>> t7f .book
 p: **f)** $\displaystyle\int_0^1\frac{3x^2+4}{x^3+4x+1}\,dx$
 prac: ln6 ; القيمة
 hint: البسط مشتقة المقام.
 gen: gLn
-sol: » البسط مشتقة المقام ⇐ $\left[\ln(x^3+4x+1)\right]_0^1=\ln6-\ln1=\ln6$
->>> t7g
+sol: **الحل:**
+| let> $u$ ; المقام ; $x^3+4x+1$ ⇐ $du=(3x^2+4)\,dx$ ✓
+| main> [قاعدة ln] البسط مشتقة المقام
+| $$\int\frac{du}{u}=\ln|u|+c
+| $\left[\ln(x^3+4x+1)\right]_0^1=\ln6-\ln1=\ln6$
+>>> t7g .book
 p: **g)** $\displaystyle\int_1^4\frac{e^{\sqrt x}\,dx}{2\sqrt x}$
 prac: e^2-e ; القيمة
 hint: $\dfrac{1}{2\sqrt x}$ مشتقة $\sqrt x$.
-sol: » $\dfrac{1}{2\sqrt x}$ مشتقة $\sqrt x$ ⇐ $\left[e^{\sqrt x}\right]_1^4=e^2-e$
->>> t7h
+sol: **الحل:**
+| let> $u$ ; الأس ; $\sqrt x$ ⇐ $du=\dfrac{dx}{2\sqrt x}$ ✓
+| main> [تكامل e^u] مشتقة الأس موجودة
+| $$\int e^u\,du=e^u+c
+| $\left[e^{\sqrt x}\right]_1^4=e^2-e$
+>>> t7h .book
 p: **h)** $\displaystyle\int_{-\pi/4}^{\pi/4}\frac{\sec^2x}{2+\tan x}\,dx$
 prac: ln3 ; القيمة
 hint: $\sec^2x$ مشتقة $(2+\tan x)$ ، و $\tan(\pm\tfrac{\pi}{4})=\pm1$.
-sol: » $\sec^2x$ مشتقة $(2+\tan x)$ ⇐ $\left[\ln(2+\tan x)\right]_{-\pi/4}^{\pi/4}=\ln3-\ln1=\ln3$
->>> t7i
+sol: **الحل:**
+| let> $u$ ; المقام ; $2+\tan x$ ⇐ $du=\sec^2x\,dx$ ✓
+| main> [قاعدة ln] البسط مشتقة المقام
+| $$\int\frac{du}{u}=\ln|u|+c
+| $\left[\ln(2+\tan x)\right]_{-\pi/4}^{\pi/4}=\ln3-\ln1=\ln3$
+>>> t7i .book
 p: **i)** $\displaystyle\int_{\pi/6}^{\pi/2}\frac{\cos x}{\sqrt{\sin x}}\,dx$
 prac: 2-√2 ; القيمة
 hint: $\int(\sin x)^{-1/2}\cos x\,dx=2(\sin x)^{1/2}$
-sol: » $\int(\sin x)^{-1/2}\cos x\,dx=2\sqrt{\sin x}$
+sol: **الحل:**
+| let> $u$ ; تحت الجذر ; $\sin x$ ⇐ $du=\cos x\,dx$ ✓
+| main> [قاعدة القوة] $n=-\tfrac12$
+| $$\int u^n\,du=\frac{u^{n+1}}{n+1}+c
+| » $\int(\sin x)^{-1/2}\cos x\,dx=2\sqrt{\sin x}$
 | $\left[2\sqrt{\sin x}\right]_{\pi/6}^{\pi/2}=2\sqrt1-2\sqrt{\tfrac12}=2-\sqrt2$
->>> xs6
+>>> xs6 .book
 p: **j)** $\int\cot^35x\,dx$
 self:
-sol: » $\cot^35x=\cot5x(\csc^25x-1)=\cot5x\csc^25x-\dfrac{\cos5x}{\sin5x}$
+hint: اكتب $\cot^2=\csc^2-1$ ، ثم $\cot5x=\dfrac{\cos5x}{\sin5x}$ .
+sol: **الحل:**
+| let> $f(x)$ ; تحت التكامل ; $\cot^35x$
+| main> [نبسّط بالمتطابقة] ثم قاعدة القوة وقاعدة ln
+| $$\cot^2\theta=\csc^2\theta-1
+| » $\cot^35x=\cot5x(\csc^25x-1)=\cot5x\csc^25x-\dfrac{\cos5x}{\sin5x}$
 | $\int\cot5x\csc^25x\,dx=-\dfrac{\cot^25x}{10}$ ، $\int\dfrac{\cos5x}{\sin5x}\,dx=\dfrac15\ln|\sin5x|$
 | $\int\cot^35x\,dx=-\dfrac{1}{10}\cot^25x-\dfrac15\ln|\sin5x|+c$
->>> t7k
+>>> t7k .book
 p: **k)** $\int_0^{\pi/2}e^{\cos x}\sin x\,dx$
 prac: e-1 ; القيمة
 hint: $-\sin x$ مشتقة $\cos x$.
-sol: » $-\sin x$ مشتقة $\cos x$ ⇐ $\left[-e^{\cos x}\right]_0^{\pi/2}=-e^0+e^1=e-1$
->>> t7l
+sol: **الحل:**
+| let> $u$ ; الأس ; $\cos x$ ⇐ $du=-\sin x\,dx$
+| main> [تكامل e^u] نكمل المشتقة بالإشارة
+| $$\int e^u\,du=e^u+c
+| $\left[-e^{\cos x}\right]_0^{\pi/2}=-e^0+e^1=e-1$
+>>> t7l .book
 p: **l)** $\int_1^2xe^{-\ln x}\,dx$
 prac: 1 ; القيمة
 hint: $e^{-\ln x}=\dfrac1x$
-sol: » $e^{-\ln x}=e^{\ln x^{-1}}=\dfrac1x$ ⇐ المقدار $=x\cdot\dfrac1x=1$
+sol: **الحل:**
+| let> $e^{-\ln x}$ ; نبسّطها ; $\dfrac1x$
+| main> [e و ln متعاكستان] $x>0$
+| $$e^{\ln x}=x
+| » $e^{-\ln x}=e^{\ln x^{-1}}=\dfrac1x$ ⇐ المقدار $=x\cdot\dfrac1x=1$
 | $\int_1^2 1\,dx=1$
---- تمارين (4−7) : 3 – 7
->>> t7l
+>>> t7l .book
 k: ص 190
 p: **3−** اثبت ان: **a)** $\displaystyle\int_1^8\frac{\sqrt{\sqrt[3]x-1}}{\sqrt[3]{x^2}}\,dx=2$ **b)** $\int_{-2}^{4}|3x-6|\,dx=30$
 self:
-sol: a) » $\dfrac{d}{dx}(\sqrt[3]x-1)=\dfrac13x^{-2/3}$ ⇐ $\dfrac{1}{\sqrt[3]{x^2}}=3\cdot\dfrac{d}{dx}(\sqrt[3]x-1)$
+hint: a) مشتقة $\sqrt[3]x-1$ هي $\tfrac13x^{-2/3}$ . b) قسّم الفترة عند $x=2$ .
+sol: **الحل:**
+| let> $u$ ; في a ; $\sqrt[3]x-1$ ⇐ $du=\tfrac13x^{-2/3}\,dx$
+| main> [قاعدة القوة] $n=\tfrac12$
+| $$\int u^n\,du=\frac{u^{n+1}}{n+1}+c
+| a) » $\dfrac{d}{dx}(\sqrt[3]x-1)=\dfrac13x^{-2/3}$ ⇐ $\dfrac{1}{\sqrt[3]{x^2}}=3\cdot\dfrac{d}{dx}(\sqrt[3]x-1)$
 | $3\left[\tfrac23(\sqrt[3]x-1)^{3/2}\right]_1^8=2\left[(2-1)^{3/2}-0\right]=2$ ✓
 | b) » نقسم عند $x=2$ : $\int_{-2}^{2}(6-3x)\,dx+\int_2^4(3x-6)\,dx=24+6=30$ ✓
->>> t7l
+>>> t7l .book
 p: **4−** $f(x)$ دالة مستمرة على الفترة $[-2,6]$ فاذا كان $\int_1^6 f(x)\,dx=6$ وكان $\int_{-2}^{6}[f(x)+3]\,dx=32$ فجد $\int_{-2}^{1}f(x)\,dx$
 prac: 2 ; القيمة
 hint: افصل التكامل: $\int(f+3)=\int f+\int3$ ، ثم استخدم تجزئة الفترة.
-sol: $\int_{-2}^6 f\,dx+\int_{-2}^6 3\,dx=32$ ⇐ $\int_{-2}^6 f\,dx+24=32$ ⇐ $\int_{-2}^6 f\,dx=8$
+sol: **الحل:**
+| let> $\int_1^6 f$ ; معطى ; $6$
+| let> $\int_{-2}^{6}(f+3)$ ; معطى ; $32$
+| main> [تجزئة الفترة] $a<c<b$
+| $$\int_a^b f=\int_a^c f+\int_c^b f
+| $\int_{-2}^6 f\,dx+\int_{-2}^6 3\,dx=32$ ⇐ $\int_{-2}^6 f\,dx+24=32$ ⇐ $\int_{-2}^6 f\,dx=8$
 | $\int_{-2}^1 f=\int_{-2}^6 f-\int_1^6 f=8-6=2$
->>> t7l
+>>> t7l .book
 p: **5−** جد قيمة $a\in R$ اذا علمت أن $\int_1^a\left(x+\tfrac12\right)dx=2\int_0^{\pi/4}\sec^2x\,dx$
 prac: 2 , -3 ; قيم a
 hint: الطرف الأيمن $=2[\tan x]_0^{\pi/4}=2$.
 hint: ستحصل على معادلة من الدرجة الثانية لها حلّان.
-sol: الطرف الأيمن: $2\left[\tan x\right]_0^{\pi/4}=2(1)=2$
+sol: **الحل:**
+| let> $a$ ; المجهول ; الحد الأعلى
+| main> [المبرهنة الأساسية] نحسب الطرفين ونساوي
+| $$\int_a^b f(x)\,dx=F(b)-F(a)
+| الطرف الأيمن: $2\left[\tan x\right]_0^{\pi/4}=2(1)=2$
 | الأيسر: $\left[\tfrac{x^2}{2}+\tfrac x2\right]_1^a=\tfrac{a^2+a}{2}-1$
 | $\tfrac{a^2+a}{2}-1=2\Rightarrow a^2+a-6=0\Rightarrow(a-2)(a+3)=0\Rightarrow a=2$ أو $a=-3$
->>> t7l
+>>> t7l .book
 p: **6−** لتكن $f(x)=x^2+2x+k$ حيث $k\in R$ ، دالة نهايتها الصغرى تساوي $(-5)$ جد $\int_1^3 f(x)\,dx$
 prac: 26/3 ; القيمة
 hint: النهاية الصغرى عند $f'(x)=0$ ، وقيمتها $-5$ تعطيك $k$.
-sol: $f'(x)=2x+2=0\Rightarrow x=-1$ ، $f(-1)=1-2+k=-5\Rightarrow k=-4$
+sol: **الحل:**
+| let> $f(x)$ ; الدالة ; $x^2+2x+k$
+| let> النهاية الصغرى ; معطاة ; $-5$
+| main> [النهاية الصغرى] ثم نكامل
+| $$f'(x)=0
+| $f'(x)=2x+2=0\Rightarrow x=-1$ ، $f(-1)=1-2+k=-5\Rightarrow k=-4$
 | $\int_1^3(x^2+2x-4)\,dx=\left[\tfrac{x^3}{3}+x^2-4x\right]_1^3=6-\left(-\tfrac83\right)=\tfrac{26}{3}$
->>> t7l
+>>> t7l .book
 p: **7−** إذا كان للمنحني $f(x)=(x-3)^3+1$ نقطة انقلاب $(a,b)$ جد القيمة العددية للمقدار $\int_0^b f'(x)\,dx-\int_0^a f''(x)\,dx$
 prac: 46 ; القيمة
 hint: نقطة الانقلاب عند $f''(x)=0$.
 hint: $\int_0^b f'(x)\,dx=f(b)-f(0)$ و $\int_0^a f''(x)\,dx=f'(a)-f'(0)$
 miss: -8 ; انتبه: طرح $-27$ يعني إضافة 27.
-sol: $f''(x)=6(x-3)=0\Rightarrow x=3$ ، $f(3)=1$ ⇐ $(a,b)=(3,1)$
+sol: **الحل:**
+| let> $f(x)$ ; الدالة ; $(x-3)^3+1$
+| let> $(a,b)$ ; نقطة الانقلاب ; من $f''=0$
+| main> [تكامل المشتقة] يعيد الدالة
+| $$\int_p^q f'(x)\,dx=f(q)-f(p)
+| $f''(x)=6(x-3)=0\Rightarrow x=3$ ، $f(3)=1$ ⇐ $(a,b)=(3,1)$
 | » تكامل المشتقة يعيد الدالة: $\int_0^1 f'=f(1)-f(0)=(-7)-(-26)=19$
 | $\int_0^3 f''=f'(3)-f'(0)=0-27=-27$ ⇐ $19-(-27)=46$
+--- @check تحقّق
+>>> ln .enr
+k: تقويم قصير · ليس من الكتاب
+p: ما مشتقة $y=\ln(x^2+1)$ ؟
+ask: اختر:
+o: $\dfrac{1}{x^2+1}$
+o*: $\dfrac{2x}{x^2+1}$
+o: $2x\ln(x^2+1)$
+why: $\dfrac{d}{dx}\ln u=\dfrac{u'}{u}$ مع $u=x^2+1$ و $u'=2x$ .
+>>> ex .enr
+p: ما قيمة $\int e^{3x}\,dx$ ؟
+ask: اختر:
+o: $e^{3x}+c$
+o: $3e^{3x}+c$
+o*: $\tfrac13e^{3x}+c$
+why: مشتقة الأس $3x$ هي $3$ ، فنضرب ونقسم على 3: $\tfrac13\int e^{3x}(3)\,dx=\tfrac13e^{3x}+c$ . فحص: $\dfrac{d}{dx}\tfrac13e^{3x}=e^{3x}$ ✓
 >>> ln .summary
 h2: الخلاصة
 - $\ln x=\int_1^x\frac{dt}{t}$ ، $\ln1=0$ ، $\dfrac{d}{dx}\ln u=\dfrac{u'}{u}$ ⇐ $\int\dfrac{du}{u}=\ln|u|+c$.
