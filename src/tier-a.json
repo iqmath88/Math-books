@@ -1,3 +1,18 @@
 {
- "g12c3": ["rates", "rolle", "mvt", "approx", "mono", "extrema", "concav", "second", "graph", "optim"]
+ "g12c3": [
+  "rates",
+  "rolle",
+  "mvt",
+  "approx",
+  "mono",
+  "extrema",
+  "concav",
+  "second",
+  "graph",
+  "optim"
+ ],
+ "g12c4": [
+  "regions",
+  "sums"
+ ]
 }
