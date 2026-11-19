@@ -104,3 +104,15 @@ S.quad={v:[-5,1,-2.6,2.6],eq:1,title:'جذرا x² + 4x + c',hint:'المميز 
   dot(A,r1[0],r1[1],'f',7); dot(A,r2[0],r2[1],'tan',7);
   A.chips.push(['c','المميز b² − 4ac',fr(D,2)],['f','x₁',fr(r1[0],2)+(r1[1]?(' + '+fr(r1[1],2)+'i'):'')],['tan','x₂',fr(r2[0],2)+(r2[1]?(' − '+fr(-r2[1],2)+'i'):'')],['muted','x₁ + x₂','−4'],['muted','x₁ · x₂',fr(c,2)]);
   A.hint=D<0?'المميز سالب: الجذران مترافقان، مجموعهما −4 وحاصل ضربهما c':'المميز غير سالب: جذران حقيقيان'; }};
+
+/* ---------- 1−6 ---------- */
+/* cube roots of unity: 1, ω, ω² form an equilateral triangle; powers of ω cycle every 3 */
+const OM=[[1,0,'1'],[-.5,sq(3)/2,'ω'],[-.5,-sq(3)/2,'ω²']];
+S.omega={v:[-1.9,1.9,-1.6,1.6],eq:1,title:'الجذور التكعيبية للواحد: مثلث متساوي الأضلاع',hint:'ω³ = 1 و 1 + ω + ω² = 0',
+ sl:{min:-8,max:33,v:0,step:1,play:1,speed:.6,lab:'الأس n',fmt:v=>String(Math.round(v))},
+ draw(A){ const n=Math.round(A.p), r=((n%3)+3)%3;
+  circ(A,1);
+  A.el('path',{d:OM.map((p,k)=>(k?'L':'M')+A.X(p[0])+' '+A.Y(p[1])).join('')+'Z',stroke:A.col.muted,'stroke-width':1.4,fill:A.col.f,'fill-opacity':.06},A.G);
+  OM.forEach(([x,y,l],k)=>{ dot(A,x,y,k===r?'f':'muted',k===r?9:5); T(A,A.X(x*1.3),A.Y(y*1.3)+5,l,k===r?'f':'muted',{size:k===r?16:13,anchor:'middle'}); });
+  seg(A,0,0,OM[r][0],OM[r][1],'f',3);
+  A.chips.push(['c','n',String(n)],['tan','الباقي من ÷ 3',String(r)],['f','ωⁿ',OM[r][2]],['muted','ω','−½ + (√3/2) i']); }};

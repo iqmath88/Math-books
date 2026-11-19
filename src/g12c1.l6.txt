@@ -1,0 +1,283 @@
+=== omega | 1−6 | الجذور التكعيبية للواحد الصحيح | 27–31 | جذور z³ = 1 هي 1 , ω , ω² ؛ ومنها 1 + ω + ω² = 0 و ω³ = 1 ، وقوى ω تتكرر كل 3 .
+--- @discover اكتشف: ثلاثة جذور للعدد 1
+>>> omega .act
+k: [1−6] · الجذور التكعيبية للواحد الصحيح
+h1: للعدد 1 ثلاثة جذور تكعيبية
+lead: في الأعداد الحقيقية للعدد 1 جذر تكعيبي واحد. في $\mathbb{C}$ له ثلاثة: $1$ و $\cf{\omega}$ و $\omega^2$ ، رؤوس مثلث متساوي الأضلاع.
+p: **حرّك الأس n** : قوى $\omega$ تتكرر كل 3 ، فالباقي من القسمة على 3 يحدد القيمة.
+>>>
+ask: ما قيمة $\omega^3$ ؟
+o: $\omega$
+o*: $1$
+o: $-1$
+why: $\omega$ جذر تكعيبي للواحد، أي $\omega^3=1$ .
+--- @understand افهم: 1 , ω , ω² وخاصيتاهما
+>>> omega .book
+k: [1−6] · ص 27
+h2: الجذور التكعيبية للواحد الصحيح
+p: ليكن $z$ احد الجذور التكعيبية للواحد الصحيح : فان $z^3=1$ ومنها :
+$$z^3-1=0\Rightarrow(z-1)(z^2+z+1)=0\Rightarrow
+$$z=1\qquad\text{or}\qquad z^2+z+1=0
+p: ولحل المعادلة $z^2+z+1=0$ نستخدم الدستور :
+$$z=\frac{-b\pm\sqrt{b^2-4ac}}{2a}=\frac{-1\pm\sqrt{1-(4)(1)(1)}}{(2)(1)}
+$$=\frac{-1\pm\sqrt{-3}}{2}=\frac{-1}{2}\pm\frac{\sqrt3}{2}i
+>>> omega .book
+p: اي ان الجذور التكعيبية للواحد الصحيح الموجب هي :
+$$1\ ,\ -\frac12+\frac{\sqrt3}{2}i\ ,\ -\frac12-\frac{\sqrt3}{2}i
+p: ان مربع أي من الجذرين التخيليين يساوي الجذر التخيلي الاخر وهما مترافقان (تحقق من ذلك)
+p: فاذا رمزنا لاحد الجذرين التخيليين بالرمز $\omega$ "ويقرأ أوميكا **Omega**" فان الجذر الآخر هو $\omega^2$ .
+law: ولذلك يمكن كتابة الجذور التكعيبية للواحد الصحيح على الصورة :
+| $$1\ ,\ \omega\ ,\ \omega^2
+xp: تحقق من ذلك
+| $\left(-\tfrac12+\tfrac{\sqrt3}{2}i\right)^2=\tfrac14-\tfrac{\sqrt3}{2}i+\tfrac34i^2=-\tfrac12-\tfrac{\sqrt3}{2}i$ ✓ : مربع أحدهما هو الآخر، وهو مرافقه.
+>>> omega .book
+k: ص 28
+p: وهذه الجذور تحقق الخواص الآتية :
+law:
+| **1)** $1+\omega+\omega^2=0$
+| **2)** $\omega^3=1$
+p: ومن الخاصية الاولى نحصل على الاتي :
+tbh: (1) | (2) | (3)
+tbl: $\omega+\omega^2=-1$ | $1+\omega=-\omega^2$ | $1+\omega^2=-\omega$
+tbh: (4) | (5) | (6)
+tbl: $\omega=-1-\omega^2$ | $\omega^2=-1-\omega$ | $1=-\omega-\omega^2$
+>>> omega .book
+p: ومن الخاصية الثانية يمكن التوصل الى النتائج الاتية :
+$$\omega^4=\omega^3\cdot\omega=1\cdot\omega=\omega
+$$\omega^{-4}=\frac{1}{\omega^4}=\frac{1}{\omega^3\cdot\omega}=\frac1\omega=\frac{\omega^3}{\omega}=\omega^2
+$$\omega^5=\omega^3\cdot\omega^2=1\cdot\omega^2=\omega^2
+$$\omega^{-5}=\frac{1}{\omega^5}=\frac{1}{\omega^3\cdot\omega^2}=\frac{1}{1\cdot\omega^2}=\frac{\omega^3}{\omega^2}=\omega
+$$\omega^6=(\omega^3)^2=(1)^2=1\qquad\omega^{-6}=\frac{1}{\omega^6}=\frac11=1
+p: وبالاستمرار على هذا النحو فان قوى $(\omega)$ لاعداد صحيحة تأخذ احدى القيم : $1,\omega,\omega^2$ وتتكرر هذه القيم كلما زادت الاسس على التوالي بمقدار $(3)$ .
+law: بمعنى أن :
+| $$\omega^{3n+r}=\omega^r
+| حيث $n$ عدد صحيح , $r=0,1,2$
+--- @learn تعلّم الحل: الباقي من ÷ 3 ، و 1 + ω + ω² = 0
+>>> omega .book
+k: فكرة الحل في هذا الدرس
+h2: أداتان
+xp: فكرة الحل في هذا الدرس
+| **قوى ω:** نقسم الأس على 3 والباقي هو الأس الجديد: $\omega^{3n+r}=\omega^r$ . للأس السالب نكتبه $3n+r$ بـ $n$ سالب و $r\ge0$ .
+| **التبسيط:** نجمع $\omega+\omega^2$ معاً ونعوّضه $-1$ ، و $1+\omega=-\omega^2$ ، و $1+\omega^2=-\omega$ .
+| **المقلوب:** $\dfrac1\omega=\omega^2$ و $\dfrac{1}{\omega^2}=\omega$ (لأن $\omega^3=1$).
+| **فحص:** النتيجة النهائية عدد حقيقي أو واحد من $1,\omega,\omega^2$ في أغلب الأسئلة.
+>>> omega .book
+k: مثال 19 · ص 29
+h2: قوى ω
+p: جد ناتج : $\omega^{33}$ ، $\omega^{25}$ ، $\omega^{-58}$
+let: المعطيات
+| $\omega^3$ ; الخاصية الثانية ; $1$
+| الأسس ; المعطاة ; $33\ ,\ 25\ ,\ -58$
+| المطلوب ; أبسط صورة ; $1\ ,\ \omega\ ,\ \omega^2$
+main: [قوى ω] الأس الجديد باقي القسمة على 3
+| $$\omega^{3n+r}=\omega^r\ ,\quad r=0,1,2
+>>> omega #1 :: أسّان موجبان
+p: **الحل:**
+$$\omega^{33}=\omega^{3(11)+0}=\omega^0=1
+$$\omega^{25}=\omega^{3(8)+1}=\omega^1=\omega
+>>> omega ! #2 :: أس سالب
+$$\omega^{-58}=\omega^{3(-20)+2}=1\cdot\omega^2=\omega^2
+note: بمعنى أن : باقي قسمة أس $(\omega)$ على $(3)$ هو الاس الجديد الى $\omega$ .
+xp: فحص
+| $3(-20)+2=-58$ ✓ ، والباقي $2\ge0$ . لو كتبنا $-58=3(-19)-1$ لكان الباقي سالباً، فنختار $n=-20$ .
+>>> omega .book
+k: مثال 20 · ص 29
+h2: إثبات بالخاصيتين
+p: اثبت ان : **a)** $\omega^7+\omega^5+1=0$ **b)** $(5+3\omega+3\omega^2)^2=-4(2+\omega+2\omega^2)^3=4$
+let: المعطيات
+| الخاصية 1 ; المجموع ; $1+\omega+\omega^2=0$
+| الخاصية 2 ; المكعب ; $\omega^3=1$
+| المطلوب ; نبسّط الطرف الأيسر ; حتى يساوي الأيمن
+main: [خاصيتا ω] نجمع $\omega+\omega^2$ معاً
+| $$\omega+\omega^2=-1
+>>> omega #1 :: الفقرة a
+p: **الحل:**
+$$a)\ \text{LHS}=\omega^7+\omega^5+1=\omega^6\cdot\omega+\omega^3\cdot\omega^2+1
+$$=\omega+\omega^2+1=0=\text{RHS}
+p: (حسب الخاصية الاولى)
+>>> omega #2 :: الفقرة b: المقدار الأول
+$$b)\ (5+3\omega+3\omega^2)^2=\left[5+3(\omega+\omega^2)\right]^2
+$$=[5-3]^2=(2)^2=4
+>>> omega ! #3 :: الفقرة b: المقدار الثاني
+p: كذلك المقدار الثاني :
+$$=-4(2+\omega+2\omega^2)^3=-4\left[2(1+\omega^2)+\omega\right]^3
+$$=-4[-2\omega+\omega]^3=-4[-\omega]^3
+$$=-4(-1)=4
+$$\therefore\ (5+3\omega+3\omega^2)^2=-4(2+\omega+2\omega^2)^3=4
+xp: من أين −4(−1)؟
+| $[-\omega]^3=-\omega^3=-1$ ، فيكون $-4\times(-1)=4$ .
+>>> omega .book
+k: مثال 21 · ص 30
+h2: تكوين معادلة جذراها بدلالة ω
+p: كوّن المعادلة التربيعية التي جذراها : **a)** $1-i\omega^2\ ,\ 1-i\omega$ **b)** $\dfrac{2}{1-\omega}\ ,\ \dfrac{2}{1-\omega^2}$
+let: المعطيات
+| a ; الجذران ; $1-i\omega^2\ ,\ 1-i\omega$
+| b ; الجذران ; $\dfrac{2}{1-\omega}\ ,\ \dfrac{2}{1-\omega^2}$
+| المطلوب ; المعادلة ; من المجموع والضرب
+main: [تكوين المعادلة] من المجموع وحاصل الضرب
+| $$x^2-(x_1+x_2)x+x_1x_2=0
+>>> omega #1 :: الفقرة a
+p: **الحل a)** مجموع الجذرين :
+$$(1-i\omega^2)+(1-i\omega)=2-i(\omega^2+\omega)=2+i
+p: حاصل ضرب الجذرين :
+$$(1-i\omega^2)(1-i\omega)=1-i\omega-i\omega^2+i^2\omega^3
+$$=1-i(\omega+\omega^2)+(-1)(1)=i
+p: $\therefore$ المعادلة هي : $x^2-(2+i)x+i=0$
+>>> omega #2 :: الفقرة b: المجموع
+p: **b)** مجموع الجذرين :
+$$\frac{2}{1-\omega}+\frac{2}{1-\omega^2}=\frac{2-2\omega+2-2\omega^2}{1-\omega^2-\omega+\omega^3}
+$$=\frac{4-2(\omega+\omega^2)}{2-(\omega+\omega^2)}=\frac63=2
+>>> omega ! #3 :: الفقرة b: الضرب والمعادلة
+p: حاصل ضرب الجذرين :
+$$\frac{2}{1-\omega}\cdot\frac{2}{1-\omega^2}=\frac{4}{1-\omega^2-\omega+\omega^3}=\frac43
+p: $\therefore$ المعادلة هي : $x^2-2x+\dfrac43=0$
+xp: فحص المقام
+| $(1-\omega)(1-\omega^2)=1-\omega^2-\omega+\omega^3=1+1+1=3$ ، ومنه المجموع $\tfrac{4+2}{3}=2$ ✓ والضرب $\tfrac43$ ✓
+--- @practice تدرّب: تمارين ص 31
+>>> omega .book
+k: تمارين · ص 31
+h2: دورك الآن
+p: **1.** اكتب المقادير الآتية في ابسط صورة : **a)** $\omega^{64}$
+xp: قالب الحل
+| **قوى:** الباقي من القسمة على 3 هو الأس الجديد.
+| **مجاميع:** $\omega+\omega^2=-1$
+| $1+\omega=-\omega^2$ و $1+\omega^2=-\omega$
+| **مقلوب:** $\tfrac1\omega=\omega^2$
+| **فحص:** بالتعويض العددي $\omega=-\tfrac12+\tfrac{\sqrt3}{2}i$
+ask: اختر:
+o: $1$
+o*: $\omega$
+o: $\omega^2$
+why: $64=3(21)+1$ ⇐ $\omega^{64}=\omega$ .
+>>> omega .book
+p: **b)** $\omega^{-325}$
+ask: اختر:
+o: $1$
+o: $\omega$
+o*: $\omega^2$
+why: $-325=3(-109)+2$ ⇐ $\omega^{-325}=\omega^2$ .
+>>> omega .book
+p: **c)** $\dfrac{1}{(1+\omega^{-32})^{12}}$
+ask: اختر:
+o*: $1$
+o: $\omega$
+o: $-1$
+why: $\omega^{-32}=\omega^{3(-11)+1}=\omega$ ⇐ $1+\omega=-\omega^2$ ⇐ $(-\omega^2)^{12}=\omega^{24}=1$ ⇐ الناتج $1$ .
+>>> omega .book
+p: **d)** $(1+\omega^2)^{-4}$
+ask: اختر:
+o: $\omega$
+o*: $\omega^2$
+o: $1$
+why: $1+\omega^2=-\omega$ ⇐ $(-\omega)^{-4}=\omega^{-4}=\omega^2$ .
+>>> omega .book
+p: **e)** $\omega^{9n+5}\ ,\ n\in w$
+ask: اختر:
+o: $\omega$
+o*: $\omega^2$
+o: $1$
+why: $\omega^{9n+5}=(\omega^3)^{3n}\cdot\omega^5=\omega^5=\omega^2$ .
+>>> omega .book
+p: **2.** كوّن المعادلة التربيعية التي جذراها : **a)** $1+\omega^2\ ,\ 1+\omega$
+self:
+hint: $1+\omega^2=-\omega$ و $1+\omega=-\omega^2$ .
+sol: **الحل:**
+| let> الجذران ; بعد التبسيط ; $-\omega\ ,\ -\omega^2$
+| main> [تكوين المعادلة] من المجموع وحاصل الضرب
+| $$x^2-(x_1+x_2)x+x_1x_2=0
+| المجموع: $-(\omega+\omega^2)=1$
+| حاصل الضرب: $\omega^3=1$
+| المعادلة: $x^2-x+1=0$
+>>> omega .book
+p: **b)** $\dfrac{\omega}{2-\omega^2}\ ,\ \dfrac{\omega^2}{2-\omega}$
+self:
+hint: المقام المشترك $(2-\omega^2)(2-\omega)=4-2(\omega+\omega^2)+\omega^3=7$ .
+sol: **الحل:**
+| let> المقام المشترك ; $(2-\omega^2)(2-\omega)$ ; $7$
+| main> [تكوين المعادلة] من المجموع وحاصل الضرب
+| $$x^2-(x_1+x_2)x+x_1x_2=0
+| المجموع: $\dfrac{\omega(2-\omega)+\omega^2(2-\omega^2)}{7}=\dfrac{2\omega+\omega^2-\omega}{7}=\dfrac{\omega+\omega^2}{7}=-\dfrac17$
+| حاصل الضرب: $\dfrac{\omega^3}{7}=\dfrac17$
+| المعادلة: $x^2+\dfrac17x+\dfrac17=0$ أي $7x^2+x+1=0$
+>>> omega .book
+p: **c)** $\dfrac{3i}{\omega^2}\ ,\ \dfrac{-3\omega^2}{i}$
+self:
+hint: $\dfrac{1}{\omega^2}=\omega$ و $\dfrac1i=-i$ .
+sol: **الحل:**
+| let> الجذر الأول ; بعد التبسيط ; $3i\omega$
+| let> الجذر الثاني ; بعد التبسيط ; $3i\omega^2$
+| main> [تكوين المعادلة] من المجموع وحاصل الضرب
+| $$x^2-(x_1+x_2)x+x_1x_2=0
+| المجموع: $3i(\omega+\omega^2)=-3i$
+| حاصل الضرب: $9i^2\omega^3=-9$
+| المعادلة: $x^2+3ix-9=0$
+>>> omega .book
+p: **3.** اذا كان : $z^2+z+1=0$ فجد قيمة : $\dfrac{1+3z^{10}+3z^{11}}{1-3z^7-3z^8}$
+prac: -1/2 ; القيمة
+hint: جذرا $z^2+z+1=0$ هما $\omega , \omega^2$ ، فالخاصيتان تنطبقان على $z$ : $z^3=1$ و $z+z^2=-1$ .
+sol: **الحل:**
+| let> $z$ ; جذر لـ $z^2+z+1=0$ ; $z^3=1\ ,\ z+z^2=-1$
+| main> [خاصيتا ω] على $z$
+| $$z^{10}=z\ ,\ z^{11}=z^2\ ,\ z^7=z\ ,\ z^8=z^2
+| $\dfrac{1+3(z+z^2)}{1-3(z+z^2)}=\dfrac{1-3}{1+3}=-\dfrac12$
+>>> omega .book
+p: **4.** اثبت ان : **a)** $\left(\dfrac{1}{2+\omega}-\dfrac{1}{2+\omega^2}\right)^2=-\dfrac13$
+self:
+hint: المقام المشترك $(2+\omega)(2+\omega^2)=4+2(\omega+\omega^2)+1=3$ .
+sol: **الحل:**
+| let> المقام المشترك ; $(2+\omega)(2+\omega^2)$ ; $3$
+| main> [خاصيتا ω] $\omega+\omega^2=-1$
+| $$(2+\omega)(2+\omega^2)=3
+| داخل القوس: $\dfrac{\omega^2-\omega}{3}$
+| التربيع: $\dfrac{\omega^4-2\omega^3+\omega^2}{9}=\dfrac{\omega-2+\omega^2}{9}=\dfrac{-3}{9}=-\dfrac13$ ✓
+>>> omega .book
+p: **b)** $\dfrac{\omega^{14}+\omega^7-1}{\omega^{10}+\omega^5-2}=\dfrac23$
+self:
+sol: **الحل:**
+| let> البسط ; بعد القسمة على 3 ; $\omega^2+\omega-1$
+| let> المقام ; بعد القسمة على 3 ; $\omega+\omega^2-2$
+| main> [خاصيتا ω] $\omega+\omega^2=-1$
+| $$\frac{(\omega+\omega^2)-1}{(\omega+\omega^2)-2}
+| $=\dfrac{-1-1}{-1-2}=\dfrac{-2}{-3}=\dfrac23$ ✓
+>>> omega .book
+p: **c)** $\left(1-\dfrac{2}{\omega^2}+\omega^2\right)\left(1+\omega-\dfrac5\omega\right)=18$
+self:
+hint: $\dfrac{1}{\omega^2}=\omega$ و $\dfrac1\omega=\omega^2$ .
+sol: **الحل:**
+| let> $\dfrac{1}{\omega^2}$ ; المقلوب ; $\omega$
+| let> $\dfrac1\omega$ ; المقلوب ; $\omega^2$
+| main> [خاصيتا ω] $1+\omega^2=-\omega$ و $1+\omega=-\omega^2$
+| $$\omega^3=1
+| القوس الأول: $1+\omega^2-2\omega=-\omega-2\omega=-3\omega$
+| القوس الثاني: $1+\omega-5\omega^2=-\omega^2-5\omega^2=-6\omega^2$
+| حاصل الضرب: $18\omega^3=18$ ✓
+>>> omega .book
+p: **d)** $(1+\omega^2)^3+(1+\omega)^3=-2$
+self:
+sol: **الحل:**
+| let> $1+\omega^2$ ; القوس الأول ; $-\omega$
+| let> $1+\omega$ ; القوس الثاني ; $-\omega^2$
+| main> [خاصيتا ω] $\omega^3=1$
+| $$(-\omega)^3+(-\omega^2)^3
+| $=-\omega^3-\omega^6=-1-1=-2$ ✓
+--- @check تحقّق
+>>> omega .enr
+k: تقويم قصير · ليس من الكتاب
+p: ما قيمة $\omega^{100}$ ؟
+ask: اختر:
+o: $1$
+o*: $\omega$
+o: $\omega^2$
+why: $100=3(33)+1$ ⇐ $\omega^{100}=\omega$ .
+>>> omega .enr
+p: ما قيمة $(1+\omega)(1+\omega^2)$ ؟
+ask: اختر:
+o*: $1$
+o: $-1$
+o: $0$
+why: $(-\omega^2)(-\omega)=\omega^3=1$ .
+>>> omega .summary
+h2: الخلاصة
+- الجذور التكعيبية للواحد: $1\ ,\ \omega=-\tfrac12+\tfrac{\sqrt3}{2}i\ ,\ \omega^2=-\tfrac12-\tfrac{\sqrt3}{2}i$ .
+- $1+\omega+\omega^2=0$ و $\omega^3=1$ .
+- $\omega^{3n+r}=\omega^r$ : الباقي من القسمة على 3 هو الأس الجديد.
