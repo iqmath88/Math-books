@@ -82,3 +82,14 @@ S.conj={v:[-4.5,4.5,-3.6,3.6],eq:1,title:'المرافق انعكاس في ال�
   seg(A,a,b,a,-b,'muted',1.4,'5 4');
   cpt(A,a,b,'c = a + bi','c'); cpt(A,a,-b,'c̄ = a − bi','tan');
   A.chips.push(['c','c',fr(a,1)+(b<0?' − ':' + ')+fr(abs(b),1)+'i'],['tan','c̄',fr(a,1)+(b<0?' + ':' − ')+fr(abs(b),1)+'i'],['f','c × c̄ = a² + b²',fr(a*a+b*b,2)]); }};
+
+/* ---------- 1−4 ---------- */
+/* square roots: the two roots are opposite points; squaring doubles the angle and squares the length */
+const C14=[[8,6,'8 + 6i'],[-25,0,'−25'],[-17,0,'−17'],[0,-1,'−i'],[0,8,'8i']];
+S.csqrt={v:[-6,6,-5.4,5.4],eq:1,title:'للعدد المركب جذران تربيعيان متعاكسان',hint:'الخط المتقطع اتجاه العدد c ؛ كل جذر نصف زاويته وجذر طوله',
+ sl:{min:0,max:4,v:0,step:1,play:1,speed:.35,lab:'العدد c',fmt:v=>C14[Math.round(v)][2]},
+ draw(A){ const [a,b,l]=C14[Math.round(A.p)], m=Math.hypot(a,b), t=Math.atan2(b,a), r=sq(m), x=r*Math.cos(t/2), y=r*Math.sin(t/2);
+  circ(A,r,'muted',1.2,'3 5');
+  seg(A,0,0,5.2*a/m,5.2*b/m,'c',1.8,'7 5'); T(A,A.X(5.2*a/m),A.Y(5.2*b/m)-10,'c = '+l,'c',{size:12.5,anchor:'middle'});
+  seg(A,-x,-y,x,y,'f',1.2,'2 4'); dot(A,x,y,'f',7); dot(A,-x,-y,'f',7);
+  A.chips.push(['c','c',l],['f','الجذران ±',fr(x,3)+(y<0?' − ':' + ')+fr(abs(y),3)+'i'],['muted','|c|',fr(m,2)]); }};
