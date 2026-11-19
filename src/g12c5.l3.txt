@@ -49,9 +49,16 @@ xp: قالب الحل
 >>> sep1 .book
 k: مثال 1 · ص 220
 p: حل المعادلة $\dfrac{dy}{dx}=2x+5$
->>> sep1 ! #1 :: نفصل ونكامل
+let: المعطيات
+| المعادلة ; الرتبة الأولى ; $\dfrac{dy}{dx}=2x+5$
+| $g(y)$ ; طرف y ; $1$
+| $f(x)$ ; طرف x ; $2x+5$
+main: [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
+>>> sep1 #1 :: نفصل
 p: **الحل:**
 $$\frac{dy}{dx}=2x+5\Rightarrow dy=(2x+5)\,dx
+>>> sep1 ! #2 :: نكامل الطرفين
 $$\int dy=\int(2x+5)\,dx\Rightarrow y=x^2+5x+c
 xp: فحص بالاشتقاق
 | $\dfrac{d}{dx}(x^2+5x+c)=2x+5$ ✓
@@ -61,6 +68,8 @@ p: حل المعادلة $\dfrac{dy}{dx}=\dfrac{x-1}{y}$
 let: نفصل
 | $g(y)\,dy$ ; طرف y ; $y\,dy$
 | $f(x)\,dx$ ; طرف x ; $(x-1)\,dx$
+main: [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
 >>> sep2 #1 :: نكامل الطرفين
 p: **الحل:** نجعل المعادلة بالصورة $g(y)dy=f(x)dx$ اي:
 $$y\,dy=(x-1)\,dx
@@ -68,22 +77,31 @@ p: باخذ التكامل للطرفين :
 $$\int y\,dy=\int(x-1)\,dx
 $$\frac12y^2=\frac12x^2-x+c
 >>> sep2 ! #2 :: نكتب y
-$$y^2=x^2-2x+2c\Rightarrow y=\pm(x^2-2x+2c)^{\frac12}=\pm(x^2-2x+c_1)^{\frac12}
+$$y^2=x^2-2x+2c
+$$\Rightarrow y=\pm(x^2-2x+2c)^{\frac12}=\pm(x^2-2x+c_1)^{\frac12}
 p: (لكون $c$ ثابت اختياري فان $2c$ ثابت اختياري ايضاً اسميناه $c_1$)
 xp: فحص بالاشتقاق
 | من $y^2=x^2-2x+c_1$ ضمنياً: $2yy'=2x-2\Rightarrow y'=\dfrac{x-1}{y}$ ✓
 >>> sep3 .book
 k: مثال 3 · ص 221
 p: حل المعادلة التفاضلية $dy=\sin x\cos^2y\,dx$ حيث $\cos y\ne0\,,\ y\ne(2n+1)\dfrac{\pi}{2}$
->>> sep3 ! #1 :: نفصل ونكامل
+let: المعطيات
+| المعادلة ; المعطاة ; $dy=\sin x\cos^2y\,dx$
+| الشرط ; لنقسم ; $\cos y\ne0$
+| المطلوب ; الحل العام ; $\tan y$
+main: [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
+>>> sep3 #1 :: نفصل
 p: **الحل:** نجعل المعادلة بالشكل $g(y)dy=f(x)dx$ اي:
 $$\frac{1}{\cos^2y}\,dy=\sin x\,dx
+>>> sep3 ! #2 :: نكامل الطرفين
 $$\sec^2y\,dy=\sin x\,dx\Rightarrow\int\sec^2y\,dy=\int\sin x\,dx
 p: باخذ التكامل
 $$\tan y=-\cos x+c
 p: حيث $c$ ثابت اختياري
 xp: لماذا الشرط $\cos y\ne0$؟
 | لأننا قسمنا على $\cos^2y$ ؛ القسمة على صفر غير ممكنة.
+| **فحص:** نشتق ضمنياً: $\sec^2y\,y'=\sin x\Rightarrow y'=\sin x\cos^2y$ ✓
 --- @learn تعلّم: الحل الخاص بشرط معطى
 >>> sep4 .book
 k: مثال 4 · ص 221
@@ -92,10 +110,14 @@ let: المعطيات
 | المعادلة ; من الرتبة الأولى ; $y'=x\sqrt y$
 | الشرط ; نقطة على الحل ; $x=2\,,\ y=9$
 | المطلوب ; الحل الخاص ; نجد $c$
+main: [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
 >>> sep4 #1 :: نفصل ونكامل
 p: **الحل:**
-$$y'-x\sqrt y=0\Rightarrow\frac{dy}{dx}-xy^{\frac12}=0\Rightarrow\frac{dy}{dx}=xy^{\frac12}
-$$y^{-\frac12}dy=x\,dx\Rightarrow\int y^{-\frac12}dy=\int x\,dx\Rightarrow2\sqrt y=\frac12x^2+c
+$$y'-x\sqrt y=0\Rightarrow\frac{dy}{dx}-xy^{\frac12}=0
+$$\Rightarrow\frac{dy}{dx}=xy^{\frac12}
+$$y^{-\frac12}dy=x\,dx\Rightarrow\int y^{-\frac12}dy=\int x\,dx
+$$\Rightarrow2\sqrt y=\frac12x^2+c
 xp: من أين $2\sqrt y$؟
 | $\int y^{-\frac12}dy=\dfrac{y^{\frac12}}{\frac12}=2\sqrt y$
 >>> sep4ok ! #2 :: نجد c من الشرط
@@ -108,6 +130,12 @@ xp: فحص
 >>> sep5 .book
 k: مثال 5 · ص 222
 p: حل المعادلة $\dfrac{dy}{dx}=e^{2x+y}$ حيث $y=0$ عندما $x=0$
+let: المعطيات
+| المعادلة ; المعطاة ; $\dfrac{dy}{dx}=e^{2x+y}$
+| الشرط ; نقطة على الحل ; $x=0\,,\ y=0$
+| المطلوب ; الحل الخاص ; نجد $c$
+main: [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
 >>> sep5 #1 :: نفصل ونكامل
 p: **الحل:**
 $$\frac{dy}{dx}=e^{2x}.e^y\Rightarrow e^{-y}dy=e^{2x}dx
@@ -128,6 +156,12 @@ xp: فحص
 >>> sep6 .book
 k: مثال 6 · ص 222
 p: جد الحل العام للمعادلة التفاضلية : $(x+1)\dfrac{dy}{dx}=2y$
+let: المعطيات
+| المعادلة ; المعطاة ; $(x+1)\dfrac{dy}{dx}=2y$
+| $g(y)$ ; طرف y ; $\dfrac1y$
+| $f(x)$ ; طرف x ; $\dfrac{2}{x+1}$
+main: [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
 >>> sep6 #1 :: نفصل ونكامل
 p: **الحل:**
 $$\frac{dy}{y}=2\frac{dx}{x+1}\Rightarrow\int\frac{dy}{y}=2\int\frac{dx}{x+1}
@@ -147,7 +181,11 @@ p: **1−** حل المعادلات التفاضلية الاتية بطريقة
 p: **a)** $y'\cos^3x=\sin x$
 self:
 hint: افصل: $dy=\dfrac{\sin x}{\cos^3x}\,dx$ ، و $\sin x$ هي سالب مشتقة $\cos x$.
-sol: **نفصل:** $dy=\dfrac{\sin x}{\cos^3x}\,dx=(\cos x)^{-3}\sin x\,dx$
+sol: **الحل:**
+| let> المعادلة ; المعطاة ; $y'\cos^3x=\sin x$
+| main> [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
+| **نفصل:** $dy=\dfrac{\sin x}{\cos^3x}\,dx=(\cos x)^{-3}\sin x\,dx$
 | **نكامل:** $\int(\cos x)^{-3}\sin x\,dx=-\int(\cos x)^{-3}(-\sin x)\,dx=-\dfrac{(\cos x)^{-2}}{-2}$
 | $y=\dfrac{1}{2\cos^2x}+c=\tfrac12\sec^2x+c$
 | » **فحص:** $\dfrac{d}{dx}\tfrac12\sec^2x=\sec^2x\tan x=\dfrac{\sin x}{\cos^3x}$ ✓
@@ -157,7 +195,12 @@ self:
 ok: x1b
 hint: $\dfrac{dy}{dx}=3x-xy=x(3-y)$ ، فافصل: $\dfrac{dy}{3-y}=x\,dx$.
 hint: $\int\dfrac{dy}{3-y}=-\ln|3-y|$
-sol: **نفصل:** $\dfrac{dy}{dx}=x(3-y)\Rightarrow\dfrac{dy}{3-y}=x\,dx$
+sol: **الحل:**
+| let> المعادلة ; المعطاة ; $y'+xy=3x$
+| let> الشرط ; نقطة على الحل ; $(1,2)$
+| main> [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
+| **نفصل:** $\dfrac{dy}{dx}=x(3-y)\Rightarrow\dfrac{dy}{3-y}=x\,dx$
 | **نكامل:** $-\ln|3-y|=\dfrac{x^2}{2}+c$
 | **الشرط** $x=1 , y=2$ : $-\ln1=\tfrac12+c\Rightarrow c=-\tfrac12$ ⇐ $\ln|3-y|=\dfrac{1-x^2}{2}$
 | $3-y=e^{\frac{1-x^2}{2}}$ (موجبة لأن $3-2>0$) ⇐ $y=3-e^{\frac{1-x^2}{2}}$
@@ -165,21 +208,33 @@ sol: **نفصل:** $\dfrac{dy}{dx}=x(3-y)\Rightarrow\dfrac{dy}{3-y}=x\,dx$
 >>> sep1 .book
 p: **c)** $\dfrac{dy}{dx}=(x+1)(y-1)$
 self:
-sol: **نفصل:** $\dfrac{dy}{y-1}=(x+1)\,dx$
+sol: **الحل:**
+| let> المعادلة ; المعطاة ; $y'=(x+1)(y-1)$
+| main> [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
+| **نفصل:** $\dfrac{dy}{y-1}=(x+1)\,dx$
 | **نكامل:** $\ln|y-1|=\dfrac{x^2}{2}+x+c$
 | $y=1\pm e^{c}e^{\frac{x^2}{2}+x}=1+c_1e^{\frac{x^2}{2}+x}$
 | » **فحص:** $y'=c_1(x+1)e^{\frac{x^2}{2}+x}=(x+1)(y-1)$ ✓
 >>> sep1 .book
 p: **d)** $(y^2+4y-1)y'=x^2-2x+3$
 self:
-sol: **نفصل:** $(y^2+4y-1)\,dy=(x^2-2x+3)\,dx$
+sol: **الحل:**
+| let> المعادلة ; المعطاة ; $(y^2+4y-1)y'=x^2-2x+3$
+| main> [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
+| **نفصل:** $(y^2+4y-1)\,dy=(x^2-2x+3)\,dx$
 | **نكامل:** $\dfrac{y^3}{3}+2y^2-y=\dfrac{x^3}{3}-x^2+3x+c$
 | » الحل هنا ضمني (لا نكتب $y$ صراحة)، وهو مقبول.
 >>> sep1 .book
 p: **e)** $yy'=4\sqrt{(1+y^2)^3}$
 self:
 hint: افصل: $\dfrac{y\,dy}{(1+y^2)^{3/2}}=4\,dx$ ، و $y$ نصف مشتقة $1+y^2$.
-sol: **نفصل:** $y(1+y^2)^{-\frac32}\,dy=4\,dx$
+sol: **الحل:**
+| let> المعادلة ; المعطاة ; $yy'=4\sqrt{(1+y^2)^3}$
+| main> [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
+| **نفصل:** $y(1+y^2)^{-\frac32}\,dy=4\,dx$
 | **نكامل:** $\tfrac12\int(1+y^2)^{-\frac32}(2y)\,dy=\tfrac12\cdot\dfrac{(1+y^2)^{-\frac12}}{-\frac12}=-\dfrac{1}{\sqrt{1+y^2}}$
 | $-\dfrac{1}{\sqrt{1+y^2}}=4x+c$
 >>> sep1 .book
@@ -192,7 +247,12 @@ p: **g)** $y'=2e^xy^3\ ,\ x=0\,,\ y=\tfrac12$
 self:
 ok: x1g
 hint: افصل: $y^{-3}\,dy=2e^x\,dx$ ، و $\int y^{-3}dy=-\dfrac{1}{2y^2}$.
-sol: **نفصل:** $y^{-3}\,dy=2e^x\,dx$
+sol: **الحل:**
+| let> المعادلة ; المعطاة ; $y'=2e^xy^3$
+| let> الشرط ; نقطة على الحل ; $\left(0,\tfrac12\right)$
+| main> [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
+| **نفصل:** $y^{-3}\,dy=2e^x\,dx$
 | **نكامل:** $-\dfrac{1}{2y^2}=2e^x+c$
 | **الشرط** $x=0 , y=\tfrac12$ : $-\dfrac{1}{2\cdot\frac14}=-2=2+c\Rightarrow c=-4$
 | $\dfrac{1}{2y^2}=4-2e^x\Rightarrow y^2=\dfrac{1}{8-4e^x}\Rightarrow y=\dfrac{1}{\sqrt{8-4e^x}}$ (موجبة لأن $y=\tfrac12>0$)
@@ -203,41 +263,69 @@ p: **2−** جد الحل العام للمعادلات التفاضلية ال�
 p: **a)** $xy\dfrac{dy}{dx}+y^2=1-y^2$
 self:
 hint: $xy\,y'=1-2y^2$ ، فافصل: $\dfrac{y\,dy}{1-2y^2}=\dfrac{dx}{x}$.
-sol: **نفصل:** $xy\dfrac{dy}{dx}=1-2y^2\Rightarrow\dfrac{y\,dy}{1-2y^2}=\dfrac{dx}{x}$
+sol: **الحل:**
+| let> المعادلة ; المعطاة ; $xy\,y'+y^2=1-y^2$
+| main> [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
+| **نفصل:** $xy\dfrac{dy}{dx}=1-2y^2\Rightarrow\dfrac{y\,dy}{1-2y^2}=\dfrac{dx}{x}$
 | **نكامل:** $-\tfrac14\ln|1-2y^2|=\ln|x|+c$
 | » نضرب في $-4$ ونجمع اللوغاريتمات: $\ln\big|x^4(1-2y^2)\big|=-4c$ ⇐ $x^4(1-2y^2)=c_1$
 >>> sep6 .book
 p: **b)** $\sin x\cos y\dfrac{dy}{dx}+\cos x\sin y=0$
 self:
-sol: **نفصل:** $\dfrac{\cos y}{\sin y}\,dy=-\dfrac{\cos x}{\sin x}\,dx$
+sol: **الحل:**
+| let> المعادلة ; المعطاة ; $\sin x\cos y\,y'+\cos x\sin y=0$
+| main> [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
+| **نفصل:** $\dfrac{\cos y}{\sin y}\,dy=-\dfrac{\cos x}{\sin x}\,dx$
 | **نكامل:** $\ln|\sin y|=-\ln|\sin x|+c$
 | $\ln|\sin x\sin y|=c$ ⇐ $\sin x\sin y=c_1$
 >>> sep3 .book
 p: **c)** $x\cos^2y\,dx+\tan y\,dy=0$
 self:
-sol: **نفصل:** نقسم على $\cos^2y$ : $x\,dx=-\tan y\sec^2y\,dy$
+sol: **الحل:**
+| let> المعادلة ; المعطاة ; $x\cos^2y\,dx+\tan y\,dy=0$
+| main> [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
+| **نفصل:** نقسم على $\cos^2y$ : $x\,dx=-\tan y\sec^2y\,dy$
 | **نكامل:** $\dfrac{x^2}{2}=-\dfrac{\tan^2y}{2}+c$ ⇐ $x^2+\tan^2y=c_1$
 >>> sep3 .book
 p: **d)** $\tan^2y\,dy=\sin^3x\,dx$
 self:
 hint: $\tan^2y=\sec^2y-1$ و $\sin^3x=\sin x(1-\cos^2x)$
-sol: **نفصل** (منفصلة أصلاً) ونستعمل المتطابقات: $(\sec^2y-1)\,dy=\sin x(1-\cos^2x)\,dx$
+sol: **الحل:**
+| let> المعادلة ; المعطاة ; $\tan^2y\,dy=\sin^3x\,dx$
+| main> [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
+| **نفصل** (منفصلة أصلاً) ونستعمل المتطابقات: $(\sec^2y-1)\,dy=\sin x(1-\cos^2x)\,dx$
 | **نكامل:** $\tan y-y=-\cos x+\dfrac{\cos^3x}{3}+c$
 >>> sep3 .book
 p: **e)** $\dfrac{dy}{dx}=\cos^2x\cos^2y$
 self:
-sol: **نفصل:** $\sec^2y\,dy=\cos^2x\,dx=\dfrac{1+\cos2x}{2}\,dx$
+sol: **الحل:**
+| let> المعادلة ; المعطاة ; $y'=\cos^2x\cos^2y$
+| main> [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
+| **نفصل:** $\sec^2y\,dy=\cos^2x\,dx=\dfrac{1+\cos2x}{2}\,dx$
 | **نكامل:** $\tan y=\dfrac x2+\dfrac{\sin2x}{4}+c$
 >>> sep3 .book
 p: **f)** $\dfrac{dy}{dx}=\dfrac{\cos x}{3y^2+e^y}$
 self:
-sol: **نفصل:** $(3y^2+e^y)\,dy=\cos x\,dx$
+sol: **الحل:**
+| let> المعادلة ; المعطاة ; $y'=\dfrac{\cos x}{3y^2+e^y}$
+| main> [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
+| **نفصل:** $(3y^2+e^y)\,dy=\cos x\,dx$
 | **نكامل:** $y^3+e^y=\sin x+c$
 >>> sep5 .book
 p: **g)** $e^{x+2y}+y'=0$
 self:
 hint: $e^{x+2y}=e^xe^{2y}$ ، فافصل: $e^{-2y}dy=-e^x\,dx$.
-sol: **نفصل:** $\dfrac{dy}{dx}=-e^xe^{2y}\Rightarrow e^{-2y}\,dy=-e^x\,dx$
+sol: **الحل:**
+| let> المعادلة ; المعطاة ; $e^{x+2y}+y'=0$
+| main> [فصل المتغيرات] نكامل الطرفين ونضيف ثابتاً واحداً
+| $$\int g(y)\,dy=\int f(x)\,dx+c
+| **نفصل:** $\dfrac{dy}{dx}=-e^xe^{2y}\Rightarrow e^{-2y}\,dy=-e^x\,dx$
 | **نكامل:** $-\tfrac12e^{-2y}=-e^x+c$ ⇐ $e^{-2y}=2e^x+c_1$
 | » أو بعد أخذ $\ln$ : $y=-\tfrac12\ln(2e^x+c_1)$
 --- @check تحقّق: سؤالان

@@ -22,5 +22,10 @@
   "area",
   "between",
   "volumes"
+ ],
+ "g12c5": [
+  "odeintro",
+  "odesol",
+  "sepvar"
  ]
 }
