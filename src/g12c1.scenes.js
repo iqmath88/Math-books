@@ -73,3 +73,12 @@ S.cmul={v:[-12,6,-21,26],eq:1,title:'الضرب: (a₁a₂ − b₁b₂) + (a₁
  draw(A){ const [[a1,b1],[a2,b2]]=C7[Math.round(A.p)], a=a1*a2-b1*b2, b=a1*b2+a2*b1;
   arrow(A,a1,b1,'c'); arrow(A,a2,b2,'tan'); arrow(A,a,b,'f',3.4);
   A.chips.push(['f','الحقيقي a₁a₂ − b₁b₂',fr(a,2)],['f','التخيلي a₁b₂ + a₂b₁',fr(b,2)]); }};
+
+/* ---------- 1−3 ---------- */
+/* the conjugate a − bi is the mirror image of a + bi in the real axis; c · c̄ = a² + b² */
+S.conj={v:[-4.5,4.5,-3.6,3.6],eq:1,title:'المرافق انعكاس في المحور الحقيقي',hint:'c × c̄ = a² + b² عدد حقيقي دائماً',
+ sl:{min:0,max:6.283,v:.9,step:.01,play:1,speed:.12,lab:'حرّك العدد c',fmt:v=>''},
+ draw(A){ const t=A.p, a=Math.round((2.2*Math.cos(t)+.6)*10)/10, b=Math.round((2.4*Math.sin(t))*10)/10;
+  seg(A,a,b,a,-b,'muted',1.4,'5 4');
+  cpt(A,a,b,'c = a + bi','c'); cpt(A,a,-b,'c̄ = a − bi','tan');
+  A.chips.push(['c','c',fr(a,1)+(b<0?' − ':' + ')+fr(abs(b),1)+'i'],['tan','c̄',fr(a,1)+(b<0?' + ':' − ')+fr(abs(b),1)+'i'],['f','c × c̄ = a² + b²',fr(a*a+b*b,2)]); }};
