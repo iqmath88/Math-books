@@ -27,5 +27,8 @@
   "odeintro",
   "odesol",
   "sepvar"
+ ],
+ "g12c1": [
+  "inum"
  ]
 }
