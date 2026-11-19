@@ -46,3 +46,30 @@ S.ceq={v:[-3,3,-3,3],eq:1,title:'التساوي: النقطتان تنطبقان
   cpt(A,R[0],R[1],'1 + (y+1)i','c'); cpt(A,L[0],L[1],'(2x−1) + 2i','f');
   A.chips.push(['f','2x − 1',fr(L[0],2)],['c','الجزء الحقيقي الآخر','1']);
   A.hint=ok?'انطبقت النقطتان ✓ : x = 1 و y = 1':'حرّك x حتى يتساوى الجزءان الحقيقيان'; }};
+
+/* ---------- 1−2 ---------- */
+/* c1 + c2 : add the parts, i.e. the parallelogram rule for the points */
+const C4=[[[3,4*sq(2)],[5,-2*sq(2)],'(3+4√2 i)+(5−2√2 i)'],[[3,0],[2,-5],'(3)+(2−5i)'],[[1,-1],[0,3],'(1−i)+3i']];
+const arrow=(A,a,b,col,w=2.6)=>{ seg(A,0,0,a,b,col,w); dot(A,a,b,col,5); };
+S.cadd={v:[-2,9,-6,6.5],eq:1,title:'الجمع: نجمع الحقيقي مع الحقيقي والتخيلي مع التخيلي',hint:'المجموع هو الرأس الرابع لمتوازي الأضلاع',
+ sl:{min:0,max:2,v:0,step:1,play:1,speed:.45,lab:'الفقرة',fmt:v=>C4[Math.round(v)][2]},
+ draw(A){ const [[a1,b1],[a2,b2]]=C4[Math.round(A.p)], a=a1+a2, b=b1+b2;
+  seg(A,a1,b1,a,b,'muted',1.4,'5 4'); seg(A,a2,b2,a,b,'muted',1.4,'5 4');
+  arrow(A,a1,b1,'c'); arrow(A,a2,b2,'tan'); arrow(A,a,b,'f',3.4);
+  A.chips.push(['c','c₁',fr(a1,2)+(b1<0?' − ':' + ')+fr(abs(b1),2)+'i'],['tan','c₂',fr(a2,2)+(b2<0?' − ':' + ')+fr(abs(b2),2)+'i'],['f','c₁ + c₂',fr(a,2)+(b<0?' − ':' + ')+fr(abs(b),2)+'i']); }};
+/* subtraction = adding the additive inverse (examples 5 and 6) */
+const C5=[[[7,-13],[-9,-4],'مثال 5: (7−13i) + (−9−4i)'],[[-5,1],[-2,4],'مثال 6: x = (−5+i) + (−2+4i)']];
+S.csub={v:[-11,9,-19,7],eq:1,title:'الطرح: نجمع مع النظير الجمعي',hint:'النظير الجمعي لـ a + bi هو −a − bi : نقطة مقابلة عبر الأصل',
+ sl:{min:0,max:1,v:0,step:1,play:1,speed:.4,lab:'المثال',fmt:v=>C5[Math.round(v)][2]},
+ draw(A){ const [[a1,b1],[a2,b2]]=C5[Math.round(A.p)], a=a1+a2, b=b1+b2;
+  seg(A,0,0,-a2,-b2,'muted',1.6,'5 4'); dot(A,-a2,-b2,'muted',4.5);
+  seg(A,a1,b1,a,b,'muted',1.4,'5 4'); seg(A,a2,b2,a,b,'muted',1.4,'5 4');
+  arrow(A,a1,b1,'c'); arrow(A,a2,b2,'tan'); arrow(A,a,b,'f',3.4);
+  A.chips.push(['tan','النظير الجمعي',fr(a2,2)+(b2<0?' − ':' + ')+fr(abs(b2),2)+'i'],['f','الناتج',fr(a,2)+(b<0?' − ':' + ')+fr(abs(b),2)+'i']); }};
+/* c1 · c2 : (a1a2 − b1b2) + (a1b2 + a2b1) i */
+const C7=[[[2,-3],[3,-5],'(2−3i)(3−5i)'],[[3,4],[3,4],'(3+4i)²'],[[0,1],[1,1],'i(1+i)'],[[-2.5,0],[4,3],'−5/2 (4+3i)']];
+S.cmul={v:[-12,6,-21,26],eq:1,title:'الضرب: (a₁a₂ − b₁b₂) + (a₁b₂ + a₂b₁) i',hint:'i² = −1 هو الذي يجعل −b₁b₂ في الجزء الحقيقي',
+ sl:{min:0,max:3,v:0,step:1,play:1,speed:.45,lab:'الفقرة',fmt:v=>C7[Math.round(v)][2]},
+ draw(A){ const [[a1,b1],[a2,b2]]=C7[Math.round(A.p)], a=a1*a2-b1*b2, b=a1*b2+a2*b1;
+  arrow(A,a1,b1,'c'); arrow(A,a2,b2,'tan'); arrow(A,a,b,'f',3.4);
+  A.chips.push(['f','الحقيقي a₁a₂ − b₁b₂',fr(a,2)],['f','التخيلي a₁b₂ + a₂b₁',fr(b,2)]); }};
