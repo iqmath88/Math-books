@@ -1,0 +1,326 @@
+=== moivre | 1−9 | مبرهنة ديموافر | 41–47 | (cos θ + i sin θ)ⁿ = cos nθ + i sin nθ : القوى بضرب الزاوية، والجذور النونية بقسمة (θ + 2πk) على n .
+--- @discover اكتشف: القوة تضرب الزاوية
+>>> moivre .act
+k: [1−9] · مبرهنة ديموافر · De Moivre's Theorem
+h1: القوة تدوّر بمضاعفات الزاوية
+lead: سعة $1+i$ هي $\tfrac{\pi}{4}$ . كل ضرب في $(1+i)$ يضيف $\tfrac{\pi}{4}$ إلى الزاوية ويضرب الطول في $\sqrt2$ .
+p: **حرّك n** حتى 11 : هذا هو المثال 29 ، $(1+i)^{11}$ .
+>>>
+ask: ما سعة $(1+i)^8$ ؟
+o: $\dfrac{\pi}{4}$
+o*: $2\pi$ أي $0$
+o: $8$
+why: $8\times\tfrac{\pi}{4}=2\pi$ : دورة كاملة، فالناتج عدد حقيقي موجب $(\sqrt2)^8=16$ .
+--- @understand افهم: المبرهنة ونتيجتها
+>>> moivre .book
+k: [1−9] · ص 41
+h2: مبرهنة ديموافر
+p: $z_1 , z_2$ يمكن ان تكتب بصورة : $z_1=\cos\theta+i\sin\theta\ ,\ z_2=\cos\phi+i\sin\phi$ والان سنجد $z_1\cdot z_2$ بالصيغة القطبية
+$$z_1\times z_2=(\cos\theta+i\sin\theta)(\cos\phi+i\sin\phi)
+$$=\cos\theta\cos\phi+i\cos\theta\sin\phi+i\sin\theta\cos\phi+i^2\sin\theta\sin\phi
+$$=[\cos\theta\cos\phi-\sin\theta\sin\phi]+i[\cos\theta\sin\phi+\sin\theta\cos\phi]
+$$=\cos(\theta+\phi)+i\sin(\theta+\phi)
+p: ولو كان $(\phi=\theta)$ فان العلاقة تصبح : $(\cos\theta+i\sin\theta)^2=\cos2\theta+i\sin2\theta$
+p: ويمكن برهنتها كما يأتي :
+$$\text{LHS}=(\cos\theta+i\sin\theta)^2=(\cos^2\theta+2i\sin\theta\cos\theta-\sin^2\theta)
+$$=(\cos^2\theta-\sin^2\theta)+i(2\sin\theta\cos\theta)=\cos2\theta+i\sin2\theta=\text{RHS}
+p: وقد توصل العالم ديموافر (1664–1754) الى تعميم العلاقة والتي سميت بمبرهنة ديموافر .
+>>> moivre .book
+k: ص 42
+law: مبرهنة ديموافر · De Moivre's Theorem
+| لكل $\theta\in R\ ,\ n\in N$ فإن
+| $$(\cos\theta+i\sin\theta)^n=\cos n\theta+i\sin n\theta
+p: **البرهان :** (للاطلاع فقط) سنتوصل الى برهان هذه المبرهنة بطريقة الاستقراء الرياضي وكما يأتي :
+p: **1)** لنعتبر $n=1$ فان العلاقة تصبح : $(\cos\theta+i\sin\theta)^1=\cos1\theta+i\sin1\theta$ وهي عبارة صحيحة .
+p: **2)** لنأخذ $k\ge1$ ونفترض ان العلاقة صحيحة لكل $n=k$ . أي ان $(\cos\theta+i\sin\theta)^k=\cos k\theta+i\sin k\theta$ صحيحة فرضاً .
+p: **3)** يجب ان نثبت ان العلاقة صحيحة عندما $n=k+1$
+$$\therefore\ (\cos\theta+i\sin\theta)^{k+1}=(\cos\theta+i\sin\theta)^1(\cos\theta+i\sin\theta)^k
+$$=(\cos\theta+i\sin\theta)(\cos k\theta+i\sin k\theta)
+$$=\cos(\theta+k\theta)+i\sin(\theta+k\theta)=\cos(k+1)\theta+i\sin(k+1)\theta
+p: وعليه فاذا كانت العلاقة صحيحة عند $n$ أي $n=k\ ,\ k\ge1$ فهي كذلك صحيحة عند $n=k+1$ وبواسطة الاستقراء الرياضي فان المبرهنة تعتبر صحيحة لجميع قيم $n$ .
+>>> nroot .book
+k: ص 43–44
+law: نتيجة لمبرهنة ديموافر
+| لكل $\theta\in R\ ,\ n\in Z^+$ فان
+| $$\sqrt[n]{z}=r^{\frac1n}\left[\cos\frac{\theta+2\pi k}{n}+i\sin\frac{\theta+2\pi k}{n}\right]
+| حيث $k=0,1,2,\dots,n-1$
+note: **ملاحظة:** $(\cos\theta+i\sin\theta)^{-1}=[\cos(-\theta)+i\sin(-\theta)]=(\cos\theta-i\sin\theta)$
+| ويمكن تعميم هذه العلاقة بالشكل الاتي : $(\cos\theta+i\sin\theta)^{-n}=\cos n\theta-i\sin n\theta$
+xp: لماذا n من الجذور؟
+| قيم $k$ من $0$ إلى $n-1$ تعطي زوايا مختلفة بفرق $\tfrac{2\pi}{n}$ ؛ عند $k=n$ نعود إلى الجذر الأول. فالجذور رؤوس مضلع منتظم.
+--- @learn تعلّم الحل: قطبية ← قوة أو جذر ← جبرية
+>>> moivre .book
+k: فكرة الحل في هذا الدرس
+h2: ثلاث خطوات
+xp: فكرة الحل في هذا الدرس
+| **1) نحوّل** العدد إلى الصيغة القطبية $r(\cos\theta+i\sin\theta)$ كما في [1−8].
+| **2a) قوة:** $r^n(\cos n\theta+i\sin n\theta)$ ، ثم نطرح مضاعفات $2\pi$ من $n\theta$ .
+| **2b) جذر نوني:** $r^{1/n}\left[\cos\tfrac{\theta+2\pi k}{n}+i\sin\tfrac{\theta+2\pi k}{n}\right]$ لكل $k=0,\dots,n-1$ .
+| **3) نعود** إلى الصيغة الجبرية بقيم الجيب وجيب التمام.
+| **فحص:** نرفع أحد الجذور للقوة $n$ فيعود العدد.
+>>> moivre .book
+k: مثال 27 · ص 42
+h2: قوة بالمبرهنة مباشرة
+p: احسب $\left(\cos\dfrac38\pi+i\sin\dfrac38\pi\right)^4$
+let: المعطيات
+| $\theta$ ; الزاوية ; $\dfrac{3\pi}{8}$
+| $n$ ; القوة ; $4$
+| المطلوب ; الناتج ; $a+bi$
+main: [مبرهنة ديموافر] $n\in N$
+| $$(\cos\theta+i\sin\theta)^n=\cos n\theta+i\sin n\theta
+>>> moivre #1 :: نضرب الزاوية في 4
+p: **الحل:**
+$$\left(\cos\frac38\pi+i\sin\frac38\pi\right)^4=\cos\frac{3\pi}{2}+i\sin\frac{3\pi}{2}
+>>> moivre ! #2 :: الصيغة الجبرية
+$$=0+i(-1)=-i
+xp: فحص
+| $4\times\tfrac{3\pi}{8}=\tfrac{3\pi}{2}$ ✓ ، و $-i$ على المحور التخيلي السالب ✓
+>>> moivre .book
+k: مثال 28 · ص 43
+h2: القوس بإشارة سالبة
+p: بين انه لكل $\theta\in R\ ,\ n\in N$ فان : $(\cos\theta-i\sin\theta)^n=\cos n\theta-i\sin n\theta$
+let: المعطيات
+| الطرف الأيسر ; المعطى ; $(\cos\theta-i\sin\theta)^n$
+| الأداة ; زوجية cos وفردية sin ; $\cos(-\theta)=\cos\theta$
+| المطلوب ; نصل إلى ; $\cos n\theta-i\sin n\theta$
+main: [مبرهنة ديموافر] مع $\phi=-\theta$
+| $$(\cos\phi+i\sin\phi)^n=\cos n\phi+i\sin n\phi
+>>> moivre #1 :: نكتب القوس بزاوية −θ
+p: **الحل:** الطرف الايسر
+$$\text{LHS}=(\cos\theta-i\sin\theta)^n=[\cos\theta+(-i\sin\theta)]^n
+$$=[(\cos\theta+i\sin(-\theta)]^n=[\cos(-\theta)+i\sin(-\theta)]^n
+>>> moivre ! #2 :: نطبق المبرهنة
+p: وبجعل $\phi=-\theta$ تصبح العلاقة
+$$=[\cos\phi+i\sin\phi]^n=\cos n\phi+i\sin n\phi
+$$=\cos(-n\theta)+i\sin(-n\theta)=\cos n\theta-i\sin n\theta=\text{RHS}
+p: الطرف الايمن (و . هـ . م)
+xp: فحص عددي
+| $\theta=\tfrac{\pi}{2}\ ,\ n=2$ : $(0-i)^2=-1$ ، و $\cos\pi-i\sin\pi=-1$ ✓
+>>> moivre .book
+k: مثال 29 · ص 43–44
+h2: قوة عدد بالصيغة الجبرية
+p: احسب باستخدام مبرهنة ديموافر $(1+i)^{11}$
+let: المعطيات
+| $z$ ; العدد ; $1+i$
+| $r , \theta$ ; مقياسه وسعته ; $\sqrt2\ ,\ \dfrac{\pi}{4}$
+| $n$ ; القوة ; $11$
+main: [مبرهنة ديموافر] للعدد $r(\cos\theta+i\sin\theta)$
+| $$z^n=r^n(\cos n\theta+i\sin n\theta)
+>>> moivre #1 :: الصيغة القطبية
+p: **الحل:**
+$$z=1+i
+$$\text{mod}\,z=\sqrt2\ ,\ \cos\theta=\frac{1}{\sqrt2}\ ,\ \sin\theta=\frac{1}{\sqrt2}\Rightarrow\therefore\ \arg z=\frac{\pi}{4}
+$$\therefore\ z=\sqrt2\left(\cos\frac{\pi}{4}+i\sin\frac{\pi}{4}\right)
+>>> moivre #2 :: نرفع للقوة 11
+$$\therefore\ (1+i)^{11}=(\sqrt2)^{11}\left(\cos\frac{\pi}{4}+i\sin\frac{\pi}{4}\right)^{11}
+$$=2^{\frac{11}{2}}\left(\cos\frac{11\pi}{4}+i\sin\frac{11\pi}{4}\right)
+$$=2^{\frac{11}{2}}\left(\cos\frac{3\pi}{4}+i\sin\frac{3\pi}{4}\right)
+>>> moivre ! #3 :: الصيغة الجبرية
+$$=2^{\frac{11}{2}}\left(-\frac{1}{\sqrt2}+i\frac{1}{\sqrt2}\right)=2^5\sqrt2\left(-\frac{1}{\sqrt2}+i\frac{1}{\sqrt2}\right)
+$$=2^5(-1+i)=32(-1+i)
+xp: من أين 3π/4؟
+| $\tfrac{11\pi}{4}=2\pi+\tfrac{3\pi}{4}$ : نطرح دورة كاملة. و $2^{\frac{11}{2}}=2^5\cdot2^{\frac12}=32\sqrt2$ .
+>>> nroot .book
+k: مثال 30 · ص 44–45
+h2: جذور تكعيبية
+p: حل المعادلة $x^3+1=0$ حيث $x\in\mathbb{C}$
+let: المعطيات
+| المعادلة ; المعطاة ; $x^3=-1$
+| $-1$ ; بالصيغة القطبية ; $\cos\pi+i\sin\pi$
+| $n$ ; جذر تكعيبي ; $3$ ، و $k=0,1,2$
+main: [نتيجة مبرهنة ديموافر] الجذور النونية
+| $$\sqrt[n]{z}=r^{\frac1n}\left[\cos\frac{\theta+2\pi k}{n}+i\sin\frac{\theta+2\pi k}{n}\right]
+>>> nroot #1 :: الصيغة العامة للجذور
+p: **الحل:**
+$$x^3+1=0\Rightarrow x^3=-1
+$$x^3=\cos\pi+i\sin\pi
+$$\therefore\ x=(\cos\pi+i\sin\pi)^{\frac13}
+$$\therefore\ x=\cos\frac{\pi+2k\pi}{3}+i\sin\frac{\pi+2k\pi}{3}
+p: حيث $k=0,1,2$ لانه جذر تكعيبي
+>>> nroot #2 :: نعوّض k = 0 , 1
+p: بوضع $k=0$ يكون
+$$x_1=\cos\frac{\pi}{3}+i\sin\frac{\pi}{3}=\frac12+\frac{\sqrt3}{2}i
+p: بوضع $k=1$ يكون
+$$x_2=\cos\pi+i\sin\pi=-1+i(0)=-1
+>>> nroot ! #3 :: نعوّض k = 2
+p: بوضع $k=2$ يكون
+$$x_3=\cos\frac{5\pi}{3}+i\sin\frac{5\pi}{3}=\frac12-\frac{\sqrt3}{2}i
+p: اذاً مجموعة الحل للمعادلة هي : $\left\{\dfrac12+\dfrac{\sqrt3}{2}i\ ,\ -1\ ,\ \dfrac12-\dfrac{\sqrt3}{2}i\right\}$
+xp: فحص
+| $(-1)^3=-1$ ✓ ، والجذران الآخران مترافقان (المعاملات حقيقية) ✓ . وهي $-1$ و $-\omega$ و $-\omega^2$ .
+>>> nroot .book
+k: مثال 31 · ص 45–46
+h2: جذور خامسة
+p: اوجد الصيغة القطبية للمقدار : $(\sqrt3+i)^2$ ثم جد الجذور الخمسة له
+let: المعطيات
+| $z$ ; العدد ; $\sqrt3+i$
+| $r , \theta$ ; مقياسه وسعته ; $2\ ,\ \dfrac{\pi}{6}$
+| المطلوب ; الجذور الخمسة ; للعدد $z^2$
+main: [نتيجة مبرهنة ديموافر] الجذور النونية
+| $$\sqrt[n]{z}=r^{\frac1n}\left[\cos\frac{\theta+2\pi k}{n}+i\sin\frac{\theta+2\pi k}{n}\right]
+>>> nroot #1 :: الصيغة القطبية والتربيع
+p: **الحل:** ليكن $z=\sqrt3+i$ نضع $z$ بالصيغة القطبية :
+$$\|z\|=\sqrt{3+1}=2\qquad\cos\theta=\frac{\sqrt3}{2}\ ,\ \sin\theta=\frac12
+$$\therefore\ \theta=\frac{\pi}{6}\qquad\arg(z)=\frac{\pi}{6}
+$$\therefore\ z=2\left(\cos\frac{\pi}{6}+i\sin\frac{\pi}{6}\right)\Rightarrow z^2=2^2\left(\cos\frac{\pi}{6}+i\sin\frac{\pi}{6}\right)^2
+$$z^2=4\left(\cos\frac{\pi}{3}+i\sin\frac{\pi}{3}\right)
+>>> nroot #2 :: الصيغة العامة للجذور
+$$\therefore\ (z^2)^{\frac15}=4^{\frac15}\left[\cos\frac{\pi}{3}+i\sin\frac{\pi}{3}\right]^{\frac15}
+$$=\sqrt[5]4\left[\cos\frac{\frac{\pi}{3}+2k\pi}{5}+i\sin\frac{\frac{\pi}{3}+2k\pi}{5}\right]
+p: حيث $k=0,1,2,3,4$ لانه جذر خامس
+>>> nroot ! #3 :: الجذور الخمسة
+p: وبوضع $k=0$ يكون : $Z_1=\sqrt[5]4\left(\cos\dfrac{\pi}{15}+i\sin\dfrac{\pi}{15}\right)$
+p: وبوضع $k=1$ يكون : $Z_2=\sqrt[5]4\left[\cos\dfrac{7\pi}{15}+i\sin\dfrac{7\pi}{15}\right]$
+p: وبوضع $k=2$ يكون : $Z_3=\sqrt[5]4\left[\cos\dfrac{13\pi}{15}+i\sin\dfrac{13\pi}{15}\right]$
+p: وبوضع $k=3$ يكون : $Z_4=\sqrt[5]4\left[\cos\dfrac{19\pi}{15}+i\sin\dfrac{19\pi}{15}\right]$
+p: وبوضع $k=4$ يكون : $Z_5=\sqrt[5]4\left[\cos\dfrac{25\pi}{15}+i\sin\dfrac{25\pi}{15}\right]=\sqrt[5]4\left[\cos\dfrac{5\pi}{3}+i\sin\dfrac{5\pi}{3}\right]$
+xp: فحص
+| الزوايا تزيد بمقدار $\tfrac{6\pi}{15}=\tfrac{2\pi}{5}$ ✓ : مضلع خماسي منتظم نصف قطره $\sqrt[5]4$ (في الرسم: السؤال الثاني).
+--- @practice تدرّب: تمارين ص 47
+>>> moivre .book
+k: تمارين · ص 47
+h2: دورك الآن
+p: **1.** احسب ما يأتي : **a)** $\left[\cos\dfrac{5}{24}\pi+i\sin\dfrac{5}{24}\pi\right]^4$
+xp: قالب الحل
+| **1) قطبية:** نجد $r$ و $\theta$ .
+| **2) قوة:** $r^n$ و $n\theta$ .
+| **أو جذر:** $r^{1/n}$ و $\tfrac{\theta+2\pi k}{n}$ .
+| **3) نطرح** مضاعفات $2\pi$ ثم نكتب الصيغة الجبرية.
+| **فحص:** نرفع الجواب للقوة المناسبة.
+prac: -√3/2 , 1/2 ; الجزء الحقيقي ، الجزء التخيلي
+hint: $4\times\tfrac{5\pi}{24}=\tfrac{5\pi}{6}$
+sol: **الحل:**
+| let> $\theta$ ; الزاوية ; $\dfrac{5\pi}{24}$
+| let> $n$ ; القوة ; $4$
+| main> [مبرهنة ديموافر] نضرب الزاوية في $n$
+| $$(\cos\theta+i\sin\theta)^n=\cos n\theta+i\sin n\theta
+| $=\cos\dfrac{5\pi}{6}+i\sin\dfrac{5\pi}{6}=-\dfrac{\sqrt3}{2}+\dfrac12i$
+>>> moivre .book
+p: **b)** $\left[\cos\dfrac{7}{12}\pi+i\sin\dfrac{7}{12}\pi\right]^{-3}$
+prac: √2/2 , √2/2 ; الجزء الحقيقي ، الجزء التخيلي
+hint: $(\cos\theta+i\sin\theta)^{-n}=\cos n\theta-i\sin n\theta$ ، و $3\times\tfrac{7\pi}{12}=\tfrac{7\pi}{4}$ .
+sol: **الحل:**
+| let> $\theta$ ; الزاوية ; $\dfrac{7\pi}{12}$
+| let> $n$ ; القوة ; $3$
+| main> [الأس السالب] تعميم الملاحظة
+| $$(\cos\theta+i\sin\theta)^{-n}=\cos n\theta-i\sin n\theta
+| $=\cos\dfrac{7\pi}{4}-i\sin\dfrac{7\pi}{4}=\dfrac{\sqrt2}{2}-i\left(-\dfrac{\sqrt2}{2}\right)$
+| $=\dfrac{\sqrt2}{2}+\dfrac{\sqrt2}{2}i$
+>>> moivre .book
+p: **2.** احسب باستخدام مبرهنة ديموافر (او التعميم) ما يأتي : **a)** $(1-i)^7$
+prac: 8 , 8 ; الجزء الحقيقي ، الجزء التخيلي
+hint: $1-i=\sqrt2\left(\cos\tfrac{7\pi}{4}+i\sin\tfrac{7\pi}{4}\right)$
+sol: **الحل:**
+| let> $r , \theta$ ; للعدد $1-i$ ; $\sqrt2\ ,\ \dfrac{7\pi}{4}$
+| main> [مبرهنة ديموافر] $z^n=r^n(\cos n\theta+i\sin n\theta)$
+| $$(1-i)^7=(\sqrt2)^7\left(\cos\frac{49\pi}{4}+i\sin\frac{49\pi}{4}\right)
+| $\dfrac{49\pi}{4}=12\pi+\dfrac{\pi}{4}$
+| $(\sqrt2)^7=8\sqrt2$
+| $=8\sqrt2\left(\dfrac{\sqrt2}{2}+\dfrac{\sqrt2}{2}i\right)=8+8i$
+>>> moivre .book
+p: **b)** $(\sqrt3+i)^{-9}$
+prac: 0 , 1/512 ; الجزء الحقيقي ، الجزء التخيلي
+hint: $\sqrt3+i=2\left(\cos\tfrac{\pi}{6}+i\sin\tfrac{\pi}{6}\right)$ ، و $9\times\tfrac{\pi}{6}=\tfrac{3\pi}{2}$ .
+sol: **الحل:**
+| let> $r , \theta$ ; للعدد $\sqrt3+i$ ; $2\ ,\ \dfrac{\pi}{6}$
+| main> [الأس السالب] $z^{-n}=r^{-n}(\cos n\theta-i\sin n\theta)$
+| $$(\sqrt3+i)^{-9}=2^{-9}\left(\cos\frac{3\pi}{2}-i\sin\frac{3\pi}{2}\right)
+| $=\dfrac{1}{512}(0-i(-1))=\dfrac{1}{512}i$
+>>> moivre .book
+p: **3.** بسط ما يأتي : **a)** $\dfrac{(\cos2\theta+i\sin2\theta)^5}{(\cos3\theta+i\sin3\theta)^3}$
+ask: اختر:
+o*: $\cos\theta+i\sin\theta$
+o: $\cos19\theta+i\sin19\theta$
+o: $\cos\theta-i\sin\theta$
+why: البسط $\cos10\theta+i\sin10\theta$ والمقام $\cos9\theta+i\sin9\theta$ ، والقسمة تطرح الزاويتين: $10\theta-9\theta=\theta$ .
+>>> moivre .book
+p: **b)** $(\cos\theta+i\sin\theta)^8(\cos\theta-i\sin\theta)^4$ Hint: $x^4y^4=(xy)^4$
+ask: اختر:
+o: $\cos12\theta+i\sin12\theta$
+o*: $\cos4\theta+i\sin4\theta$
+o: $1$
+why: $(\cos\theta+i\sin\theta)^4\big[(\cos\theta+i\sin\theta)(\cos\theta-i\sin\theta)\big]^4=(\cos\theta+i\sin\theta)^4\cdot1^4=\cos4\theta+i\sin4\theta$ .
+>>> nroot .book
+p: **4.** جد الجذور التربيعية للعدد المركب $-1+\sqrt3\,i$ بأستخدام نتيجة مبرهنة ديموافر ثم الطريقة المعروضة في البند [1−4].
+self:
+hint: $r=2$ ، $\theta=\tfrac{2\pi}{3}$ ، و $k=0,1$ .
+sol: **الحل:**
+| let> $r$ ; المقياس ; $2$
+| let> $\theta$ ; السعة ; $\dfrac{2\pi}{3}$
+| main> [نتيجة مبرهنة ديموافر] $n=2$
+| $$\sqrt z=\sqrt2\left[\cos\frac{\frac{2\pi}{3}+2k\pi}{2}+i\sin\frac{\frac{2\pi}{3}+2k\pi}{2}\right]
+| عند $k=0$ :
+| $\sqrt2\left(\cos\dfrac{\pi}{3}+i\sin\dfrac{\pi}{3}\right)=\dfrac{\sqrt2}{2}+\dfrac{\sqrt6}{2}i$
+| عند $k=1$ :
+| $\sqrt2\left(\cos\dfrac{4\pi}{3}+i\sin\dfrac{4\pi}{3}\right)=-\dfrac{\sqrt2}{2}-\dfrac{\sqrt6}{2}i$
+| » **بطريقة [1−4]:** $x^2-y^2=-1$ و $2xy=\sqrt3$ ⇐ $x^2=\tfrac12$ ⇐ النتيجة نفسها ✓
+>>> nroot .book
+p: **5.** بأستخدام نتيجة مبرهنة ديموافر جد الجذور التكعيبية للعدد $27i$ .
+self:
+hint: $r=27$ ، $\theta=\tfrac{\pi}{2}$ ، و $\sqrt[3]{27}=3$ .
+sol: **الحل:**
+| let> $r$ ; المقياس ; $27$
+| let> $\theta$ ; السعة ; $\dfrac{\pi}{2}$
+| main> [نتيجة مبرهنة ديموافر] $n=3$
+| $$\sqrt[3]z=3\left[\cos\frac{\frac{\pi}{2}+2k\pi}{3}+i\sin\frac{\frac{\pi}{2}+2k\pi}{3}\right]
+| عند $k=0$ :
+| $3\left(\cos\dfrac{\pi}{6}+i\sin\dfrac{\pi}{6}\right)=\dfrac{3\sqrt3}{2}+\dfrac32i$
+| عند $k=1$ :
+| $3\left(\cos\dfrac{5\pi}{6}+i\sin\dfrac{5\pi}{6}\right)=-\dfrac{3\sqrt3}{2}+\dfrac32i$
+| عند $k=2$ :
+| $3\left(\cos\dfrac{3\pi}{2}+i\sin\dfrac{3\pi}{2}\right)=-3i$
+| » **فحص:**
+| $(-3i)^3=-27i^3=27i$ ✓
+>>> nroot .book
+p: **6.** جد الجذور الاربعة للعدد $(-16)$ بأستخدام نتيجة مبرهنة ديموافر.
+self:
+sol: **الحل:**
+| let> $r$ ; المقياس ; $16$
+| let> $\theta$ ; السعة ; $\pi$
+| main> [نتيجة مبرهنة ديموافر] $n=4$
+| $$\sqrt[4]z=2\left[\cos\frac{\pi+2k\pi}{4}+i\sin\frac{\pi+2k\pi}{4}\right]
+| عند $k=0$ :
+| $2\left(\cos\dfrac{\pi}{4}+i\sin\dfrac{\pi}{4}\right)=\sqrt2+\sqrt2\,i$
+| عند $k=1$ :
+| $2\left(\cos\dfrac{3\pi}{4}+i\sin\dfrac{3\pi}{4}\right)=-\sqrt2+\sqrt2\,i$
+| عند $k=2$ :
+| $2\left(\cos\dfrac{5\pi}{4}+i\sin\dfrac{5\pi}{4}\right)=-\sqrt2-\sqrt2\,i$
+| عند $k=3$ :
+| $2\left(\cos\dfrac{7\pi}{4}+i\sin\dfrac{7\pi}{4}\right)=\sqrt2-\sqrt2\,i$
+>>> nroot .book
+p: **7.** جد الجذور الستة للعدد $(-64i)$ بأستخدام نتيجة مبرهنة ديموافر.
+self:
+hint: $r=64$ ، $\theta=\tfrac{3\pi}{2}$ ، و $\sqrt[6]{64}=2$ .
+sol: **الحل:**
+| let> $r$ ; المقياس ; $64$
+| let> $\theta$ ; السعة ; $\dfrac{3\pi}{2}$
+| main> [نتيجة مبرهنة ديموافر] $n=6$
+| $$\sqrt[6]z=2\left[\cos\frac{\frac{3\pi}{2}+2k\pi}{6}+i\sin\frac{\frac{3\pi}{2}+2k\pi}{6}\right]
+| » الزوايا $\dfrac{\pi}{4}+\dfrac{k\pi}{3}$ ، أي:
+| $$\frac{\pi}{4}\ ,\ \frac{7\pi}{12}\ ,\ \frac{11\pi}{12}\ ,\ \frac{5\pi}{4}\ ,\ \frac{19\pi}{12}\ ,\ \frac{23\pi}{12}
+| عند $k=0$ :
+| $2\left(\cos\dfrac{\pi}{4}+i\sin\dfrac{\pi}{4}\right)=\sqrt2+\sqrt2\,i$
+| عند $k=3$ :
+| $2\left(\cos\dfrac{5\pi}{4}+i\sin\dfrac{5\pi}{4}\right)=-\sqrt2-\sqrt2\,i$
+| » والبقية تُترك بالصيغة القطبية: $2\left(\cos\theta_k+i\sin\theta_k\right)$ .
+--- @check تحقّق
+>>> moivre .enr
+k: تقويم قصير · ليس من الكتاب
+p: ما ناتج $\left(\cos\dfrac{\pi}{6}+i\sin\dfrac{\pi}{6}\right)^6$ ؟
+ask: اختر:
+o: $1$
+o*: $-1$
+o: $i$
+why: $6\times\tfrac{\pi}{6}=\pi$ ⇐ $\cos\pi+i\sin\pi=-1$ .
+>>> nroot .enr
+p: كم جذراً خامساً للعدد $32$ في $\mathbb{C}$ ، وما الفرق بين سعتي جذرين متتاليين؟
+ask: اختر:
+o: جذر واحد هو 2
+o*: خمسة جذور، والفرق $\dfrac{2\pi}{5}$
+o: خمسة جذور، والفرق $\dfrac{\pi}{5}$
+why: $k=0,1,2,3,4$ تعطي خمس زوايا بفرق $\tfrac{2\pi}{5}$ ، والجذر الحقيقي $2$ واحد منها ($k=0$).
+>>> moivre .summary
+h2: الخلاصة
+- $(\cos\theta+i\sin\theta)^n=\cos n\theta+i\sin n\theta$ ، و $(\cos\theta+i\sin\theta)^{-n}=\cos n\theta-i\sin n\theta$ .
+- للعدد $r(\cos\theta+i\sin\theta)$ : القوة $r^n(\cos n\theta+i\sin n\theta)$ .
+- الجذور النونية: $r^{1/n}\left[\cos\tfrac{\theta+2\pi k}{n}+i\sin\tfrac{\theta+2\pi k}{n}\right]$ ، $k=0,\dots,n-1$ : رؤوس مضلع منتظم.

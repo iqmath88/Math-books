@@ -146,3 +146,26 @@ S.polar={v:[-4.2,4.2,-3.4,3.4],eq:1,title:'الصيغة القطبية: z = r (c
   if(t>0) A.el('path',{d,stroke:A.col.tan,'stroke-width':2.4,fill:'none'},A.G);
   seg(A,0,0,x,y,'f',3); cpt(A,x,y,l,'f');
   A.chips.push(['f','r = ‖z‖',fr(r,3)],['tan','θ = arg z',tl],['c','الربع',x>0&&y>=0?(y?'الأول':'على المحور'):x<=0&&y>0?(x?'الثاني':'على المحور'):x<0&&y<=0?(y?'الثالث':'على المحور'):(x?'الرابع':'على المحور')]); }};
+
+/* ---------- 1−9 ---------- */
+/* De Moivre: raising to the n-th power multiplies the angle by n (and raises the modulus to the n-th power) */
+S.moivre={v:[-1.7,1.7,-1.45,1.45],eq:1,title:'(cos θ + i sin θ)ⁿ = cos nθ + i sin nθ',hint:'الرفع للقوة n يضرب الزاوية في n',
+ sl:{min:1,max:11,v:1,step:1,play:1,speed:.5,lab:'n في (1 + i)ⁿ',fmt:v=>String(Math.round(v))},
+ draw(A){ const n=Math.round(A.p), t=PI/4;
+  circ(A,1);
+  for(let k=1;k<=n;k++){ const a=k*t; dot(A,Math.cos(a),Math.sin(a),k===n?'f':'muted',k===n?8:3.5); }
+  const a=n*t; seg(A,0,0,Math.cos(a),Math.sin(a),'f',3);
+  let d=''; for(let j=0;j<=60;j++){ const b=a*j/60, rr=.18+.02*b; d+=(j?'L':'M')+A.X(rr*Math.cos(b))+' '+A.Y(rr*Math.sin(b)); }
+  A.el('path',{d,stroke:A.col.tan,'stroke-width':1.8,fill:'none'},A.G);
+  const m=((n%8)+8)%8, nm=['0','π/4','π/2','3π/4','π','5π/4','3π/2','7π/4'][m];
+  A.chips.push(['c','المقياس (√2)ⁿ',fr(Math.pow(2,n/2),3)],['tan','السعة n·π/4',n+'π/4'],['f','القيمة الأساسية',nm]); }};
+/* n-th roots: the n roots are equally spaced (a regular polygon) on a circle of radius r^(1/n) */
+const NR=[[-1,0,3,'جذور x³ = −1 (مثال 30)'],[2,2*sq(3),5,'الجذور الخمسة لـ z² = 4 cis(π/3) (مثال 31)'],[-16,0,4,'الجذور الأربعة لـ −16 (تمرين 6)'],[0,-64,6,'الجذور الستة لـ −64i (تمرين 7)'],[0,27,3,'الجذور التكعيبية لـ 27i (تمرين 5)']];
+S.nroot={v:[-3.4,3.4,-2.8,2.8],eq:1,title:'الجذور النونية: رؤوس مضلع منتظم',hint:'k = 0 , 1 , … , n − 1 ؛ الفرق بين جذرين متتاليين 2π/n',
+ sl:{min:0,max:4,v:0,step:1,play:1,speed:.35,lab:'السؤال',fmt:v=>NR[Math.round(v)][3]},
+ draw(A){ const [a,b,n]=NR[Math.round(A.p)], r=Math.hypot(a,b), t=Math.atan2(b,a), R=Math.pow(r,1/n), pts=[];
+  circ(A,R);
+  for(let k=0;k<n;k++){ const g=(t+2*PI*k)/n; pts.push([R*Math.cos(g),R*Math.sin(g)]); }
+  A.el('path',{d:pts.map((p,k)=>(k?'L':'M')+A.X(p[0])+' '+A.Y(p[1])).join('')+'Z',stroke:A.col.muted,'stroke-width':1.4,fill:A.col.f,'fill-opacity':.07},A.G);
+  pts.forEach((p,k)=>{ dot(A,p[0],p[1],k?'tan':'f',k?6:8); T(A,A.X(p[0]*1.18),A.Y(p[1]*1.18)+5,'k='+k,k?'tan':'f',{size:11.5,anchor:'middle'}); });
+  A.chips.push(['c','n',String(n)],['f','نصف القطر r^(1/n)',fr(R,3)],['tan','الفرق 2π/n',fr(360/n,1)+'°']); }};

@@ -36,6 +36,7 @@
   "cquad",
   "omega",
   "argand",
-  "polar"
+  "polar",
+  "moivre"
  ]
 }
