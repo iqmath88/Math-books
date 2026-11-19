@@ -93,3 +93,14 @@ S.csqrt={v:[-6,6,-5.4,5.4],eq:1,title:'للعدد المركب جذران ترب
   seg(A,0,0,5.2*a/m,5.2*b/m,'c',1.8,'7 5'); T(A,A.X(5.2*a/m),A.Y(5.2*b/m)-10,'c = '+l,'c',{size:12.5,anchor:'middle'});
   seg(A,-x,-y,x,y,'f',1.2,'2 4'); dot(A,x,y,'f',7); dot(A,-x,-y,'f',7);
   A.chips.push(['c','c',l],['f','الجذران ±',fr(x,3)+(y<0?' − ':' + ')+fr(abs(y),3)+'i'],['muted','|c|',fr(m,2)]); }};
+
+/* ---------- 1−5 ---------- */
+/* roots of x² + 4x + c : real while the discriminant is ≥ 0, then a conjugate pair */
+S.quad={v:[-5,1,-2.6,2.6],eq:1,title:'جذرا x² + 4x + c',hint:'المميز سالب ⇐ جذران مركبان مترافقان',
+ sl:{min:0,max:8,v:5,step:.05,play:1,speed:.18,lab:'c',fmt:v=>fr(v,2)},
+ draw(A){ const c=A.p, D=16-4*c;
+  let r1,r2; if(D>=0){ r1=[(-4+sq(D))/2,0]; r2=[(-4-sq(D))/2,0]; } else { r1=[-2,sq(-D)/2]; r2=[-2,-sq(-D)/2]; }
+  seg(A,r1[0],r1[1],r2[0],r2[1],'muted',1.2,'4 4');
+  dot(A,r1[0],r1[1],'f',7); dot(A,r2[0],r2[1],'tan',7);
+  A.chips.push(['c','المميز b² − 4ac',fr(D,2)],['f','x₁',fr(r1[0],2)+(r1[1]?(' + '+fr(r1[1],2)+'i'):'')],['tan','x₂',fr(r2[0],2)+(r2[1]?(' − '+fr(-r2[1],2)+'i'):'')],['muted','x₁ + x₂','−4'],['muted','x₁ · x₂',fr(c,2)]);
+  A.hint=D<0?'المميز سالب: الجذران مترافقان، مجموعهما −4 وحاصل ضربهما c':'المميز غير سالب: جذران حقيقيان'; }};
