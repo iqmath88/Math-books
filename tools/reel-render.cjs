@@ -1,18 +1,18 @@
 /* Render a hand-made reel page (tools/reels/*.html, exposes window.render(t) and window.DURATION) to MP4.
-   usage: node tools/reel-render.cjs tools/reels/ladder.html out.mp4            (1080×1920, 30 fps)
+   usage: node tools/reel-render.cjs tools/reels/ladder.html out.mp4            (1080×1920, 30 fps; --size 1920x1080 for landscape, --fps 60)
           node tools/reel-render.cjs tools/reels/ladder.html out.mp4 --preview 3,8,17   (JPEG stills only)
           node tools/reel-render.cjs tools/reels/ice.html proof.mp4 --range 0,12        (only seconds 0–12, e.g. a proof-of-motion)
    BASE (env) optional; by default the repo is served to the page by request interception. */
 const {chromium}=require('playwright'), fs=require('fs'), {spawn}=require('child_process');
 const [page,out]=process.argv.slice(2), A=process.argv, pi=A.indexOf('--preview'), PRE=pi>0?A[pi+1].split(',').map(Number):null;
-const BASE=process.env.BASE||'http://reel.local/', FPS=30;
+const BASE=process.env.BASE||'http://reel.local/', fi=A.indexOf('--fps'), FPS=fi>0?+A[fi+1]:30;
 /* serve the repo through request interception (no local web server needed) */
 const LOCAL='http://reel.local/';
 async function serveRepo(pg){ const fs=require('fs'), path=require('path'), root=path.join(__dirname,'..');
   const T={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.woff2':'font/woff2','.woff':'font/woff','.ttf':'font/ttf','.json':'application/json','.png':'image/png','.svg':'image/svg+xml','.jpg':'image/jpeg'};
   await pg.route(LOCAL+'**',r=>{ const u=new URL(r.request().url()), f=path.join(root,decodeURIComponent(u.pathname)); if(!f.startsWith(root)||!fs.existsSync(f)) return r.fulfill({status:404,body:'not found'}); r.fulfill({status:200,contentType:T[path.extname(f)]||'application/octet-stream',body:fs.readFileSync(f)}); }); }
 (async()=>{
- const b=await chromium.launch(), pg=await b.newPage({viewport:{width:1080,height:1920}});
+ const b=await chromium.launch(), si=process.argv.indexOf('--size'), [VW,VH]=si>0?process.argv[si+1].split('x').map(Number):[1080,1920], pg=await b.newPage({viewport:{width:VW,height:VH}});
  if(!process.env.BASE) await serveRepo(pg);
  await pg.goto(BASE+page); await pg.evaluate(()=>document.fonts.ready); await pg.waitForTimeout(300);
  const D=await pg.evaluate(()=>window.DURATION);
