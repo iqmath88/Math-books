@@ -116,3 +116,22 @@ S.omega={v:[-1.9,1.9,-1.6,1.6],eq:1,title:'الجذور التكعيبية لل�
   OM.forEach(([x,y,l],k)=>{ dot(A,x,y,k===r?'f':'muted',k===r?9:5); T(A,A.X(x*1.3),A.Y(y*1.3)+5,l,k===r?'f':'muted',{size:k===r?16:13,anchor:'middle'}); });
   seg(A,0,0,OM[r][0],OM[r][1],'f',3);
   A.chips.push(['c','n',String(n)],['tan','الباقي من ÷ 3',String(r)],['f','ωⁿ',OM[r][2]],['muted','ω','−½ + (√3/2) i']); }};
+
+/* ---------- 1−7 ---------- */
+/* example 22 on the Argand diagram: (a) a sum, (b) a difference as a sum with −z₂ */
+const C22=[[[3,4],[5,2],'a) (3+4i) + (5+2i)'],[[6,-2],[-2,5],'b) (6−2i) + (−2+5i)']];
+S.argand={v:[-4,10,-4,8],eq:1,title:'التمثيل الهندسي: الجمع متوازي أضلاع قطره op₃',hint:'الطرح جمع مع −z₂ : نصف دورة حول 0',
+ sl:{min:0,max:1,v:0,step:1,play:1,speed:.4,lab:'الفقرة',fmt:v=>C22[Math.round(v)][2]},
+ draw(A){ const [[a1,b1],[a2,b2]]=C22[Math.round(A.p)], a=a1+a2, b=b1+b2;
+  seg(A,a1,b1,a,b,'muted',1.4,'5 4'); seg(A,a2,b2,a,b,'muted',1.4,'5 4');
+  arrow(A,a1,b1,'c'); arrow(A,a2,b2,'tan'); arrow(A,a,b,'f',3.4);
+  T(A,A.X(a1)+8,A.Y(b1)-10,'p₁','c',{anchor:'start'}); T(A,A.X(a2)+8,A.Y(b2)-10,'p₂','tan',{anchor:'start'}); T(A,A.X(a)+8,A.Y(b)-10,'p₃ ('+a+' , '+b+')','f',{anchor:'start'});
+  A.chips.push(['c','p₁',`(${a1} , ${b1})`],['tan','p₂',`(${a2} , ${b2})`],['f','p₃',`(${a} , ${b})`]); }};
+/* exercise 4: z₁ = 4 − 2i , z₂ = 1 + 2i and the four requested points */
+const X74=[[-3,-6,'−3z₂'],[8,-4,'2z₁'],[3,-4,'z₁ − z₂'],[5,0,'z₁ + z₂']];
+S.ex74={v:[-5,9,-7,4],eq:1,title:'z₁ = 4 − 2i , z₂ = 1 + 2i',hint:'kz تكبير مركزه 0 ، و −z نصف دورة',
+ sl:{min:0,max:3,v:0,step:1,play:1,speed:.4,lab:'النقطة',fmt:v=>X74[Math.round(v)][2]},
+ draw(A){ const k=Math.round(A.p); arrow(A,4,-2,'c',2); arrow(A,1,2,'tan',2);
+  X74.forEach(([a,b,l],j)=>{ if(j!==k) dot(A,a,b,'muted',4.5); });
+  const [a,b,l]=X74[k]; cpt(A,a,b,l+' = '+a+(b<0?' − ':' + ')+abs(b)+'i','f');
+  A.chips.push(['c','z₁','4 − 2i'],['tan','z₂','1 + 2i'],['f',l,`(${a} , ${b})`]); }};

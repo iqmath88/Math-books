@@ -34,6 +34,7 @@
   "conj",
   "csqrt",
   "cquad",
-  "omega"
+  "omega",
+  "argand"
  ]
 }
