@@ -35,6 +35,7 @@
   "csqrt",
   "cquad",
   "omega",
-  "argand"
+  "argand",
+  "polar"
  ]
 }

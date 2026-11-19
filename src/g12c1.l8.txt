@@ -1,0 +1,231 @@
+=== polar | 1−8 | الصيغة القطبية Polar Form للعدد المركب | 36–41 | z = r(cos θ + i sin θ) : المقياس r = √(x² + y²) والسعة θ من cos θ = x/r و sin θ = y/r مع تحديد الربع.
+--- @discover اكتشف: طول واتجاه
+>>> polar .act
+k: [1−8] · الصيغة القطبية للعدد المركب · Polar Form
+h1: كل عدد مركب = طول + زاوية
+lead: بدل الإحداثيين $(x , y)$ يمكن تحديد النقطة بطولها عن الأصل $\cf{r}$ وزاويتها $\theta$ مع المحور الحقيقي الموجب.
+p: **حرّك المنزلق** بين أعداد الأمثلة 23–26 وراقب الربع والسعة.
+>>>
+ask: ما المقياس $r$ للعدد $3+4i$ ؟
+o: $7$
+o*: $5$
+o: $25$
+why: $r=\sqrt{x^2+y^2}=\sqrt{9+16}=5$ .
+--- @understand افهم: المقياس والسعة
+>>> polar .book
+k: [1−8] · ص 36
+h2: الصيغة القطبية للعدد المركب
+p: في البنود السابقة درسنا العدد المركب بصيغته الجبرية $z=x+yi$ والديكارتية $z=(x,y)$ وفي هذا البند سندرس صيغة اخرى للعدد المركب تدعى بالصيغة القطبية . وتحويل احدهما الى الاخرى .
+p: فلو كان لدينا العدد المركب $z=x+yi$ ومثلناه بالنقطة $p(x,y)$ كما في الشكل (1−6) فان : $(r,\theta)$ هما الاحداثيان القطبيان للنقطة $p$ حيث $0$ يمثل القطب و $\overrightarrow{ox}$ يمثل الضلع الابتدائي، وهذا يعني أن : $\theta=m(\angle xop)$ وان $r=\|\overrightarrow{op}\|$
+p: ويكون قياس $\theta$ من $\overrightarrow{ox}$ الى $\overrightarrow{op}$ بأتجاه عكس عقارب الساعة اذا كان القياس موجباً، ومع اتجاه عقارب الساعة اذا كان القياس سالباً ويكون بالقياس الدائري وعليه فأن :
+$$R(z)=x=r\cos\theta\ \ldots(1)\qquad I(z)=y=r\sin\theta\ \ldots(2)
+p: حيث $R(z)$ يرمز للجزء الحقيقي للعدد المركب $z$ بينما $I(z)$ يرمز للجزء التخيلي للعدد المركب $z$
+>>> polar .book
+law: المقياس (**Modulus of Complex Number**)
+| $r$ يسمى مقياس العدد المركب $z$ وهو عدد حقيقي غير سالب ويقرأ "mod z" او مقياس $z$ ويرمز له $\|z\|$ حيث
+| $$r=\|z\|=\sqrt{x^2+y^2}
+p: ومن العلاقتين (1) و (2) نحصل على :
+$$\cos\theta=\frac xr=\frac{x}{\|z\|}\qquad\sin\theta=\frac yr=\frac{y}{\|z\|}
+p: اما $\theta$ فقياسها يسمى سعة العدد المركب (**Argument of Complex Number**) واختصاراً تكتب بالشكل $\theta=\arg(z)$
+>>> polar .book
+k: ص 37
+note: **ملاحظة:** يمكن ان تاخذ $\theta$ عدداً غير منته من القيم التي تختلف كل منها عن الاخرى بعدد صحيح من الدورات.
+p: فاذا كانت $\theta$ سعة عدد مركب فان كلاً من الاعداد : $\theta+2n\pi$ حيث $n$ عدد صحيح يكون ايضاً سعة لنفس العدد المركب .
+p: اما اذا كانت $\theta\in[0,2\pi)$ الدالة على سعة العدد المركب فيقال لها القيمة الاساسية لسعة العدد المركب (**Principle Value**) .
+err: الصواب بالإنكليزية Principal Value (القيمة الأساسية)، لا Principle.
+>>> polar .book
+k: ص 38
+note: **ملاحظة:**
+| **1)** ان سعة العدد المركب $z=0$ غير معرفة وذلك لان المتجه الصفري ليس له اتجاه .
+| **2)** ممكن الافادة من المقياس والقيمة الاساسية لسعة العدد المركب بكتابة العدد المركب $z=x+yi$ بصورة اخرى تسمى الصيغة القطبية **Polar From** وكما يأتي :
+law: الصيغة القطبية
+| $\because\ x=r\cos\theta\ ,\ y=r\sin\theta$
+| $$\therefore\ z=r\cos\theta+ir\sin\theta=r(\cos\theta+i\sin\theta)
+| او $z=\|z\|\big(\cos(\arg z)+i\sin(\arg z)\big)$
+| حيث $r=\text{mod}\,z=\|z\|$ ، $\theta=\arg(z)$ هي سعة العدد المركب $z$
+err: الصواب Polar Form لا Polar From (خطأ مطبعي).
+--- @learn تعلّم الحل: المقياس، ثم الإشارتان تحددان الربع
+>>> polar .book
+k: فكرة الحل في هذا الدرس
+h2: من x + yi إلى r(cos θ + i sin θ)
+xp: فكرة الحل في هذا الدرس
+| **1) المقياس:** $r=\sqrt{x^2+y^2}$
+| **2) الجيب وجيب التمام:** $\cos\theta=\tfrac xr$ ، $\sin\theta=\tfrac yr$
+| **3) الربع من الإشارتين:** الأول $\theta$ ، الثاني $\pi-\alpha$ ، الثالث $\pi+\alpha$ ، الرابع $2\pi-\alpha$ ، حيث $\alpha$ الزاوية الحادة (زاوية الإسناد).
+| **4) نكتب** $z=r(\cos\theta+i\sin\theta)$ .
+| **فحص:** نفك القوس: $r\cos\theta$ يعيد $x$ و $r\sin\theta$ يعيد $y$ .
+>>> polar .book
+k: مثال 23 · ص 37
+h2: الربع الأول
+p: اذا كان $z=1+\sqrt3\,i$ فجد المقياس والقيمة الاساسية لسعة $z$ .
+let: المعطيات
+| $x , y$ ; جزءا العدد ; $1\ ,\ \sqrt3$
+| الإشارتان ; موجبتان ; الربع الأول
+| المطلوب ; المقياس والسعة ; $r\ ,\ \theta$
+main: [المقياس والسعة] $\theta\in[0,2\pi)$
+| $$r=\sqrt{x^2+y^2}\ ,\quad\cos\theta=\frac xr\ ,\ \sin\theta=\frac yr
+>>> polar #1 :: المقياس
+p: **الحل:**
+$$\text{mod}\,z=\|z\|=\sqrt{x^2+y^2}=\sqrt{1+3}=2
+>>> polar ! #2 :: السعة
+$$\cos\theta=\frac{x}{\|z\|}=\frac12\qquad\sin\theta=\frac{y}{\|z\|}=\frac{\sqrt3}{2}
+p: نستنتج ان $\theta$ في الربع الاول
+$$\therefore\ \arg(z)=\frac{\pi}{3}
+xp: فحص
+| $2\cos\tfrac{\pi}{3}=1=x$ ✓
+| $2\sin\tfrac{\pi}{3}=\sqrt3=y$ ✓
+>>> polar .book
+k: مثال 24 · ص 37
+h2: الربع الثالث
+p: اذا كان $z=-1-i$ فجد المقياس والقيمة الاساسية لسعة $z$ .
+let: المعطيات
+| $x , y$ ; جزءا العدد ; $-1\ ,\ -1$
+| الإشارتان ; سالبتان ; الربع الثالث
+| المطلوب ; المقياس والسعة ; $r\ ,\ \theta$
+main: [المقياس والسعة] $\theta\in[0,2\pi)$
+| $$r=\sqrt{x^2+y^2}\ ,\quad\cos\theta=\frac xr\ ,\ \sin\theta=\frac yr
+>>> polar #1 :: المقياس
+p: **الحل:**
+$$\text{mod}\,z=\|z\|=\sqrt{1+1}=\sqrt2
+>>> polar ! #2 :: السعة
+$$\cos\theta=\frac{x}{\|z\|}=\frac{-1}{\sqrt2}\qquad\sin\theta=\frac{y}{\|z\|}=\frac{-1}{\sqrt2}
+p: نستنتج ان $\theta$ في الربع الثالث
+$$\therefore\ \arg(z)=\pi+\frac{\pi}{4}=\frac{5\pi}{4}
+xp: لماذا π + π/4؟
+| زاوية الإسناد $\tfrac{\pi}{4}$ (لأن $|\cos|=|\sin|=\tfrac{1}{\sqrt2}$)، وفي الربع الثالث نضيفها إلى $\pi$ .
+>>> polar .book
+k: مثال 25 · ص 38–39
+h2: من الجبرية إلى القطبية
+p: عبر عن كل من الاعداد الآتية بالصيغة القطبية : **a)** $-2+2i$ **b)** $2\sqrt3-2i$
+let: المعطيات
+| a ; الربع الثاني ; $-2+2i$
+| b ; الربع الرابع ; $2\sqrt3-2i$
+| المطلوب ; الصيغة القطبية ; $r(\cos\theta+i\sin\theta)$
+main: [الصيغة القطبية] بعد إيجاد $r$ و $\theta$
+| $$z=r(\cos\theta+i\sin\theta)
+>>> polar #1 :: الفقرة a: المقياس والسعة
+p: **الحل:**
+$$a)\ z=-2+2i
+$$\text{mod}\,z=\|z\|=\sqrt{4+4}=2\sqrt2
+$$\cos\theta=\frac{-2}{2\sqrt2}=-\frac{1}{\sqrt2}\qquad\sin\theta=\frac{2}{2\sqrt2}=\frac{1}{\sqrt2}
+p: $\theta$ تقع في الربع الثاني
+$$\therefore\ \arg(z)=\pi-\frac{\pi}{4}=\frac{3\pi}{4}
+>>> polar #2 :: الفقرة a: الصيغة القطبية
+p: الصيغة القطبية للعدد المركب $z$ هي :
+$$z=r(\cos\theta+i\sin\theta)
+$$z=2\sqrt2\left(\cos\frac{3\pi}{4}+i\sin\frac{3\pi}{4}\right)
+>>> polar ! #3 :: الفقرة b
+$$b)\ z=2\sqrt3-2i
+$$\text{mod}\,z=\sqrt{12+4}=\sqrt{16}=4
+$$\cos\theta=\frac{2\sqrt3}{4}=\frac{\sqrt3}{2}\qquad\sin\theta=\frac{-2}{4}=\frac{-1}{2}
+p: $\theta$ تقع في الربع الرابع
+$$\therefore\ \arg(z)=2\pi-\frac{\pi}{6}=\frac{11\pi}{6}
+p: $\therefore$ الصيغة القطبية للعدد المركب $z$ هي :
+$$z=4\left(\cos\frac{11\pi}{6}+i\sin\frac{11\pi}{6}\right)
+xp: فحص بفك القوس
+| (a): $2\sqrt2\cdot\left(-\tfrac{1}{\sqrt2}\right)=-2$ و $2\sqrt2\cdot\tfrac{1}{\sqrt2}=2$ ✓
+| (b): $4\cdot\tfrac{\sqrt3}{2}=2\sqrt3$ و $4\cdot\left(-\tfrac12\right)=-2$ ✓
+>>> polar .book
+k: مثال 26 · ص 40–41
+h2: أعداد على المحورين
+p: عبر عن كل من الاعداد الاتية بالصيغة القطبية : **a)** $1$ **b)** $i$ **c)** $-1$ **d)** $-i$
+let: المعطيات
+| الأعداد ; على المحورين ; $r=1$ لكل منها
+| السعة ; من الرسم ; زاوية المحور
+| المطلوب ; الصيغة القطبية ; $\cos\theta+i\sin\theta$
+main: [الصيغة القطبية] $r=1$
+| $$z=\cos\theta+i\sin\theta
+>>> polar #1 :: الفقرتان a و b
+p: **الحل:** لاحظ الاشكال الآتية : الشكل (1−7)
+$$a)\ p(z_1)=(1,0)=1+0i
+$$\text{mod}\,z_1=1\ ,\quad\arg z_1=0
+$$\therefore\ z_1=1(\cos0+i\sin0)
+$$b)\ p(z_2)=(0,1)=0+i
+$$\text{mod}\,z_2=1\ ,\quad\arg z_2=\frac{\pi}{2}
+$$\therefore\ z_2=1\left(\cos\frac{\pi}{2}+i\sin\frac{\pi}{2}\right)
+>>> polar #2 :: الفقرتان c و d
+$$c)\ p(z_3)=(-1,0)=-1+0i
+$$\text{mod}\,z_3=1\ ,\quad\arg z_3=\pi
+$$\therefore\ z_3=1(\cos\pi+i\sin\pi)
+$$d)\ p(z_4)=(0,-1)=0-i
+$$\text{mod}\,z_4=1\ ,\quad\arg z_4=\frac{3\pi}{2}
+$$\therefore\ z_4=1\left(\cos\frac{3\pi}{2}+i\sin\frac{3\pi}{2}\right)
+>>> polar ! #3 :: الاستنتاج
+law: من المثال السابق نستنتج الاتي :
+| $1=(\cos0+i\sin0)$
+| $-1=(\cos\pi+i\sin\pi)$
+| $i=\left(\cos\tfrac{\pi}{2}+i\sin\tfrac{\pi}{2}\right)$
+| $-i=\left(\cos\tfrac{3\pi}{2}+i\sin\tfrac{3\pi}{2}\right)$
+p: وبتطبيق الاستنتاج السابق يمكن أن نضع :
+$$3=3\times1=3(\cos0+i\sin0)
+$$-2=2\times(-1)=2(\cos\pi+i\sin\pi)
+$$5i=5\times i=5\left(\cos\frac{\pi}{2}+i\sin\frac{\pi}{2}\right)
+$$-7i=7\times(-i)=7\left(\cos\frac{3\pi}{2}+i\sin\frac{3\pi}{2}\right)
+xp: فحص
+| $$2(\cos\pi+i\sin\pi)=2(-1+0i)=-2\ ✓
+| المقياس دائماً موجب، والإشارة تذهب إلى السعة.
+--- @practice تدرّب: تدريب إضافي (ليس من الكتاب)
+>>> polar .enr
+k: تدريب · ليس من الكتاب
+h2: دورك الآن
+note: تمارين الكتاب في ص 47 كلها على مبرهنة ديموافر، فتأتي في الدرس [1−9]. هذه تمارين إضافية على الصيغة القطبية.
+p: جد المقياس والقيمة الاساسية لسعة $z=1+i$ .
+xp: قالب الحل
+| **المقياس** $\sqrt{x^2+y^2}$ ← **cos و sin** ← **الربع من الإشارتين** ← **السعة** ← **فحص** بفك القوس
+ask: اختر:
+o*: $r=\sqrt2\ ,\ \theta=\dfrac{\pi}{4}$
+o: $r=2\ ,\ \theta=\dfrac{\pi}{4}$
+o: $r=\sqrt2\ ,\ \theta=\dfrac{3\pi}{4}$
+why: $r=\sqrt{1+1}=\sqrt2$ ، $\cos\theta=\sin\theta=\tfrac{1}{\sqrt2}$ وكلاهما موجب ⇐ الربع الأول ⇐ $\theta=\tfrac{\pi}{4}$ .
+>>> polar .enr
+p: عبر بالصيغة القطبية عن $z=-\sqrt3+i$ .
+self:
+hint: $r=2$ ، و $\cos\theta=-\tfrac{\sqrt3}{2}$ ، $\sin\theta=\tfrac12$ .
+sol: **الحل:**
+| let> $x , y$ ; جزءا العدد ; $-\sqrt3\ ,\ 1$
+| main> [الصيغة القطبية] $z=r(\cos\theta+i\sin\theta)$
+| $$r=\sqrt{3+1}=2
+| $\cos\theta=-\dfrac{\sqrt3}{2}$ و $\sin\theta=\dfrac12$ ⇐ الربع الثاني
+| $\theta=\pi-\dfrac{\pi}{6}=\dfrac{5\pi}{6}$
+| $z=2\left(\cos\dfrac{5\pi}{6}+i\sin\dfrac{5\pi}{6}\right)$
+>>> polar .enr
+p: عبر بالصيغة القطبية عن $z=-4i$ .
+ask: اختر:
+o: $4\left(\cos\dfrac{\pi}{2}+i\sin\dfrac{\pi}{2}\right)$
+o*: $4\left(\cos\dfrac{3\pi}{2}+i\sin\dfrac{3\pi}{2}\right)$
+o: $-4\left(\cos\dfrac{\pi}{2}+i\sin\dfrac{\pi}{2}\right)$
+why: $-4i=4\times(-i)$ ، و $-i=\cos\tfrac{3\pi}{2}+i\sin\tfrac{3\pi}{2}$ . المقياس $4$ موجب دائماً.
+>>> polar .enr
+p: حوّل إلى الصيغة الجبرية: $z=6\left(\cos\dfrac{2\pi}{3}+i\sin\dfrac{2\pi}{3}\right)$
+prac: -3 , 3√3 ; الجزء الحقيقي ، الجزء التخيلي
+hint: $\cos\tfrac{2\pi}{3}=-\tfrac12$ و $\sin\tfrac{2\pi}{3}=\tfrac{\sqrt3}{2}$ .
+sol: **الحل:**
+| let> $r$ ; المقياس ; $6$
+| let> $\theta$ ; السعة ; $\dfrac{2\pi}{3}$
+| main> [من القطبية إلى الجبرية] نفك القوس
+| $$x=r\cos\theta\ ,\ y=r\sin\theta
+| $x=6\left(-\tfrac12\right)=-3$
+| $y=6\cdot\tfrac{\sqrt3}{2}=3\sqrt3$
+| $z=-3+3\sqrt3\,i$
+--- @check تحقّق
+>>> polar .enr
+k: تقويم قصير · ليس من الكتاب
+p: العدد $z=x+yi$ فيه $x<0$ و $y<0$ . في أي ربع تقع سعته؟
+ask: اختر:
+o: الثاني
+o*: الثالث
+o: الرابع
+why: الجيب وجيب التمام سالبان معاً في الربع الثالث، فتكون $\theta=\pi+\alpha$ .
+>>> polar .enr
+p: ما سعة العدد $z=0$ ؟
+ask: اختر:
+o: $0$
+o: $\pi$
+o*: غير معرفة
+why: المتجه الصفري ليس له اتجاه، فسعة الصفر غير معرفة (ملاحظة ص 38).
+>>> polar .summary
+h2: الخلاصة
+- $r=\|z\|=\sqrt{x^2+y^2}$ ، و $\cos\theta=\tfrac xr$ ، $\sin\theta=\tfrac yr$ .
+- القيمة الأساسية للسعة $\theta\in[0,2\pi)$ ، والإشارتان تحددان الربع.
+- الصيغة القطبية: $z=r(\cos\theta+i\sin\theta)$ .
+- $1=\cos0+i\sin0$ ، $i=\cos\tfrac{\pi}{2}+i\sin\tfrac{\pi}{2}$ ، $-1=\cos\pi+i\sin\pi$ ، $-i=\cos\tfrac{3\pi}{2}+i\sin\tfrac{3\pi}{2}$ .

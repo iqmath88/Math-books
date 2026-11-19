@@ -135,3 +135,14 @@ S.ex74={v:[-5,9,-7,4],eq:1,title:'z₁ = 4 − 2i , z₂ = 1 + 2i',hint:'kz تك
   X74.forEach(([a,b,l],j)=>{ if(j!==k) dot(A,a,b,'muted',4.5); });
   const [a,b,l]=X74[k]; cpt(A,a,b,l+' = '+a+(b<0?' − ':' + ')+abs(b)+'i','f');
   A.chips.push(['c','z₁','4 − 2i'],['tan','z₂','1 + 2i'],['f',l,`(${a} , ${b})`]); }};
+
+/* ---------- 1−8 ---------- */
+/* polar form: r = ‖z‖ and θ = arg z measured anticlockwise from the positive real axis, θ ∈ [0 , 2π) */
+const C23=[[1,sq(3),'1 + √3 i','π/3'],[-1,-1,'−1 − i','5π/4'],[-2,2,'−2 + 2i','3π/4'],[2*sq(3),-2,'2√3 − 2i','11π/6'],[1,0,'1','0'],[0,1,'i','π/2'],[-1,0,'−1','π'],[0,-1,'−i','3π/2']];
+S.polar={v:[-4.2,4.2,-3.4,3.4],eq:1,title:'الصيغة القطبية: z = r (cos θ + i sin θ)',hint:'θ تُقاس من المحور الحقيقي الموجب عكس عقارب الساعة',
+ sl:{min:0,max:7,v:0,step:1,play:1,speed:.35,lab:'العدد',fmt:v=>C23[Math.round(v)][2]},
+ draw(A){ const [x,y,l,tl]=C23[Math.round(A.p)], r=Math.hypot(x,y); let t=Math.atan2(y,x); if(t<0) t+=2*PI;
+  const rr=Math.min(.7,r*.5); let d=''; for(let j=0;j<=40;j++){ const a=t*j/40; d+=(j?'L':'M')+A.X(rr*Math.cos(a))+' '+A.Y(rr*Math.sin(a)); }
+  if(t>0) A.el('path',{d,stroke:A.col.tan,'stroke-width':2.4,fill:'none'},A.G);
+  seg(A,0,0,x,y,'f',3); cpt(A,x,y,l,'f');
+  A.chips.push(['f','r = ‖z‖',fr(r,3)],['tan','θ = arg z',tl],['c','الربع',x>0&&y>=0?(y?'الأول':'على المحور'):x<=0&&y>0?(x?'الثاني':'على المحور'):x<0&&y<=0?(y?'الثالث':'على المحور'):(x?'الرابع':'على المحور')]); }};
