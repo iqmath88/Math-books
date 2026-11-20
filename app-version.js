@@ -1,2 +1,2 @@
 /* Shared release metadata */
-globalThis.MATH_BOOKS_RELEASE = Object.freeze({ version: '1.66.0', cachePrefix: 'math-books-' });
+globalThis.MATH_BOOKS_RELEASE = Object.freeze({ version: '1.67.0', cachePrefix: 'math-books-' });

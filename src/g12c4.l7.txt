@@ -84,7 +84,7 @@ p: اذا كان $y=\ln(3x^2+4)$ فاوجد $\dfrac{dy}{dx}$
 let: المعطيات
 | $y$ ; الدالة ; $\ln(3x^2+4)$
 | $u$ ; ما داخل ln ; $3x^2+4$
-| المطلوب ; ; $\dfrac{dy}{dx}$
+| المطلوب ; إيجاد ; $\dfrac{dy}{dx}$
 main: [مشتقة ln u] $u$ موجبة
 | $$\frac{d}{dx}(\ln u)=\frac1u\cdot\frac{du}{dx}
 >>> ln #1 :: نحدد u ونشتقها
@@ -99,9 +99,9 @@ k: مثال 2 · ص 186
 h2: البسط مشتقة المقام
 p: جد $\displaystyle\int\frac{\cos\theta\,d\theta}{1+\sin\theta}$
 let: المعطيات
-| التكامل ; ; $\displaystyle\int\frac{\cos\theta\,d\theta}{1+\sin\theta}$
+| التكامل ; المعطى ; $\displaystyle\int\frac{\cos\theta\,d\theta}{1+\sin\theta}$
 | $u$ ; المقام ; $1+\sin\theta$
-| المطلوب ; ; الدالة المقابلة $+c$
+| المطلوب ; من السؤال ; الدالة المقابلة $+c$
 main: [قاعدة ln] البسط مشتقة المقام
 | $$\int\frac{du}{u}=\ln|u|+c
 >>> ln #1 :: نفرض u
@@ -120,7 +120,7 @@ p: لتكن $y=e^{\tan x}$ فجد $\dfrac{dy}{dx}$ .
 let: المعطيات
 | $y$ ; الدالة ; $e^{\tan x}$
 | $u$ ; الأس ; $\tan x$
-| المطلوب ; ; $\dfrac{dy}{dx}$
+| المطلوب ; إيجاد ; $\dfrac{dy}{dx}$
 main: [مشتقة e^u] الدالة نفسها × مشتقة الأس
 | $$\frac{d}{dx}(e^u)=e^u\cdot\frac{du}{dx}
 >>> ex #1 :: نطبق القاعدة
@@ -136,7 +136,7 @@ k: مثال 4 · ص 187
 h2: تكامل e^u
 p: جد $\int xe^{x^2}\,dx$
 let: المعطيات
-| التكامل ; ; $\int xe^{x^2}\,dx$
+| التكامل ; المعطى ; $\int xe^{x^2}\,dx$
 | $u$ ; الأس ; $x^2$
 | $du$ ; مشتقته ; $2x\,dx$ والموجود $x\,dx$
 main: [تكامل e^u] مشتقة الأس موجودة
@@ -157,7 +157,7 @@ p: جد $\dfrac{dy}{dx}$ لكل مما يأتي: **a)** $y=3^{2x-5}$ **b)** $y=2
 let: المعطيات
 | $a$ ; الأساس (a، b، c) ; $3\ ,\ 2\ ,\ 5$
 | $u$ ; الأس (a، b، c) ; $2x-5\ ,\ -x^2\ ,\ \sin x$
-| المطلوب ; ; $\dfrac{dy}{dx}$
+| المطلوب ; إيجاد ; $\dfrac{dy}{dx}$
 main: [مبرهنة 4−7−5] الدالة × مشتقة الأس × ln الأساس
 | $$\frac{da^u}{dx}=a^u\cdot\frac{du}{dx}\ln a
 >>> ex #1 :: a) الأس خطي

@@ -13,6 +13,7 @@ Rules — each one is a defect a student would actually see:
   dollar        unbalanced $ on a line (the rest of the line would be read as TeX).
   brace         unbalanced { } in a formula (KaTeX error box on the page).
   sol-empty     a «sol:» block with no lines.
+  let-empty     a givens row («| a ; ; c» / «| let> a ; ; c») with an empty column: the page shows a stray «;».
 Warnings (reported, do not stop the build):
   unit-italic   a unit written as italic letters after a number inside a formula (2m, 0.4m^3/h) — write \\text{m}.
 """
@@ -95,6 +96,9 @@ def lint(cid, src):
             continue
         # inline formulas (text lines); $$…$$ pairs inside text are display blocks
         txt = re.sub(r'\$\$[^$]+\$\$', lambda m: ' ', body)
+        if raw.startswith('| ') and ' ; ' in txt:
+            cols = re.sub(r'\$[^$]*\$', 'M', txt).split(';')
+            if len(cols) >= 2 and any(not c.strip() for c in cols[:-1]): errs.append((where, 'let-empty', body[:80]))
         if txt.count('$') % 2: errs.append((where, 'dollar', body[:80])); continue
         for m in re.finditer(r'\$([^$]+)\$', txt):
             f = m.group(1)
