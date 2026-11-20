@@ -1,0 +1,275 @@
+=== dihed | 6−1 , 6−2 | الزاوية الزوجية والمستويات المتعامدة | 224–235 | حرف الزاوية الزوجية ووجهاها، الزاوية العائدة لها، تعامد مستويين، والمبرهنات 7 و8 و9 ونتائجها.
+--- @discover اكتشف: زاوية بين مستويين
+>>> dihed .act
+k: الفصل السادس · الهندسة الفضائية · Space Geometry
+h1: كيف نقيس الزاوية بين مستويين؟
+lead: مستويان يلتقيان بحافة مشتركة $\cf{AB}$ . نأخذ نقطة $D$ على الحافة ونرسم منها عموداً على الحافة في كل مستوٍ: الزاوية بين العمودين هي قياس الزاوية بين المستويين.
+p: **حرّك القياس** : عندما يصبح $90^\circ$ يكون المستويان متعامدين.
+>>>
+ask: في الرسم، لماذا لا نقيس الزاوية بين أي مستقيمين في الوجهين؟
+o: لأن الوجهين متوازيان
+o*: لأن الزاوية تتغير حسب اتجاه المستقيمين؛ فقط العمودان على الحرف يعطيان قياساً ثابتاً
+o: لأن الحرف لا ينتمي للوجهين
+why: من تعريف الزاوية العائدة: ضلعاها عموديان على الحرف من نقطة واحدة عليه، ولذلك قياسها ثابت ويساوي قياس الزاوية الزوجية.
+--- @understand افهم: التعاريف والمبرهنات
+>>> dihed .book
+k: [6−1] · تمهيد · ص 224
+p: سبق وان علمنا أن كلاً من المستقيم والمستوي مجموعة غير منتهية من النقط وأن كل نقطتين تعينان مستقيماً واحداً وواحداً فقط وكل ثلاث نقط ليست على استقامة واحدة تعين مستوياً واحداً واحداً فقط ، وكل اربعة نقط لا تقع في مستوٍ واحد تعين فضاء . اي أن المستقيم يحتوي على نقطتين على اقل تقدير ، والمستوي يحتوي على ثلاث نقط على اقل تقدير لا يحتويها مستقيم واحد ، والفراغ يحتوي على اربع نقط على اقل تقدير ليست جميعها في مستوٍ واحد .
+p: كما تعرفنا في الصف الخامس العلمي على علاقات بين المستقيمات والمستويات وبرهنا بعض المبرهنات التي يمكن الافادة منها في مبرهنات جديدة ستتعرف عليها في هذا الفصل . ولكي تتمكن من التواصل معنا وتتعرف على علاقات جديدة بين المستقيمات والمستويات ، والمستويات والمستويات وتكتسب مفاهيم جديدة وتبرهن مبرهنات اخرنا عليك الا الرجوع الى مراجعة ما درسته في هذا الموضوع في السنة السابقة .
+tbh: المصطلح | الرمز او العلاقة الرياضية
+tbl: الزاوية الزوجية بين $(X) , (Y)$ | $(X)-\overleftrightarrow{AB}-(Y)$
+tbl: المساحة الجانبية | $L\cdot A$
+tbl: المساحة الكلية | $T\cdot A$
+tbl: المستوي $X$ | $(X)$
+>>> dihed .book
+k: [6−2] · ص 225–226
+law: تعريف [6−2−1]
+| الزاوية الزوجية : اتحاد نصفي مستويين لهما حافة (**Edge**) مشتركة .
+p: تسمى الحافة المشتركة بـ (حرف الزاوية الزوجية **Edge of Dihedral**) ويسمى كل من نصفي المستويين بـ (وجه الزاوية الزوجية) كما في الشكل (6−1) حيث $\overleftrightarrow{AB}$ هو حرف الزاوية الزوجية ، $(X)$ و $(Y)$ هما وجهاها ويعبر عن الزاوية الزوجية بالتعبير : $(X)-\overleftrightarrow{AB}-(Y)$
+p: وقد يعبر عنها بحرف الزاوية الزوجية ان لم يكن مشتركاً مع زاوية اخرى . ولا يمكن ان تكتب الزاوية الزوجية بشكل $\overleftrightarrow{AB}$ في الشكل (6−2) لأن الحرف $\overleftrightarrow{AB}$ مشترك في اكثر من زاوية زوجية : $(X)-\overleftrightarrow{AB}-(Z)$ ، $(X)-\overleftrightarrow{AB}-(Y)$ ، $(Y)-\overleftrightarrow{AB}-(Z)$
+note: **ملاحظة:** عندما تكون اربع نقاط ليست في مستوٍ واحد ، نكتب الزاوية الزوجية $A-\overleftrightarrow{BC}-D$ او الزاوية الزوجية بين المستويين $(ABC) , (DBC)$ . كما في الشكل (6−3)
+>>> dihed .book
+k: ص 226–227
+p: **وتقاس الزاوية الزوجية كالآتي :** نأخذ نقطة $D$ على الحافة المشتركة $\overleftrightarrow{AB}$ ونرسم من $D$ العمود $\overrightarrow{DC}$ في $(X)$ والعمود $\overrightarrow{DE}$ في $(Y)$ على الحرف $\overleftrightarrow{AB}$ فيكون قياس الزاوية الزوجية بين المستويين هو قياس الزاوية $CDE$ وتسمى الزاوية $CDE$ الزاوية العائدة للزاوية الزوجية . (كما في الشكل (6−4))
+p: بعبارة اخرى لدينا الزاوية الزوجية $(X)-\overleftrightarrow{AB}-(Y)$ ولدينا $\overrightarrow{DC}\subset(X)\ ,\ \overrightarrow{DE}\subset(Y)$ ، $\overrightarrow{DC}\perp\overleftrightarrow{AB}\ ,\ \overrightarrow{DE}\perp\overleftrightarrow{AB}$
+p: $\therefore\ \angle CDE$ هي الزاوية العائدة للزاوية الزوجية $\overleftrightarrow{AB}$ او $(X)-\overleftrightarrow{AB}-(Y)$
+law: تعريف [6−2−2]
+| الزاوية المستوية العائدة لزاوية زوجية : هي الزاوية التي ضلعاها عموديان على حرف الزاوية الزوجية من نقطة تنتمي اليه وكل منهما في أحد وجهي الزاوية الزوجية
+| أو هي اتحاد شعاعين عمودين على حرف الزاوية الزوجية من نقطة تنتمي اليه وكل منهما في احد وجهي الزاوية الزوجية
+p: **ومن تعريف الزاويتين العائدة والزوجية يمكن استنتاج الآتي :**
+p: **1)** قياس زاوية عائدة لزاوية زوجية ثابت **2)** قياس الزاوية الزوجية يساوي قياس الزاوية العائدة لها وبالعكس .
+law: تعريف [6−2−3]
+| اذا كانت الزاوية الزوجية قائمة فان المستويين متعامدان وبالعكس
+| $$(X)\perp(Y)\Leftrightarrow m\,(X)-\overleftrightarrow{AB}-(Y)=90^\circ
+>>> dihed .book
+k: مبرهنة 7 · ص 228
+law: مبرهنة (7)
+| اذا تعامد مستويان فالمستقيم المرسوم في احدهما والعمودي على مستقيم التقاطع يكون عمودياً على المستوي الآخر
+p: **المعطيات:** $(X)\perp(Y)$ ، $(X)\cap(Y)=\overleftrightarrow{AB}$ ، $\overleftrightarrow{CD}\subset(Y)\ ,\ \overleftrightarrow{CD}\perp\overleftrightarrow{AB}$ في نقطة $D$
+p: **المطلوب اثباته:** $\overleftrightarrow{CD}\perp(X)$
+p: **البرهان:**
+p: في $(X)$ نرسم $\overleftrightarrow{DE}\perp\overleftrightarrow{AB}$ (في المستوي الواحد يمكن رسم مستقيم وحيد عمودي على مستقيم فيه من نقطة معلومة)
+p: $\overleftrightarrow{CD}\subset(Y)\ ,\ \overleftrightarrow{CD}\perp\overleftrightarrow{AB}$ (معطى)
+p: $\therefore\ \angle CDE$ عائدة للزاوية الزوجية $(Y)-\overleftrightarrow{AB}-(X)$ (تعريف الزاوية العائدة)
+p: $\therefore\ m\angle CDE=90^\circ$ (قياس الزاوية الزوجية يساوي قياس الزاوية العائدة لها وبالعكس)
+p: $\therefore\ \overleftrightarrow{CD}\perp\overleftrightarrow{DE}$ (اذا كان قياس الزاوية بين مستقيمين $90^\circ$ فان المستقيمين متعامدان وبالعكس)
+p: $\therefore\ \overleftrightarrow{CD}\perp(X)$ (المستقيم العمودي على مستقيمين متقاطعين من نقطة تقاطعهما يكون عمودياً على مستويهما) و.هـ.م
+>>> dihed .book
+k: ص 229–230
+law: نتيجة مبرهنة (7)
+| اذا تعامد مستويان فالمستقيم المرسوم من نقطة في احدهما عمودياً على المستوي الآخر يكون محتوى فيه .
+| $$\overleftrightarrow{CD}\perp(X)\ ,\ C\in(Y)\ ,\ (Y)\perp(X)\Rightarrow\overleftrightarrow{CD}\subset(Y)
+law: مبرهنة (8)
+| كل مستوٍ مار بمستقيم عمودي على مستوٍ آخر يكون عمودياً على ذلك المستوي
+| أو يتعامد المستويان اذا احتوى احدهما على مستقيم عمودي على الآخر
+p: **المعطيات:** $\overleftrightarrow{AB}\perp(X)$ ، $\overleftrightarrow{AB}\subset(Y)$ . **المطلوب اثباته:** $(Y)\perp(X)$
+p: **البرهان:** ليكن $(X)\cap(Y)=\overleftrightarrow{CD}$ (يتقاطع المستويان بخط مستقيم) ، $B\in\overleftrightarrow{CD}$ (مستقيم التقاطع يحتوي النقاط المشتركة)
+p: في $(X)$ نرسم $\overleftrightarrow{BE}\perp\overleftrightarrow{CD}$ (في المستوي الواحد يوجد مستقيم وحيد عمودي على مستقيم فيه من نقطة معلومة)
+p: $\because\ \overleftrightarrow{AB}\perp(X)$ (معطى) $\therefore\ \overleftrightarrow{AB}\perp\overleftrightarrow{CD},\overleftrightarrow{BE}$ (المستقيم العمودي على مستوي يكون عمودياً على جميع المستقيمات المحتواة في المستوي والمارة من أثره)
+p: $\because\ \overleftrightarrow{AB}\subset(Y)$ (معطى) $\therefore\ \angle ABE$ عائدة للزاوية الزوجية $\overleftrightarrow{CD}$ (تعريف الزاوية العائدة) ، $m\angle ABE=90^\circ$ (لان $\overleftrightarrow{AB}\perp\overleftrightarrow{BE}$)
+p: $\therefore$ قياس الزاوية الزوجية $(Y)-\overleftrightarrow{CD}-(X)=90^\circ$ (قياس الزاوية الزوجية يساوي قياس الزاوية العائدة لها وبالعكس)
+p: $\therefore\ (Y)\perp(X)$ (اذا كان قياس الزاوية الزوجية $90^\circ$ فان المستويين متعامدان وبالعكس) و.هـ.م
+>>> dihed .book
+k: ص 230–231
+law: مبرهنة (9)
+| من مستقيم غير عمودي على مستوٍ معلوم يوجد مستوٍ وحيد عمودي على المستوي المعلوم .
+p: **المعطيات:** $\overleftrightarrow{AB}$ غير عمودي على $(X)$ . **المطلوب اثباته:** ايجاد مستوٍ وحيد يحوي $\overleftrightarrow{AB}$ وعمودي على $(X)$
+p: **البرهان:** من نقطة $(A)$ نرسم $\overleftrightarrow{AC}\perp(X)$ (يوجد مستقيم وحيد عمودي على مستوٍ معلوم من نقطة لا تنتمي اليه) $\because\ \overleftrightarrow{AB},\overleftrightarrow{AC}$ متقاطعان $\therefore$ يوجد مستوٍ وحيد مثل $(Y)$ يحويهما (لكل مستقيمين متقاطعين يوجد مستوٍ وحيد يحويهما) $\therefore\ (Y)\perp(X)$ (مبرهنة 8)
+p: **ولبرهنة الوحدانية:** ليكن $(Z)$ مستوي اخر يحوي $\overleftrightarrow{AB}$ وعمودي على $(X)$ $\because\ \overleftrightarrow{AC}\perp(X)$ (بالبرهان) $\therefore\ \overleftrightarrow{AC}\subset(Z)$ (نتيجة مبرهنة 7) $\therefore\ (Y)=(Z)$ (لكل مستقيمين متقاطعين يوجد مستوٍ وحيد يحويهما) و.هـ.م
+law: نتيجة مبرهنة (9)
+| اذا كان كل من مستويين متقاطعين عمودياً على مستوٍ ثالث فان مستقيم تقاطعهما يكون عمودياً على المستوي الثالث .
+p: **المعطيات:** $(X)\cap(Y)=\overleftrightarrow{AB}$ ، $(X),(Y)\perp(Z)$ . **المطلوب اثباته:** $\overleftrightarrow{AB}\perp(Z)$
+p: **البرهان:** ان لم يكن $\overleftrightarrow{AB}$ عمودياً على $(Z)$ لما وجد اكثر من مستوي يحوي $\overleftrightarrow{AB}$ وعمودي على $(Z)$ (مبرهنة 9) $\therefore\ \overleftrightarrow{AB}\perp(Z)$ و.هـ.م
+note: **نشاط :** توجد طرق اخرى لبرهان هذه المبرهنة ، حاول ذلك .
+--- @learn تعلّم الحل: نبحث عن الزاوية العائدة
+>>> dihed .book
+k: فكرة الحل في هذا الدرس
+h2: ثلاث أدوات للبرهان
+xp: فكرة الحل في هذا الدرس
+| **لإيجاد زاوية زوجية:** نرسم من نقطة على الحرف عموداً عليه في كل وجه (غالباً بمبرهنة الأعمدة الثلاثة)، فنحصل على الزاوية العائدة، ونحسبها بالمثلثات.
+| **لإثبات تعامد مستويين:** نجد في أحدهما مستقيماً عمودياً على الآخر (مبرهنة 8).
+| **لإثبات أن مستقيماً عمودي على مستوٍ:** إما أنه في أحد مستويين متعامدين وعمودي على تقاطعهما (مبرهنة 7)، أو أنه تقاطع مستويين عموديين على المستوي (نتيجة مبرهنة 9).
+| **في كل خطوة:** نكتب السبب بين قوسين.
+>>> ex1 .book
+k: مثال 1 · ص 232
+h2: قياس زاوية زوجية
+p: في $\triangle ABC$ ، $\overline{BD}\perp(ABC)$ ، $m\angle A=30^\circ$ ، $AB=10\text{ cm}\ ,\ BD=5\text{ cm}$ . جد قياس الزاوية الزوجية $D-\overline{AC}-B$
+let: المعطيات
+| $\overline{BD}$ ; عمودي على المستوي ; $\overline{BD}\perp(ABC)$
+| $m\angle BAC$ ; معطى ; $30^\circ$
+| $AB , BD$ ; معطى ; $10\text{ cm}\ ,\ 5\text{ cm}$
+main: [الزاوية العائدة] قياس الزاوية الزوجية يساوي قياس الزاوية العائدة لها
+| $$m\,(D-\overline{AC}-B)=m\angle DEB
+>>> ex1 #1 :: نرسم الزاوية العائدة
+p: **المطلوب اثباته:** ايجاد قياس الزاوية الزوجية $D-\overline{AC}-B$
+p: **البرهان:** في المستوي $(ABC)$ نرسم $\overline{BE}\perp\overline{AC}$ في نقطة $E$ (في المستوي الواحد يوجد مستقيم وحيد عمودي على آخر من نقطة معلومة)
+p: $\because\ \overline{BD}\perp(ABC)$ (معطى) $\therefore\ \overline{DE}\perp\overline{AC}$ (مبرهنة الاعمدة الثلاثة)
+p: $\Leftarrow\ \angle DEB$ عائدة للزاوية الزوجية $\overline{AC}$ (تعريف الزاوية العائدة)
+>>> ex1 #2 :: نحسب BE
+p: $\overline{DB}\perp\overline{BE}$ (المستقيم العمودي على مستوي يكون عموديا على جميع المستقيمات المحتواة في المستوي والمارة من اثره) $\Leftarrow\ \triangle DBE$ قائم الزاوية في $B$
+p: في $\triangle BEA$ القائم الزاوية في $E$
+$$\sin30^\circ=\frac{BE}{BA}\Rightarrow\frac12=\frac{BE}{10}\Rightarrow BE=5\text{ cm}
+>>> ex1 ! #3 :: نحسب الزاوية
+p: في $\triangle DBE$ القائم الزاوية في $B$ :
+$$\tan(BED)=\frac55=1
+p: $\therefore$ قياس $m\angle BED=45^\circ$
+p: $\therefore$ قياس الزاوية الزوجية $D-\overline{AC}-B=45^\circ$ (قياس الزاوية الزوجية هو قياس الزاوية العائدة لها وبالعكس) و.هـ.م
+xp: فحص
+| $BD=BE=5$ ⇐ المثلث $DBE$ قائم ومتساوي الساقين ⇐ زاويتاه الحادتان $45^\circ$ ✓ . جرّب في الرسم: حرّك $BD$ وراقب الزاوية.
+>>> dihed .book
+k: مثال 2 · ص 233
+h2: إثبات بالمبرهنتين 8 و7
+p: ليكن $ABC$ مثلثاً وليكن :
+$$\overline{AF}\perp(ABC)\ ,\ \overline{BD}\perp\overline{CF}\ ,\ \overline{BE}\perp\overline{CA}
+p: برهن ان :
+$$\overline{BE}\perp(CAF)\ ,\ \overline{ED}\perp\overline{CF}
+let: المعطيات
+| $\overline{AF}$ ; معطى ; $\perp(ABC)$
+| $\overline{BE}$ ; معطى ; $\perp\overline{CA}$
+| $\overline{BD}$ ; معطى ; $\perp\overline{CF}$
+main: [مبرهنة 8 ثم مبرهنة 7] نثبت تعامد المستويين أولاً
+| $$(CAF)\perp(ABC)\Rightarrow\overline{BE}\perp(CAF)
+>>> dihed #1 :: تعامد المستويين
+p: **المطلوب اثباته:** $\overline{DE}\perp\overline{CF}\ ,\ \overline{BE}\perp(CAF)$
+p: **البرهان:** $\because\ \overline{AF}\perp(ABC)$ (معطى)
+p: $\therefore\ (CAF)\perp(ABC)$ (مبرهنة 8 : يتعامد المستويان اذا احتوى احدهما على مستقيم عمودي على الآخر)
+>>> dihed #2 :: BE عمودي على المستوي
+p: $\because\ \overline{BE}\perp\overline{CA}$ (معطى)
+p: $\therefore\ \overline{BE}\perp(CAF)$ (مبرهنة 7 : اذا تعامد مستويان فالمستقيم المرسوم في احدهما والعمودي على مستقيم التقاطع يكون عمودياً على الآخر)
+>>> dihed ! #3 :: ED عمودي على CF
+p: $\because\ \overline{BD}\perp\overline{CF}$ (معطى)
+p: $\therefore\ \overline{ED}\perp\overline{CF}$ (نتيجة مبرهنة الاعمدة الثلاثة) و.هـ.م
+xp: لماذا نتيجة الأعمدة الثلاثة؟
+| $\overline{BE}\perp(CAF)$ ، و $\overline{BD}$ مائل على $(CAF)$ ومسقطه $\overline{ED}$ . المائل عمودي على $\overline{CF}$ ⇐ مسقطه عمودي عليه أيضاً.
+>>> dihed .book
+k: مثال 3 · ص 234
+h2: إثبات بنتيجة مبرهنة 9
+p: $(X) , (Y)$ مستويان متعامدان ، $\overleftrightarrow{AB}\subset(X)$ ، $\overleftrightarrow{BC},\overleftrightarrow{BD}$ عموديان على $\overleftrightarrow{AB}$ ويقطعان $(Y)$ في $C,D$ على الترتيب . برهن أن : $\overleftrightarrow{CD}\perp(X)$
+let: المعطيات
+| $(X) , (Y)$ ; معطى ; متعامدان
+| $\overleftrightarrow{AB}$ ; معطى ; $\subset(X)$
+| $\overleftrightarrow{BC},\overleftrightarrow{BD}$ ; معطى ; $\perp\overleftrightarrow{AB}$
+main: [نتيجة مبرهنة 9] تقاطع مستويين عموديين على مستوٍ ثالث
+| $$(Z),(Y)\perp(X)\Rightarrow(Z)\cap(Y)\perp(X)
+>>> dihed #1 :: المستوي (Z)
+p: **البرهان:** ليكن $(Z)$ مستوي المستقيمين المتقاطعين $\overleftrightarrow{BC},\overleftrightarrow{BD}$ (لكل مستقيمين متقاطعين يوجد مستوياً وحيداً يحويهما)
+p: بما ان $\overleftrightarrow{AB}\perp\overleftrightarrow{BC},\overleftrightarrow{BD}$ (معطى) $\therefore\ \overleftrightarrow{AB}\perp(Z)$ (المستقيم العمودي على مستقيمين متقاطعين من نقطة تقاطعهما يكون عمودياً على مستويهما)
+>>> dihed #2 :: (Z) عمودي على (X)
+p: $\because\ \overleftrightarrow{AB}\subset(X)$ (معطى) $\therefore\ (X)\perp(Z)$ (يتعامد المستويان اذا احتوى احدهما على مستقيم عمودي على الآخر)
+>>> dihed ! #3 :: التقاطع CD
+p: $\because\ (X)\perp(Y)$ (معطى) ، ولما كان $(Z)\cap(Y)=\overleftrightarrow{CD}$ (لانه محتوى في كل منهما)
+p: $\therefore\ \overleftrightarrow{CD}\perp(X)$ (اذا كان كل من مستويين متقاطعين عمودياً على مستوٍ ثالث فان مستقيم تقاطعهما يكون عمودياً على المستوي الثالث) و.هـ.م
+xp: الخطة باختصار
+| نبني مستوياً $(Z)$ عمودياً على $(X)$ ، والمستوي $(Y)$ عمودي على $(X)$ أصلاً ، فتقاطعهما $\overleftrightarrow{CD}$ عمودي على $(X)$ .
+--- @practice تدرّب: تمارين ص 235
+>>> dihed .book
+k: تمارين · ص 235
+h2: دورك الآن
+p: **1.** برهن ان مستوي الزاوية المستوية العائدة لزاوية زوجية يكون عمودياً على حرفها .
+xp: قالب البرهان
+| **المعطيات** ← **المطلوب** ← **الرسم المساعد** (عمود في مستوٍ، أو مستوٍ يحوي مستقيمين) ← **خطوات** كل منها بسببها بين قوسين ← **و.هـ.م**
+self:
+hint: ضلعا الزاوية العائدة عموديان على الحرف ويتقاطعان في نقطة عليه.
+sol: **البرهان:**
+| let> المعطيات ; الزاوية العائدة ; $\angle CDE$ للزاوية الزوجية $\overleftrightarrow{AB}$
+| main> [عمودي على مستقيمين متقاطعين] من نقطة تقاطعهما
+| $$\overleftrightarrow{AB}\perp\overrightarrow{DC},\overrightarrow{DE}\Rightarrow\overleftrightarrow{AB}\perp(CDE)
+| $\overrightarrow{DC}\perp\overleftrightarrow{AB}$ و $\overrightarrow{DE}\perp\overleftrightarrow{AB}$
+| » (تعريف الزاوية العائدة)
+| $\overrightarrow{DC},\overrightarrow{DE}$ يتقاطعان في $D$ ويعينان المستوي $(CDE)$
+| $\therefore\ \overleftrightarrow{AB}\perp(CDE)$
+| » (المستقيم العمودي على مستقيمين متقاطعين من نقطة تقاطعهما يكون عمودياً على مستويهما) و.هـ.م
+>>> dihed .book
+p: **2.** برهن انه اذا وازى مستقيم مستوياً وكان عمودياً على مستوٍ آخر فان المستويين متعامدان .
+self:
+hint: ارسم من المستقيم مستوياً يقطع المستوي الأول بمستقيم يوازيه.
+sol: **البرهان:**
+| let> المعطيات ; من السؤال ; $L\parallel(X)\ ,\ L\perp(Y)$
+| main> [مبرهنة 8] مستوٍ يحوي مستقيماً عمودياً على الآخر
+| $$M\subset(X)\ ,\ M\perp(Y)\Rightarrow(X)\perp(Y)
+| نرسم مستوياً يحوي $L$ ويقطع $(X)$ في المستقيم $M$
+| $\because\ L\parallel(X)\ \therefore\ L\parallel M$
+| » (اذا وازى مستقيم مستوياً فانه يوازي مستقيم تقاطعه مع أي مستوٍ يحويه)
+| $\because\ L\perp(Y)\ \therefore\ M\perp(Y)$
+| » (اذا كان احد مستقيمين متوازيين عمودياً على مستوٍ فان الآخر يكون عمودياً عليه)
+| $\because\ M\subset(X)\ \therefore\ (X)\perp(Y)$
+| » (مبرهنة 8) و.هـ.م
+>>> dihed .book
+p: **3.** برهن ان المستوي العمودي على احد مستويين متوازيين يكون عمودياً على الآخر ايضاً .
+self:
+hint: ارسم في المستوي العمودي مستقيماً عمودياً على تقاطعه مع المستوي الأول، واستخدم المبرهنتين 7 و8.
+sol: **البرهان:**
+| let> المعطيات ; من السؤال ; $(X)\parallel(Y)\ ,\ (Z)\perp(X)$
+| main> [مبرهنة 7 ثم مبرهنة 8] عبر مستقيم عمودي
+| $$\overleftrightarrow{CD}\subset(Z)\ ,\ \overleftrightarrow{CD}\perp(Y)\Rightarrow(Z)\perp(Y)
+| ليكن $(Z)\cap(X)=\overleftrightarrow{AB}$ ، وفي $(Z)$ نرسم $\overleftrightarrow{CD}\perp\overleftrightarrow{AB}$
+| $\therefore\ \overleftrightarrow{CD}\perp(X)$
+| » (مبرهنة 7)
+| $\because\ (X)\parallel(Y)\ \therefore\ \overleftrightarrow{CD}\perp(Y)$
+| » (المستقيم العمودي على احد مستويين متوازيين يكون عمودياً على الآخر)
+| $\because\ \overleftrightarrow{CD}\subset(Z)\ \therefore\ (Z)\perp(Y)$
+| » (مبرهنة 8) و.هـ.م
+>>> dihed .book
+p: **4.** $A,B,C,D$ اربع نقاط ليست في مستوٍ واحد بحيث $AB=AC$ ، $E\in\overline{BC}$ فاذا كانت $\angle AED$ عائدة للزاوية الزوجية $A-\overline{BC}-D$ برهن ان $CD=BD$ .
+self:
+hint: الزاوية العائدة ⇐ $\overline{AE}\perp\overline{BC}$ و $\overline{DE}\perp\overline{BC}$ . وفي المثلث المتساوي الساقين العمود ينصف القاعدة.
+sol: **البرهان:**
+| let> المعطيات ; من السؤال ; $AB=AC\ ,\ \angle AED$ عائدة
+| main> [تعريف الزاوية العائدة] ثم التطابق
+| $$\overline{AE}\perp\overline{BC}\ ,\ \overline{DE}\perp\overline{BC}
+| $\angle AED$ عائدة للزاوية الزوجية $\overline{BC}$ $\therefore\ \overline{AE}\perp\overline{BC}\ ,\ \overline{DE}\perp\overline{BC}$
+| » (تعريف الزاوية العائدة)
+| في $\triangle ABC$ : $AB=AC$ و $\overline{AE}\perp\overline{BC}$ $\therefore\ BE=EC$
+| » (العمود النازل من رأس مثلث متساوي الساقين على القاعدة ينصفها)
+| في $\triangle DEB , \triangle DEC$ : $BE=EC$ ، $\overline{DE}$ مشترك ، $m\angle DEB=m\angle DEC=90^\circ$
+| $\therefore$ المثلثان متطابقان (ضلعان وزاوية محصورة) $\therefore\ CD=BD$ و.هـ.م
+>>> dihed .book
+p: **5.** برهن انه اذا وازى كل من مستقيمين متقاطعين مستوياً معلوماً وكانا عموديين على مستويين متقاطعين فان مستقيم تقاطع المستويين المتقاطعين يكون عمودياً على المستوي المعلوم .
+self:
+hint: استخدم التمرين 2 مرتين ثم نتيجة مبرهنة 9.
+sol: **البرهان:**
+| let> المعطيات ; من السؤال ; $L_1,L_2\parallel(X)\ ,\ L_1\perp(Y)\ ,\ L_2\perp(Z)$
+| main> [نتيجة مبرهنة 9] تقاطع مستويين عموديين على مستوٍ ثالث
+| $$(Y),(Z)\perp(X)\Rightarrow(Y)\cap(Z)\perp(X)
+| $L_1\parallel(X)$ و $L_1\perp(Y)$ $\therefore\ (X)\perp(Y)$
+| » (التمرين 2)
+| $L_2\parallel(X)$ و $L_2\perp(Z)$ $\therefore\ (X)\perp(Z)$
+| » (التمرين 2)
+| $(Y)\cap(Z)=\overleftrightarrow{AB}$ $\therefore\ \overleftrightarrow{AB}\perp(X)$
+| » (نتيجة مبرهنة 9) و.هـ.م
+>>> dihed .book
+p: **6.** دائرة قطرها $\overline{AB}$ ، $\overline{AC}$ عمودي على مستويها ، $D$ نقطة تنتمي للدائرة . برهن ان $(CDA)$ عمودي على $(CDB)$ .
+self:
+hint: الزاوية المحيطية المرسومة على القطر قائمة: $\overline{BD}\perp\overline{AD}$ .
+sol: **البرهان:**
+| let> المعطيات ; من السؤال ; $\overline{AB}$ قطر ، $\overline{AC}\perp$ مستوي الدائرة ، $D$ على الدائرة
+| main> [مبرهنة 8] نثبت أن $\overline{BD}\perp(CDA)$
+| $$\overline{BD}\subset(CDB)\ ,\ \overline{BD}\perp(CDA)\Rightarrow(CDB)\perp(CDA)
+| $m\angle ADB=90^\circ$ (الزاوية المحيطية المرسومة في نصف دائرة قائمة) $\therefore\ \overline{BD}\perp\overline{AD}$
+| $\overline{AC}\perp$ مستوي الدائرة ، و $\overline{AD}$ مسقط $\overline{CD}$ $\therefore\ \overline{CD}\perp\overline{BD}$
+| » (مبرهنة الاعمدة الثلاثة)
+| $\overline{BD}\perp\overline{AD},\overline{CD}$ المتقاطعين في $D$ $\therefore\ \overline{BD}\perp(CDA)$
+| $\because\ \overline{BD}\subset(CDB)\ \therefore\ (CDB)\perp(CDA)$
+| » (مبرهنة 8) و.هـ.م
+--- @check تحقّق
+>>> dihed .enr
+k: تقويم قصير · ليس من الكتاب
+p: الزاوية العائدة لزاوية زوجية قياسها $90^\circ$ . ماذا نستنتج؟
+ask: اختر:
+o: الحرف عمودي على الوجهين
+o*: المستويان متعامدان
+o: المستويان متوازيان
+why: قياس الزاوية الزوجية يساوي قياس الزاوية العائدة لها، وإذا كانت قائمة فالمستويان متعامدان (تعريف 6−2−3).
+>>> dihed .enr
+p: لإثبات أن المستوي $(Y)$ عمودي على $(X)$ يكفي أن:
+ask: اختر:
+o: يقطع $(Y)$ المستوي $(X)$
+o*: يحتوي $(Y)$ على مستقيم عمودي على $(X)$
+o: يوازي $(Y)$ مستقيماً في $(X)$
+why: مبرهنة 8 : يتعامد المستويان اذا احتوى احدهما على مستقيم عمودي على الآخر.
+>>> dihed .summary
+h2: الخلاصة
+- الزاوية الزوجية $(X)-\overleftrightarrow{AB}-(Y)$ تُقاس بزاويتها العائدة: ضلعاها عموديان على الحرف من نقطة عليه.
+- مبرهنة 7: في مستويين متعامدين، المستقيم في أحدهما العمودي على التقاطع عمودي على الآخر.
+- مبرهنة 8: مستوٍ يحوي مستقيماً عمودياً على مستوٍ آخر يكون عمودياً عليه.
+- مبرهنة 9 ونتيجتها: تقاطع مستويين عموديين على ثالث يكون عمودياً عليه.
