@@ -234,7 +234,8 @@ o: $\cos19\theta+i\sin19\theta$
 o: $\cos\theta-i\sin\theta$
 why: البسط $\cos10\theta+i\sin10\theta$ والمقام $\cos9\theta+i\sin9\theta$ ، والقسمة تطرح الزاويتين: $10\theta-9\theta=\theta$ .
 >>> moivre .book
-p: **b)** $(\cos\theta+i\sin\theta)^8(\cos\theta-i\sin\theta)^4$ Hint: $x^4y^4=(xy)^4$
+p: **b)** $(\cos\theta+i\sin\theta)^8(\cos\theta-i\sin\theta)^4$
+p: $\boxed{\text{Hint: }x^4y^4=(xy)^4}$
 ask: اختر:
 o: $\cos12\theta+i\sin12\theta$
 o*: $\cos4\theta+i\sin4\theta$
