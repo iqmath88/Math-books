@@ -394,6 +394,7 @@ function draw(){
   $('#figTitle').textContent=iso(sc.title||''); const chips=[]; let hint=sc.hint||'', hintOk=false;
   const legend=[];
   const A={W,H,el,lab,col:COL,p:P,t:(performance.now()-T0)/1000,svg,fmt,subplot:(r,v)=>subplot(svg,r,v),chips,set hint(v){ hint=v; },get hint(){ return hint; },set ok(v){ hintOk=v; },get ok(){ return hintOk; }};
+  if(sc.drag2){ if(!sc._q) sc._q={x:sc.drag2.x,y:sc.drag2.y}; A.q=sc._q; }
   lastA=A;
   if(sc.v){
     const Vb=view(sc), V=from&&from.v&&k<1?mixV(view(from),Vb,k):Vb, pad=V.pad, gb=H-pad.b;
@@ -584,7 +585,7 @@ function setPlay(on){ playing=on; if(on&&cur&&cur.sl){ const sl=cur.sl, u0=Math.
 function syncPlay(){ const b=$('#slP'); if(!b) return; b.textContent=playing?'⏸':'▶'; b.title=playing?'إيقاف الحركة':'تشغيل الحركة'; b.classList.toggle('on',playing); }
 function go(name,hold){ if(hold!==undefined) stepHold=hold; const sc=B.S[name]; if(!sc) return;
   if(sc===cur){ if(sc.sl){ if(stepHold&&playing){ P=sc.sl.v??P; syncSlider(); setPlay(false); draw(); } else if(!stepHold&&!playing&&wantPlay(sc)) setPlay(true); } return; } const red=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  from=cur&&!red?cur:null; t=0; cur=sc; currentSceneId=name; cDrag=null; sweepT=0; svg.style.touchAction=sc.pick?'none':''; svg.style.cursor=sc.pick?'grab':''; if(sc.sl){ const sl=sc.sl; P=sl.v??sl.min; playing=wantPlay(sc); const u0=Math.min(1,Math.max(0,(P-sl.min)/((sl.max-sl.min)||1))); playT=Math.acos(1-2*u0)/(sl.speed||.6); } syncSlider(); syncPlay(); kick(); }
+  from=cur&&!red?cur:null; t=0; cur=sc; currentSceneId=name; cDrag=null; sweepT=0; svg.style.touchAction=sc.pick||sc.drag2?'none':''; svg.style.cursor=sc.pick||sc.drag2?'grab':''; if(sc.sl){ const sl=sc.sl; P=sl.v??sl.min; playing=wantPlay(sc); const u0=Math.min(1,Math.max(0,(P-sl.min)/((sl.max-sl.min)||1))); playT=Math.acos(1-2*u0)/(sl.speed||.6); } syncSlider(); syncPlay(); kick(); }
 $('#slP').addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); setPlay(!playing); });
 function size(){ const r=box.getBoundingClientRect(); W=r.width; H=r.height; draw(); }
 new ResizeObserver(size).observe(box);
@@ -592,10 +593,15 @@ $('#slI').addEventListener('input',e=>{ playing=false; syncPlay(); P=+e.target.v
 let dragging=false;
 const setC=e=>{ if(!W2Xg) return; const r=svg.getBoundingClientRect(); const x=W2Xg(e.clientX-r.left); const lo=Math.min(curA,curB)+.01*(curB-curA), hi=Math.max(curA,curB)-.01*(curB-curA); cDrag=Math.max(lo,Math.min(hi,x)); draw(); };
 let lastA=null;
+/* drag2: a scene point (e.g. the centre (h , k)) follows the pointer in 2D; snapped and kept inside drag2.box */
+const q2Drag=e=>{ const A=lastA, d=cur.drag2; if(!A||!A.X_inv) return; const r=svg.getBoundingClientRect(), sx=W/(r.width||W), sy=H/(r.height||H);
+  const sn=d.snap||1, b=d.box||[A.V.x0,A.V.x1,A.V.y0,A.V.y1], cl=(v,a,z)=>Math.max(a,Math.min(z,v));
+  const x=cl(Math.round(A.X_inv((e.clientX-r.left)*sx)/sn)*sn,b[0],b[1]), y=cl(Math.round(A.Y_inv((e.clientY-r.top)*sy)/sn)*sn,b[2],b[3]);
+  if(cur._q&&cur._q.x===x&&cur._q.y===y) return; cur._q={x,y}; if(d.full&&cur.sl&&P!==cur.sl.max){ playing=false; syncPlay(); P=cur.sl.max; syncSlider(); } draw(); };
 const objDrag=e=>{ const r=svg.getBoundingClientRect(), s=cur.sl, v=cur.pick(lastA,e.clientX-r.left,e.clientY-r.top); if(v==null||!isFinite(v)) return; playing=false; syncPlay(); P=Math.max(s.min,Math.min(s.max,v)); syncSlider(); draw(); };
-svg.addEventListener('pointerdown',e=>{ if(!cur) return; if(cur.pick&&cur.sl&&lastA){ dragging=true; svg.setPointerCapture(e.pointerId); objDrag(e); return; } if(cur.drag){ dragging=true; svg.setPointerCapture(e.pointerId); setC(e); } else if(cur.sl&&cur.slx&&W2Xg){ dragging=true; svg.setPointerCapture(e.pointerId); slDrag(e); } });
+svg.addEventListener('pointerdown',e=>{ if(!cur) return; if(cur.drag2&&lastA){ dragging=true; svg.setPointerCapture(e.pointerId); q2Drag(e); return; } if(cur.pick&&cur.sl&&lastA){ dragging=true; svg.setPointerCapture(e.pointerId); objDrag(e); return; } if(cur.drag){ dragging=true; svg.setPointerCapture(e.pointerId); setC(e); } else if(cur.sl&&cur.slx&&W2Xg){ dragging=true; svg.setPointerCapture(e.pointerId); slDrag(e); } });
 const slDrag=e=>{ const r=svg.getBoundingClientRect(); const x=W2Xg(e.clientX-r.left), s=cur.sl; playing=false; syncPlay(); P=Math.max(s.min,Math.min(s.max,x)); syncSlider(); draw(); };
-svg.addEventListener('pointermove',e=>{ if(!dragging) return; if(cur.pick&&lastA) objDrag(e); else if(cur.drag) setC(e); else if(cur.slx) slDrag(e); });
+svg.addEventListener('pointermove',e=>{ if(!dragging) return; if(cur.drag2) return q2Drag(e); if(cur.pick&&lastA) objDrag(e); else if(cur.drag) setC(e); else if(cur.slx) slDrag(e); });
 svg.addEventListener('pointerup',()=>dragging=false); svg.addEventListener('pointercancel',()=>dragging=false);
 
 /* ================= scrollytelling ================= */
