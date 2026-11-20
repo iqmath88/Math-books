@@ -48,3 +48,15 @@ S.porient={v:[-5,5,-4.2,4.2],eq:1,title:'المعادلات القياسية ا�
   const F=[[0,p],[0,-p],[p,0],[-p,0]][k]; ptl(A,F[0],F[1],'F','c',8,-8);
   if(k<2) hline(A,k?p:-p,'tan',k?'y = p':'y = −p'); else vline(A,k===2?-p:p,'tan',k===2?'x = −p':'x = p');
   A.chips.push(['f','المعادلة',PO[k][0]],['c','البؤرة',['(0 , p)','(0 , −p)','(p , 0)','(−p , 0)'][k]],['tan','الفتحة',PO[k][1]]); }};
+
+/* ---------- 2−3 ---------- */
+/* translating the axes: the parabola x² = y slides so that its vertex moves from (0,0) to (h,k) = (−2,−4) (example 10) */
+S.ptrans={v:[-6,3,-5.5,4.5],eq:1,title:'انسحاب المحاور: الرأس ينتقل إلى (h , k)',hint:'كل مكوّن ينسحب بالمقدار نفسه: الرأس والبؤرة والدليل والمحور',
+ sl:{min:0,max:1,v:1,step:.01,play:1,speed:.25,lab:'الانسحاب',fmt:v=>Math.round(v*100)+'%'},
+ draw(A){ const t=A.p, h=-2*t, k=-4*t, p=.25;
+  pcurve(A,u=>[h+u,k+u*u/(4*p)],-3.2,3.2,'muted',1.4,200,'4 5');
+  pcurve(A,u=>[u,u*u/(4*p)],-2.2,2.2,'muted',1.2,120,'2 6');
+  pcurve(A,u=>[h+u,k+u*u/(4*p)],-3.2,3.2,'f',3);
+  hline(A,k-p,'tan','الدليل'); seg(A,h,A.V.y0,h,A.V.y1,'c',1.3,'3 5');
+  ptl(A,h,k,'(h , k)','f',10,14); ptl(A,h,k+p,'F','c',10,-6);
+  A.chips.push(['f','الرأس',`(${fr(h,2)} , ${fr(k,2)})`],['c','البؤرة',`(${fr(h,2)} , ${fr(k+p,2)})`],['tan','الدليل','y = '+fr(k-p,2)]); }};
