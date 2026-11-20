@@ -93,3 +93,29 @@ S.etrans={v:[-5,8,-5,7],eq:1,title:'انسحاب القطع الناقص: الم
   seg(A,h,A.V.y0,h,A.V.y1,'c',1.3,'3 5'); seg(A,A.V.x0,k,A.V.x1,k,'tan',1.3,'3 5');
   ptl(A,h,k,'(h , k)','ink2',8,16); ptl(A,h,k+c,'F₁','c'); ptl(A,h,k-c,'F₂','c'); ptl(A,h,k+a,'V₁','f'); ptl(A,h,k-a,'V₂','f');
   A.chips.push(['ink2','المركز',`(${fr(h,2)} , ${fr(k,2)})`],['c','F₁',`(${fr(h,1)} , ${fr(k+c,1)})`]); }};
+
+/* ---------- 2−6 ---------- */
+function hyper(A,h,k,a,b,horiz,col='f',w=3){ const R=2.6;
+  [1,-1].forEach(s=>pcurve(A,t=>horiz?[h+s*a*Math.cosh(t),k+b*Math.sinh(t)]:[h+b*Math.sinh(t),k+s*a*Math.cosh(t)],-R,R,col,w,160)); }
+function asym(A,h,k,a,b,horiz){ const m=horiz?b/a:a/b, L=40;
+  seg(A,h-L,k-m*L,h+L,k+m*L,'muted',1.3,'6 5'); seg(A,h-L,k+m*L,h+L,k-m*L,'muted',1.3,'6 5');
+  const [rx,ry]=horiz?[a,b]:[b,a]; A.el('path',{d:`M${A.X(h-rx)} ${A.Y(k-ry)}H${A.X(h+rx)}V${A.Y(k+ry)}H${A.X(h-rx)}Z`,stroke:A.col.muted,'stroke-width':1.2,fill:'none'},A.G); }
+/* difference definition: |PF₁ − PF₂| = 2a (example 19 : x²/64 − y²/36 = 1) */
+S.hyp={v:[-16,16,-12,12],eq:1,title:'القطع الزائد: |PF₁ − PF₂| = 2a',hint:'الفرق المطلق ثابت على الفرعين كليهما',
+ sl:{min:-4,max:4,v:1.3,step:.01,play:1,speed:.3,lab:'موضع P',fmt:v=>''},
+ draw(A){ const a=8,b=6,c=10, t=A.p, s=t<0?-1:1, u=Math.abs(t)-2, x=s*a*Math.cosh(u), y=b*Math.sinh(u);
+  asym(A,0,0,a,b,1); hyper(A,0,0,a,b,1);
+  seg(A,c,0,x,y,'c',2.2); seg(A,-c,0,x,y,'tan',2.2);
+  ptl(A,c,0,'F₁','c',6,18); ptl(A,-c,0,'F₂','tan',-6,18,'end'); ptl(A,a,0,'V₁','f',4,-10); ptl(A,-a,0,'V₂','f',-4,-10,'end');
+  dot(A,x,y,'f',7); T(A,A.X(x)+8,A.Y(y)-10,'P','f',{anchor:'start'});
+  const d1=Math.hypot(x-c,y), d2=Math.hypot(x+c,y);
+  A.chips.push(['c','PF₁',fr(d1,2)],['tan','PF₂',fr(d2,2)],['f','|PF₁ − PF₂|',fr(abs(d1-d2),2)]); }};
+/* the two standard hyperbolas and the rectangle–asymptote construction */
+const HO=[[3,sq(27),1,'x²/9 − y²/27 = 1 (مثال 20)'],[2,2,0,'y²/4 − x²/4 = 1 (مثال 21)']];
+S.horient={v:[-9,9,-7.5,7.5],eq:1,title:'رسم الزائد: المستطيل والقطران (المستقيمان المحاذيان)',hint:'الحد الموجب يحدد محور البؤرتين، و c² = a² + b²',
+ sl:{min:0,max:1,v:0,step:1,play:1,speed:.3,lab:'المعادلة',fmt:v=>HO[Math.round(v)][3]},
+ draw(A){ const [a,b,hz]=HO[Math.round(A.p)], c=sq(a*a+b*b);
+  asym(A,0,0,a,b,hz); hyper(A,0,0,a,b,hz);
+  const P=hz?[[c,0,'F₁','c'],[-c,0,'F₂','c'],[a,0,'V₁','f'],[-a,0,'V₂','f']]:[[0,c,'F₁','c'],[0,-c,'F₂','c'],[0,a,'V₁','f'],[0,-a,'V₂','f']];
+  P.forEach(([x,y,l,cl])=>ptl(A,x,y,l,cl,6,-8));
+  A.chips.push(['f','a',fr(a,2)],['tan','b',fr(b,2)],['c','c = √(a² + b²)',fr(c,3)],['muted','e = c/a',fr(c/a,3)]); }};

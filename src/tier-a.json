@@ -43,6 +43,7 @@
   "parab",
   "ptrans",
   "ellipse",
-  "etrans"
+  "etrans",
+  "hyperb"
  ]
 }
