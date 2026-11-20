@@ -60,3 +60,25 @@ S.ptrans={v:[-6,3,-5.5,4.5],eq:1,title:'انسحاب المحاور: الرأس 
   hline(A,k-p,'tan','الدليل'); seg(A,h,A.V.y0,h,A.V.y1,'c',1.3,'3 5');
   ptl(A,h,k,'(h , k)','f',10,14); ptl(A,h,k+p,'F','c',10,-6);
   A.chips.push(['f','الرأس',`(${fr(h,2)} , ${fr(k,2)})`],['c','البؤرة',`(${fr(h,2)} , ${fr(k+p,2)})`],['tan','الدليل','y = '+fr(k-p,2)]); }};
+
+/* ---------- 2−4 ---------- */
+function ellipse(A,h,k,a,b,horiz,col='f',w=3){ pcurve(A,t=>horiz?[h+a*Math.cos(t),k+b*Math.sin(t)]:[h+b*Math.cos(t),k+a*Math.sin(t)],0,2*PI,col,w,200); }
+/* string definition: PF₁ + PF₂ = 2a for every point (example 11 (1): x²/25 + y²/16 = 1) */
+S.ell={v:[-6.5,6.5,-5,5],eq:1,title:'القطع الناقص: PF₁ + PF₂ = 2a',hint:'مجموع البعدين ثابت مهما تحركت P',
+ sl:{min:0,max:6.283,v:1.1,step:.01,play:1,speed:.15,lab:'موضع P',fmt:v=>''},
+ draw(A){ const a=5,b=4,c=3,t=A.p, x=a*Math.cos(t), y=b*Math.sin(t);
+  ellipse(A,0,0,a,b,1);
+  seg(A,c,0,x,y,'c',2.4); seg(A,-c,0,x,y,'tan',2.4);
+  ptl(A,c,0,'F₁','c',6,18); ptl(A,-c,0,'F₂','tan',-6,18,'end'); dot(A,x,y,'f',7); T(A,A.X(x)+8,A.Y(y)-10,'P','f',{anchor:'start'});
+  [[a,0,'V₁'],[-a,0,'V₂']].forEach(([px,py,l])=>{ dot(A,px,py,'ink2',4); T(A,A.X(px),A.Y(py)-10,l,'ink2',{anchor:'middle',size:11.5}); });
+  const d1=Math.hypot(x-c,y), d2=Math.hypot(x+c,y);
+  A.chips.push(['c','PF₁',fr(d1,2)],['tan','PF₂',fr(d2,2)],['f','المجموع 2a',fr(d1+d2,2)]); }};
+/* the two standard ellipses with centre at the origin */
+const EO=[[5,4,1,'x²/25 + y²/16 = 1 (مثال 11)'],[6,4,0,'x²/16 + y²/36 = 1 (مثال 13)']];
+S.eorient={v:[-7.5,7.5,-6.6,6.6],eq:1,title:'البؤرتان على المحور الأكبر دائماً',hint:'المقام الأكبر هو a² ، والمتغير تحته يحدد محور البؤرتين',
+ sl:{min:0,max:1,v:0,step:1,play:1,speed:.3,lab:'المعادلة',fmt:v=>EO[Math.round(v)][3]},
+ draw(A){ const [a,b,hz]=EO[Math.round(A.p)], c=sq(a*a-b*b);
+  ellipse(A,0,0,a,b,hz);
+  const P=hz?[[c,0,'F₁','c'],[-c,0,'F₂','c'],[a,0,'V₁','f'],[-a,0,'V₂','f'],[0,b,'M₁','tan'],[0,-b,'M₂','tan']]:[[0,c,'F₁','c'],[0,-c,'F₂','c'],[0,a,'V₁','f'],[0,-a,'V₂','f'],[b,0,'M₁','tan'],[-b,0,'M₂','tan']];
+  P.forEach(([x,y,l,cl])=>ptl(A,x,y,l,cl,6,-8));
+  A.chips.push(['f','a',fr(a,2)],['tan','b',fr(b,2)],['c','c = √(a² − b²)',fr(c,3)],['muted','e = c/a',fr(c/a,3)]); }};
