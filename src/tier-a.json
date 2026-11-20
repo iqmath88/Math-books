@@ -44,6 +44,7 @@
   "ptrans",
   "ellipse",
   "etrans",
-  "hyperb"
+  "hyperb",
+  "htrans"
  ]
 }

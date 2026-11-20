@@ -119,3 +119,13 @@ S.horient={v:[-9,9,-7.5,7.5],eq:1,title:'رسم الزائد: المستطيل �
   const P=hz?[[c,0,'F₁','c'],[-c,0,'F₂','c'],[a,0,'V₁','f'],[-a,0,'V₂','f']]:[[0,c,'F₁','c'],[0,-c,'F₂','c'],[0,a,'V₁','f'],[0,-a,'V₂','f']];
   P.forEach(([x,y,l,cl])=>ptl(A,x,y,l,cl,6,-8));
   A.chips.push(['f','a',fr(a,2)],['tan','b',fr(b,2)],['c','c = √(a² + b²)',fr(c,3)],['muted','e = c/a',fr(c/a,3)]); }};
+
+/* ---------- 2−7 ---------- */
+/* translating a hyperbola: example 22 : (x + 2)²/9 − (y − 1)²/4 = 1 , centre (−2 , 1) */
+S.htrans={v:[-10,6,-6,7],eq:1,title:'انسحاب القطع الزائد: المركز (h , k)',hint:'البؤرتان والرأسان على المستقيم y = k ، بعداها عن المركز c و a',
+ sl:{min:0,max:1,v:1,step:.01,play:1,speed:.25,lab:'الانسحاب',fmt:v=>Math.round(v*100)+'%'},
+ draw(A){ const t=A.p, h=-2*t, k=1*t, a=3, b=2, c=sq(13);
+  hyper(A,0,0,a,b,1,'muted',1.2);
+  asym(A,h,k,a,b,1); hyper(A,h,k,a,b,1);
+  ptl(A,h,k,'(h , k)','ink2',6,16); ptl(A,h+c,k,'F₁','c',4,-10); ptl(A,h-c,k,'F₂','c',-4,-10,'end'); ptl(A,h+a,k,'V₁','f',4,18); ptl(A,h-a,k,'V₂','f',-4,18,'end');
+  A.chips.push(['ink2','المركز',`(${fr(h,2)} , ${fr(k,2)})`],['c','c = √13',fr(c,3)],['f','e = c/a',fr(c/a,3)]); }};
