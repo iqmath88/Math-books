@@ -34,15 +34,7 @@ S.rIntro={v:[-7.5,1.5,-2.2,6.2],eq:1,title:'x و y تتغيران مع الزم�
   A.chips.push(['c','x',fr(x)],['c','y',fr(y)],['chord','dx/dt',fr(vx)],['tan','dy/dt',fr(vy)]);
   A.hint=wx+' ، '+wy; }};
 S.rTank={title:'خزان قاعدته مربعة ضلعها 2m',hint:'V = 4h ⇒ dV/dt = 4 dh/dt',sl:{min:.3,max:2.7,v:2.2,play:1,rate:-.25,speed:.35,lab:'ارتفاع الماء h',fmt:v=>fr(v)+' m'},
- draw(A){ const g=fit(A,-1.2,4.2,-.6,3.8), h=A.p, dx=.9, dy=.6, X=g.X, Y=g.Y, f=A.col;
-  const box=(y0,y1,fill,op,st)=>{ poly(A,[[X(0),Y(y0)],[X(2),Y(y0)],[X(2),Y(y1)],[X(0),Y(y1)]],{fill,opacity:op,stroke:st,'stroke-width':1.6});
-    poly(A,[[X(2),Y(y0)],[X(2+dx),Y(y0+dy)],[X(2+dx),Y(y1+dy)],[X(2),Y(y1)]],{fill,opacity:op*.75,stroke:st,'stroke-width':1.6});
-    poly(A,[[X(0),Y(y1)],[X(2),Y(y1)],[X(2+dx),Y(y1+dy)],[X(dx),Y(y1+dy)]],{fill,opacity:op*.55,stroke:st,'stroke-width':1.6}); };
-  box(0,h,f.f,.32,'none'); box(0,3,'none',1,f.ink2);
-  A.el('path',{d:`M${X(-.35)} ${Y(0)}V${Y(h)}`,stroke:f.c,'stroke-width':2.4}); T(A,X(-.6),Y(h/2),'h','c');
-  T(A,X(1),Y(-.32),'2 m','muted'); T(A,X(2+dx/2+.35),Y(dy/2-.1),'2 m','muted');
-  arrow(A,X(1),Y(h+.15),X(1),Y(h-.45),'tan');
-  A.chips.push(['c','h',fr(h)+' m'],['f','V = 4h',fr(4*h)+' m³'],['chord','dV/dt','−0.4'],['tan','dh/dt','−0.1']); }};
+ draw(){} };  /* the drawing is S.rTank.draw further down */
 S.rPlate={title:'صفيحة مساحتها 96 cm² ثابتة',hint:'A = xy ⇒ 0 = x dy/dt + y dx/dt',sl:{min:6,max:20,v:12,rate:2,lab:'الطول x',fmt:v=>fr(v,1)+' cm'},
  draw(A){ const x=A.p, y=96/x, g=fit(A,-3,22,-3,18), X=g.X, Y=g.Y, f=A.col;
   A.el('rect',{x:X(0),y:Y(y),width:x*g.s,height:y*g.s,fill:f.f,opacity:.16,stroke:f.f,'stroke-width':2.4,rx:3});
@@ -51,23 +43,9 @@ S.rPlate={title:'صفيحة مساحتها 96 cm² ثابتة',hint:'A = xy ⇒ 
   T(A,X(x/2),Y(y/2),'96 cm²','f',{size:15});
   A.chips.push(['chord','dx/dt','2'],['tan','dy/dt',fr(-2*y/x,3)]); A.ok=abs(y-8)<.05; if(A.ok) A.hint='✓ عندما y = 8 يكون x = 12 و dy/dt = −4/3'; }};
 S.rIce={title:'مكعب حرفه 8cm مغطى بالجليد',hint:'V = (8 + 2x)³ − 8³',sl:{min:0,max:3,v:1,rate:-.25,lab:'سمك الجليد x',fmt:v=>fr(v)+' cm'},
- draw(A){ const x=A.p, g=fit(A,-4,14,-4,14), X=g.X, Y=g.Y, f=A.col, o=8+2*x, d=2.2;
-  const cube=(x0,s,fill,op,st)=>{ poly(A,[[X(x0),Y(x0)],[X(x0+s),Y(x0)],[X(x0+s),Y(x0+s)],[X(x0),Y(x0+s)]],{fill,opacity:op,stroke:st,'stroke-width':1.6});
-    poly(A,[[X(x0+s),Y(x0)],[X(x0+s+d),Y(x0+d)],[X(x0+s+d),Y(x0+s+d)],[X(x0+s),Y(x0+s)]],{fill,opacity:op*.7,stroke:st,'stroke-width':1.6});
-    poly(A,[[X(x0),Y(x0+s)],[X(x0+s),Y(x0+s)],[X(x0+s+d),Y(x0+s+d)],[X(x0+d),Y(x0+s+d)]],{fill,opacity:op*.5,stroke:st,'stroke-width':1.6}); };
-  cube(-x,o,f.tan,.18,f.tan); cube(0,8,f.f,.45,f.f);
-  T(A,X(4),Y(4),'8','surf',{size:15}); if(x>.15){ A.el('path',{d:`M${X(-x)} ${Y(-x-0.6)}H${X(0)}`,stroke:f.c,'stroke-width':2.4}); T(A,X(-x/2),Y(-x-1.4),'x','c'); }
-  const V=o**3-512, r=-6/(6*o*o); A.chips.push(['tan','V',fr(V,1)],['chord','dV/dt','−6'],['c','dx/dt',fr(r,4)]); }};
+ draw(){} };  /* the drawing is S.rIce.draw further down */
 S.rLadder={title:'سلم طوله 10m',hint:'x² + y² = 100',sl:{min:1,max:9.6,v:8,rate:2,lab:'بعد الطرف الأسفل x',fmt:v=>fr(v,1)+' m'},
- draw(A){ const x=A.p, y=sq(100-x*x), g=fit(A,-1.6,11.4,-1.6,11.2), X=g.X, Y=g.Y, f=A.col, th=Math.atan2(y,x);
-  A.el('rect',{x:X(-1.2),y:Y(11),width:X(0)-X(-1.2),height:Y(0)-Y(11),fill:f.surf2,stroke:f.line});
-  A.el('rect',{x:X(-1.2),y:Y(0),width:X(11.2)-X(-1.2),height:Y(-1.2)-Y(0),fill:f.surf2,stroke:f.line});
-  A.el('path',{d:`M${X(x)} ${Y(0)}L${X(0)} ${Y(y)}`,stroke:f.f,'stroke-width':6,'stroke-linecap':'round'});
-  A.el('path',{d:`M${X(x)-30} ${Y(0)}A30 30 0 0 1 ${X(x)-30*Math.cos(th)} ${Y(0)-30*Math.sin(th)}`,fill:'none',stroke:f.int,'stroke-width':2.2});
-  T(A,X(x)-44,Y(0)-12,'θ','int'); T(A,X(x/2),Y(0)+16,'x','chord'); T(A,X(0)+14,Y(y/2),'y','tan'); T(A,(X(x)+X(0))/2+16,(Y(0)+Y(y))/2-6,'10','f');
-  arrow(A,X(x),Y(0)-8,X(x)+46,Y(0)-8,'chord'); const vy=-2*x/y; arrow(A,X(0)+8,Y(y),X(0)+8,Y(y)-Math.max(-110,vy*14),'tan');
-  A.chips.push(['chord','dx/dt','2'],['tan','y',fr(y,2)],['tan','dy/dt',fr(vy,3)],['int','dθ/dt',fr(vy/(10*Math.cos(th)),3)]);
-  A.ok=abs(x-8)<.06; if(A.ok) A.hint='✓ عند x = 8 : y = 6 ، dy/dt = −8/3 ، dθ/dt = −1/3'; }};
+ draw(){} };  /* the drawing is S.rLadder.draw further down */
 /* filter: in 5 cm³/s, out 1 cm³/s ⇒ dV/dt = 4 ; V = πh³/27 ⇒ dh/dt = 36/(πh²). The drawing is S.rCone.draw below («richer cone»). */
 S.rCone={title:'مرشح مخروطي ارتفاعه 24cm وقطر قاعدته 16cm',hint:'r/h = 8/24 ⇒ r = h/3',sl:{min:3,max:24,v:12,rate:2,lab:'عمق السائل h',fmt:v=>fr(v,1)+' cm'},
  draw(){} };
@@ -81,23 +59,9 @@ S.rPar={v:[-1,9,-6.5,6.5],eq:1,title:'M على القطع المكافئ y² = 4
   const k=(2*x-10)/(2*S2); A.chips.push(['chord','S',fr(S2,3)],['tan','dS/dx',fr(k,3)],['c','dx/dt = 0.2 ÷ dS/dx',fr(.2/k,3)]);
   A.ok=abs(x-4)<.05; if(A.ok) A.hint='✓ عند x = 4 : S = 5 ، dx/dt = −1'; }};
 S.rShadow={title:'عمود 7.2m ورجل طوله 1.8m',hint:'تشابه المثلثين: (x + s)/7.2 = s/1.8 ⇒ s = x/3',sl:{min:1,max:16,v:6,play:1,rate:.5,speed:.4,lab:'بعد الرجل x',fmt:v=>fr(v,1)+' m'},
- draw(A){ const x=A.p, s=x/3, g=fit(A,-1.5,23,-1.2,8.4), X=g.X, Y=g.Y, f=A.col;
-  A.el('path',{d:`M${X(-1.5)} ${Y(0)}H${X(23)}`,stroke:f.ink2,'stroke-width':2});
-  A.el('path',{d:`M${X(0)} ${Y(0)}V${Y(7.2)}`,stroke:f.ink2,'stroke-width':5}); A.el('circle',{cx:X(0),cy:Y(7.2),r:8,fill:'#ffc94d'});
-  poly(A,[[X(0),Y(7.2)],[X(x+s),Y(0)],[X(x),Y(0)]],{fill:f.chord,opacity:.08});
-  A.el('path',{d:`M${X(0)} ${Y(7.2)}L${X(x+s)} ${Y(0)}`,stroke:'#e0a800','stroke-width':1.5,'stroke-dasharray':'5 5'});
-  A.el('path',{d:`M${X(x)} ${Y(0)}V${Y(1.8)}`,stroke:f.f,'stroke-width':6,'stroke-linecap':'round'}); A.el('circle',{cx:X(x),cy:Y(1.8)-6,r:6,fill:f.f});
-  A.el('path',{d:`M${X(x)} ${Y(0)}H${X(x+s)}`,stroke:f.chord,'stroke-width':6,'stroke-linecap':'round'});
-  T(A,X(x/2),Y(0)+16,'x','c'); T(A,X(x+s/2),Y(0)+16,'s','chord'); T(A,X(0)-14,Y(3.6),'7.2','muted',{anchor:'end'}); T(A,X(x)+12,Y(1),'1.8','f',{anchor:'start'});
-  A.chips.push(['c','dx/dt','30'],['chord','s = x/3',fr(s,2)],['chord','ds/dt','10 m/min']); }};
+ draw(){} };  /* the drawing is S.rShadow.draw further down */
 S.rBox={title:'متوازي سطوح قاعدته مربعة',hint:'V = x²h',sl:{min:2,max:6,v:4,rate:.3,lab:'ضلع القاعدة x',fmt:v=>fr(v,1)+' cm'},
- draw(A){ const x=A.p, h=3+(4-x)*(.5/.3), g=fit(A,-1,9.5,-1,9), X=g.X, Y=g.Y, f=A.col, dx=x*.45, dy=x*.3;
-  const H2=Math.max(.3,h);
-  poly(A,[[X(0),Y(0)],[X(x),Y(0)],[X(x),Y(H2)],[X(0),Y(H2)]],{fill:f.f,opacity:.25,stroke:f.f,'stroke-width':2});
-  poly(A,[[X(x),Y(0)],[X(x+dx),Y(dy)],[X(x+dx),Y(H2+dy)],[X(x),Y(H2)]],{fill:f.f,opacity:.18,stroke:f.f,'stroke-width':2});
-  poly(A,[[X(0),Y(H2)],[X(x),Y(H2)],[X(x+dx),Y(H2+dy)],[X(dx),Y(H2+dy)]],{fill:f.f,opacity:.1,stroke:f.f,'stroke-width':2});
-  T(A,X(x/2),Y(0)+16,'x','chord'); T(A,X(0)-12,Y(H2/2),'h','tan');
-  A.chips.push(['chord','dx/dt','0.3'],['tan','dh/dt','−0.5'],['f','dV/dt = 2xh·dx/dt + x²·dh/dt',fr(2*x*H2*.3-.5*x*x,2)]); }};
+ draw(){} };  /* the drawing is S.rBox.draw further down */
 S.rCirc={v:[-15,11,-9,17],eq:1,title:'x² + y² + 4x − 8y = 108',hint:'2x + 4 = −(2y − 8) ⇒ x + y = 2',
  curves:[{f:x=>4+sq(128-(x+2)**2),dom:[-2-sq(128),-2+sq(128)]},{f:x=>4-sq(128-(x+2)**2),dom:[-2-sq(128),-2+sq(128)]},{f:x=>2-x,col:'chord',dash:'6 6',w:1.8}],
  pts:[[-2,4,'(−2 , 4)','muted']],
@@ -118,7 +82,6 @@ S.rPx={v:[-3.2,3.2,-.6,4.8],eq:1,f:x=>x*x,title:'M على القطع المكا�
   A.chips.push(['chord','S',fr(S2,3)],['tan','dS/dt ÷ dy/dt',fr(k,3)]);
   A.ok=abs(k-2/3)<.01&&y>1; if(A.ok) A.hint='✓ النسبة 2/3 عند M('+(x<0?'−':'')+'√2 , 2)'; }};
 S.rPxOk=Object.assign({},S.rPx,{sl:undefined,draw:undefined,pts:[[0,1.5,'(0 , 3/2)','int'],[sq(2),2,'(√2 , 2)','c'],[-sq(2),2,'(−√2 , 2)','c']],segs:[[0,1.5,sq(2),2,'chord'],[0,1.5,-sq(2),2,'chord']]});
-S.rLad60=Object.assign({},S.rLadder,{title:'سلم: الزاوية π/3',hint:'dy/dt = −(x/y)·dx/dt = −2 cot θ',sl:{min:1,max:9.6,v:5,rate:2,lab:'x (السلم 10 للتوضيح)',fmt:v=>fr(v,1)}});
 
 /* ---------- 3−2 Rolle & critical numbers ---------- */
 S.ext={v:[-2.6,2.6,-3,3],f:x=>x**3-3*x,title:'قيمة عظمى وقيمة صغرى داخل الفترة',hint:'المماس أفقي عند القيمة العظمى والصغرى',a:-2,b:2,
@@ -278,13 +241,7 @@ S.o1={v:[-2,1.2,-.6,1.4],f:x=>x+x*x,pts:[[-.5,-.25,'العدد −1/2','bad',{dy
 const split=A=>A.W>520?{g:[0,0,A.W*.52,A.H],p:[A.W*.56,18,A.W*.42,A.H-48]}:{g:[0,0,A.W,A.H*.55],p:[38,A.H*.6,A.W-56,A.H*.36]};
 function fitR(r,x0,x1,y0,y1,pad=14){ const [rx,ry,rw,rh]=r, s=Math.min((rw-2*pad)/(x1-x0),(rh-2*pad)/(y1-y0)), ox=rx+(rw-(x1-x0)*s)/2, oy=ry+(rh-(y1-y0)*s)/2; return {s,X:x=>ox+(x-x0)*s,Y:y=>ry+rh-(oy-ry)-(y-y0)*s}; }
 S.o2={title:'صندوق من مربع ضلعه 12cm',hint:'V = x(12 − 2x)² ، 0 < x < 6',sl:{min:.2,max:5.8,v:1,play:1,speed:.35,lab:'ضلع المربع المقطوع x',fmt:v=>fr(v,2)+' cm'},
- draw(A){ const x=A.p, L=split(A), g=fitR(L.g,-.5,12.5,-.5,12.5), X=g.X, Y=g.Y, c=A.col;
-  A.el('rect',{x:X(0),y:Y(12),width:12*g.s,height:12*g.s,fill:c.f,opacity:.12,stroke:c.f,'stroke-width':2});
-  [[0,0],[12-x,0],[0,12-x],[12-x,12-x]].forEach(([a,b])=>A.el('rect',{x:X(a),y:Y(b+x),width:x*g.s,height:x*g.s,fill:c.bad,opacity:.25,stroke:c.bad,'stroke-dasharray':'4 3'}));
-  A.el('rect',{x:X(x),y:Y(12-x),width:(12-2*x)*g.s,height:(12-2*x)*g.s,fill:'none',stroke:c.f,'stroke-width':1.4,'stroke-dasharray':'6 4'});
-  T(A,X(x/2),Y(12)-10,'x','bad'); T(A,X(6),Y(6),'12 − 2x','f');
-  const V=t=>t*(12-2*t)**2, P=subplot0(A,L.p,[0,6,0,140]); P.axes('x','V'); P.curve(V,'f',0,6); P.pt(x,V(x),'c'); P.pt(2,128,'tan','128',{r:4});
-  A.chips.push(['c','x',fr(x,2)],['f','V',fr(V(x),1)+' cm³']); A.ok=abs(x-2)<.05; if(A.ok) A.hint='✓ عند x = 2 الحجم الأعظم 128 cm³'; }};
+ draw(){} };  /* the drawing is S.o2.draw further down */
 const subplot0=(A,r,v)=>A.subplot(r,v);
 S.o3={title:'مثلث متساوي الساقين داخل دائرة نصف قطرها 12',hint:'A = h√(24h − h²) ، 0 ≤ h ≤ 24',sl:{min:1,max:23.5,v:10,play:1,speed:.3,lab:'الارتفاع h',fmt:v=>fr(v,1)},
  draw(A){ const h=A.p, x=sq(24*h-h*h), L=split(A), g=fitR(L.g,-13,13,-13,13), X=g.X, Y=g.Y, c=A.col;

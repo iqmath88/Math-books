@@ -21,4 +21,6 @@ for(const m of idx.matchAll(/v2:'([\w-]+)'/g)) assert.ok(core.includes(flat(m[1]
 assert.equal(require('node:child_process').spawnSync(process.execPath,[path.join(root,'tools/flatten.cjs'),'--check'],{encoding:'utf8'}).status,0,'flat copy out of date: run node tools/flatten.cjs');
 /* quality gate: every lesson source passes tools/lint_lessons.py (Arabic inside formulas, labels in maths, braces, $) */
 { const g=require('node:child_process').spawnSync('python3',[path.join(root,'tools/lint_lessons.py')],{encoding:'utf8'}); assert.equal(g.status,0,'quality gate failed:\n'+g.stdout); }
+/* the interactive scenes: no errors at any slider position, and the key scenes agree with independent maths and the book's answers */
+{ const g=require('node:child_process').spawnSync(process.execPath,[path.join(root,'tests/scenes-math.test.cjs')],{encoding:'utf8'}); assert.equal(g.status,0,'scene maths failed:\n'+g.stdout); }
 console.log(`PASS v${ver||'?'}: ${chapters.length} chapters + ${v2.length} v2 chapters, ${core.length} offline files, classroom-v2 linked everywhere`);
