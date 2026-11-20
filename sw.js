@@ -73,18 +73,19 @@ self.addEventListener('fetch', event => {
   if (!CORE_URLS.has(canonical)) return;
 
   if (req.mode === 'navigate') {
-    // Prefer the latest page online, but preserve offline access.
+    // Pages come from the same release cache as their scripts, so a page and its JS never mix versions
+    // (a newer page with older cached JS). A new release arrives through the update bar («حدّث الآن»).
     event.respondWith(
-      fetch(req).then(response => {
-        if (response.ok) {
-          const copy = response.clone();
-          event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put(canonical, copy)));
+      caches.open(CACHE_NAME).then(async cache => {
+        const hit = await cache.match(canonical);
+        if (hit) return hit;
+        try {
+          const response = await fetch(req);
+          if (response.ok) event.waitUntil(cache.put(canonical, response.clone()));
+          return response;
+        } catch (_) {
+          return (await cache.match(INDEX_URL)) || Response.error();
         }
-        return response;
-      }).catch(async () => {
-        const cache = await caches.open(CACHE_NAME);
-        return (await cache.match(canonical)) || (await cache.match(INDEX_URL)) ||
-          Response.error();
       })
     );
     return;

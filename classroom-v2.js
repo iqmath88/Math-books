@@ -16,14 +16,22 @@
  /* ---------- drawing layer ---------- */
  const cv=el('canvas',{id:'mbCanvas'}); cv.setAttribute('aria-hidden','true'); body.append(cv); const ctx=cv.getContext('2d');
  let mode='off', color='#e44949', strokes=[], redo=[], cur=null, drawing=false;
+ /* strokes are stored in content coordinates of the element that scrolls under the pen (a book page, the board page, or the window),
+    so the ink stays on the content when the page is scrolled */
+ const scroller=e=>{ cv.style.pointerEvents='none'; let el=document.elementFromPoint(e.clientX,e.clientY); cv.style.pointerEvents='';
+  for(;el&&el!==document.body&&el!==document.documentElement;el=el.parentElement){ const o=getComputedStyle(el).overflowY; if(/auto|scroll/.test(o)&&el.scrollHeight>el.clientHeight+1) return el; }
+  return document.scrollingElement||document.documentElement; };
+ const off=el=>[el.scrollLeft||0,el.scrollTop||0];
  const render=()=>{ const d=Math.min(devicePixelRatio||1,3), w=innerWidth, h=innerHeight; cv.width=Math.round(w*d); cv.height=Math.round(h*d);
   ctx.setTransform(d,0,0,d,0,0); ctx.lineCap='round'; ctx.lineJoin='round';
-  for(const s of strokes){ ctx.strokeStyle=s.c; ctx.lineWidth=s.w; ctx.beginPath(); s.p.forEach(([x,y],i)=>i?ctx.lineTo(x*w,y*h):ctx.moveTo(x*w,y*h)); if(s.p.length===1) ctx.lineTo(s.p[0][0]*w+.01,s.p[0][1]*h+.01); ctx.stroke(); } };
- const near=pt=>s=>s.p.some(p=>Math.hypot((p[0]-pt[0])*innerWidth,(p[1]-pt[1])*innerHeight)<24);
+  for(const s of strokes){ const [ox,oy]=off(s.el); ctx.strokeStyle=s.c; ctx.lineWidth=s.w; ctx.beginPath(); s.p.forEach(([x,y],i)=>i?ctx.lineTo(x-ox,y-oy):ctx.moveTo(x-ox,y-oy)); if(s.p.length===1) ctx.lineTo(s.p[0][0]-ox+.01,s.p[0][1]-oy+.01); ctx.stroke(); } };
+ const at=(e,el)=>{ const [ox,oy]=off(el); return [e.clientX+ox,e.clientY+oy]; };
+ const near=e=>s=>{ const [ox,oy]=off(s.el); return s.p.some(p=>Math.hypot(p[0]-ox-e.clientX,p[1]-oy-e.clientY)<24); };
  cv.addEventListener('pointerdown',e=>{ if(mode==='off') return; e.preventDefault(); cv.setPointerCapture(e.pointerId); drawing=true; redo=[];
-  const pt=[e.clientX/innerWidth,e.clientY/innerHeight]; if(mode==='erase') strokes=strokes.filter(s=>!near(pt)(s)); else { cur={c:color,w:3.5,p:[pt]}; strokes.push(cur); } render(); });
- cv.addEventListener('pointermove',e=>{ if(!drawing) return; e.preventDefault(); const pt=[e.clientX/innerWidth,e.clientY/innerHeight];
-  if(mode==='erase') strokes=strokes.filter(s=>!near(pt)(s)); else if(cur) cur.p.push(pt); render(); });
+  if(mode==='erase') strokes=strokes.filter(s=>!near(e)(s)); else { const el=scroller(e); cur={c:color,w:3.5,el,p:[at(e,el)]}; strokes.push(cur); } render(); });
+ cv.addEventListener('pointermove',e=>{ if(!drawing) return; e.preventDefault();
+  if(mode==='erase') strokes=strokes.filter(s=>!near(e)(s)); else if(cur) cur.p.push(at(e,cur.el)); render(); });
+ let rq=0; document.addEventListener('scroll',()=>{ if(strokes.length&&!rq) rq=requestAnimationFrame(()=>{ rq=0; render(); }); },{capture:true,passive:true});
  const endDraw=()=>{ drawing=false; cur=null; }; cv.addEventListener('pointerup',endDraw); cv.addEventListener('pointercancel',endDraw);
  const clearInk=()=>{ if(strokes.length){ strokes=[]; redo=[]; render(); } };
  const undoInk=()=>{ if(strokes.length){ redo.push(strokes.pop()); render(); say('تم التراجع عن آخر خط'); } else say('لا توجد خطوط'); };

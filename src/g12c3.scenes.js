@@ -56,17 +56,9 @@ S.rLadder={title:'سلم طوله 10m',hint:'x² + y² = 100',sl:{min:1,max:9.6,
   arrow(A,X(x),Y(0)-8,X(x)+46,Y(0)-8,'chord'); const vy=-2*x/y; arrow(A,X(0)+8,Y(y),X(0)+8,Y(y)-Math.max(-110,vy*14),'tan');
   A.chips.push(['chord','dx/dt','2'],['tan','y',fr(y,2)],['tan','dy/dt',fr(vy,3)],['int','dθ/dt',fr(vy/(10*Math.cos(th)),3)]);
   A.ok=abs(x-8)<.06; if(A.ok) A.hint='✓ عند x = 8 : y = 6 ، dy/dt = −8/3 ، dθ/dt = −1/3'; }};
+/* filter: in 5 cm³/s, out 1 cm³/s ⇒ dV/dt = 4 ; V = πh³/27 ⇒ dh/dt = 36/(πh²). The drawing is S.rCone.draw below («richer cone»). */
 S.rCone={title:'مرشح مخروطي ارتفاعه 24cm وقطر قاعدته 16cm',hint:'r/h = 8/24 ⇒ r = h/3',sl:{min:3,max:24,v:12,rate:2,lab:'عمق السائل h',fmt:v=>fr(v,1)+' cm'},
- draw(A){ const h=A.p, r=h/3, g=fit(A,-13,13,-2,27), X=g.X, Y=g.Y, f=A.col;
-  poly(A,[[X(0),Y(0)],[X(r),Y(h)],[X(-r),Y(h)]],{fill:f.f,opacity:.3});
-  A.el('ellipse',{cx:X(0),cy:Y(h),rx:r*g.s,ry:r*g.s*.22,fill:f.f,opacity:.35});
-  A.el('path',{d:`M${X(-8)} ${Y(24)}L${X(0)} ${Y(0)}L${X(8)} ${Y(24)}`,fill:'none',stroke:f.ink2,'stroke-width':2});
-  A.el('ellipse',{cx:X(0),cy:Y(24),rx:8*g.s,ry:8*g.s*.22,fill:'none',stroke:f.ink2,'stroke-width':2});
-  A.el('path',{d:`M${X(0)} ${Y(0)}V${Y(h)}H${X(r)}`,stroke:f.c,'stroke-width':2,'stroke-dasharray':'4 4',fill:'none'});
-  T(A,X(0)-12,Y(h/2),'h','c'); T(A,X(r/2),Y(h)-10,'r','c'); T(A,X(9.5),Y(24),'8','muted'); T(A,X(-10.5),Y(12),'24','muted');
-  arrow(A,X(-11),Y(29.5)+0,X(-4),Y(25.5),'tan'); T(A,X(-11),Y(26.8),'5 cm³/s','tan',{size:11});
-  const dh=36/(PI*h*h); A.chips.push(['c','r = h/3',fr(r,2)],['f','V',fr(PI*h**3/27,1)],['tan','dV/dt','4'],['chord','dh/dt',fr(dh,4)]);
-  A.ok=abs(h-12)<.1; if(A.ok) A.hint='✓ عند h = 12 : dh/dt = 1/(4π) ≈ 0.0796 cm/s'; }};
+ draw(){} };
 S.rPar={v:[-1,9,-6.5,6.5],eq:1,title:'M على القطع المكافئ y² = 4x',hint:'S = √(x² − 10x + 49)',
  curves:[{f:x=>2*sq(x),dom:[0,20]},{f:x=>-2*sq(x),dom:[0,20]}],sl:{min:.2,max:8.6,v:4,rate:-1,lab:'الإحداثي السيني x',fmt:v=>fr(v,2)},slx:1,
  draw(A){ const x=A.p, y=2*sq(x), S2=sq(x*x-10*x+49), G=A.G;
