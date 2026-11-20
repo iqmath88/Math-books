@@ -65,7 +65,17 @@ function partsHTML(s){ const ms=[...s.matchAll(PARTRE)]; if(ms.length<2) return 
   const stem=s.slice(0,ms[0].index+ms[0][1].length).trim(); let h=stem?`<span class="pstem">${T1(stem)}</span>`:'';
   ms.forEach((m,i)=>{ const a=m.index+m[0].length, b=i+1<ms.length?ms[i+1].index:s.length; h+=`<span class="prow"><span class="plab" dir="ltr">${labs[i]})</span><span class="pbody">${T1(s.slice(a,b).trim())}</span></span>`; });
   return `<span class="parts">${h}</span>`; }
-function T(s){ if(s==null) return ''; const ph=partsHTML(String(s)); return ph||T1(s); }
+/* numbered items «1) نص» / «**1)** نص» / «**1) عنوان:** نص» (one or several on a line): in RTL the bare «1)» shows as «(1»,
+   so each number becomes a badge in front of its text */
+const NUMRE=/(^|\s)(?:\*\*(\d{1,2})\)\*\*\s*|\*\*(\d{1,2})\)\s*|(\d{1,2})\)\s+)/g;
+function numHTML(s){ const mk=s.replace(/\$[^$]*\$/g,m=>'#'.repeat(m.length)), ms=[...mk.matchAll(NUMRE)]; if(!ms.length) return null;
+  const ns=ms.map(m=>+(m[2]||m[3]||m[4])); if(ns.some((n,i)=>i&&n!==ns[i-1]+1)) return null;
+  if(ms[0].index>0&&ms.length<2) return null;   // a lone «2)» inside a sentence is not a list
+  const stem=s.slice(0,ms[0].index).trim(); let h=stem?`<span class="pstem">${T1(stem)}</span>`:'';
+  ms.forEach((m,i)=>{ const a=m.index+m[0].length, b=i+1<ms.length?ms[i+1].index:s.length; const body=(m[3]?'**':'')+s.slice(a,b).trim();
+    h+=`<span class="nrow"><span class="nlab">${ns[i]}</span><span class="nbody">${T1(body)}</span></span>`; });
+  return `<span class="nlist">${h}</span>`; }
+function T(s){ if(s==null) return ''; s=String(s); return partsHTML(s)||numHTML(s)||T1(s); }
 function T1(s){
   if(s==null) return ''; s=glue(String(s)); const keep=[], ph=i=>String.fromCharCode(0xE000+i);
   s=String(s).replace(/\$\$([^$]+)\$\$/g,(_,t)=>{ keep.push(`<span class="big tex" data-tex="${esc(t).replace(/"/g,'&quot;')}"></span>`); return ph(keep.length-1); })

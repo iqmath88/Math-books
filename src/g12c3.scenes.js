@@ -12,15 +12,27 @@ const poly=(A,pts,o)=>A.el('path',Object.assign({d:'M'+pts.map(p=>p.join(' ')).j
 
 const S={};
 /* ---------- 3−1 related rates ---------- */
+/* a point moving round the circle (x+3)² + (y−2)² = 13 : all four directions of motion.
+   dx/dt and dy/dt change sign at the four turning points: right/left (dx/dt = 0), top/bottom (dy/dt = 0) */
 S.rIntro={v:[-7.5,1.5,-2.2,6.2],eq:1,title:'x و y تتغيران مع الزمن t',hint:'النقطة تتحرك على المنحني: معدلا تغير x و y مرتبطان',
- curves:[{f:x=>2+sq(13-(x+3)**2),dom:[-3-sq(13),-3+sq(13)]},{f:x=>2-sq(13-(x+3)**2),dom:[-3-sq(13),-3+sq(13)]}],
  sl:{min:0,max:6.283,v:1,play:1,speed:.5,lab:'الزمن t',fmt:v=>fr(v,1)},
- draw(A){ const th=A.p, x=-3+sq(13)*Math.cos(th), y=2+sq(13)*Math.sin(th), vx=-sq(13)*Math.sin(th), vy=sq(13)*Math.cos(th), k=.35;
-  A.el('path',{d:`M${A.X(x)} ${A.Y(y)}V${A.Y(0)}M${A.X(x)} ${A.Y(y)}H${A.X(0)}`,stroke:A.col.muted,'stroke-width':1.2,'stroke-dasharray':'3 4'},A.G);
+ draw(A){ const R=sq(13), cx=-3, cy=2, th=((A.p%(2*PI))+2*PI)%(2*PI), x=cx+R*Math.cos(th), y=cy+R*Math.sin(th), vx=-R*Math.sin(th), vy=R*Math.cos(th), k=.35, f=A.col;
+  const rp=A.X(cx+R)-A.X(cx), q=Math.min(3,Math.floor(th/(PI/2)));
+  /* the whole circle, then the quarter the point is on (the signs of dx/dt and dy/dt are fixed on it) */
+  A.el('circle',{cx:A.X(cx),cy:A.Y(cy),r:rp,fill:'none',stroke:f.f,'stroke-width':2.4,opacity:.55},A.G);
+  const a0=q*PI/2, a1=a0+PI/2, P=t=>[A.X(cx+R*Math.cos(t)),A.Y(cy+R*Math.sin(t))];
+  A.el('path',{d:`M${P(a0).join(' ')}A${rp} ${rp} 0 0 0 ${P(a1).join(' ')}`,fill:'none',stroke:f.f,'stroke-width':5,'stroke-linecap':'round',opacity:.9},A.G);
+  /* turning points */
+  [[0,'dx/dt = 0',10,4,'start'],[PI/2,'dy/dt = 0',0,-12,'middle'],[PI,'dx/dt = 0',-10,4,'end'],[3*PI/2,'dy/dt = 0',0,20,'middle']].forEach(([t,lab,dx,dy,an])=>{
+    const [px,py]=P(t); A.el('circle',{cx:px,cy:py,r:4.5,fill:f.surf,stroke:f.ink2,'stroke-width':1.8},A.G); T(A,px+dx,py+dy,lab,'muted',{size:11.5,anchor:an,w:600}); });
+  A.el('path',{d:`M${A.X(x)} ${A.Y(y)}V${A.Y(0)}M${A.X(x)} ${A.Y(y)}H${A.X(0)}`,stroke:f.muted,'stroke-width':1.2,'stroke-dasharray':'3 4'},A.G);
   arrow(A,A.X(x),A.Y(y),A.X(x+vx*k),A.Y(y),'chord'); arrow(A,A.X(x),A.Y(y),A.X(x),A.Y(y+vy*k),'tan');
-  A.el('circle',{cx:A.X(x),cy:A.Y(y),r:7,fill:A.col.c,stroke:A.col.surf,'stroke-width':2.4});
-  T(A,A.X(x+vx*k)+(vx>0?14:-14),A.Y(y)-10,'dx/dt','chord',{size:12}); T(A,A.X(x)+22,A.Y(y+vy*k),'dy/dt','tan',{size:12});
-  A.chips.push(['c','x',fr(x)],['c','y',fr(y)],['chord','dx/dt',fr(vx)],['tan','dy/dt',fr(vy)]); }};
+  A.el('circle',{cx:A.X(x),cy:A.Y(y),r:7,fill:f.c,stroke:f.surf,'stroke-width':2.4});
+  if(abs(vx*k)>.25) T(A,A.X(x+vx*k)+(vx>0?14:-14),A.Y(y)-10,'dx/dt','chord',{size:12,anchor:vx>0?'start':'end'});
+  if(abs(vy*k)>.25) T(A,A.X(x)+(x>cx?-12:12),A.Y(y+vy*k)+(vy>0?-6:12),'dy/dt','tan',{size:12,anchor:x>cx?'end':'start'});
+  const wx=abs(vx)<.05?'x لحظياً ثابتة':vx>0?'x تتزايد':'x تتناقص', wy=abs(vy)<.05?'y لحظياً ثابتة':vy>0?'y تتزايد':'y تتناقص';
+  A.chips.push(['c','x',fr(x)],['c','y',fr(y)],['chord','dx/dt',fr(vx)],['tan','dy/dt',fr(vy)]);
+  A.hint=wx+' ، '+wy; }};
 S.rTank={title:'خزان قاعدته مربعة ضلعها 2m',hint:'V = 4h ⇒ dV/dt = 4 dh/dt',sl:{min:.3,max:2.7,v:2.2,play:1,rate:-.25,speed:.35,lab:'ارتفاع الماء h',fmt:v=>fr(v)+' m'},
  draw(A){ const g=fit(A,-1.2,4.2,-.6,3.8), h=A.p, dx=.9, dy=.6, X=g.X, Y=g.Y, f=A.col;
   const box=(y0,y1,fill,op,st)=>{ poly(A,[[X(0),Y(y0)],[X(2),Y(y0)],[X(2),Y(y1)],[X(0),Y(y1)]],{fill,opacity:op,stroke:st,'stroke-width':1.6});

@@ -376,3 +376,32 @@ html[data-role="teacher"] .tagtools{display:block}
 .parts .prow{display:flex;gap:.6em;align-items:baseline;padding:.15em 0}
 .parts .prow .plab{min-width:1.6em}
 .parts .pbody{flex:1;min-width:0}
+
+/* ================= numbered items: «1) …» as a badge (bidi-safe) ================= */
+.nlist{display:block}
+.nlist .pstem{display:block;margin-bottom:.2em}
+.nrow{display:flex;align-items:flex-start;gap:.6em;margin:.35em 0}
+.nlab{flex:none;min-width:1.75em;height:1.75em;margin-top:.2em;padding:0 .3em;border-radius:999px;display:inline-grid;place-items:center;
+  font-size:.82em;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;direction:ltr;
+  color:var(--accent);background:color-mix(in srgb,var(--accent) 13%,transparent);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent)}
+.nbody{flex:1;min-width:0}
+.summary .nlab{color:#fff;background:#ffffff22;border-color:#ffffff44}
+
+/* ================= glass cards (question, explanation, answer boxes) ================= */
+:root{ --glass:rgba(255,255,255,.62); --glass-b:rgba(255,255,255,.85); --glass-hi:rgba(255,255,255,.9); --glass-in:rgba(255,255,255,.5);
+  --glass-sh:0 1px 1px rgba(20,26,43,.04),0 10px 30px rgba(43,89,195,.10); --orb1:rgba(43,89,195,.16); --orb2:rgba(124,77,255,.12); --orb3:rgba(15,157,110,.10); }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --glass:rgba(30,40,66,.55); --glass-b:rgba(255,255,255,.10); --glass-hi:rgba(255,255,255,.14); --glass-in:rgba(255,255,255,.045);
+  --glass-sh:0 1px 1px rgba(0,0,0,.25),0 14px 34px rgba(0,0,0,.35); --orb1:rgba(122,162,255,.16); --orb2:rgba(169,139,255,.12); --orb3:rgba(62,211,160,.08); } }
+:root[data-theme="dark"]{ --glass:rgba(30,40,66,.55); --glass-b:rgba(255,255,255,.10); --glass-hi:rgba(255,255,255,.14); --glass-in:rgba(255,255,255,.045);
+  --glass-sh:0 1px 1px rgba(0,0,0,.25),0 14px 34px rgba(0,0,0,.35); --orb1:rgba(122,162,255,.16); --orb2:rgba(169,139,255,.12); --orb3:rgba(62,211,160,.08); }
+/* soft colour behind the glass (a fixed layer: iPad Safari ignores background-attachment:fixed) */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(42vmax 34vmax at 88% 12%,var(--orb1),transparent 70%),radial-gradient(38vmax 30vmax at 8% 55%,var(--orb2),transparent 70%),radial-gradient(40vmax 30vmax at 70% 95%,var(--orb3),transparent 70%)}
+.step,.law{background:linear-gradient(160deg,var(--glass-hi),transparent 38%),var(--glass);border:1px solid var(--glass-b);
+  box-shadow:inset 0 1px 0 var(--glass-hi),var(--glass-sh);-webkit-backdrop-filter:blur(16px) saturate(150%);backdrop-filter:blur(16px) saturate(150%)}
+.step .sol,.step .why{background:var(--glass-in);border:1px solid var(--glass-b);box-shadow:inset 0 1px 0 var(--glass-hi)}
+.opt{background:var(--glass-in);border-color:var(--glass-b);box-shadow:inset 0 1px 0 var(--glass-hi);transition:transform .15s,border-color .2s,background .2s}
+.opt:hover{transform:translateY(-1px)}
+.story.focus .step.on{border-color:color-mix(in srgb,var(--accent) 45%,var(--glass-b));box-shadow:inset 0 1px 0 var(--glass-hi),0 0 0 1px color-mix(in srgb,var(--accent) 25%,transparent),var(--glass-sh)}
+@media print{ body::before{display:none} .step,.law{-webkit-backdrop-filter:none;backdrop-filter:none;background:#fff} }
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){ .step,.law{background:var(--surface)} }
