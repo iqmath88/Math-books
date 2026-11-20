@@ -67,15 +67,22 @@ function transVec(A,h,k){ if(Math.hypot(h,k)<.3) return; const f=A.col, X=A.X, Y
 const grip=(A,h,k)=>{ A.el('circle',{cx:A.X(h),cy:A.Y(k),r:17,fill:A.col.f,opacity:.16}); A.el('circle',{cx:A.X(h),cy:A.Y(k),r:7.5,fill:A.col.f,stroke:A.col.surf,'stroke-width':2.5}); };
 
 S.ptrans={v:[-8,8,-6.5,6.5],eq:1,title:'انسحاب المحاور: الرأس ينتقل إلى (h , k)',hint:'',
- drag2:{x:-2,y:-4,snap:1,box:[-6,6,-5,4],full:1},
+ modes:{lab:'فتحة القطع',opts:['للأعلى','للأسفل','لليمين','لليسار'],v:0},
+ drag2:{x:-2,y:-4,snap:1,box:m=>[[-6,6,-5,3],[-6,6,-3,5],[-6,5,-5,5],[-5,6,-5,5]][m],full:1},
  sl:{min:0,max:1,v:1,step:.01,play:1,speed:.25,lab:'الانسحاب',fmt:v=>Math.round(v*100)+'%'},
- draw(A){ const t=A.p, h=A.q.x*t, k=A.q.y*t, p=.25;
-  pcurve(A,u=>[u,u*u/(4*p)],-2.6,2.6,'muted',1.3,120,'2 6');
+ draw(A){ const t=A.p, h=A.q.x*t, k=A.q.y*t, p=.25, m=A.m, vert=m<2, s=m%2?-1:1;
+  /* vertical: (x−h)² = ±4p(y−k) ; horizontal: (y−k)² = ±4p(x−h) — here 4p = 1 as in example 10 */
+  const C=(h0,k0)=>u=>vert?[h0+u,k0+s*u*u/(4*p)]:[h0+s*u*u/(4*p),k0+u];
+  pcurve(A,C(0,0),-2.6,2.6,'muted',1.3,120,'2 6');
   transVec(A,h,k);
-  pcurve(A,u=>[h+u,k+u*u/(4*p)],-3.4,3.4,'f',3);
-  hline(A,k-p,'tan','الدليل'); seg(A,h,A.V.y0,h,A.V.y1,'c',1.3,'3 5');
-  ptl(A,h,k+p,'F','c',10,-6); grip(A,h,k); T(A,A.X(h)+12,A.Y(k)+18,'(h , k)','f',{anchor:'start',size:12.5});
-  A.chips.push(['f','المعادلة',`${sqT(h,'x')} = ${linT(k,'y')}`],['f','الرأس',`(${fr(h,2)} , ${fr(k,2)})`],['c','البؤرة',`(${fr(h,2)} , ${fr(k+p,2)})`],['tan','الدليل','y = '+fr(k-p,2)]);
+  pcurve(A,C(h,k),-3.4,3.4,'f',3);
+  if(vert){ hline(A,k-s*p,'tan','الدليل'); seg(A,h,A.V.y0,h,A.V.y1,'c',1.3,'3 5'); ptl(A,h,k+s*p,'F','c',10,s>0?-6:16); }
+  else { vline(A,h-s*p,'tan','الدليل'); seg(A,A.V.x0,k,A.V.x1,k,'c',1.3,'3 5'); ptl(A,h+s*p,k,'F','c',s>0?6:-6,-10,s>0?'start':'end'); }
+  grip(A,h,k); T(A,A.X(h)+(vert?12:-12),A.Y(k)+(vert?(s>0?18:-12):18),'(h , k)','f',{anchor:vert?'start':'end',size:12.5});
+  const lin=(v,n)=>s>0?linT(v,n):(Math.abs(v)<1e-9?'−'+n:`−(${linT(v,n)})`);
+  const eq=vert?`${sqT(h,'x')} = ${lin(k,'y')}`:`${sqT(k,'y')} = ${lin(h,'x')}`;
+  const F=vert?[h,k+s*p]:[h+s*p,k];
+  A.chips.push(['f','المعادلة',eq],['f','الرأس',`(${fr(h,2)} , ${fr(k,2)})`],['c','البؤرة',`(${fr(F[0],2)} , ${fr(F[1],2)})`],['tan','الدليل',(vert?'y = ':'x = ')+fr(vert?k-s*p:h-s*p,2)]);
   A.hint=moveTxt(h,k); }};
 
 /* ---------- 2−4 ---------- */
@@ -103,16 +110,19 @@ S.eorient={v:[-7.5,7.5,-6.6,6.6],eq:1,title:'البؤرتان على المحو�
 /* ---------- 2−5 ---------- */
 /* translating an ellipse: centre (h , k); example 18 : (x − 2)²/9 + (y − 1)²/25 = 1 */
 S.etrans={v:[-10,10,-9,9],eq:1,title:'انسحاب القطع الناقص: المركز (h , k)',hint:'',
- drag2:{x:2,y:1,snap:1,box:[-6,6,-3,3],full:1},
+ modes:{lab:'المحور الكبير',opts:['أفقي','رأسي'],v:1},
+ drag2:{x:2,y:1,snap:1,box:m=>m?[-6,6,-3,3]:[-4,4,-5,5],full:1},
  sl:{min:0,max:1,v:1,step:.01,play:1,speed:.25,lab:'الانسحاب',fmt:v=>Math.round(v*100)+'%'},
- draw(A){ const t=A.p, h=A.q.x*t, k=A.q.y*t, a=5, b=3, c=4;
-  ellipse(A,0,0,a,b,0,'muted',1.3);
+ draw(A){ const t=A.p, h=A.q.x*t, k=A.q.y*t, a=5, b=3, c=4, hz=!A.m;
+  ellipse(A,0,0,a,b,hz,'muted',1.3);
   seg(A,h,A.V.y0,h,A.V.y1,'c',1.3,'3 5'); seg(A,A.V.x0,k,A.V.x1,k,'tan',1.3,'3 5');
   transVec(A,h,k);
-  ellipse(A,h,k,a,b,0);
-  ptl(A,h,k+c,'F₁','c'); ptl(A,h,k-c,'F₂','c'); ptl(A,h,k+a,'V₁','f'); ptl(A,h,k-a,'V₂','f');
+  ellipse(A,h,k,a,b,hz);
+  if(hz){ ptl(A,h+c,k,'F₁','c',4,-10); ptl(A,h-c,k,'F₂','c',-4,-10,'end'); ptl(A,h+a,k,'V₁','f',6,18); ptl(A,h-a,k,'V₂','f',-6,18,'end'); }
+  else { ptl(A,h,k+c,'F₁','c'); ptl(A,h,k-c,'F₂','c'); ptl(A,h,k+a,'V₁','f'); ptl(A,h,k-a,'V₂','f'); }
   grip(A,h,k); T(A,A.X(h)-12,A.Y(k)-12,'(h , k)','f',{anchor:'end',size:12.5});
-  A.chips.push(['f','المعادلة',`${sqT(h,'x')}/9 + ${sqT(k,'y')}/25 = 1`],['ink2','المركز',`(${fr(h,2)} , ${fr(k,2)})`],['c','F₁',`(${fr(h,1)} , ${fr(k+c,1)})`],['c','F₂',`(${fr(h,1)} , ${fr(k-c,1)})`]);
+  const F1=hz?[h+c,k]:[h,k+c], F2=hz?[h-c,k]:[h,k-c];
+  A.chips.push(['f','المعادلة',`${sqT(h,'x')}/${hz?25:9} + ${sqT(k,'y')}/${hz?9:25} = 1`],['ink2','المركز',`(${fr(h,2)} , ${fr(k,2)})`],['c','F₁',`(${fr(F1[0],1)} , ${fr(F1[1],1)})`],['c','F₂',`(${fr(F2[0],1)} , ${fr(F2[1],1)})`]);
   A.hint=moveTxt(h,k); }};
 
 /* ---------- 2−6 ---------- */
@@ -144,12 +154,16 @@ S.horient={v:[-9,9,-7.5,7.5],eq:1,title:'رسم الزائد: المستطيل �
 /* ---------- 2−7 ---------- */
 /* translating a hyperbola: example 22 : (x + 2)²/9 − (y − 1)²/4 = 1 , centre (−2 , 1) */
 S.htrans={v:[-13,13,-8.5,8.5],eq:1,title:'انسحاب القطع الزائد: المركز (h , k)',hint:'',
- drag2:{x:-2,y:1,snap:1,box:[-6,6,-5,5],full:1},
+ modes:{lab:'المحور الحقيقي',opts:['أفقي','رأسي'],v:0},
+ drag2:{x:-2,y:1,snap:1,box:m=>m?[-8,8,-4,4]:[-6,6,-5,5],full:1},
  sl:{min:0,max:1,v:1,step:.01,play:1,speed:.25,lab:'الانسحاب',fmt:v=>Math.round(v*100)+'%'},
- draw(A){ const t=A.p, h=A.q.x*t, k=A.q.y*t, a=3, b=2, c=sq(13);
-  hyper(A,0,0,a,b,1,'muted',1.2);
-  asym(A,h,k,a,b,1); transVec(A,h,k); hyper(A,h,k,a,b,1);
-  ptl(A,h+c,k,'F₁','c',4,-10); ptl(A,h-c,k,'F₂','c',-4,-10,'end'); ptl(A,h+a,k,'V₁','f',4,18); ptl(A,h-a,k,'V₂','f',-4,18,'end');
+ draw(A){ const t=A.p, h=A.q.x*t, k=A.q.y*t, a=3, b=2, c=sq(13), hz=!A.m;
+  hyper(A,0,0,a,b,hz,'muted',1.2);
+  asym(A,h,k,a,b,hz); transVec(A,h,k); hyper(A,h,k,a,b,hz);
+  if(hz){ ptl(A,h+c,k,'F₁','c',4,-10); ptl(A,h-c,k,'F₂','c',-4,-10,'end'); ptl(A,h+a,k,'V₁','f',4,18); ptl(A,h-a,k,'V₂','f',-4,18,'end'); }
+  else { ptl(A,h,k+c,'F₁','c',10,4); ptl(A,h,k-c,'F₂','c',10,4); ptl(A,h,k+a,'V₁','f',-10,4,'end'); ptl(A,h,k-a,'V₂','f',-10,4,'end'); }
   grip(A,h,k); T(A,A.X(h)-10,A.Y(k)-14,'(h , k)','f',{anchor:'end',size:12.5});
-  A.chips.push(['f','المعادلة',`${sqT(h,'x')}/9 − ${sqT(k,'y')}/4 = 1`],['ink2','المركز',`(${fr(h,2)} , ${fr(k,2)})`],['c','F₁',`(${fr(h+c,2)} , ${fr(k,2)})`],['c','F₂',`(${fr(h-c,2)} , ${fr(k,2)})`]);
+  const F1=hz?[h+c,k]:[h,k+c], F2=hz?[h-c,k]:[h,k-c];
+  const eq=hz?`${sqT(h,'x')}/9 − ${sqT(k,'y')}/4 = 1`:`${sqT(k,'y')}/9 − ${sqT(h,'x')}/4 = 1`;
+  A.chips.push(['f','المعادلة',eq],['ink2','المركز',`(${fr(h,2)} , ${fr(k,2)})`],['c','F₁',`(${fr(F1[0],2)} , ${fr(F1[1],2)})`],['c','F₂',`(${fr(F2[0],2)} , ${fr(F2[1],2)})`]);
   A.hint=moveTxt(h,k); }};

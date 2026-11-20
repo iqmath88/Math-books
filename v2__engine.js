@@ -238,6 +238,7 @@ D.body.innerHTML=`<header>
   <div class="top"><span class="title" id="figTitle"></span><span id="chips" style="display:contents"></span></div>
   <div class="legend" id="legend" hidden></div>
   <div class="svgbox" id="box"><svg class="g" id="svg" dir="ltr" aria-hidden="true"></svg></div>
+  <div class="modes" id="modes" role="radiogroup" hidden></div>
   <label class="sl" id="sl" hidden><button type="button" id="slP" class="slp" aria-label="تشغيل الحركة أو إيقافها"></button><span id="slL"></span><input type="range" id="slI"><b id="slV"></b></label>
   <div class="hint" id="hint"></div>
  </div></aside>
@@ -395,6 +396,7 @@ function draw(){
   const legend=[];
   const A={W,H,el,lab,col:COL,p:P,t:(performance.now()-T0)/1000,svg,fmt,subplot:(r,v)=>subplot(svg,r,v),chips,set hint(v){ hint=v; },get hint(){ return hint; },set ok(v){ hintOk=v; },get ok(){ return hintOk; }};
   if(sc.drag2){ if(!sc._q) sc._q={x:sc.drag2.x,y:sc.drag2.y}; A.q=sc._q; }
+  if(sc.modes){ if(sc._m==null) sc._m=sc.modes.v||0; A.m=sc._m; }
   lastA=A;
   if(sc.v){
     const Vb=view(sc), V=from&&from.v&&k<1?mixV(view(from),Vb,k):Vb, pad=V.pad, gb=H-pad.b;
@@ -575,6 +577,10 @@ function loop(){ raf=0; let more=false; if(from&&t<1){ t+=1/36; more=true; } els
   if(cur&&cur.anim) more=true;
   draw(); if(more) raf=requestAnimationFrame(loop); }
 const kick=()=>{ if(!raf) raf=requestAnimationFrame(loop); };
+/* modes: a row of buttons choosing a case of the scene (scene.modes={lab,opts:[…],v}); the scene reads A.m */
+function syncModes(){ const w=$('#modes'), m=cur&&cur.modes; w.hidden=!m; if(!m){ w.replaceChildren(); return; } const i0=cur._m??m.v??0;
+  w.innerHTML=(m.lab?`<span class="ml">${m.lab}</span>`:'')+m.opts.map((o,i)=>`<button type="button" role="radio" aria-checked="${i===i0}" data-m="${i}">${o}</button>`).join(''); }
+$('#modes').addEventListener('click',e=>{ const b=e.target.closest('[data-m]'); if(!b||!cur||!cur.modes) return; cur._m=+b.dataset.m; const d=cur.drag2; if(d&&cur._q&&typeof d.box==='function'){ const x=d.box(cur._m); cur._q={x:Math.max(x[0],Math.min(x[1],cur._q.x)),y:Math.max(x[2],Math.min(x[3],cur._q.y))}; } syncModes(); kick(); draw(); });
 function syncSlider(){ const s=cur&&cur.sl, w=$('#sl'); w.hidden=!s; if(!s) return; const i=$('#slI'); i.min=s.min; i.max=s.max; i.step=s.step||'any'; i.value=P; $('#slL').textContent=s.lab||''; $('#slV').textContent=(s.fmt||fmt)(P); }
 let currentSceneId="";
 window.MathBooksSceneState=()=>({name:currentSceneId,value:P});
@@ -585,7 +591,7 @@ function setPlay(on){ playing=on; if(on&&cur&&cur.sl){ const sl=cur.sl, u0=Math.
 function syncPlay(){ const b=$('#slP'); if(!b) return; b.textContent=playing?'⏸':'▶'; b.title=playing?'إيقاف الحركة':'تشغيل الحركة'; b.classList.toggle('on',playing); }
 function go(name,hold){ if(hold!==undefined) stepHold=hold; const sc=B.S[name]; if(!sc) return;
   if(sc===cur){ if(sc.sl){ if(stepHold&&playing){ P=sc.sl.v??P; syncSlider(); setPlay(false); draw(); } else if(!stepHold&&!playing&&wantPlay(sc)) setPlay(true); } return; } const red=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  from=cur&&!red?cur:null; t=0; cur=sc; currentSceneId=name; cDrag=null; sweepT=0; svg.style.touchAction=sc.pick||sc.drag2?'none':''; svg.style.cursor=sc.pick||sc.drag2?'grab':''; if(sc.sl){ const sl=sc.sl; P=sl.v??sl.min; playing=wantPlay(sc); const u0=Math.min(1,Math.max(0,(P-sl.min)/((sl.max-sl.min)||1))); playT=Math.acos(1-2*u0)/(sl.speed||.6); } syncSlider(); syncPlay(); kick(); }
+  from=cur&&!red?cur:null; t=0; cur=sc; currentSceneId=name; cDrag=null; sweepT=0; svg.style.touchAction=sc.pick||sc.drag2?'none':''; svg.style.cursor=sc.pick||sc.drag2?'grab':''; if(sc.sl){ const sl=sc.sl; P=sl.v??sl.min; playing=wantPlay(sc); const u0=Math.min(1,Math.max(0,(P-sl.min)/((sl.max-sl.min)||1))); playT=Math.acos(1-2*u0)/(sl.speed||.6); } syncSlider(); syncModes(); syncPlay(); kick(); }
 $('#slP').addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); setPlay(!playing); });
 function size(){ const r=box.getBoundingClientRect(); W=r.width; H=r.height; draw(); }
 new ResizeObserver(size).observe(box);
@@ -595,7 +601,7 @@ const setC=e=>{ if(!W2Xg) return; const r=svg.getBoundingClientRect(); const x=W
 let lastA=null;
 /* drag2: a scene point (e.g. the centre (h , k)) follows the pointer in 2D; snapped and kept inside drag2.box */
 const q2Drag=e=>{ const A=lastA, d=cur.drag2; if(!A||!A.X_inv) return; const r=svg.getBoundingClientRect(), sx=W/(r.width||W), sy=H/(r.height||H);
-  const sn=d.snap||1, b=d.box||[A.V.x0,A.V.x1,A.V.y0,A.V.y1], cl=(v,a,z)=>Math.max(a,Math.min(z,v));
+  const sn=d.snap||1, b=(typeof d.box==='function'?d.box(cur._m||0):d.box)||[A.V.x0,A.V.x1,A.V.y0,A.V.y1], cl=(v,a,z)=>Math.max(a,Math.min(z,v));
   const x=cl(Math.round(A.X_inv((e.clientX-r.left)*sx)/sn)*sn,b[0],b[1]), y=cl(Math.round(A.Y_inv((e.clientY-r.top)*sy)/sn)*sn,b[2],b[3]);
   if(cur._q&&cur._q.x===x&&cur._q.y===y) return; cur._q={x,y}; if(d.full&&cur.sl&&P!==cur.sl.max){ playing=false; syncPlay(); P=cur.sl.max; syncSlider(); } draw(); };
 const objDrag=e=>{ const r=svg.getBoundingClientRect(), s=cur.sl, v=cur.pick(lastA,e.clientX-r.left,e.clientY-r.top); if(v==null||!isFinite(v)) return; playing=false; syncPlay(); P=Math.max(s.min,Math.min(s.max,v)); syncSlider(); draw(); };
