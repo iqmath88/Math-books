@@ -42,6 +42,7 @@
  "g12c2": [
   "parab",
   "ptrans",
-  "ellipse"
+  "ellipse",
+  "etrans"
  ]
 }

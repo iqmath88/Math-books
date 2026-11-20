@@ -82,3 +82,14 @@ S.eorient={v:[-7.5,7.5,-6.6,6.6],eq:1,title:'البؤرتان على المحو�
   const P=hz?[[c,0,'F₁','c'],[-c,0,'F₂','c'],[a,0,'V₁','f'],[-a,0,'V₂','f'],[0,b,'M₁','tan'],[0,-b,'M₂','tan']]:[[0,c,'F₁','c'],[0,-c,'F₂','c'],[0,a,'V₁','f'],[0,-a,'V₂','f'],[b,0,'M₁','tan'],[-b,0,'M₂','tan']];
   P.forEach(([x,y,l,cl])=>ptl(A,x,y,l,cl,6,-8));
   A.chips.push(['f','a',fr(a,2)],['tan','b',fr(b,2)],['c','c = √(a² − b²)',fr(c,3)],['muted','e = c/a',fr(c/a,3)]); }};
+
+/* ---------- 2−5 ---------- */
+/* translating an ellipse: centre (h , k); example 18 : (x − 2)²/9 + (y − 1)²/25 = 1 */
+S.etrans={v:[-5,8,-5,7],eq:1,title:'انسحاب القطع الناقص: المركز (h , k)',hint:'المحوران يصبحان x = h و y = k ، وكل نقطة تنسحب بالمقدار نفسه',
+ sl:{min:0,max:1,v:1,step:.01,play:1,speed:.25,lab:'الانسحاب',fmt:v=>Math.round(v*100)+'%'},
+ draw(A){ const t=A.p, h=2*t, k=1*t, a=5, b=3, c=4;
+  ellipse(A,0,0,a,b,0,'muted',1.3);
+  ellipse(A,h,k,a,b,0);
+  seg(A,h,A.V.y0,h,A.V.y1,'c',1.3,'3 5'); seg(A,A.V.x0,k,A.V.x1,k,'tan',1.3,'3 5');
+  ptl(A,h,k,'(h , k)','ink2',8,16); ptl(A,h,k+c,'F₁','c'); ptl(A,h,k-c,'F₂','c'); ptl(A,h,k+a,'V₁','f'); ptl(A,h,k-a,'V₂','f');
+  A.chips.push(['ink2','المركز',`(${fr(h,2)} , ${fr(k,2)})`],['c','F₁',`(${fr(h,1)} , ${fr(k+c,1)})`]); }};
