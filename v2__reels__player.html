@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#151d1d">
+<title>ريلز السبورة · الرياضيات الحية</title>
+<link rel="stylesheet" href="v2__reels__reels.css">
+<style>
+:root{--bg:#121a1a;--panel:#1b2524;--line:rgba(243,241,234,.14);--ink:#f3f1ea;--muted:#a9b8b2;--accent:#f6a259;--blue:#8fd3ff}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Body,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+body{display:flex;flex-direction:column;min-height:100dvh}
+header{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line)}
+header a{color:var(--ink);text-decoration:none;font-weight:700;padding:8px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+header h1{font:700 22px Ruqaa,serif;margin:0;flex:1}
+header small{color:var(--muted);font-size:13px}
+main{flex:1;display:flex;gap:18px;padding:14px 16px;min-height:0;align-items:flex-start;justify-content:center}
+/* the 9:16 stage */
+.stage{position:relative;height:calc(100dvh - 190px);max-height:960px;aspect-ratio:9/16;border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);background:#151d1d;flex:none}
+.stage canvas{width:100%;height:100%;display:block}
+.stage .wait{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:18px;background:#151d1d}
+.stage .tap{position:absolute;inset:0;display:grid;place-items:center;background:transparent;border:0;cursor:pointer}
+.stage .tap span{width:86px;height:86px;border-radius:50%;display:grid;place-items:center;background:rgba(246,162,89,.92);color:#1b1b1b;font-size:38px;box-shadow:0 10px 30px rgba(0,0,0,.4);transition:opacity .25s,transform .25s}
+.stage:not(.edge) .tap span{opacity:0;transform:scale(.8)}
+.side{width:min(380px,100%);display:flex;flex-direction:column;gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px}
+.card h2{margin:0 0 8px;font:700 18px Ruqaa,serif;color:var(--accent)}
+.picks{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pick{display:block;border:2px solid transparent;border-radius:12px;overflow:hidden;background:#0f1515;color:var(--ink);text-decoration:none;cursor:pointer;padding:0;font:inherit;text-align:center}
+.pick img{width:100%;aspect-ratio:9/16;object-fit:cover;display:block}
+.pick b{display:block;padding:6px 4px;font-size:14px}
+.pick[aria-current="true"]{border-color:var(--accent)}
+.scenes{display:flex;flex-direction:column;gap:6px}
+.scenes button{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:#0f1515;color:var(--ink);font:inherit;font-size:15px;cursor:pointer;text-align:start}
+.scenes button[aria-current="true"]{border-color:var(--accent);color:var(--accent)}
+.scenes bdi{color:var(--muted);font-family:Chalk,monospace;font-size:16px}
+/* controls */
+.bar{position:sticky;bottom:0;display:flex;align-items:center;gap:10px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:rgba(18,26,26,.96)}
+.bar button{min-width:48px;height:48px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:20px;cursor:pointer}
+.bar button.main{background:var(--accent);color:#1b1b1b;border-color:var(--accent);min-width:64px}
+.track{position:relative;flex:1;height:48px;display:flex;align-items:center}
+.track input{width:100%;accent-color:var(--accent);height:28px;margin:0}
+.marks{position:absolute;inset:auto 0 4px 0;height:8px;pointer-events:none}
+.marks i{position:absolute;bottom:0;width:2px;height:8px;background:var(--blue);opacity:.7}
+.time{font-family:Chalk,monospace;font-size:18px;color:var(--muted);min-width:96px;text-align:center;direction:ltr}
+@media (orientation:portrait),(max-width:820px){
+  main{flex-direction:column;align-items:center;justify-content:flex-start}
+  .stage{height:auto;width:min(100%,calc((100dvh - 230px)*9/16))}
+  .side{width:100%;max-width:560px}
+  .picks{grid-template-columns:repeat(2,minmax(0,170px));justify-content:center}
+}
+@media (max-width:600px){
+  header{padding:8px 12px} header small{display:none} header h1{font-size:20px}
+  main{padding:10px 12px}
+  .stage{width:min(100%,calc((100dvh - 250px)*9/16))}
+  .bar{flex-wrap:wrap;gap:8px;padding:8px 12px calc(8px + env(safe-area-inset-bottom))}
+  .track{order:-1;flex-basis:100%;height:34px}
+  .time{min-width:0;flex:1;font-size:16px}
+  .bar button{min-width:44px;height:44px}
+}
+.stage:fullscreen{height:100vh;max-height:none;border-radius:0}
+.stage:-webkit-full-screen{height:100vh;max-height:none;border-radius:0}
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html">‹ المكتبة</a>
+  <h1>ريلز السبورة</h1>
+  <small>إعداد: الأستاذ فائز الحمداني</small>
+</header>
+<main>
+  <div class="stage" id="stage">
+    <canvas id="c" width="1080" height="1920" aria-label="ريلز السبورة"></canvas>
+    <button class="tap" id="tap" aria-label="تشغيل أو إيقاف"><span>▶</span></button>
+    <div class="wait" id="wait">جارٍ تحميل الخطوط…</div>
+  </div>
+  <div class="side">
+    <div class="card"><h2>اختر المثال</h2>
+      <div class="picks" id="picks">
+        <button class="pick" data-r="cone"><img src="v2__reels__covers__cone.jpg" alt=""><b>مثال 5 · ص 95<br>المرشح المخروطي</b></button>
+        <button class="pick" data-r="ladder"><img src="v2__reels__covers__ladder.jpg" alt=""><b>مثال 4 · ص 94<br>السلم</b></button>
+      </div>
+    </div>
+    <div class="card"><h2>المشاهد</h2><div class="scenes" id="scenes"></div></div>
+  </div>
+</main>
+<div class="bar">
+  <button id="prev" aria-label="المشهد السابق">⏮</button>
+  <button id="play" class="main" aria-label="تشغيل">▶</button>
+  <button id="next" aria-label="المشهد التالي">⏭</button>
+  <div class="track"><input type="range" id="seek" min="0" max="60" step="0.01" value="0" aria-label="الزمن"><div class="marks" id="marks"></div></div>
+  <span class="time" id="time">0:00 / 0:00</span>
+  <button id="mute" aria-label="كتم الصوت">🔊</button>
+  <button id="full" aria-label="ملء الشاشة">⛶</button>
+</div>
+<audio id="a-cone" src="v2__reels__audio__cone.m4a" preload="auto"></audio>
+<audio id="a-ladder" src="v2__reels__audio__ladder.m4a" preload="auto"></audio>
+<script src="v2__reels__chalk.js"></script>
+<script src="v2__reels__cone.js"></script>
+<script src="v2__reels__ladder.js"></script>
+<script>
+'use strict';
+/* the player: one reel at a time; the clock follows the music when it plays (so picture and chimes stay together),
+   otherwise its own timer. Every frame is drawn from the time alone, so seeking and scene jumps are exact. */
+const $=id=>document.getElementById(id);
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const fmt=s=>{ s=Math.max(0,s); return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0'); };
+let reel=null, id=null, audio=null, t=0, playing=false, last=0, lastFix=0, dirty=true, ready=false;
+
+function choose(r){ if(!window.REELS[r]) r='cone'; if(audio){ audio.pause(); }
+  id=r; reel=window.REELS[r](); audio=$('a-'+r); audio.muted=ls.get('reels-mute')==='1';
+  t=0; playing=false; $('seek').max=reel.D;
+  document.querySelectorAll('.pick').forEach(b=>b.setAttribute('aria-current',String(b.dataset.r===r)));
+  $('scenes').innerHTML=reel.cues.map((c,i)=>`<button data-t="${c.t}">${c.l}<bdi>${fmt(c.t)}</bdi></button>`).join('');
+  $('marks').innerHTML=reel.cues.slice(1).map(c=>`<i style="left:${100-(c.t/reel.D*100)}%"></i>`).join('');
+  history.replaceState(null,'','#'+r); ui(); dirty=true; }
+function ui(){ $('play').textContent=playing?'⏸':'▶'; $('play').setAttribute('aria-label',playing?'إيقاف':'تشغيل');
+  $('stage').classList.toggle('playing',playing); $('tap').querySelector('span').textContent='▶';
+  $('mute').textContent=audio&&audio.muted?'🔇':'🔊'; }
+function seek(v){ t=Math.max(0,Math.min(reel.D,v)); if(audio){ try{ audio.currentTime=t; }catch(e){} } dirty=true; }
+function play(){ if(!ready) return; if(t>=reel.D-.05) seek(0); playing=true; last=performance.now();
+  if(audio){ try{ audio.currentTime=t; }catch(e){} const p=audio.play(); if(p&&p.catch) p.catch(()=>{}); lastFix=0; } ui(); }
+function pause(){ playing=false; if(audio) audio.pause(); ui(); dirty=true; }
+function scene(dir){ const cs=reel.cues.map(c=>c.t); let target;
+  if(dir<0){ const before=cs.filter(c=>c<t-.6); target=before.length?before[before.length-1]:0; } else { target=cs.find(c=>c>t+.1); if(target==null) target=reel.D; }
+  seek(target); }
+
+function loop(now){
+  if(ready&&reel){
+    if(playing){ t+=(now-last)/1000; last=now;
+      /* the picture keeps its own clock; the music follows it (it is re-seeked when it drifts, e.g. when it was not loaded yet) */
+      if(audio&&!audio.paused&&audio.readyState>=1){ const drift=audio.currentTime-t;
+        if(Math.abs(drift)<.25) t+=drift*.1; else if(now-lastFix>700){ lastFix=now; try{ audio.currentTime=t; }catch(e){} } }
+      if(t>=reel.D){ t=reel.D; pause(); } dirty=true; }
+    if(dirty){ reel.render(t); dirty=false;
+      $('seek').value=t; $('time').textContent=fmt(t)+' / '+fmt(reel.D);
+      $('stage').classList.toggle('edge',!playing&&(t<.05||t>=reel.D-.05));   /* the big ▶ only at the start and the end */
+      let cur=0; reel.cues.forEach((c,i)=>{ if(t>=c.t-.05) cur=i; });
+      document.querySelectorAll('#scenes button').forEach((b,i)=>b.setAttribute('aria-current',String(i===cur))); } }
+  requestAnimationFrame(loop); }
+
+$('play').onclick=()=>playing?pause():play();
+$('tap').onclick=()=>playing?pause():play();
+$('prev').onclick=()=>scene(-1); $('next').onclick=()=>scene(1);
+$('seek').oninput=e=>{ seek(+e.target.value); };
+$('scenes').onclick=e=>{ const b=e.target.closest('button[data-t]'); if(b) seek(+b.dataset.t+.02); };
+$('picks').onclick=e=>{ const b=e.target.closest('.pick'); if(b&&b.dataset.r!==id) choose(b.dataset.r); };
+$('mute').onclick=()=>{ if(!audio) return; audio.muted=!audio.muted; ls.set('reels-mute',audio.muted?'1':'0'); ui(); };
+$('full').onclick=()=>{ const s=$('stage'); const fs=document.fullscreenElement||document.webkitFullscreenElement;
+  if(fs){ (document.exitFullscreen||document.webkitExitFullscreen).call(document); } else { const f=s.requestFullscreen||s.webkitRequestFullscreen; if(f) f.call(s); } };
+addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT'&&e.key!==' ') return;
+  if(e.key===' '){ e.preventDefault(); playing?pause():play(); } else if(e.key==='ArrowLeft') scene(1); else if(e.key==='ArrowRight') scene(-1); });
+addEventListener('hashchange',()=>{ const r=location.hash.slice(1); if(r&&r!==id) choose(r); });
+
+Promise.all(['700 40px Ruqaa','400 40px Ruqaa','700 40px Chalk','500 40px Body'].map(f=>document.fonts.load(f,'ابت 12'))).catch(()=>{}).then(()=>{
+  ready=true; $('wait').remove(); choose(location.hash.slice(1)||'cone'); window.__playerReady=true; });
+requestAnimationFrame(loop);
+/* for tests: draw a given time synchronously */
+window.__at=s=>{ seek(s); reel.render(t); };   /* draws now (export, tests); the next frame also refreshes the controls */
+</script>
+<script src="update.js"></script>
+</body>
+</html>

@@ -86,6 +86,7 @@ header p{font-size:14px}
 .ib.gold:hover{background:#f3d6a5}
 .shelf{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:20px;padding:20px 0 34px}
 .shelf::after{display:none}
+.book.reel .cv{background-size:cover;background-position:center top;justify-content:flex-end}
 .book{padding:10px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.045);transition:background .2s,transform .2s}
 .book:hover{background:rgba(255,255,255,.095);transform:translateY(-3px)}
 .cv{transform:none;border-radius:12px;padding:18px;box-shadow:0 14px 24px #0003;aspect-ratio:3/3.7}
@@ -139,6 +140,11 @@ footer{padding:24px 0}
     <span id="libraryCount" class="library-count" aria-live="polite"></span>
   </section>
   <div id="shelves"></div>
+  <section class="bk reels"><h2>ريلز السبورة <small>أمثلة الكتاب مشروحة خطوة خطوة · للعرض في الصف</small></h2>
+   <div class="shelf">
+    <a class="book reel" href="v2__reels__player.html#cone" style="--c1:#24302f;--c2:#151d1d"><div class="cv" style="background-image:linear-gradient(180deg,rgba(21,29,29,.15),rgba(21,29,29,.92) 70%),url(v2__reels__covers__cone.jpg)"><span class="badge on new">ريلز</span><div class="n">مثال <bdi>5</bdi> · ص <bdi>95</bdi></div><div class="ti">المرشح المخروطي</div></div></a>
+    <a class="book reel" href="v2__reels__player.html#ladder" style="--c1:#24302f;--c2:#151d1d"><div class="cv" style="background-image:linear-gradient(180deg,rgba(21,29,29,.15),rgba(21,29,29,.92) 70%),url(v2__reels__covers__ladder.jpg)"><span class="badge on new">ريلز</span><div class="n">مثال <bdi>4</bdi> · ص <bdi>94</bdi></div><div class="ti">السلم المنزلق</div></div></a>
+   </div></section>
   <footer><b>إعداد وتصميم: الأستاذ فائز الحمداني</b> · © 2026 جميع الحقوق محفوظة<br>نصوص الكتاب المدرسي ملك وزارة التربية العراقية، وتُعرض لأغراض تعليمية.<br>يعمل التطبيق بدون إنترنت بعد أول فتح. تُضاف الفصول والكتب الأخرى تباعاً.</footer>
 </div>
 <script>
