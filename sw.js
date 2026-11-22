@@ -11,8 +11,8 @@ const CORE = [
   './v2__ch3.html', './v2__ch3.js', './v2__ch4.html', './v2__ch4.js', './v2__ch5.html', './v2__ch5.js', './v2__ch6.html', './v2__ch6.js',
   './v2__g9c1.html', './v2__g9c1.js', './v2__g9c5.html', './v2__g9c5.js',
   /* chalkboard reels (the music is not precached: Safari plays media through range requests) */
-  './v2__reels__player.html', './v2__reels__reels.css', './v2__reels__chalk.js', './v2__reels__cone.js', './v2__reels__ladder.js', './v2__reels__box.js',
-  './v2__reels__covers__cone.jpg', './v2__reels__covers__ladder.jpg', './v2__reels__covers__box.jpg',
+  './v2__reels__player.html', './v2__reels__reels.css', './v2__reels__chalk.js', './v2__reels__cone.js', './v2__reels__ladder.js', './v2__reels__box.js', './v2__reels__steps.js',
+  './v2__reels__covers__cone.jpg', './v2__reels__covers__ladder.jpg', './v2__reels__covers__box.jpg', './v2__reels__covers__steps.jpg',
   './v2__reels__fonts__ruqaa-ar-700.woff2', './v2__reels__fonts__ruqaa-ar-400.woff2', './v2__reels__fonts__caveat-700.woff2',
   './v2__reels__fonts__caveat-600.woff2', './v2__reels__fonts__marhey-500.woff2',
   './v2__lib__fonts__plex-ar-400.woff2',
