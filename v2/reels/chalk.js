@@ -4,7 +4,7 @@
    كل ريلز في ملف خاص (cone.js, ladder.js) يسجّل نفسه في window.REELS ويرسم بهذه الأدوات.
    كل رقم ومستوى في الرسوم محسوب من معادلات الكتاب؛ الرسم حتمي: الإطار عند الزمن t لا يعتمد إلا على t.
    ===================================================================================== */
-const W=1080,H=1920, PI=Math.PI;
+const W=window.CHALK_W||1080,H=window.CHALK_H||1920, PI=Math.PI;   /* reels 1080×1920; long videos set CHALK_W/H to 1920×1080 first */
 const cv=document.getElementById('c'), g=cv.getContext('2d');
 const layer=document.createElement('canvas'); layer.width=W; layer.height=H; const L=layer.getContext('2d');
 const WHITE='#f3f1ea', ORANGE='#f6a259', BLUE='#8fd3ff', DIM='rgba(243,241,234,.55)';
@@ -66,7 +66,7 @@ function glyphApprox(x,y,sz,col){ L.strokeStyle=col; L.lineWidth=sz*.06; L.lineC
 function glyphImp(x,y,sz,col){ L.strokeStyle=col; L.lineWidth=sz*.06; L.lineCap='round'; L.lineJoin='round'; L.beginPath();
   L.moveTo(x+sz*.1,y-sz*.42); L.lineTo(x+sz*.72,y-sz*.42); L.moveTo(x+sz*.1,y-sz*.22); L.lineTo(x+sz*.72,y-sz*.22); L.moveTo(x+sz*.55,y-sz*.58); L.lineTo(x+sz*.86,y-sz*.32); L.lineTo(x+sz*.55,y-sz*.06); L.stroke(); }
 /* write-on for math: left to right */
-function math(e,cx,y,sz,o={}){ const p=o.p??1; if(p<=0) return; { const w0=mW(e,sz); if(w0>o.max||w0>980) sz*=Math.min(o.max||980,980)/w0; } const w=mW(e,sz), x0=cx-w/2; L.save(); L.globalAlpha=o.a??1;
+function math(e,cx,y,sz,o={}){ const p=o.p??1; if(p<=0) return; { const CAP=W>H?1760:980, w0=mW(e,sz); if(w0>o.max||w0>CAP) sz*=Math.min(o.max||CAP,CAP)/w0; } const w=mW(e,sz), x0=cx-w/2; L.save(); L.globalAlpha=o.a??1;
   const cut=(w+40)*easeOut(p); L.beginPath(); L.rect(x0-20,y-sz*1.6,cut,sz*2.8); L.clip(); if(o.glow){ L.shadowColor=o.col||WHITE; L.shadowBlur=o.glow; }
   mDraw(e,x0,y,sz,o.col||WHITE); L.restore(); if(p<1) tip(x0-20+cut,y-sz*.3,o.col||WHITE); return {x0,w}; }
 

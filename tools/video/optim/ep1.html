@@ -1,0 +1,13 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>تطبيقات عملية · الحلقة 1</title>
+<link rel="stylesheet" href="../../../v2/reels/reels.css">
+<style>html,body{margin:0;background:#111}canvas{display:block;width:100vw;height:auto;max-height:100vh;object-fit:contain}</style></head>
+<body><canvas id="c" width="1920" height="1080"></canvas>
+<script>window.CHALK_W=1920;window.CHALK_H=1080;</script>
+<script src="../../../v2/reels/chalk.js"></script>
+<script src="ep1.js"></script>
+<script>
+/* render(t) draws the frame at t seconds; __at(t) for export, ?t=… to look at one moment */
+Promise.all(['700 40px Ruqaa','400 40px Ruqaa','700 40px Chalk','500 40px Body'].map(f=>document.fonts.load(f,'ابت 12'))).catch(()=>{}).then(()=>{
+  window.__at=t=>EPISODE.render(t); window.__D=EPISODE.D; window.__chapters=EPISODE.chapters;
+  const q=+(new URLSearchParams(location.search).get('t')||0); EPISODE.render(q); window.__ready=true; });
+</script></body></html>
