@@ -47,6 +47,7 @@ function mW(e,sz){ if(typeof e==='string'){ let w=0; for(const ch of e) w+= ch==
   if(Array.isArray(e)) return e.reduce((a,x)=>a+mW(x,sz),0);
   if(e.f) return Math.max(mW(e.f[0],sz*.82),mW(e.f[1],sz*.82))+sz*.36;
   if(e.s) return mW(e.s[0],sz)+mW(e.s[1],sz*.6)+sz*.04;
+  if(e.r) return sz*.56+mW(e.r,sz)+sz*.08; if(e.sb) return mW(e.sb[0],sz)+mW(e.sb[1],sz*.6)+sz*.04;
   if(e.c) return mW(e.e,sz); if(e.sp) return sz*e.sp; return 0; }
 function mDraw(e,x,y,sz,col){ if(typeof e==='string'){ for(const ch of e){ if(ch==='π'){ glyphPi(x,y,sz,col); x+=sz*.62; } else if(ch==='≈'){ glyphApprox(x,y,sz,col); x+=sz*.7; } else if(ch==='⇒'){ glyphImp(x,y,sz,col); x+=sz*.95; } else if(ch==='θ'){ glyphTheta(x,y,sz,col); x+=sz*.5; }
       else { L.font=`700 ${sz}px ${LT}`; L.fillStyle=col; L.textAlign='left'; L.direction='ltr'; L.fillText(ch,x,y); x+=textW(ch,L.font); } } return x; }
@@ -55,6 +56,9 @@ function mDraw(e,x,y,sz,col){ if(typeof e==='string'){ for(const ch of e){ if(ch
     mDraw(e.f[0],x+(w-a)/2,bar-sz*.14,s2,col); mDraw(e.f[1],x+(w-b)/2,bar+sz*.66,s2,col);
     L.strokeStyle=col; L.lineWidth=Math.max(3,sz*.055); L.lineCap='round'; L.beginPath(); L.moveTo(x+sz*.08,bar+1); L.quadraticCurveTo(x+w/2,bar-2,x+w-sz*.08,bar+1.5); L.stroke(); return x+w; }
   if(e.s){ x=mDraw(e.s[0],x,y,sz,col); return mDraw(e.s[1],x+sz*.02,y-sz*.42,sz*.6,col); }
+  if(e.r){ const w=mW(e,sz); L.strokeStyle=col; L.lineWidth=Math.max(3,sz*.06); L.lineCap='round'; L.lineJoin='round'; L.beginPath();   /* square root drawn by hand */
+    L.moveTo(x+sz*.02,y-sz*.3); L.lineTo(x+sz*.14,y-sz*.38); L.lineTo(x+sz*.28,y+sz*.04); L.lineTo(x+sz*.48,y-sz*.9); L.lineTo(x+w,y-sz*.9); L.stroke(); mDraw(e.r,x+sz*.54,y,sz,col); return x+w; }
+  if(e.sb){ x=mDraw(e.sb[0],x,y,sz,col); return mDraw(e.sb[1],x+sz*.02,y+sz*.2,sz*.6,col); }
   if(e.c) return mDraw(e.e,x,y,sz,e.c); if(e.sp) return x+sz*e.sp; return x; }
 function glyphPi(x,y,sz,col){ L.strokeStyle=col; L.lineWidth=sz*.075; L.lineCap='round'; L.beginPath();
   L.moveTo(x+sz*.04,y-sz*.48); L.quadraticCurveTo(x+sz*.3,y-sz*.56,x+sz*.58,y-sz*.5);
