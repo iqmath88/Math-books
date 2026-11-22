@@ -15,7 +15,7 @@ const flat=p=>'v2__'+p.split('/').join('__');
 const v2=core.filter(f=>/^v2__[\w-]+\.html$/.test(f)&&!f.startsWith('v2__reels__'));
 /* the chalkboard reels player: its engine, reels, fonts and covers are linked and precached (music is streamed, not precached) */
 { const f='v2__reels__player.html', s=read(f); assert.ok(core.includes(f),'reels player not precached');
-  for(const need of ['reels/chalk.js','reels/cone.js','reels/ladder.js','reels/reels.css','reels/covers/cone.jpg','reels/covers/ladder.jpg']){ assert.ok(s.includes(flat(need)),`${f} must link ${flat(need)}`); assert.ok(core.includes(flat(need)),`reels file not precached: ${flat(need)}`); }
+  for(const need of ['reels/chalk.js','reels/cone.js','reels/ladder.js','reels/box.js','reels/covers/box.jpg','reels/reels.css','reels/covers/cone.jpg','reels/covers/ladder.jpg']){ assert.ok(s.includes(flat(need)),`${f} must link ${flat(need)}`); assert.ok(core.includes(flat(need)),`reels file not precached: ${flat(need)}`); }
   for(const m of read('v2__reels__reels.css').matchAll(/url\(([^)]+)\)/g)){ assert.ok(fs.existsSync(path.join(root,m[1])),`reels font missing: ${m[1]}`); assert.ok(core.includes(m[1]),`reels font not precached: ${m[1]}`); } }
 for(const f of v2){ const s=read(f); const id=f.slice(4,-5);
   for(const need of ['lib/katex/katex.min.css','lib/katex/katex.min.js','engine.css','engine.js',id+'.js']){ assert.ok(s.includes(flat(need)),`${f} must link ${flat(need)}`); assert.ok(core.includes(flat(need)),`v2 file not precached: ${flat(need)}`); }

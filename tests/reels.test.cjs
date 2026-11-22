@@ -5,7 +5,7 @@ const page='file://'+path.join(__dirname,'..','v2__reels__player.html');
 let fail=0; const ok=(c,m)=>{ console.log((c?'PASS ':'FAIL ')+m); if(!c) fail++; };
 (async()=>{ const b=await chromium.launch(), pg=await (await b.newContext({viewport:{width:1366,height:1024}})).newPage();
   const errs=[]; pg.on('pageerror',e=>errs.push(e.message));
-  for(const id of ['cone','ladder']){
+  for(const id of ['cone','ladder','box']){
     await pg.goto(page+'#'+id); await pg.reload(); await pg.waitForFunction(()=>window.__playerReady,null,{timeout:20000});
     const info=await pg.evaluate(()=>({D:+document.getElementById('seek').max, cues:[...document.querySelectorAll('#scenes button')].map(b=>+b.dataset.t)}));
     ok(info.cues.length===7&&info.D>50&&info.D<90, `${id}: 7 scenes, ${info.D.toFixed(1)} s`);

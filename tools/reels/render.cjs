@@ -1,5 +1,5 @@
 /* Export a chalkboard reel to MP4 (1080×1920, 30 fps, H.264), frame-exact, from the player itself.
-   usage: node tools/reels/render.cjs <cone|ladder> <out.mp4> [music.wav]   (run node tools/flatten.cjs first)
+   usage: node tools/reels/render.cjs <cone|ladder|box> <out.mp4> [music.wav]   (run node tools/flatten.cjs first)
    Each frame is drawn by the reel's own render(t) and read from the canvas at its full size (no screen scaling). */
 const {chromium}=require('playwright'), {spawn}=require('child_process'), path=require('path'), fs=require('fs');
 const [id,out,music]=process.argv.slice(2); if(!id||!out){ console.error('usage: render.cjs <id> <out.mp4> [music.wav]'); process.exit(2); }

@@ -80,6 +80,7 @@ main{flex:1;display:flex;gap:18px;padding:14px 16px;min-height:0;align-items:fle
       <div class="picks" id="picks">
         <button class="pick" data-r="cone"><img src="covers/cone.jpg" alt=""><b>مثال 5 · ص 95<br>المرشح المخروطي</b></button>
         <button class="pick" data-r="ladder"><img src="covers/ladder.jpg" alt=""><b>مثال 4 · ص 94<br>السلم</b></button>
+        <button class="pick" data-r="box"><img src="covers/box.jpg" alt=""><b>مثال 2 · ص 141<br>أكبر صندوق</b></button>
       </div>
     </div>
     <div class="card"><h2>المشاهد</h2><div class="scenes" id="scenes"></div></div>
@@ -96,9 +97,11 @@ main{flex:1;display:flex;gap:18px;padding:14px 16px;min-height:0;align-items:fle
 </div>
 <audio id="a-cone" src="audio/cone.m4a" preload="auto"></audio>
 <audio id="a-ladder" src="audio/ladder.m4a" preload="auto"></audio>
+<audio id="a-box" src="audio/box.m4a" preload="auto"></audio>
 <script src="chalk.js"></script>
 <script src="cone.js"></script>
 <script src="ladder.js"></script>
+<script src="box.js"></script>
 <script>
 'use strict';
 /* the player: one reel at a time; the clock follows the music when it plays (so picture and chimes stay together),
