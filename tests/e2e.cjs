@@ -168,6 +168,35 @@ async function page(b,vp='board',o={}){ const ctx=o.ctx||await b.newContext({vie
       return {out,mix:document.querySelectorAll('.tex.mix').length,parts:document.querySelectorAll('.parts').length}; });
     nMix+=r.mix; nParts+=r.parts; r.out.forEach(x=>bad.push(c+'/'+id+' '+x)); } }
   rec('T32','بوابة الجودة على الشاشة: لا أخطاء معادلات ولا معادلة أعرض من الهاتف، والأسطر المختلطة بترتيب القراءة',bad.length===0&&!errs.length,`${nL} درساً، ${nMix} سطراً مختلطاً، ${nParts} سؤالاً بفروع; ${bad.slice(0,5).join(' | ')}${errs[0]||''}`); await ctx.close(); }
+ /* T33 library search reaches examples inside chapters (offline index): «مثال 3 صفحة 93» opens the lesson at that example */
+ if(want('T33')){ const {ctx,pg,errs}=await page(b,'phone'); await pg.goto(BASE); await pg.waitForSelector('#librarySearch'); const r={};
+  const q=async s=>{ await pg.fill('#librarySearch',''); await pg.fill('#librarySearch',s); await pg.waitForFunction(()=>!document.getElementById('searchResults').hidden); await pg.waitForTimeout(80);
+    return pg.$$eval('#searchResults a',a=>a.map(x=>x.getAttribute('href'))); };
+  r.ex=(await q('مثال 3 صفحة 93'))[0]; r.indic=(await q('مثال ٣ ص ٩٣'))[0]; r.page=(await q('ص 141')).some(h=>/g12c3\.html#l=optim/.test(h));
+  r.lesson=(await q('المعدلات المرتبطة')).some(h=>/#l=rates$/.test(h)); r.none=await pg.$eval('#searchResults',e=>e.textContent.includes('لا توجد')).catch(()=>null); await q('مثال 3 صفحة 9999'); r.none=await pg.$eval('#searchResults',e=>e.textContent.includes('لا توجد'));
+  await q('مثال 3 صفحة 93'); await pg.press('#librarySearch','Enter'); await pg.waitForSelector('.step'); await pg.waitForTimeout(700);
+  r.url=pg.url().split('/').pop(); r.active=await pg.evaluate(()=>document.querySelector('.step.on')?.dataset.key);
+  const ok=/v2__g12c3\.html#l=rates&k=rates-4-10$/.test(r.ex)&&r.indic===r.ex&&r.page&&r.lesson&&r.none&&r.active==='rates-4-10';
+  rec('T33','البحث في المكتبة يصل إلى المثال داخل الدرس (مثال 3 صفحة 93) ويفتحه عنده',ok&&!errs.length,JSON.stringify(r)+errs.join('|')); await ctx.close(); }
+ /* T34 progress: visited ≠ mastered; old stored progress is migrated without loss; mastery needs steps + exercises + check questions */
+ if(want('T34')){ const {ctx,pg,errs}=await page(b); await pg.goto(BASE); const r={};
+  const old={ex:{'rolle-3-1-2':1,'rolle-3-1-3':0},seen:{rolle:1},last:'mvt',gen:2};
+  await pg.evaluate(o=>localStorage.setItem('lb-v2-g12c3',JSON.stringify(o)),old);
+  await pg.goto(BASE+'v2/g12c3.html'); await pg.waitForSelector('.lcard'); const S=()=>pg.evaluate(()=>JSON.parse(localStorage.getItem('lb-v2-g12c3')));
+  let st=await S(); r.kept=JSON.stringify(st.ex)===JSON.stringify(old.ex)&&st.seen.rolle===1&&st.last==='mvt'&&st.gen===2; r.vis=!!(st.vis.rolle&&st.vis.mvt)&&st.pv===2;
+  r.pips=await pg.$$eval('.lcard .lv',x=>x.length); r.notMastered=await pg.$$eval('.lcard .master',x=>x.length)===0;
+  await pg.evaluate(()=>location.hash='l=rates'); await pg.waitForSelector('.step'); await pg.waitForTimeout(200);
+  const ids=await pg.evaluate(()=>({ex:[...document.querySelectorAll('.prac[data-id],.selfrow[data-self]')].map(e=>e.dataset.id||e.dataset.self),
+    chk:[...document.querySelectorAll('.sec[data-stg="check"] .ask[data-id]')].map(e=>e.dataset.id)}));
+  r.nEx=ids.ex.length; r.nChk=ids.chk.length; st=await S(); r.visRates=st.vis.rates===1&&!st.seen.rates;
+  for(const id of ids.chk){ await pg.evaluate(id=>{ const q=document.querySelector(`.ask[data-id="${id}"]`); q.querySelectorAll('.opt')[+q.dataset.ans].click(); },id); }
+  st=await S(); r.ask=ids.chk.every(id=>st.ask[id]===1);
+  await pg.evaluate(ids=>{ const o=JSON.parse(localStorage.getItem('lb-v2-g12c3')); ids.forEach(i=>o.ex[i]=1); localStorage.setItem('lb-v2-g12c3',JSON.stringify(o)); },ids.ex.slice(0,Math.ceil(ids.ex.length*0.8)));
+  await pg.evaluate(()=>location.hash=''); await pg.waitForSelector('.lcard'); r.beforeSteps=await pg.$eval('a.lcard[href="#l=rates"]',a=>!!a.querySelector('.master'));
+  await pg.evaluate(()=>{ const o=JSON.parse(localStorage.getItem('lb-v2-g12c3')); o.seen.rates=1; localStorage.setItem('lb-v2-g12c3',JSON.stringify(o)); }); await pg.reload(); await pg.waitForSelector('.lcard');
+  r.mastered=await pg.$eval('a.lcard[href="#l=rates"]',a=>!!a.querySelector('.master')); r.meta=await pg.$eval('.hero .meta',e=>e.textContent);
+  const ok=r.kept&&r.vis&&r.pips===2&&r.notMastered&&r.nChk>0&&r.visRates&&r.ask&&!r.beforeSteps&&r.mastered&&/أتقنت 1/.test(r.meta);
+  rec('T34','مؤشرات التقدم منفصلة: زيارة، خطوات، تمارين، تحقق، إتقان — وترحيل التقدم القديم دون فقد',ok&&!errs.length,JSON.stringify(r)+errs.join('|')); await ctx.close(); }
  /* T20 clear error message instead of a blank page */
  if(want('T20')){ const {ctx,pg}=await page(b); await pg.route('**/v2/g12c4.js',r=>r.abort()); await pg.goto(BASE+'v2/g12c4.html').catch(()=>{}); await pg.waitForTimeout(500);
   const t=await pg.evaluate(()=>document.body.innerText); rec('T20','رسالة واضحة عند فشل تحميل الفصل (بدل صفحة فارغة)',/تعذّر فتح هذا الفصل/.test(t)&&/أعد المحاولة/.test(t),t.slice(0,80)); await ctx.close(); }

@@ -102,6 +102,13 @@ footer{padding:24px 0}
 .library-hero p{margin:0 0 18px;color:#dce7e9;line-height:1.8}
 .library-search{width:100%;max-width:520px;border:1px solid #ffffff55;border-radius:14px;background:#fff;color:#1b3442;padding:13px 16px;font:inherit;font-size:16px}
 .library-search:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.search-results{list-style:none;margin:10px 0 0;padding:0;max-width:640px;display:grid;gap:6px;text-align:start}
+.search-results a{display:block;background:#fff;color:#1b3442;border-radius:12px;padding:10px 14px;text-decoration:none;min-height:44px;box-shadow:0 1px 3px #0002}
+.search-results a:focus-visible,.search-results a:hover{outline:3px solid var(--gold);outline-offset:1px}
+.search-results b{font-weight:700}.search-results small{display:block;color:#53656f;font-size:13px;margin-top:2px}
+.search-results .sr-k{display:inline-block;font-size:12px;border-radius:8px;padding:1px 8px;margin-inline-end:8px;background:#e6f2ef;color:#0f5e55}
+.search-results .sr-k.L{background:#ecebfa;color:#3d2f8f}.search-results .sr-k.X{background:#fbf0dc;color:#7a4b06}
+.search-results .sr-none{color:#fff;opacity:.85;font-size:14px}
 .library-count{display:inline-block;margin-inline-start:12px;color:#dce7e9;font-size:13px}
 @media(max-width:550px){body{padding-inline:12px}.library-hero{padding:22px 18px}.shelf{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.book{padding:7px;border-radius:15px}.cv{padding:12px}.cv .ti{font-size:16px}header{gap:10px}header img{width:44px;height:44px}}
 @media(prefers-reduced-motion:reduce){.ib,.book{transition:none}}
@@ -136,8 +143,9 @@ footer{padding:24px 0}
   <section class="library-hero" aria-label="البحث في الكتب">
     <h2>مكتبتك الرياضية التفاعلية</h2>
     <p>اختر الفصل، تابع من آخر صفحة، أو استخدم البحث للوصول إلى موضوعك بسرعة.</p>
-    <input id="librarySearch" class="library-search" type="search" placeholder="ابحث عن فصل أو موضوع رياضي..." aria-label="البحث في فصول الرياضيات">
+    <input id="librarySearch" class="library-search" type="search" placeholder="ابحث عن فصل أو موضوع، أو مثلاً: مثال 3 ص 93" aria-label="البحث في فصول الرياضيات">
     <span id="libraryCount" class="library-count" aria-live="polite"></span>
+    <ul id="searchResults" class="search-results" hidden aria-label="نتائج البحث داخل الدروس"></ul>
   </section>
   <div id="shelves"></div>
   <section class="bk reels"><h2>ريلز السبورة <small>أمثلة الكتاب مشروحة خطوة خطوة · للعرض في الصف</small></h2>
@@ -210,14 +218,55 @@ if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!standalone) document.getEleme
 (d=>{ const s=d.createElement('script'); s.src='update.js'; d.head.append(s); })(document);
 </script>
 <script>
+/* Library search: chapter cards by text, plus an offline index of every lesson, example and exercise set
+   (search-index.js, built by tools/build-search-index.cjs). «مثال 3 صفحة 93» opens the lesson at that example. */
 (()=>{
- const field=document.getElementById('librarySearch');
- const count=document.getElementById('libraryCount');
- if(!field)return;
- const normalize=s=>String(s||'').normalize('NFKD').replace(/[\u064B-\u065F]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').toLowerCase();
+ const field=document.getElementById('librarySearch'), count=document.getElementById('libraryCount'), box=document.getElementById('searchResults');
+ if(!field) return;
+ const AR='٠١٢٣٤٥٦٧٨٩';
+ const norm=s=>String(s||'').normalize('NFKD').replace(/[ً-ٰٟ]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/[٠-٩]/g,d=>AR.indexOf(d)).replace(/[−–—]/g,'-').toLowerCase();
  const cards=[...document.querySelectorAll('.book')];
- function filter(){let visible=0;const q=normalize(field.value.trim());for(const card of cards){const ok=normalize(card.textContent).includes(q);card.hidden=!ok;card.style.display=ok?'':'none';if(ok)visible++;}count.textContent=visible+' فصل';}
- field.addEventListener('input',filter);filter();
+ let IDX=null, loading=null;
+ const load=()=>loading||(loading=new Promise(res=>{ if(self.MB_SEARCH){ res(IDX=self.MB_SEARCH); return; } const s=document.createElement('script'); s.src='search-index.js'; s.onload=()=>res(IDX=self.MB_SEARCH||null); s.onerror=()=>res(null); document.head.append(s); }));
+ /* «مثال 3» «ص 93» «صفحة 93» «تمرين 2» «تمارين 3-1» + free words; a lone number is a page */
+ function parseQ(q){ const r={ex:null,pg:null,xs:false,sec:null,words:[]}; let s=norm(q);
+  s=s.replace(/(?:مثال|المثال)\s*(\d+)/g,(m,n)=>{ r.ex=+n; return ' '; });
+  s=s.replace(/(?:صفحه|الصفحه|ص)\s*\.?\s*(\d+)/g,(m,n)=>{ r.pg=+n; return ' '; });
+  s=s.replace(/(?:تمارين|تمرين|التمارين)\s*\(?\s*(\d+\s*-\s*\d+)?\)?/g,(m,n)=>{ r.xs=true; if(n) r.sec=n.replace(/\s/g,''); return ' '; });
+  s=s.replace(/\b(\d+-\d+(?:-\d+)?)\b/g,(m,n)=>{ r.sec=n; return ' '; });
+  const w=s.split(/[\s,،·]+/).filter(Boolean); for(const x of w){ if(/^\d+$/.test(x)&&r.pg===null&&r.ex===null) r.pg=+x; else if(x.length>1) r.words.push(x); }
+  return r; }
+ function search(q){ if(!IDX) return []; const P=parseQ(q); if(P.ex===null&&P.pg===null&&!P.xs&&!P.sec&&!P.words.length) return [];
+  const out=[];
+  for(const row of IDX.rows){ const [c,l,k,kind,lab,t,p1,p2,w]=row, bk=IDX.books[c]||['',0,''];
+   if(P.ex!==null&&!(kind==='E'&&new RegExp('^مثال\\s*'+P.ex+'(?!\\d)').test(norm(lab)))) continue;
+   if(P.xs&&kind!=='X') continue;
+   if(P.pg!==null&&!(p1<=P.pg&&P.pg<=p2)) continue;
+   const hay=norm([lab,t,w,bk[0],'الفصل '+bk[1],bk[2]].join(' '));
+   if(P.sec&&!norm(lab+' '+(kind==='L'?lab:'')).includes(P.sec)&&!hay.includes(P.sec)) continue;
+   if(!P.words.every(x=>hay.includes(x))) continue;
+   /* rank: exact structured hits first, then examples, then lessons */
+   out.push({row,bk,score:(P.ex!==null||P.pg!==null?0:1)+(kind==='E'?0:kind==='X'?.3:.6)}); }
+  return out.sort((a,b)=>a.score-b.score).slice(0,12); }
+ const href=([c,l,k])=>`v2__${c}.html#l=${encodeURIComponent(l)}${k?'&k='+encodeURIComponent(k):''}`;
+ const esc=s=>String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+ function render(res,q){ if(!box) return; if(!q){ box.hidden=true; box.innerHTML=''; return; }
+  box.hidden=false;
+  box.innerHTML=res.length?res.map(({row:[c,l,k,kind,lab,t,p1,p2],bk})=>`<li><a href="${href([c,l,k])}"><span class="sr-k ${kind}">${kind==='E'?'مثال':kind==='X'?'تمارين':'درس'}</span><b>${esc(kind==='L'?t:lab)}</b><small>${esc(kind==='L'?'['+lab+']':t)} · ${esc(bk[0])} · الفصل <bdi>${bk[1]}</bdi> ${esc(bk[2])}${p1?` · ص <bdi dir="ltr">${p1===p2?p1:p1+'–'+p2}</bdi>`:''}</small></a></li>`).join('')
+   :`<li class="sr-none">لا توجد نتيجة داخل الدروس${IDX?'':' (فهرس البحث غير متاح)'} — جرّب: «مثال 3 ص 93» أو «المعدلات المرتبطة»</li>`; }
+ let last=null;
+ async function filter(){ const raw=field.value.trim(), q=norm(raw), P=parseQ(raw);
+  if(raw) await load(); if(field.value.trim()!==raw) return;
+  const res=raw?search(raw):[]; last=res;
+  const hit=new Set(res.map(r=>r.row[0])); let visible=0;
+  for(const card of cards){ const href=card.getAttribute('href')||'', id=(href.match(/v2__(\w+)\.html/)||[])[1];
+   const text=!P.ex&&P.pg===null&&!P.xs&&norm(card.textContent).includes(P.words.join(' ')||q);
+   const ok=!raw||text||hit.has(id); card.hidden=!ok; card.style.display=ok?'':'none'; if(ok) visible++; }
+  count.textContent=visible+' فصل'+(raw?` · ${res.length} نتيجة داخل الدروس`:''); render(res,raw); }
+ field.addEventListener('input',filter);
+ field.addEventListener('focus',load,{once:true});
+ field.addEventListener('keydown',e=>{ if(e.key==='Enter'&&last&&last.length){ e.preventDefault(); location.href=href(last[0].row); } });
+ filter();
 })();
 </script>
 </body>

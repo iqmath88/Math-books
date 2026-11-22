@@ -84,11 +84,20 @@ node tools/reel-render.cjs tools/reels/ladder.html out.mp4 [--preview 3,8,17]
 - الصوت: `VOICE=…/vits-piper-ar_JO-SA_dii-high tools/reels/ice-audio/build-audio.sh video.mp4 out.mp4` (`mix.py` يكتب `ice.timeline.full.js`)
 - التحقق الحركي: `node tools/reels/ice.check.cjs` (حرف المكعب 8 ثابت، L = 8 + 2x من المجسمات نفسها، V = L³ − 8³، dV/dτ = −6 بالزمن الحقيقي، dx/dτ = −1/L² و −0.01 عند x = 1، وعوامل التسريع المعروضة ×10 و ×2.5 و ×8)
 
+## فهرس البحث والتدقيق الرياضي (v1.77)
+```
+node tools/build-search-index.cjs          # يولّد search-index.js (بحث المكتبة: الدروس والأمثلة والتمارين وصفحاتها) — بعد كل بناء
+python3 tools/audit_math.py [g12c3 …]       # يفحص كل سلسلة a = b = c في الحلول (pip install sympy antlr4-python3-runtime==4.11)
+python3 tests/g12c3-answers.test.py         # أجوبة الفصل المرجعي محلولة باستقلال ومطابقة لنص كل مثال
+```
+الحالات التي راجعها إنسان (موثّقة بـ err:/xp: أو تحتاج مطابقة مع الكتاب) في `tools/audit-known.json`.
+
 ## النسخة المسطّحة (v2__*)
 المكتبة تفتح نسخة «مسطّحة» من المجلد `v2/` في جذر المستودع (`v2/lib/katex/x.css` ← `v2__lib__katex__x.css`)، ليسهل رفعها يدوياً عبر GitHub.
 **لا تعدّل ملفات `v2__*` يدوياً:** عدّل `src/` أو `v2/` ثم:
 ```
 python3 src/build.py            # يولّد v2/<chapter>.js و .html
 node tools/flatten.cjs          # يولّد ملفات v2__* من v2/
+node tools/build-search-index.cjs   # يحدّث فهرس البحث
 node release.test.cjs           # يفشل إن كانت النسخة المسطّحة قديمة
 ```

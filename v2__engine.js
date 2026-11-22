@@ -189,7 +189,7 @@ function stepHTML(st,les,si,ki){
       case 'err': h+=`<div class="err"><b>تنبيه على خطأ في الكتاب:</b> ${lines(p)}</div>`; break;
       case 'html': h+=p.lines.join('\n'); break;
       case 'tbl': h+=`<div class="tblwrap"><table class="t">${p.rows.map(r=>`<tr>${r.c.map(c=>`<${r.h?'th':'td'}>${T(c)}</${r.h?'th':'td'}>`).join('')}</tr>`).join('')}</table></div>`; break;
-      case 'ask': h+=`<p>${T(p.v)}</p><div class="ask" data-ans="${p.ans}">${p.o.map(o=>`<button type="button" class="opt">${T(o)}</button>`).join('')}</div><div class="why">${p.why?lines(p.why):''}</div>`; break;
+      case 'ask': h+=`<p>${T(p.v)}</p><div class="ask" data-ans="${p.ans}" data-id="${id}">${p.o.map(o=>`<button type="button" class="opt">${T(o)}</button>`).join('')}</div><div class="why">${p.why?lines(p.why):''}</div>`; break;
       case 'prac': h+=`<div class="prac" data-key="${esc(p.ans)}" data-id="${id}"${p.ok?` data-ok="${esc(p.ok)}"`:''}${p.miss?` data-miss="${encodeURIComponent(JSON.stringify(p.miss))}"`:''}><input inputmode="text" autocomplete="off" placeholder="${esc(p.ph)}" aria-label="${esc(p.ph)}"><button type="button" class="btn">تحقّق</button></div><div class="fb"></div>`+
         `<div class="selfrow">${extra(p,id)}<button type="button" class="btn ghost small" data-show>الحل</button></div>${extraBox(p)}<div class="sol">${p.sol?lines(p.sol):''}</div>`; break;
       case 'self': h+=(p.lines.length?`<p>${lines(p)}</p>`:'')+`<div class="selfrow" data-self="${id}"${p.ok?` data-ok="${esc(p.ok)}"`:''}>${extra(p,id)}<button type="button" class="btn ghost small" data-show>أظهر الحل</button><span class="mk" hidden>هل كان حلّك صحيحاً؟ <button type="button" class="btn small" data-y>✓ نعم</button> <button type="button" class="btn ghost small" data-n>✗ ليس بعد</button></span><span class="done" hidden></span></div>${extraBox(p)}<div class="sol">${p.sol?lines(p.sol):''}</div>`; break;
@@ -202,9 +202,28 @@ const KEY='lb-v2-'+B.id; let ST={ex:{},seen:{}};
 try{ ST=Object.assign(ST,JSON.parse(localStorage.getItem(KEY)||'{}')); }catch(e){}
 const save=()=>{ try{ localStorage.setItem(KEY,JSON.stringify(ST)); }catch(e){} };
 const LES=parse(B.src);
-LES.forEach(l=>{ l.nEx=0; l.secs.forEach(s=>s.steps.forEach(st=>st.parts.forEach(p=>{ if(p.k==='prac'||p.k==='self') l.nEx++; }))); });
-ST.n=LES.length; ST.t=LES.reduce((a,l)=>a+l.nEx,0); save();
+LES.forEach(l=>{ l.nEx=0; l.chk=[]; const asks=[];
+  l.secs.forEach((s,si)=>s.steps.forEach((st,ki)=>st.parts.forEach((p,pi)=>{ if(p.k==='prac'||p.k==='self') l.nEx++;
+    if(p.k==='ask'){ const id=`${l.id}-${si}-${ki}-${pi}`; asks.push(id); if(s.stg==='check') l.chk.push(id); } })));
+  if(!l.chk.length) l.chk=asks; });   /* lessons without a «تحقّق» stage: every understanding question counts */
+ST.n=LES.length; ST.t=LES.reduce((a,l)=>a+l.nEx,0);
+/* Progress model (v1.77): five separate indicators — a lesson opened is NOT a lesson mastered.
+   vis: lesson opened · seen: reached the end of its steps (the old «مكتمل», kept as is) · ex: exercise results (unchanged)
+   ask: understanding-question results · mastered = steps seen + ≥80% of exercises solved + every check question right.
+   Migration from v1 only ADDS keys (vis is rebuilt from seen / ex / last); nothing stored before is changed or removed. */
+ST.vis=ST.vis||{}; ST.ask=ST.ask||{};
+if((ST.pv||1)<2){ const own=k=>LES.find(l=>k.startsWith(l.id+'-'));
+  Object.keys(ST.seen||{}).forEach(id=>ST.vis[id]=1); Object.keys(ST.ex||{}).forEach(k=>{ const l=own(k); if(l) ST.vis[l.id]=1; }); if(ST.last) ST.vis[ST.last]=1; ST.pv=2; }
+save();
 const exDone=l=>Object.keys(ST.ex).filter(k=>k.startsWith(l.id+'-')&&ST.ex[k]===1).length;
+const MASTER_EX=0.8;
+const mastery=l=>{ const d=exDone(l), ok=l.chk.filter(k=>ST.ask[k]===1).length;
+  const r={vis:!!ST.vis[l.id], steps:!!ST.seen[l.id], ex:l.nEx?d/l.nEx>=MASTER_EX:null, chk:l.chk.length?ok===l.chk.length:null, d, ok};
+  r.master=r.steps&&r.ex!==false&&r.chk!==false&&!!(r.ex||r.chk);   /* needs real evidence: a lesson with no exercises and no questions is never «mastered» */
+  return r; };
+const PIPS=[['vis','زرت الدرس'],['steps','شاهدت خطواته'],['ex','حللت تمارينه (٨٠٪ فأكثر)'],['chk','أجبت أسئلة التحقق']];
+const pipsHTML=l=>{ const m=mastery(l);
+  return `<span class="lv" role="img" aria-label="${PIPS.map(([k,t])=>(m[k]===null?'لا يوجد: ':m[k]?'✓ ':'✗ ')+t).join('، ')}${m.master?'، أتقنت الدرس':''}">${PIPS.map(([k,t])=>`<i class="${m[k]===null?'na':m[k]?'on':''}" title="${t}${m[k]===null?' — لا يوجد في هذا الدرس':''}"></i>`).join('')}</span>${m.master?'<span class="okb master">★ أتقنت</span>':m.steps?'<span class="okb">✓ شاهدته</span>':''}`; };
 
 /* ================= page skeleton ================= */
 const CREDIT='إعداد وتصميم: الأستاذ فائز الحمداني';
@@ -249,13 +268,13 @@ const story=$('#story'), outline=$('#outline');
 function renderHome(){
   D.body.classList.add('is-home'); root.classList.remove('has-stages'); D.title=`${B.title} – الرياضيات الحيّة`;
   $('#crS').textContent=`${B.grade} · ${B.chapter}`; $('#crB').textContent=B.title; $('#bBack').href='index.html'; $('#bBackL').textContent='المكتبة'; $('#bLessons').hidden=true;
-  const tot=LES.reduce((a,l)=>a+l.nEx,0), done=LES.reduce((a,l)=>a+exDone(l),0), seen=LES.filter(l=>ST.seen[l.id]).length;
+  const tot=LES.reduce((a,l)=>a+l.nEx,0), done=LES.reduce((a,l)=>a+exDone(l),0), seen=LES.filter(l=>ST.seen[l.id]).length, mast=LES.filter(l=>mastery(l).master).length;
   $('#home').innerHTML=`<div class="hero"><svg class="deco" viewBox="0 0 300 200" fill="none" stroke="#fff" stroke-width="3"><path d="M0 170C60 170 80 20 150 40S240 180 300 60"/><path d="M40 150L260 70" stroke-dasharray="8 8"/><circle cx="150" cy="40" r="8" fill="#fff"/></svg>
     <small>${esc(B.grade)} · ${esc(B.chapter)}</small><h1>${esc(B.title)}</h1><p>${T(B.desc||'')}</p>
     <div class="bar"><i style="width:${LES.length?Math.round(seen/LES.length*100):0}%"></i></div>
-    <div class="meta">أنهيت ${seen} من ${LES.length} دروس${tot?` · حللت ${done} من ${tot} تمريناً`:''}</div><div class="share"><input id="shN" placeholder="اسمك (اختياري)" autocomplete="name" aria-label="الاسم"><button type="button" class="btn small" id="shB">📤 أرسل تقدّمي للمدرّس</button></div><pre id="shT" hidden></pre></div>
+    <div class="meta">شاهدت ${seen} من ${LES.length} دروس · أتقنت ${mast}${tot?` · حللت ${done} من ${tot} تمريناً`:''}</div><div class="share"><input id="shN" placeholder="اسمك (اختياري)" autocomplete="name" aria-label="الاسم"><button type="button" class="btn small" id="shB">📤 أرسل تقدّمي للمدرّس</button></div><pre id="shT" hidden></pre></div>
    <div class="lessons">${LES.map((l,i)=>{ const n=exDone(l); return `<a class="lcard" href="#l=${l.id}"><span class="no"><span>${esc(/^\d/.test(l.no)?'['+l.no+']':l.no)}</span><span class="pg">ص ${esc(l.pg)}</span></span><b>${T(l.t)}</b><p>${T(l.d)}</p>
-     <span class="st">${ST.seen[l.id]?'<span class="okb">✓ مكتمل</span>':`الدرس ${i+1}`}${l.nEx?`<span class="mini"><i style="width:${Math.round(n/l.nEx*100)}%"></i></span><span>${n}/${l.nEx}</span>`:''}</span></a>`; }).join('')}</div>
+     <span class="st">${ST.vis[l.id]?pipsHTML(l):`الدرس ${i+1}`}${l.nEx?`<span class="mini"><i style="width:${Math.round(n/l.nEx*100)}%"></i></span><span>${n}/${l.nEx}</span>`:''}</span></a>`; }).join('')}</div>
    ${B.classic?`<p class="classic">تفضّل الكتاب بصفحاته؟ <a href="${B.classic}">افتح النسخة الكلاسيكية</a></p>`:''}`;
   tags.home();
   $('#home').insertAdjacentHTML('beforeend',`<p class="credit home-credit">${CREDIT} · © 2026 جميع الحقوق محفوظة</p>`);
@@ -263,7 +282,7 @@ function renderHome(){
   try{ $('#shN').value=localStorage.getItem('lb-name')||''; }catch(e){}
   $('#shB').onclick=async()=>{ const nm=$('#shN').value.trim(); try{ localStorage.setItem('lb-name',nm); }catch(e){}
     const tried=LES.map(l=>{ let z=0; l.secs.forEach((s2,si)=>s2.steps.forEach((st,ki)=>st.parts.forEach((q,pi)=>{ if((q.k==='prac'||q.k==='self')&&ST.ex[`${l.id}-${si}-${ki}-${pi}`]===0) z++; }))); return z?`  • ${l.no} ${l.t}: ${z}`:''; }).filter(Boolean);
-    const txt=[`الرياضيات الحيّة — ${B.grade} · ${B.chapter}: ${B.title}`, nm?`الاسم: ${nm}`:'', `الدروس المكتملة: ${seen} من ${LES.length}`, tot?`التمارين المحلولة: ${done} من ${tot}`:'', ST.gen?`تمارين مشابهة حُلّت صحيحاً: ${ST.gen}`:'',
+    const txt=[`الرياضيات الحيّة — ${B.grade} · ${B.chapter}: ${B.title}`, nm?`الاسم: ${nm}`:'', `الدروس التي شاهدتها كاملة: ${seen} من ${LES.length}`, `الدروس التي أتقنتها: ${mast} من ${LES.length}`, tot?`التمارين المحلولة: ${done} من ${tot}`:'', ST.gen?`تمارين مشابهة حُلّت صحيحاً: ${ST.gen}`:'',
       tried.length?'تمارين حاولتها ولم أحلّها بعد:\n'+tried.join('\n'):'', 'التاريخ: '+new Date().toLocaleDateString('ar-IQ')].filter(Boolean).join('\n');
     const pre=$('#shT'); pre.hidden=false; pre.textContent=txt;
     try{ if(navigator.share){ await navigator.share({text:txt}); return; } }catch(e){ if(e&&e.name==='AbortError') return; }
@@ -273,7 +292,7 @@ function renderHome(){
 /* ================= lesson ================= */
 let steps=[], secs=[], active=null, curLes=null;
 function renderLesson(les){
-  D.body.classList.remove('is-home'); curLes=les; ST.last=les.id; save(); D.title=`${les.t.replace(/\$[^$]*\$/g,'')} – ${B.title}`;
+  D.body.classList.remove('is-home'); curLes=les; ST.last=les.id; ST.vis[les.id]=1; save(); D.title=`${les.t.replace(/\$[^$]*\$/g,'')} – ${B.title}`;
   $('#crS').textContent=`${B.grade} · ${B.chapter} · ${/^\d/.test(les.no)?'['+les.no+']':les.no} · ص ${les.pg}`; $('#crB').innerHTML=T(les.t); typeset($('#crB'));
   $('#bBack').href='#'; $('#bBackL').textContent='الدروس'; $('#bLessons').hidden=true;
   let prevSc=null, h='';
@@ -331,7 +350,8 @@ function genEx(name,bx){ const g=B.G&&B.G[name]; if(!g) return; const E=g(); bx.
   if(E.sc){ const k='gen'+(++genN); B.S[k]=E.sc; const stp=bx.closest('.step'); if(stp){ stp.dataset.scene=k; go(k); } } }
 function wire(les){
   $$('.ask',story).forEach(q=>{ const ans=+q.dataset.ans, why=q.nextElementSibling;
-    $$('.opt',q).forEach((b,i)=>b.onclick=()=>{ $$('.opt',q).forEach((x,j)=>{ x.classList.toggle('right',j===ans); x.classList.toggle('wrong',j===i&&i!==ans); }); why&&why.classList.add('on'); }); });
+    $$('.opt',q).forEach((b,i)=>b.onclick=()=>{ $$('.opt',q).forEach((x,j)=>{ x.classList.toggle('right',j===ans); x.classList.toggle('wrong',j===i&&i!==ans); }); why&&why.classList.add('on');
+      if(q.dataset.id){ ST.ask[q.dataset.id]=i===ans?1:0; save(); } }); });
   $$('.prac',story).forEach(p=>{ const key=nums(p.dataset.key), inp=$('input',p), fb=p.nextElementSibling, row=fb.nextElementSibling, id=p.dataset.id; let sol=row.nextElementSibling; while(sol&&!sol.classList.contains('sol')) sol=sol.nextElementSibling;
     const miss=p.dataset.miss?JSON.parse(decodeURIComponent(p.dataset.miss)):[];
     if(!sol.innerHTML.trim()&&!row.querySelector('[data-hint],[data-gen]')) row.hidden=true; else if(!sol.innerHTML.trim()) $('[data-show]',row).hidden=true;

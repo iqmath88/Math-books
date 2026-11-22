@@ -203,6 +203,11 @@ table.t th{background:var(--surface2)}
 .lcard p{margin:0;color:var(--ink2);font-size:14.5px;line-height:1.7}
 .lcard .st{margin-top:auto;padding-top:8px;font-size:13px;color:var(--muted);display:flex;gap:10px;align-items:center}
 .lcard .st .okb{color:var(--ok);font-weight:700}
+.lcard .st .okb.master{color:var(--gold,#b7791f)}
+.lcard .lv{display:inline-flex;gap:3px;align-items:center}
+.lcard .lv i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--ok);background:transparent}
+.lcard .lv i.on{background:var(--ok)}
+.lcard .lv i.na{border-style:dashed;opacity:.45}
 .lcard .mini{height:5px;border-radius:9px;background:var(--surface2);flex:1;overflow:hidden}
 .lcard .mini i{display:block;height:100%;background:var(--ok)}
 .classic{margin-top:22px;font-size:14px;color:var(--muted)}

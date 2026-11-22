@@ -23,6 +23,15 @@ for(const f of v2){ const s=read(f); const id=f.slice(4,-5);
 for(const f of fs.readdirSync(path.join(root,'v2/lib'),{recursive:true})){ const p='v2/lib/'+f; if(fs.statSync(path.join(root,p)).isFile()&&/\.(woff2|css|js)$/.test(f)) assert.ok(core.includes(flat('lib/'+f)),`v2 asset not precached: ${flat('lib/'+f)}`); }
 for(const m of idx.matchAll(/v2:'([\w-]+)'/g)) assert.ok(core.includes(flat(m[1]+'.html')),`v2 chapter not precached: ${m[1]}`);
 assert.equal(require('node:child_process').spawnSync(process.execPath,[path.join(root,'tools/flatten.cjs'),'--check'],{encoding:'utf8'}).status,0,'flat copy out of date: run node tools/flatten.cjs');
+/* library search index (examples, exercise sets, lessons → step keys) is in sync with the chapters, and every key opens a real step */
+assert.equal(require('node:child_process').spawnSync(process.execPath,[path.join(root,'tools/build-search-index.cjs'),'--check'],{encoding:'utf8'}).status,0,'search index out of date: run node tools/build-search-index.cjs');
+assert.ok(core.includes('search-index.js'),'search-index.js not precached');
+assert.match(idx,/searchResults/,'library search results list missing');
+/* worked solutions: no arithmetic mismatch in any a = b = c chain (tools/audit_math.py; skipped if SymPy is not installed) */
+{ const g=require('node:child_process').spawnSync('python3',['-c','import sympy, antlr4'],{encoding:'utf8'});
+  if(g.status===0){ const a=require('node:child_process').spawnSync('python3',[path.join(root,'tools/audit_math.py')],{encoding:'utf8'}); assert.equal(a.status,0,'math audit found a mismatch:\n'+a.stdout); }
+  if(g.status===0){ const a=require('node:child_process').spawnSync('python3',[path.join(root,'tests/g12c3-answers.test.py')],{encoding:'utf8'}); assert.equal(a.status,0,'reference chapter answers:\n'+a.stdout); }
+  else console.log('SKIP math audit (pip install sympy antlr4-python3-runtime==4.11)'); }
 /* quality gate: every lesson source passes tools/lint_lessons.py (Arabic inside formulas, labels in maths, braces, $) */
 { const g=require('node:child_process').spawnSync('python3',[path.join(root,'tools/lint_lessons.py')],{encoding:'utf8'}); assert.equal(g.status,0,'quality gate failed:\n'+g.stdout); }
 /* the interactive scenes: no errors at any slider position, and the key scenes agree with independent maths and the book's answers */

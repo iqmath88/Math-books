@@ -4,7 +4,7 @@ const {version, cachePrefix} = self.MATH_BOOKS_RELEASE;
 const CACHE_NAME = cachePrefix + version;
 const CORE = [
   './', './index.html', './manifest.webmanifest', './app-version.js', './update.js',
-  './classroom-v2.css', './classroom-v2.js', './practice.css', './practice.js',
+  './classroom-v2.css', './classroom-v2.js', './practice.css', './practice.js', './search-index.js',
   './ch3.html', './ch4.html', './ch5.html', './ch6.html',
   './g9c1.html', './g9c5.html', './g12c3.html',
   './v2__engine.css', './v2__engine.js', './v2__g12c3.html', './v2__g12c3.js', './v2__related-rates-motion.js', './v2__solids3d.js', './v2__g12c4.html', './v2__g12c4.js', './v2__g12c5.html', './v2__g12c5.js', './v2__g12c1.html', './v2__g12c1.js', './v2__g12c2.html', './v2__g12c2.js', './v2__g12c6.html', './v2__g12c6.js',
