@@ -204,9 +204,10 @@ const KEY='lb-v2-'+B.id; let ST={ex:{},seen:{}};
 try{ ST=Object.assign(ST,JSON.parse(localStorage.getItem(KEY)||'{}')); }catch(e){}
 const save=()=>{ try{ localStorage.setItem(KEY,JSON.stringify(ST)); }catch(e){} };
 const LES=parse(B.src);
-LES.forEach(l=>{ l.nEx=0; l.chk=[]; l.auto=[]; l.selfs=[]; const asks=[];
+LES.forEach(l=>{ l.nEx=0; l.chk=[]; l.auto=[]; l.selfs=[]; l.mcq=new Set(); const asks=[];
   l.secs.forEach((s,si)=>s.steps.forEach((st,ki)=>st.parts.forEach((p,pi)=>{ const pid=`${l.id}-${si}-${ki}-${pi}`;
     if(p.k==='prac'||p.k==='do') l.auto.push(pid); else if(p.k==='self') l.selfs.push(pid);
+    else if(p.k==='ask'&&s.stg==='practice'){ l.auto.push(pid); l.mcq.add(pid); }   /* v1.80: a multiple-choice exercise is auto-checked too (its result lives in ST.ask) */
     if(p.k==='ask'){ const id=`${l.id}-${si}-${ki}-${pi}`; asks.push(id); if(s.stg==='check') l.chk.push(id); } })));
   if(!l.chk.length) l.chk=asks; l.nEx=l.auto.length; });   /* lessons without a «تحقّق» stage: every understanding question counts */
 ST.n=LES.length; ST.t=LES.reduce((a,l)=>a+l.nEx,0);
@@ -220,7 +221,7 @@ if((ST.pv||1)<2){ const own=k=>LES.find(l=>k.startsWith(l.id+'-'));
 save();
 /* v1.78: only auto-checked answers (typed answers, figure tasks) count as «solved»; a self-assessment is the student's own verdict
    and is reported apart. ST.ex keeps both, exactly as before — only the counting changed. */
-const exDone=l=>l.auto.filter(k=>ST.ex[k]===1).length, selfDone=l=>l.selfs.filter(k=>ST.ex[k]===1).length;
+const exDone=l=>l.auto.filter(k=>(l.mcq.has(k)?ST.ask[k]:ST.ex[k])===1).length, selfDone=l=>l.selfs.filter(k=>ST.ex[k]===1).length;
 const MASTER_EX=0.8;
 const mastery=l=>{ const d=exDone(l), ok=l.chk.filter(k=>ST.ask[k]===1).length;
   const r={vis:!!ST.vis[l.id], steps:!!ST.seen[l.id], ex:l.nEx?d/l.nEx>=MASTER_EX:null, chk:l.chk.length?ok===l.chk.length:null, d, ok};

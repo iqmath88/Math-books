@@ -242,6 +242,21 @@ async function page(b,vp='board',o={}){ const ctx=o.ctx||await b.newContext({vie
     r[sc]=o; }
   const ok=Object.entries(r).every(([k,o])=>o.scene===k&&o.chipOk&&o.f2!==false&&o.bad&&o.ok&&o.stored);
   rec('T38','أسئلة الرسم في رول والقيمة المتوسطة والنهايات والانقلاب والمشتقة الثانية: f′ و f″ مباشرة وتصحيح آلي',ok&&!errs.length,JSON.stringify(r)+errs.join('|')); await ctx.close(); }
+ /* T39 converted self-assessments: an old «✓ نعم» earns nothing; the new multiple-choice answer is auto-checked and counted · ladder panel compact */
+ if(want('T39')){ const {ctx,pg,errs}=await page(b,'ipad'); await pg.goto(BASE+'v2/g12c3.html'); const r={};
+  await pg.evaluate(()=>localStorage.setItem('lb-v2-g12c3',JSON.stringify({ex:{'second-3-3-1':1},seen:{},pv:2,vis:{second:1},ask:{}})));
+  await pg.goto(BASE+'v2/g12c3.html#l=second'); await pg.waitForSelector('.ask[data-id="second-3-3-1"]');
+  const auto=()=>pg.evaluate(()=>{ location.hash=''; return new Promise(res=>setTimeout(()=>{ const m=document.querySelector('.hero .meta').textContent.match(/صحّحت آلياً (\d+) من (\d+)/); res(m?[+m[1],+m[2]]:null); },400)); });
+  r.before=await auto();
+  await pg.goto(BASE+'v2/g12c3.html#l=second'); await pg.waitForSelector('.ask[data-id="second-3-3-1"]');
+  r.noSelf=await pg.$$eval('.sec[data-stg="practice"] [data-self]',x=>x.length);
+  await pg.evaluate(()=>{ const q=document.querySelector('.ask[data-id="second-3-3-1"]'); q.scrollIntoView({block:'center',behavior:'instant'}); q.querySelectorAll('.opt')[+q.dataset.ans].click(); });
+  r.after=await auto();
+  /* ladder: the duplicate value cells are hidden, the sign sentence stays */
+  await pg.goto(BASE+'v2/g12c3.html#l=rates'); await pg.waitForSelector('.step'); await pg.evaluate(()=>document.querySelector('.step[data-scene^="rLadder2"]').scrollIntoView({block:'center',behavior:'instant'})); await pg.waitForTimeout(900);
+  r.panel=await pg.evaluate(()=>{ const m=document.getElementById('rrMotion'); return m&&!m.hidden?{h:Math.round(m.getBoundingClientRect().height),cells:getComputedStyle(m.querySelector('.rr-values')).display,txt:m.innerText.length>10}:null; });
+  const ok=r.before&&r.before[0]===0&&r.after&&r.after[0]===1&&r.after[1]===r.before[1]&&r.panel&&r.panel.cells==='none'&&r.panel.h<70&&r.panel.txt;
+  rec('T39','تحويل التقييم الذاتي إلى اختيار مصحَّح آلياً دون احتساب النقرات القديمة · لوحة السلم مختصرة',ok&&!errs.length,JSON.stringify(r)+errs.join('|')); await ctx.close(); }
  /* T20 clear error message instead of a blank page */
  if(want('T20')){ const {ctx,pg}=await page(b); await pg.route('**/v2/g12c4.js',r=>r.abort()); await pg.goto(BASE+'v2/g12c4.html').catch(()=>{}); await pg.waitForTimeout(500);
   const t=await pg.evaluate(()=>document.body.innerText); rec('T20','رسالة واضحة عند فشل تحميل الفصل (بدل صفحة فارغة)',/تعذّر فتح هذا الفصل/.test(t)&&/أعد المحاولة/.test(t),t.slice(0,80)); await ctx.close(); }
