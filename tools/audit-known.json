@@ -2,7 +2,7 @@
  "_doc": "Lines flagged by tools/audit_math.py that a person has reviewed. Matched by chapter + exact TeX, so they stay valid when lines move. status: documented = the lesson already shows an err:/xp: note; human-match = must be checked against the printed book page.",
  "items": [
   {"chapter": "g12c1", "tex": "(2+2i)(-2-2i)=(2-2)+(2-2)i=0", "status": "documented", "page": 25, "note": "مثال 17: the book writes the SUM as a product; the lesson keeps the book line and adds err: with the correct sum."},
-  {"chapter": "g9c1", "tex": "\\approx -4 \\times 2.4 = -9.8", "status": "human-match", "page": 6, "note": "مثال 3 i: −4×2.4 = −9.6, the final −9.8 is right only because √6 ≈ 2.449. v1.77 adds an xp: step; check whether the printed book uses 2.4 or 2.45."},
+  {"chapter": "g9c1", "tex": "\\approx -4 \\times 2.4 = -9.8", "status": "documented", "page": 6, "note": "مثال 3 i: the printed book has −4×2.4 = −9.8 (confirmed against the book, v1.77.1); −4×2.4 = −9.6. Book line kept, err: note added (v2) and a warning in the classic step note."},
   {"chapter": "ch4", "tex": "22 \\div 60 = 0.3666666", "status": "human-match", "page": 70, "note": "مثال 9: calculator display truncated (0.36666…); harmless, but «=» is not exact. Keep if the book prints it this way."}
  ]
 }
