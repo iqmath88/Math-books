@@ -308,7 +308,7 @@ GEN.gPlate=()=>{ const y=pick([2,3,4,5,6,8]), x=pick([3,4,6,8,9,12]), A2=x*y, a=
 /* ---------- 3−1: problem data card (المعطيات / المطلوب / العلاقة) built step by step ---------- */
 /* rows: [stage, kind, formula, arabic tag]; kind: g given · r required · rel relation · d derivative · ans answer */
 const KC={g:'chord',r:'c',rel:'f',d:'int',ans:'tan'};
-function card(A,rows,stage){ const c=A.col, W=A.W, short=A.H<340, narrow=W<330||short, vis=rows.filter(r=>r[0]<=stage), cur=vis.filter(r=>r[0]===stage);
+function card(A,rows,stage){ const c=A.col, W=A.W, short=A.H<340, narrow=W<330||short, vis=rows.filter(r=>r[0]===stage||(r[0]<stage&&typeof r[2]!=='function')),   /* a live row stays only on its own step */ cur=vis.filter(r=>r[0]===stage);
   /* on a short figure (phone) the card must not crush the drawing: only this step's rows, at most 2, or none */
   const show=narrow?(cur.length?cur:vis.filter(r=>r[1]==='r')).slice(-(short?2:3)):vis;
   if(!show.length) return 0; const lh=narrow?22:25, h=show.length*lh+14, x=12, w=W-24, y=8; if(A.H-h-14<170) return 0;
@@ -317,7 +317,9 @@ function card(A,rows,stage){ const c=A.col, W=A.W, short=A.H<340, narrow=W<330||
   show.forEach((r,i)=>{ const yy=y+10+lh*i+lh/2, on=r[0]===stage||(st1&&r[0]===0), col=c[KC[r[1]]];
     if(on) A.el('rect',{x:x+4,y:yy-lh/2+1,width:w-8,height:lh-2,rx:7,fill:col,opacity:.12});
     A.lab(x+w-12,yy,r[3],{fill:col,w:700,size:narrow?11.5:12.5,anchor:'end'});
-    A.lab(x+12,yy,r[2],{fill:on?c.ink:c.ink2,w:on?700:500,size:narrow?12.5:14,anchor:'start'}); });
+    const live=typeof r[2]==='function';   /* live row: recomputed from the figure's current value on every frame */
+    if(live) A.el('circle',{cx:x+w-6,cy:yy-lh/2+6,r:3,fill:col});
+    A.lab(x+12,yy,live?r[2](A):r[2],{fill:on?c.ink:c.ink2,w:on?700:500,size:narrow?12.5:14,anchor:'start'}); });
   return h+14; }
 /* wrap a scene: base + its step variants  name, name1, name2 … */
 function staged(name,rows,nst){ const base=S[name], dr=base.draw;
@@ -492,16 +494,16 @@ staged('rTankB',[[0,'g','side = 3 m','المعطيات'],[0,'g','dV/dt = −0.9 
 staged('rTankB2',[[0,'g','side = 3 m , dV/dt = −0.9 m³/h','المعطيات'],[0,'rel','V = (3)(3)h = 9h','العلاقة'],[0,'d','dV/dt = 9·dh/dt','نشتق'],[0,'ans','dh/dt = −0.9/9 = −0.1 m/h','النتيجة']],0);
 staged('rPlate',[[0,'g','A = 96 cm²','المساحة ثابتة'],[0,'g','dx/dt = 2 cm/s ,  y = 8','المعطيات'],[0,'r','dy/dt = ?','المطلوب'],
   [1,'rel','xy = 96 ⇒ x = 12','العلاقة'],[2,'d','x·dy/dt + y·dx/dt = 0','نشتق'],[3,'ans','dy/dt = −16/12 = −4/3 cm/s','النتيجة']],3);
-staged('rIce',[[0,'g','edge = 8 cm , dV/dt = −6 cm³/s','المعطيات'],[0,'g','x = 1 cm','لحظة السؤال'],[0,'r','dx/dt = ?','المطلوب'],
-  [1,'rel','V = (8 + 2x)³ − 8³','العلاقة'],[2,'d','dV/dt = 6(8 + 2x)²·dx/dt','نشتق'],[3,'ans','dx/dt = −6/600 = −0.01 cm/s','النتيجة']],3);
-staged('rLadder',[[0,'g','L = 10 m , dx/dt = 2 m/s , x = 8','المعطيات'],[0,'r','dy/dt = ? , dθ/dt = ?','المطلوب'],
-  [1,'rel','x² + y² = 100 ⇒ y = 6','فيثاغورس'],[2,'d','2x·dx/dt + 2y·dy/dt = 0','نشتق'],[2,'ans','dy/dt = −8/3 m/s','النتيجة 1'],
-  [3,'rel','sin θ = y/10 ⇒ cos θ·dθ/dt = (1/10)·dy/dt','الزاوية'],[3,'ans','dθ/dt = −1/3 rad/s','النتيجة 2']],3);
+/* staged('rIce') is declared at the end of this file (v1.78, live rows) */
+/* staged('rLadder') is declared at the end of this file (v1.78, live rows) */
 staged('rCone',[[0,'g','H = 24 , D = 16 ⇒ R = 8 cm','المعطيات'],[0,'g','in 5 , out 1 cm³/s ; h = 12','المعطيات'],[0,'r','dh/dt = ?','المطلوب'],
   [1,'rel','r/h = 8/24 ⇒ r = h/3','التشابه'],[2,'rel','V = (1/27)πh³','الحجم'],[2,'d','dV/dt = (1/9)πh²·dh/dt','نشتق'],[3,'g','dV/dt = 5 − 1 = 4','صب − تسرب'],[4,'ans','dh/dt = 4/(16π) = 1/(4π) cm/s','النتيجة']],4);
 staged('rShadow',[[0,'g','pole 7.2 m , man 1.8 m , dx/dt = 30','المعطيات'],[0,'r','ds/dt = ?','المطلوب'],[0,'rel','s/1.8 = (x + s)/7.2 ⇒ s = x/3','التشابه'],[0,'ans','ds/dt = 30/3 = 10 m/min','النتيجة']],0);
 staged('rBox',[[0,'g','dx/dt = 0.3 , dh/dt = −0.5','المعطيات'],[0,'g','x = 4 , h = 3','لحظة السؤال'],[0,'r','dV/dt = ?','المطلوب'],[0,'rel','V = x²h','العلاقة']],0);
 S.rLad60=Object.assign({},S.rLadder,{title:'سلم: الزاوية π/3',hint:'dy/dt = −(x/y)·dx/dt = −2 cot θ',sl:{min:1,max:9.6,v:5,rate:2,lab:'x (السلم 10 للتوضيح)',fmt:v=>fr(v,1)}});
+/* v1.78: its own target — θ = π/3 means x = 5 on a 10 m ladder (it used to inherit example 4's «x = 8» check and card) */
+{ const d=S.rLadder.draw; S.rLad60.draw=function(A){ d.call(this,A); A.ok=abs(A.p-5)<.06;
+  A.hint=A.ok?'✓ عند θ = π/3 : x = 5 ، dy/dt = −2/√3 ≈ −1.155 = −2 cot θ':'حرّك قدم السلم حتى تصبح θ = π/3 (أي x = 5 في سلم طوله 10)'; }; }
 
 /* box folded from a 12 cm sheet: flat sheet + 3D folded box; drag the corner square */
 S.o2.pick=(A,px,py)=>{ const g=A._g; if(!g) return null; const u=(px-g.X(0))/g.s, v=(py-g.Y(12))/g.s; return Math.min(Math.abs(u),Math.abs(v),Math.abs(12-u),Math.abs(12-v))*0+Math.max(0,Math.min(u,v,12-u,12-v)); };
@@ -701,3 +703,119 @@ S.rSand={title:'رمل يكوّن مخروطاً ارتفاعه = قطر قاع�
   T(A,X(2.6),Y(18.2),'25 cm³/s','chord',{size:12.5,anchor:'start'});
   A.chips.push(['c','r',fr(r,2)+' cm'],['tan','h = 2r',fr(h,2)+' cm'],['f','V = ⅔πr³',fr(2*PI*r**3/3,1)+' cm³'],['c','dr/dt',this.q?'?':fr(25/(2*PI*r*r),4)]); }};
 S.rSandOk=Object.assign({},S.rSand,{title:'عند r = 5 : dr/dt = 1/(2π)',sl:Object.assign({},S.rSand.sl,{v:5,play:0}),q:0});
+
+/* ======================= v1.78: three reference scenes, one standard =======================
+   every scene: drag the object or use the slider · ▶/⏸ · ↺ reset · values in the chips · a «live» row in the equation card
+   (dot at its corner) that substitutes the current value · a goal that a figure task (do:) checks automatically. */
+const RED=()=>{ try{ return matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){ return false; } };
+const f3=v=>fr(v,3);
+
+/* ---------- 1) sliding ladder (2D is the clearer picture here: one right triangle) ---------- */
+const ladLive={
+  y:A=>{ const x=A.p, y=sq(Math.max(0,100-x*x)); return `y = √(100 − ${fr(x,2)}²) = ${fr(y,2)}`; },
+  d:A=>{ const x=A.p, y=sq(Math.max(1e-9,100-x*x)); return `dy/dt = −(x/y)·2 = −(${fr(x,2)} ÷ ${fr(y,2)})·2 = ${fr(-2*x/y,3)}`; },
+  th:A=>{ const x=A.p, y=sq(Math.max(1e-9,100-x*x)); return `dθ/dt = (dy/dt)/(10 cos θ) = ${fr(-2*x/y,3)} ÷ ${fr(x,2)} = ${fr(-2/y,3)}`; } };
+S.rLadder.goals={
+  fast:{ ok:p=>{ const y=sq(100-p*p); return abs(-2*p/y+4)<.15; },
+    yes:'عندما $x=4\\sqrt5\\approx8.94$ يكون $y=2\\sqrt5$ ، ونسبة $\\dfrac xy=2$ فتكون $\\dfrac{dy}{dt}=-2\\cdot2=-4$ : ضعف سرعة الطرف الأسفل.',
+    no:p=>{ const y=sq(100-p*p), v=-2*p/y; return `الآن $\\dfrac{dy}{dt}\\approx${fr(v,2)}$ . المطلوب $-4$ : ${v>-4?'أبعِد قدم السلم عن الحائط':'قرّب قدم السلم من الحائط'} وراقب القيمة.`; } } };
+
+staged('rLadder',[[0,'g','L = 10 m , dx/dt = 2 m/s , x = 8','المعطيات'],[0,'r','dy/dt = ? , dθ/dt = ?','المطلوب'],
+  [1,'rel','x² + y² = 100','فيثاغورس'],[1,'g',ladLive.y,'بالتعويض الآن'],[2,'d','2x·dx/dt + 2y·dy/dt = 0','نشتق'],[2,'ans',ladLive.d,'بالتعويض الآن'],
+  [3,'rel','sin θ = y/10 ⇒ cos θ·dθ/dt = (1/10)·dy/dt','الزاوية'],[3,'ans',ladLive.th,'بالتعويض الآن']],3);
+
+/* ---------- 2) ice-covered cube: real 3D (rotate / section) ---------- */
+function cam(yaw,pitch,s,cx,cy){ const cy_=Math.cos(yaw), sy_=Math.sin(yaw), cp=Math.cos(pitch), sp=Math.sin(pitch);
+  return ([x,y,z])=>{ const X1=x*cy_-z*sy_, Z1=x*sy_+z*cy_, Y1=y*cp-Z1*sp, Z2=y*sp+Z1*cp; return [cx+X1*s,cy-Y1*s,Z2]; }; }
+/* faces of an axis-aligned box centred at 0 with half side h; returns [{pts,z,n}] sorted far → near */
+function boxFaces(P,h){ const v=[-h,h], F=[[[0,-1],1],[[0,1],1],[[1,-1],1],[[1,1],1],[[2,-1],1],[[2,1],1]].map(([[ax,sg]])=>{
+    const q=[[-1,-1],[1,-1],[1,1],[-1,1]].map(([a,b])=>{ const p=[0,0,0]; p[ax]=sg*h; p[(ax+1)%3]=a*h; p[(ax+2)%3]=b*h; return p; });
+    const pr=q.map(P); return {pts:pr,z:pr.reduce((s,p)=>s+p[2],0)/4,ax,sg}; }); return F.sort((a,b)=>a.z-b.z); }
+const ICE_SHADE=[[.9,.78],[1,.66],[.82,.72]];
+S.rIce.modes={lab:'العرض',opts:['مجسّم','دوران ↻','مقطع'],v:0};
+S.rIce.pick=function(A,px){ const g=A._g; if(!g) return null; const half=abs(px-g.cx)/g.s; return Math.max(0,Math.min(3,(half-4)/(A.m===2?1:1.12))); };
+S.rIce.draw=function(A){ const x=A.p, o=8+2*x, f=A.col, W=A.W, H=A.H, top=A.resTop||0, m=A.m||0, t=A.t;
+  const avail=Math.min(W*.92,(H-top)-46), s=avail/(m===2?15.5:20.5), cx=W/2, cy=top+(H-top)*.5; A._g={s,cx};
+  if(m===2){ /* section through the centre: x on both sides is plain to see */
+    const X=u=>cx+u*s, Y=v=>cy-v*s, hh=o/2;
+    A.el('rect',{x:X(-hh),y:Y(hh),width:o*s,height:o*s,fill:'#bfe6ff',opacity:.55,stroke:'#7ab8e0','stroke-width':2});
+    A.el('rect',{x:X(-4),y:Y(4),width:8*s,height:8*s,fill:'#596273',stroke:'#2d333d','stroke-width':2});
+    A.lab(X(0),Y(0),'8 cm',{fill:'#fff',w:700,size:15});
+    if(x>.05){ [[-1,0],[1,0],[0,-1],[0,1]].forEach(([a,b])=>{ const p0=[a*4,b*4], p1=[a*hh,b*hh]; A.el('path',{d:`M${X(p0[0])} ${Y(p0[1])}L${X(p1[0])} ${Y(p1[1])}`,stroke:f.c,'stroke-width':3}); });
+      T(A,X(-4-x/2),Y(0)-12,'x','c',{size:15}); T(A,X(4+x/2),Y(0)-12,'x','c',{size:15}); }
+    const yy=Y(-hh)+26; A.el('path',{d:`M${X(-hh)} ${yy}H${X(hh)}M${X(-hh)} ${yy-6}v12M${X(hh)} ${yy-6}v12`,stroke:f.tan,'stroke-width':1.8});
+    T(A,X(0),yy+16,`x + 8 + x = 8 + 2x = ${fr(o,2)}`,'tan',{size:13});
+  } else { /* 3D: ice faces behind, the metal cube, ice faces in front (translucent) */
+    const yaw=m===1&&!RED()?.6+t*.35:.62, P=cam(yaw,.42,s,cx,cy), ice=boxFaces(P,o/2), core=boxFaces(P,4), mid=ice.length/2;
+    const face=(F,fill,op,st)=>poly(A,F.pts.map(p=>[p[0],p[1]]),{fill,opacity:op,stroke:st,'stroke-width':1.5});
+    const iceCol=F=>['#cfeeff','#e6f7ff','#b4def8'][F.ax];
+    ice.slice(0,mid).forEach(F=>face(F,iceCol(F),.35,'#7ab8e0'));
+    core.slice(mid).forEach(F=>face(F,['#5f6a7d','#7a879c','#4b5464'][F.ax],1,'#2d333d'));
+    ice.slice(mid).forEach(F=>face(F,iceCol(F),.42,'#6aaedb'));
+    /* thickness marker on the front-most vertical edge */
+    const fx=core.at(-1), e1=P([4,-4,4]), e2=P([o/2,-4,4]);
+    if(x>.05){ A.el('path',{d:`M${e1[0]} ${e1[1]}L${e2[0]} ${e2[1]}`,stroke:f.c,'stroke-width':3.2}); T(A,(e1[0]+e2[0])/2,(e1[1]+e2[1])/2+16,'x','c',{size:15}); }
+    for(let k=0;k<3;k++){ const ph=(t*.8+k/3)%1, b=P([-o/2+o*(k+.5)/3,-o/2,o/2]); A.el('ellipse',{cx:b[0],cy:b[1]+ph*16,rx:2.6,ry:3.8,fill:'#5aaee6',opacity:(1-ph)*.9}); }
+    T(A,cx,Math.min(H-12,cy+o/2*s*1.25+20),`8 + 2x = ${fr(o,2)} cm`,'tan',{size:13});
+  }
+  const V=o**3-512, r=-1/(o*o); A.chips.push(['c','x',fr(x,2)+' cm'],['tan','V',fr(V,1)],['chord','dV/dt','−6'],['c','dx/dt',fr(r,4)]);
+  A.hint=m===2?'المقطع يُظهر الجليد على الجانبين: لذلك 8 + 2x وليس 8 + x':'اسحب أفقياً لتغيير سمك الجليد · ▶ يذيبه · «مقطع» يُظهر لماذا 8 + 2x'; };
+const iceLive={ s:A=>`(8 + 2x)³ − 8³ = ${fr((8+2*A.p)**3-512,1)} cm³`,
+  d:A=>{ const o=8+2*A.p; return `dx/dt = −6 ÷ (6·${fr(o,2)}²) = ${fr(-1/(o*o),4)} cm/s`; } };
+S.rIce.goals={
+  thin:{ ok:p=>p<.06,
+    yes:'عند $x=0$ يكون $\\left|\\dfrac{dx}{dt}\\right|=\\dfrac1{64}\\approx0.0156$ أكبر ما يمكن: مساحة السطح $6(8+2x)^2$ أصغر، فالحجم الذائب نفسه ($6\\,\\text{cm}^3$ كل ثانية) يُنقص سمكاً أكبر.',
+    no:p=>`الآن $\\left|\\dfrac{dx}{dt}\\right|\\approx${fr(1/(8+2*p)**2,4)}$ . غيّر السمك وقارن القيمة: متى تكون أكبر؟` } };
+
+staged('rIce',[[0,'g','edge = 8 cm , dV/dt = −6 cm³/s , x = 1','المعطيات'],[0,'r','dx/dt = ?','المطلوب'],
+  [1,'rel','V = (8 + 2x)³ − 8³','العلاقة'],[1,'g',iceLive.s,'بالتعويض الآن'],[2,'d','dV/dt = 3(8 + 2x)²·2·dx/dt','نشتق (قاعدة السلسلة)'],[2,'ans',iceLive.d,'بالتعويض الآن'],
+  [3,'ans','dx/dt = −6/600 = −0.01 cm/s','النتيجة']],3);
+
+/* ---------- 3) largest cylinder inside a cone (ex. 9, 3−8): 3D view + the similar triangles ---------- */
+function cylCone(o){ return {title:o.title,hint:'',anim:1,modes:{lab:'العرض',opts:['مجسّم','مقطع (التشابه)'],v:o.m??0},   /* no «rotate»: a body of revolution looks the same from every turn */
+  sl:{min:.2,max:5.8,v:o.v??2,step:.01,play:0,speed:.35,lab:'نصف قطر الأسطوانة r',fmt:v=>fr(v,2)+' cm'},
+  pick(A,px){ const g=A._g; return g?Math.max(.2,Math.min(5.8,abs(px-g.cx)/g.s)):null; },
+  draw(A){ const r=A.p, h=8*(1-r/6), f=A.col, W=A.W, H=A.H, m=(A.m||0)?2:0, show=!!o.ans, top=A.resTop||0;
+    const gw=show&&W>520?W*.6:W, s=Math.min((gw-40)/14.5,(H-top-80)/10.5), cx=gw/2, by=top+(H-top)*.5+4*s; A._g={s,cx};
+    const X=u=>cx+u*s, Y=v=>by-v*s;
+    if(m===2){ /* the triangle cut through the axis: small triangle above the cylinder ~ big triangle */
+      poly(A,[[X(-6),Y(0)],[X(6),Y(0)],[X(0),Y(8)]],{fill:f.f,opacity:.08,stroke:f.ink2,'stroke-width':2});
+      A.el('rect',{x:X(-r),y:Y(h),width:2*r*s,height:h*s,fill:f.chord,opacity:.22,stroke:f.chord,'stroke-width':2.2});
+      poly(A,[[X(0),Y(8)],[X(0),Y(h)],[X(r),Y(h)]],{fill:f.c,opacity:.28,stroke:f.c,'stroke-width':2});
+      poly(A,[[X(0),Y(8)],[X(0),Y(0)],[X(6),Y(0)]],{fill:'none',stroke:f.int,'stroke-width':2.4,'stroke-dasharray':'7 5'});
+      T(A,X(r/2),Y(h)+15,'r = '+fr(r,2),'c',{size:12.5}); T(A,X(-.3),Y((8+h)/2),'8 − h','c',{size:12.5,anchor:'end'});
+      T(A,X(3),Y(0)+16,'6','int',{size:12.5}); T(A,X(-r)-8,Y(h/2),'h = '+fr(h,2),'chord',{size:12.5,anchor:'end'});
+      A.el('path',{d:`M${X(6.7)} ${Y(0)}V${Y(8)}M${X(6.5)} ${Y(0)}H${X(6.9)}M${X(6.5)} ${Y(8)}H${X(6.9)}`,stroke:f.int,'stroke-width':1.8}); T(A,X(6.9)+6,Y(4),'8','int',{size:12.5,anchor:'start'});
+      T(A,X(0),Y(0)+38,`(8 − h)/8 = ${fr((8-h)/8,3)}   |   r/6 = ${fr(r/6,3)}`,'c',{size:13});
+    } else {
+      const yaw=0, ry=.3, ell=(R,y,col,w,dash,back)=>{ const n=40, pts=[]; for(let i=0;i<=n;i++){ const a=(back?Math.PI:0)+Math.PI*i/n+yaw; pts.push([X(R*Math.cos(a)),Y(y)+R*s*ry*Math.sin(a)]); }
+        A.el('path',{d:'M'+pts.map(p=>p.join(' ')).join('L'),stroke:col,'stroke-width':w,fill:'none','stroke-dasharray':dash||null}); };
+      /* cone: silhouette + base */
+      A.el('ellipse',{cx:X(0),cy:Y(0),rx:6*s,ry:6*s*ry,fill:f.f,opacity:.07});
+      poly(A,[[X(-6),Y(0)],[X(6),Y(0)],[X(0),Y(8)]],{fill:f.f,opacity:.07,stroke:'none'});
+      ell(6,0,f.ink2,1.4,'5 5',true); A.el('path',{d:`M${X(-6)} ${Y(0)}L${X(0)} ${Y(8)}L${X(6)} ${Y(0)}`,stroke:f.ink2,'stroke-width':2,fill:'none'});
+      /* cylinder */
+      A.el('path',{d:`M${X(-r)} ${Y(0)}V${Y(h)}M${X(r)} ${Y(0)}V${Y(h)}`,stroke:f.chord,'stroke-width':2.4});
+      A.el('rect',{x:X(-r),y:Y(h),width:2*r*s,height:h*s,fill:f.chord,opacity:.16});
+      ell(r,0,f.chord,1.4,'4 4',true); ell(r,0,f.chord,2.2);
+      A.el('ellipse',{cx:X(0),cy:Y(h),rx:r*s,ry:r*s*ry,fill:f.chord,opacity:.28,stroke:f.chord,'stroke-width':2.2});
+      ell(6,0,f.ink2,2);
+      /* dimensions */
+      A.el('path',{d:`M${X(0)} ${Y(h)}H${X(r)}`,stroke:f.c,'stroke-width':2.4}); T(A,X(r/2),Y(h)-10,'r','c',{size:14});
+      A.el('path',{d:`M${X(r)+12} ${Y(0)}V${Y(h)}`,stroke:f.tan,'stroke-width':2}); T(A,X(r)+18,Y(h/2),'h = '+fr(h,2),'tan',{size:12.5,anchor:'start'});
+      T(A,X(0),Y(8)-12,'8 cm','muted',{size:12}); T(A,X(-6)-6,Y(0)+6,'6','muted',{size:12,anchor:'end'});
+    }
+    const V=PI*r*r*h, dV=8*PI*(2*r-r*r/2);
+    if(show&&W>520){ const pr=A.subplot([gw+18,top+24,W-gw-34,(H-top)*.58],[0,6,0,150]); pr.axes('r','V'); pr.curve(u=>8*PI*(u*u-u**3/6),'f',0,6,2.4); pr.pt(r,V,'chord');
+      pr.pt(4,128*PI/3,'c'); T(A,pr.X(4),pr.Y(128*PI/3)-12,'أكبر حجم','c',{size:11.5});
+      T(A,gw+18+(W-gw-34)/2,top+(H-top)*.58+50,dV>.05?'V′ > 0 : الحجم يزداد':dV<-.05?'V′ < 0 : الحجم يتناقص':'V′ = 0','c',{size:12.5}); }
+    A.chips.push(['c','r',fr(r,2)],['tan','h = 8(1 − r/6)',fr(h,2)],['chord','V = πr²h',fr(V,1)]);
+    if(show) A.chips.push(['f','V′',fr(dV,1)]);
+    A.ok=show&&abs(r-4)<.04; A.hint=A.ok?'✓ عند r = 4 : h = 8/3 ، V = 128π/3 ≈ 134 cm³ وهو أكبر حجم':m===2?'المثلث الصغير فوق الأسطوانة يشابه مثلث المخروط كله':'اسحب أفقياً لتغيير r ، والارتفاع يتبع h = 8(1 − r/6)'; },
+  goals:{ eq:{ ok:p=>abs(8*(1-p/6)-p)<.06,
+    yes:'عند $r=h=\\dfrac{24}{7}\\approx3.43$ : من التشابه $h=8-\\dfrac43r$ ، فإذا كان $h=r$ فإن $\\dfrac73r=8$ .',
+    no:p=>`الآن $r\\approx${fr(p,2)}$ و $h\\approx${fr(8*(1-p/6),2)}$ . حرّك حتى يتساويا.` } } }; }
+S.oCyl=cylCone({title:'أسطوانة داخل مخروط ارتفاعه 8 cm وقطر قاعدته 12 cm',v:2});
+S.oCylOk=cylCone({title:'أكبر أسطوانة: r = 4 ، h = 8/3',v:4,ans:1});
+staged('oCylOk',[[0,'rel','(8 − h)/8 = r/6 ⇒ h = 8(1 − r/6)','التشابه'],[0,'g',A=>`h = 8(1 − ${fr(A.p,2)}/6) = ${fr(8*(1-A.p/6),3)}`,'بالتعويض الآن'],
+  [0,'d',A=>`V′ = 8π(2r − r²/2) = ${fr(8*PI*(2*A.p-A.p*A.p/2),2)}`,'بالتعويض الآن']],0);

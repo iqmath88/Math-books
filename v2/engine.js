@@ -37,18 +37,19 @@ function parse(src){
     if(!st) continue;
     if(s.startsWith('| ')||s==='|'){ if(box) box.lines.push(s.slice(2)); continue; }
     const m=s.match(/^([a-z0-9*]+):\s?(.*)$/);
-    if(m&&['k','p','h1','h2','lead','law','note','err','ask','o','o*','why','prac','sol','self','ok','tbl','tbh','html','fig','xp','hint','miss','gen','tnote','let','rel','main','aux'].includes(m[1])){
+    if(m&&['k','p','h1','h2','lead','law','note','err','ask','o','o*','why','prac','sol','self','ok','tbl','tbh','html','fig','xp','hint','miss','gen','tnote','let','rel','main','aux','do'].includes(m[1])){
       const [ ,key,val]=m; flushList();
       if(key==='o'||key==='o*'){ const q=st.parts.findLast(p=>p.k==='ask'); if(q){ if(key==='o*') q.ans=q.o.length; q.o.push(val); } continue; }
-      if(key==='hint'||key==='miss'||key==='gen'){ const q=st.parts.findLast(p=>p.k==='prac'||p.k==='self'); if(q){ if(key==='gen') q.gen=val.trim(); else if(key==='hint') (q.hints=q.hints||[]).push(val); else { const i=val.indexOf(';'); (q.miss=q.miss||[]).push([val.slice(0,i).trim(),val.slice(i+1).trim()]); } } continue; }
+      if(key==='hint'||key==='miss'||key==='gen'){ const q=st.parts.findLast(p=>p.k==='prac'||p.k==='self'||p.k==='do'); if(q){ if(key==='gen') q.gen=val.trim(); else if(key==='hint') (q.hints=q.hints||[]).push(val); else { const i=val.indexOf(';'); (q.miss=q.miss||[]).push([val.slice(0,i).trim(),val.slice(i+1).trim()]); } } continue; }
       if(key==='ok'){ const q=st.parts.findLast(p=>p.k==='prac'||p.k==='self'); if(q) q.ok=val; continue; }
       if(key==='tbl'||key==='tbh'){ let t=st.parts.at(-1); if(!t||t.k!=='tbl'){ t={k:'tbl',rows:[]}; st.parts.push(t); } t.rows.push({h:key==='tbh',c:val.split('|').map(x=>x.trim())}); continue; }
       const p={k:key,v:val,lines:val?[val]:[]};
       if(key==='law'||key==='xp'||key==='let'||key==='main'||key==='aux'){ p.lines=[]; }
       if(key==='prac'){ const [ans,ph]=val.split(';').map(x=>x.trim()); p.ans=ans; p.ph=ph||'الجواب'; p.lines=[]; }
       if(key==='self'){ p.lines=[]; }
+      if(key==='do'){ const i=val.indexOf(';'), ref=(i<0?val:val.slice(0,i)).trim(), j=ref.lastIndexOf('.'); p.sc=ref.slice(0,j); p.goal=ref.slice(j+1); p.v=i<0?'':val.slice(i+1).trim(); p.lines=[]; }
       if(key==='ask'){ p.o=[]; p.ans=0; }
-      if(key==='sol'||key==='why'){ const q=st.parts.findLast(x=>['prac','self','ask'].includes(x.k)); if(q){ q[key]=p; } }
+      if(key==='sol'||key==='why'){ const q=st.parts.findLast(x=>['prac','self','ask','do'].includes(x.k)); if(q){ q[key]=p; } }
       st.parts.push(p); box=['law','note','err','sol','why','self','html','lead','xp','tnote','let','main','aux'].includes(key)?p:null; continue; }
     if(s.startsWith('$$')){ flushList(); st.parts.push({k:'m',v:s.slice(2).trim()}); box=null; continue; }
     if(s.startsWith('- ')){ if(!list){ list={k:'ul',items:[]}; st.parts.push(list); } list.items.push(s.slice(2)); box=null; continue; }
@@ -190,9 +191,10 @@ function stepHTML(st,les,si,ki){
       case 'html': h+=p.lines.join('\n'); break;
       case 'tbl': h+=`<div class="tblwrap"><table class="t">${p.rows.map(r=>`<tr>${r.c.map(c=>`<${r.h?'th':'td'}>${T(c)}</${r.h?'th':'td'}>`).join('')}</tr>`).join('')}</table></div>`; break;
       case 'ask': h+=`<p>${T(p.v)}</p><div class="ask" data-ans="${p.ans}" data-id="${id}">${p.o.map(o=>`<button type="button" class="opt">${T(o)}</button>`).join('')}</div><div class="why">${p.why?lines(p.why):''}</div>`; break;
-      case 'prac': h+=`<div class="prac" data-key="${esc(p.ans)}" data-id="${id}"${p.ok?` data-ok="${esc(p.ok)}"`:''}${p.miss?` data-miss="${encodeURIComponent(JSON.stringify(p.miss))}"`:''}><input inputmode="text" autocomplete="off" placeholder="${esc(p.ph)}" aria-label="${esc(p.ph)}"><button type="button" class="btn">تحقّق</button></div><div class="fb"></div>`+
+      case 'do': h+=`<div class="do" data-id="${id}" data-sc="${esc(p.sc)}" data-goal="${esc(p.goal)}"><p>${T(p.v)}</p><div class="dorow"><button type="button" class="btn" data-dochk>تحقّق من الرسم</button><span class="how auto" title="يقرأ الرسم ويُصحَّح تلقائياً">تصحيح آلي · من الرسم</span>${extra(p,id)}</div>${extraBox(p)}<div class="fb"></div>${p.why?`<div class="why">${lines(p.why)}</div>`:''}</div>`; break;
+      case 'prac': h+=`<div class="prac" data-key="${esc(p.ans)}" data-id="${id}"${p.ok?` data-ok="${esc(p.ok)}"`:''}${p.miss?` data-miss="${encodeURIComponent(JSON.stringify(p.miss))}"`:''}><input inputmode="text" autocomplete="off" placeholder="${esc(p.ph)}" aria-label="${esc(p.ph)}"><button type="button" class="btn">تحقّق</button><span class="how auto" title="يُصحَّح تلقائياً ويُحسب في الإتقان">تصحيح آلي</span></div><div class="fb"></div>`+
         `<div class="selfrow">${extra(p,id)}<button type="button" class="btn ghost small" data-show>الحل</button></div>${extraBox(p)}<div class="sol">${p.sol?lines(p.sol):''}</div>`; break;
-      case 'self': h+=(p.lines.length?`<p>${lines(p)}</p>`:'')+`<div class="selfrow" data-self="${id}"${p.ok?` data-ok="${esc(p.ok)}"`:''}>${extra(p,id)}<button type="button" class="btn ghost small" data-show>أظهر الحل</button><span class="mk" hidden>هل كان حلّك صحيحاً؟ <button type="button" class="btn small" data-y>✓ نعم</button> <button type="button" class="btn ghost small" data-n>✗ ليس بعد</button></span><span class="done" hidden></span></div>${extraBox(p)}<div class="sol">${p.sol?lines(p.sol):''}</div>`; break;
+      case 'self': h+=(p.lines.length?`<p>${lines(p)}</p>`:'')+`<div class="selfrow" data-self="${id}"${p.ok?` data-ok="${esc(p.ok)}"`:''}>${extra(p,id)}<button type="button" class="btn ghost small" data-show>أظهر الحل</button><span class="how self" title="أنت تحكم على حلّك؛ لا يُحسب في الإتقان">تقييم ذاتي</span><span class="mk" hidden>هل كان حلّك صحيحاً؟ <button type="button" class="btn small" data-y>✓ نعم</button> <button type="button" class="btn ghost small" data-n>✗ ليس بعد</button></span><span class="done" hidden></span></div>${extraBox(p)}<div class="sol">${p.sol?lines(p.sol):''}</div>`; break;
     } });
   return h;
 }
@@ -202,10 +204,11 @@ const KEY='lb-v2-'+B.id; let ST={ex:{},seen:{}};
 try{ ST=Object.assign(ST,JSON.parse(localStorage.getItem(KEY)||'{}')); }catch(e){}
 const save=()=>{ try{ localStorage.setItem(KEY,JSON.stringify(ST)); }catch(e){} };
 const LES=parse(B.src);
-LES.forEach(l=>{ l.nEx=0; l.chk=[]; const asks=[];
-  l.secs.forEach((s,si)=>s.steps.forEach((st,ki)=>st.parts.forEach((p,pi)=>{ if(p.k==='prac'||p.k==='self') l.nEx++;
+LES.forEach(l=>{ l.nEx=0; l.chk=[]; l.auto=[]; l.selfs=[]; const asks=[];
+  l.secs.forEach((s,si)=>s.steps.forEach((st,ki)=>st.parts.forEach((p,pi)=>{ const pid=`${l.id}-${si}-${ki}-${pi}`;
+    if(p.k==='prac'||p.k==='do') l.auto.push(pid); else if(p.k==='self') l.selfs.push(pid);
     if(p.k==='ask'){ const id=`${l.id}-${si}-${ki}-${pi}`; asks.push(id); if(s.stg==='check') l.chk.push(id); } })));
-  if(!l.chk.length) l.chk=asks; });   /* lessons without a «تحقّق» stage: every understanding question counts */
+  if(!l.chk.length) l.chk=asks; l.nEx=l.auto.length; });   /* lessons without a «تحقّق» stage: every understanding question counts */
 ST.n=LES.length; ST.t=LES.reduce((a,l)=>a+l.nEx,0);
 /* Progress model (v1.77): five separate indicators — a lesson opened is NOT a lesson mastered.
    vis: lesson opened · seen: reached the end of its steps (the old «مكتمل», kept as is) · ex: exercise results (unchanged)
@@ -215,7 +218,9 @@ ST.vis=ST.vis||{}; ST.ask=ST.ask||{};
 if((ST.pv||1)<2){ const own=k=>LES.find(l=>k.startsWith(l.id+'-'));
   Object.keys(ST.seen||{}).forEach(id=>ST.vis[id]=1); Object.keys(ST.ex||{}).forEach(k=>{ const l=own(k); if(l) ST.vis[l.id]=1; }); if(ST.last) ST.vis[ST.last]=1; ST.pv=2; }
 save();
-const exDone=l=>Object.keys(ST.ex).filter(k=>k.startsWith(l.id+'-')&&ST.ex[k]===1).length;
+/* v1.78: only auto-checked answers (typed answers, figure tasks) count as «solved»; a self-assessment is the student's own verdict
+   and is reported apart. ST.ex keeps both, exactly as before — only the counting changed. */
+const exDone=l=>l.auto.filter(k=>ST.ex[k]===1).length, selfDone=l=>l.selfs.filter(k=>ST.ex[k]===1).length;
 const MASTER_EX=0.8;
 const mastery=l=>{ const d=exDone(l), ok=l.chk.filter(k=>ST.ask[k]===1).length;
   const r={vis:!!ST.vis[l.id], steps:!!ST.seen[l.id], ex:l.nEx?d/l.nEx>=MASTER_EX:null, chk:l.chk.length?ok===l.chk.length:null, d, ok};
@@ -258,7 +263,7 @@ D.body.innerHTML=`<header>
   <div class="legend" id="legend" hidden></div>
   <div class="svgbox" id="box"><svg class="g" id="svg" dir="ltr" aria-hidden="true"></svg></div>
   <div class="modes" id="modes" role="radiogroup" hidden></div>
-  <label class="sl" id="sl" hidden><button type="button" id="slP" class="slp" aria-label="تشغيل الحركة أو إيقافها"></button><span id="slL"></span><input type="range" id="slI"><b id="slV"></b></label>
+  <label class="sl" id="sl" hidden><button type="button" id="slP" class="slp" aria-label="تشغيل الحركة أو إيقافها"></button><button type="button" id="slR" class="slp" aria-label="إعادة الضبط" title="إعادة الضبط إلى القيمة الأولى">↺</button><span id="slL"></span><input type="range" id="slI"><b id="slV"></b></label>
   <div class="hint" id="hint"></div>
  </div></aside>
 </div>`;
@@ -268,11 +273,12 @@ const story=$('#story'), outline=$('#outline');
 function renderHome(){
   D.body.classList.add('is-home'); root.classList.remove('has-stages'); D.title=`${B.title} – الرياضيات الحيّة`;
   $('#crS').textContent=`${B.grade} · ${B.chapter}`; $('#crB').textContent=B.title; $('#bBack').href='../index.html'; $('#bBackL').textContent='المكتبة'; $('#bLessons').hidden=true;
-  const tot=LES.reduce((a,l)=>a+l.nEx,0), done=LES.reduce((a,l)=>a+exDone(l),0), seen=LES.filter(l=>ST.seen[l.id]).length, mast=LES.filter(l=>mastery(l).master).length;
+  const tot=LES.reduce((a,l)=>a+l.nEx,0), done=LES.reduce((a,l)=>a+exDone(l),0), seen=LES.filter(l=>ST.seen[l.id]).length, mast=LES.filter(l=>mastery(l).master).length,
+    sTot=LES.reduce((a,l)=>a+l.selfs.length,0), sDone=LES.reduce((a,l)=>a+selfDone(l),0);
   $('#home').innerHTML=`<div class="hero"><svg class="deco" viewBox="0 0 300 200" fill="none" stroke="#fff" stroke-width="3"><path d="M0 170C60 170 80 20 150 40S240 180 300 60"/><path d="M40 150L260 70" stroke-dasharray="8 8"/><circle cx="150" cy="40" r="8" fill="#fff"/></svg>
     <small>${esc(B.grade)} · ${esc(B.chapter)}</small><h1>${esc(B.title)}</h1><p>${T(B.desc||'')}</p>
     <div class="bar"><i style="width:${LES.length?Math.round(seen/LES.length*100):0}%"></i></div>
-    <div class="meta">شاهدت ${seen} من ${LES.length} دروس · أتقنت ${mast}${tot?` · حللت ${done} من ${tot} تمريناً`:''}</div><div class="share"><input id="shN" placeholder="اسمك (اختياري)" autocomplete="name" aria-label="الاسم"><button type="button" class="btn small" id="shB">📤 أرسل تقدّمي للمدرّس</button></div><pre id="shT" hidden></pre></div>
+    <div class="meta">شاهدت ${seen} من ${LES.length} دروس · أتقنت ${mast}${tot?` · صحّحت آلياً ${done} من ${tot}`:''}${sTot?` · قيّمت نفسك في ${sDone} من ${sTot}`:''}</div><div class="share"><input id="shN" placeholder="اسمك (اختياري)" autocomplete="name" aria-label="الاسم"><button type="button" class="btn small" id="shB">📤 أرسل تقدّمي للمدرّس</button></div><pre id="shT" hidden></pre></div>
    <div class="lessons">${LES.map((l,i)=>{ const n=exDone(l); return `<a class="lcard" href="#l=${l.id}"><span class="no"><span>${esc(/^\d/.test(l.no)?'['+l.no+']':l.no)}</span><span class="pg">ص ${esc(l.pg)}</span></span><b>${T(l.t)}</b><p>${T(l.d)}</p>
      <span class="st">${ST.vis[l.id]?pipsHTML(l):`الدرس ${i+1}`}${l.nEx?`<span class="mini"><i style="width:${Math.round(n/l.nEx*100)}%"></i></span><span>${n}/${l.nEx}</span>`:''}</span></a>`; }).join('')}</div>
    ${B.classic?`<p class="classic">تفضّل الكتاب بصفحاته؟ <a href="${B.classic}">افتح النسخة الكلاسيكية</a></p>`:''}`;
@@ -282,7 +288,7 @@ function renderHome(){
   try{ $('#shN').value=localStorage.getItem('lb-name')||''; }catch(e){}
   $('#shB').onclick=async()=>{ const nm=$('#shN').value.trim(); try{ localStorage.setItem('lb-name',nm); }catch(e){}
     const tried=LES.map(l=>{ let z=0; l.secs.forEach((s2,si)=>s2.steps.forEach((st,ki)=>st.parts.forEach((q,pi)=>{ if((q.k==='prac'||q.k==='self')&&ST.ex[`${l.id}-${si}-${ki}-${pi}`]===0) z++; }))); return z?`  • ${l.no} ${l.t}: ${z}`:''; }).filter(Boolean);
-    const txt=[`الرياضيات الحيّة — ${B.grade} · ${B.chapter}: ${B.title}`, nm?`الاسم: ${nm}`:'', `الدروس التي شاهدتها كاملة: ${seen} من ${LES.length}`, `الدروس التي أتقنتها: ${mast} من ${LES.length}`, tot?`التمارين المحلولة: ${done} من ${tot}`:'', ST.gen?`تمارين مشابهة حُلّت صحيحاً: ${ST.gen}`:'',
+    const txt=[`الرياضيات الحيّة — ${B.grade} · ${B.chapter}: ${B.title}`, nm?`الاسم: ${nm}`:'', `الدروس التي شاهدتها كاملة: ${seen} من ${LES.length}`, `الدروس التي أتقنتها: ${mast} من ${LES.length}`, tot?`تمارين صُحّحت آلياً: ${done} من ${tot}`:'', sTot?`تقييم ذاتي (لا يُحسب في الإتقان): ${sDone} من ${sTot}`:'', ST.gen?`تمارين مشابهة حُلّت صحيحاً: ${ST.gen}`:'',
       tried.length?'تمارين حاولتها ولم أحلّها بعد:\n'+tried.join('\n'):'', 'التاريخ: '+new Date().toLocaleDateString('ar-IQ')].filter(Boolean).join('\n');
     const pre=$('#shT'); pre.hidden=false; pre.textContent=txt;
     try{ if(navigator.share){ await navigator.share({text:txt}); return; } }catch(e){ if(e&&e.name==='AbortError') return; }
@@ -368,6 +374,12 @@ function wire(les){
   $$('[data-hint]',story).forEach(b=>{ const hs=$$('.hn',b.parentElement.nextElementSibling); let i=0;
     b.onclick=()=>{ if(i<hs.length){ hs[i].hidden=false; i++; } b.querySelector('bdi').textContent=Math.min(i+1,hs.length)+'/'+hs.length; if(i>=hs.length){ b.disabled=true; b.firstChild.textContent='💡 لا تلميحات أخرى '; } }; });
   $$('[data-gen]',story).forEach(b=>{ let bx=b.parentElement.nextElementSibling; while(bx&&!bx.classList.contains('genbox')) bx=bx.nextElementSibling; b.onclick=()=>genEx(b.dataset.gen,bx); });
+  $$('.do[data-id]',story).forEach(d=>{ const id=d.dataset.id, fb=$('.fb',d), why=$('.why',d);
+    if(ST.ex[id]===1){ fb.textContent='✓ أنجزته سابقاً'; fb.className='fb ok'; }
+    $('[data-dochk]',d).onclick=()=>{ const sc=B.S[d.dataset.sc], g=sc&&sc.goals&&sc.goals[d.dataset.goal]; if(!g){ fb.textContent='هذا السؤال غير متاح الآن'; fb.className='fb'; return; }
+      if(cur!==sc){ const st=d.closest('.step'); st.dataset.scene=d.dataset.sc; activate(st,true); go(d.dataset.sc,false); setPlay(false); fb.textContent='الرسم الآن أمامك: حرّكه ثم اضغط «تحقّق من الرسم»'; fb.className='fb'; return; }
+      setPlay(false); draw(); const ok=!!g.ok(P,lastA); fb.innerHTML=ok?'✓ '+T(g.yes):'✗ '+T(typeof g.no==='function'?g.no(P,lastA):g.no); fb.className='fb '+(ok?'ok':'bad'); typeset(fb);
+      if(ok){ ST.ex[id]=1; why&&why.classList.add('on'); } else if(ST.ex[id]!==1) ST.ex[id]=0; save(); }; });
   $$('[data-self]',story).forEach(r=>{ const id=r.dataset.self; let sol=r.nextElementSibling; while(sol&&!sol.classList.contains('sol')) sol=sol.nextElementSibling; const mk=$('.mk',r), dn=$('.done',r);
     const show=v=>{ mk.hidden=true; dn.hidden=false; dn.textContent=v===1?'✓ حللته':'سأعيد المحاولة'; dn.style.color=v===1?'':'var(--muted)'; };
     if(ST.ex[id]!==undefined) show(ST.ex[id]);
@@ -613,6 +625,8 @@ function go(name,hold){ if(hold!==undefined) stepHold=hold; const sc=B.S[name]; 
   if(sc===cur){ if(sc.sl){ if(stepHold&&playing){ P=sc.sl.v??P; syncSlider(); setPlay(false); draw(); } else if(!stepHold&&!playing&&wantPlay(sc)) setPlay(true); } return; } const red=matchMedia('(prefers-reduced-motion: reduce)').matches;
   from=cur&&!red?cur:null; t=0; cur=sc; currentSceneId=name; cDrag=null; sweepT=0; svg.style.touchAction=sc.pick||sc.drag2?'none':''; svg.style.cursor=sc.pick||sc.drag2?'grab':''; if(sc.sl){ const sl=sc.sl; P=sl.v??sl.min; playing=wantPlay(sc); const u0=Math.min(1,Math.max(0,(P-sl.min)/((sl.max-sl.min)||1))); playT=Math.acos(1-2*u0)/(sl.speed||.6); } syncSlider(); syncModes(); syncPlay(); kick(); }
 $('#slP').addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); setPlay(!playing); });
+/* reset: back to the scene's starting value, motion stopped, the chosen view kept */
+$('#slR').addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); if(!cur||!cur.sl) return; setPlay(false); loop.hold=0; loop.wrap=null; P=cur.sl.v??cur.sl.min; syncSlider(); draw(); });
 function size(){ const r=box.getBoundingClientRect(); W=r.width; H=r.height; draw(); }
 new ResizeObserver(size).observe(box);
 $('#slI').addEventListener('input',e=>{ playing=false; syncPlay(); P=+e.target.value; $('#slV').textContent=(cur.sl.fmt||fmt)(P); draw(); });

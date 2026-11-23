@@ -49,6 +49,32 @@ sweep('g12c3','rIce',(c,x)=>[['V = (8+2x)³ − 8³',N(c.V),(8+2*x)**3-512,.6],[
 at('g12c3','rIce',1,'dx/dt',-.01,.0006);
 sweep('g12c3','rLadder',(c,x)=>{ const y=Math.sqrt(100-x*x); return [['y = √(100 − x²)',N(c.y),y],['dy/dt = −(x/y)·2',N(c['dy/dt']),-2*x/y],['dθ/dt = −2/y',N(c['dθ/dt']),-2/y]]; });
 at('g12c3','rLadder',8,'dy/dt',-8/3); at('g12c3','rLad60',5,'dy/dt',-2/Math.sqrt(3));
+/* v1.78: the three reference scenes — every view, the goal of each figure task, and the live rows of the equation card */
+for(const m of [0,1,2]){ sweep('g12c3','rIce',(c,x)=>[['V',N(c.V),(8+2*x)**3-512,.6],['dx/dt',N(c['dx/dt']),-1/(8+2*x)**2]],{m});
+  for(const nm of ['oCyl','oCylOk']) sweep('g12c3',nm,(c,r)=>[['h = 8(1 − r/6)',N(c['h = 8(1 − r/6)']),8*(1-r/6)],['V = πr²h',N(c['V = πr²h']),Math.PI*r*r*8*(1-r/6),.06]],{m}); }
+{ const S=book('g12c3').S, G=(n,g)=>S[n]&&S[n].goals&&S[n].goals[g];
+  ok(!!G('rLadder','fast')&&!!G('rLadder2','fast')&&!!G('rIce','thin')&&!!G('rIce3','thin')&&!!G('oCyl','eq'),'g12c3: every step variant of the three scenes carries its figure-task goal');
+  /* ladder: dy/dt = −4  ⇔  x/y = 2  ⇔  x = 4√5 */
+  ok(G('rLadder','fast').ok(4*Math.sqrt(5))&&!G('rLadder','fast').ok(8)&&!G('rLadder','fast').ok(9.3),'rLadder.fast: true only near x = 4√5');
+  /* ice: |dx/dt| = 1/(8+2x)² is largest at x = 0 */
+  ok(G('rIce','thin').ok(0)&&!G('rIce','thin').ok(.5)&&!G('rIce','thin').ok(3),'rIce.thin: true only at x ≈ 0');
+  /* cylinder: h = r ⇔ r = 24/7 */
+  ok(G('oCyl','eq').ok(24/7)&&!G('oCyl','eq').ok(3)&&!G('oCyl','eq').ok(4),'oCyl.eq: true only at r = 24/7');
+  /* the maximum the ok-scene marks is the true maximum of V(r) = 8π(r² − r³/6) on (0,6) */
+  let best=0,bv=-1; for(let r=.001;r<6;r+=.001){ const v=8*Math.PI*(r*r-r**3/6); if(v>bv){ bv=v; best=r; } } ok(Math.abs(best-4)<.002&&Math.abs(bv-128*Math.PI/3)<.01,'oCylOk: max of V at r = 4, V = 128π/3');
+  ok(RUN('g12c3','oCylOk',{p:4}).ok===true&&RUN('g12c3','oCylOk',{p:3.5}).ok===false&&RUN('g12c3','oCyl',{p:4}).ok===false,'oCylOk ✓ only at r = 4 ; the exercise scene never shows the answer');
+  ok(RUN('g12c3','rLad60',{p:5}).ok===true&&RUN('g12c3','rLad60',{p:8}).ok===false,'rLad60: target θ = π/3 (x = 5), not example 4\'s x = 8');
+  /* live rows print the right numbers */
+  const txt=(n,p)=>RUN('g12c3',n,{p}).A.labs.map(l=>l.s).join(' | ');
+  const has=(n,p,re,msg)=>{ const t=txt(n,p); ok(re.test(t),`${n} p=${p}: live row ${msg} — got «${t.slice(0,240)}»`); };
+  has('rLadder2',8,/dy\/dt = −\(x\/y\)·2 = −\(8 ÷ 6\)·2 = −2\.667/,'dy/dt at x = 8');
+  has('rLadder3',8,/dθ\/dt = .* = −0\.333/,'dθ/dt at x = 8');
+  has('rLadder1',8,/y = √\(100 − 8²\) = 6/,'y at x = 8');
+  has('rIce2',1,/dx\/dt = −6 ÷ \(6·10²\) = −0\.01 cm\/s/,'dx/dt at x = 1');
+  has('oCylOk',4,/h = 8\(1 − 4\/6\) = 2\.667/,'h at r = 4'); has('oCylOk',4,/V′ = 8π\(2r − r²\/2\) = 0/,'V′ = 0 at r = 4');
+  /* a live row appears only on its own step: step 2 must not repeat step 1's substituted y */
+  ok(!/y = √\(100/.test(txt('rLadder2',8)),'rLadder2: step-1 live row not repeated on step 2'); }
+
 sweep('g12c3','rCone',(c,h)=>[['r = h/3',N(c['r = h/3']),h/3],['V = πh³/27',N(c.V),Math.PI*h**3/27,.06],['dh/dt = 4/(πh²/9)',N(c['dh/dt']),36/(Math.PI*h*h),.0002]]);
 at('g12c3','rCone',12,'dh/dt',1/(4*Math.PI),.0001);
 sweep('g12c3','rPar',(c,x)=>{ const S=Math.sqrt((x-7)**2+4*x), k=(x-5)/S; return [['S (distance to (7,0))',N(c.S),S,.002],['dS/dx',N(c['dS/dx']),k,.002]]; },{ps:[.5,1,2,3,4,6,8]});

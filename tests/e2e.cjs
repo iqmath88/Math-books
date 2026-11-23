@@ -186,7 +186,7 @@ async function page(b,vp='board',o={}){ const ctx=o.ctx||await b.newContext({vie
   let st=await S(); r.kept=JSON.stringify(st.ex)===JSON.stringify(old.ex)&&st.seen.rolle===1&&st.last==='mvt'&&st.gen===2; r.vis=!!(st.vis.rolle&&st.vis.mvt)&&st.pv===2;
   r.pips=await pg.$$eval('.lcard .lv',x=>x.length); r.notMastered=await pg.$$eval('.lcard .master',x=>x.length)===0;
   await pg.evaluate(()=>location.hash='l=rates'); await pg.waitForSelector('.step'); await pg.waitForTimeout(200);
-  const ids=await pg.evaluate(()=>({ex:[...document.querySelectorAll('.prac[data-id],.selfrow[data-self]')].map(e=>e.dataset.id||e.dataset.self),
+  const ids=await pg.evaluate(()=>({ex:[...document.querySelectorAll('.prac[data-id],.do[data-id]')].map(e=>e.dataset.id),   /* auto-checked only (v1.78) */
     chk:[...document.querySelectorAll('.sec[data-stg="check"] .ask[data-id]')].map(e=>e.dataset.id)}));
   r.nEx=ids.ex.length; r.nChk=ids.chk.length; st=await S(); r.visRates=st.vis.rates===1&&!st.seen.rates;
   for(const id of ids.chk){ await pg.evaluate(id=>{ const q=document.querySelector(`.ask[data-id="${id}"]`); q.querySelectorAll('.opt')[+q.dataset.ans].click(); },id); }
@@ -197,6 +197,34 @@ async function page(b,vp='board',o={}){ const ctx=o.ctx||await b.newContext({vie
   r.mastered=await pg.$eval('a.lcard[href="#l=rates"]',a=>!!a.querySelector('.master')); r.meta=await pg.$eval('.hero .meta',e=>e.textContent);
   const ok=r.kept&&r.vis&&r.pips===2&&r.notMastered&&r.nChk>0&&r.visRates&&r.ask&&!r.beforeSteps&&r.mastered&&/أتقنت 1/.test(r.meta);
   rec('T34','مؤشرات التقدم منفصلة: زيارة، خطوات، تمارين، تحقق، إتقان — وترحيل التقدم القديم دون فقد',ok&&!errs.length,JSON.stringify(r)+errs.join('|')); await ctx.close(); }
+ /* T35 figure tasks (do:): the answer is the state of the drawing, checked automatically and stored as an auto-checked result */
+ if(want('T35')){ const {ctx,pg,errs}=await page(b); await pg.goto(BASE+'v2/g12c3.html'); await pg.evaluate(()=>localStorage.removeItem('lb-v2-g12c3'));
+  const r={}; const setP=v=>pg.evaluate(v=>{ const i=document.querySelector('#slI'); i.value=v; i.dispatchEvent(new Event('input')); },v);
+  const task=async(les,sc,good,bad,key)=>{ await pg.goto(BASE+'v2/g12c3.html#l='+les); await pg.waitForSelector('.do[data-sc="'+sc+'"]');
+    const d=await pg.$('.do[data-sc="'+sc+'"]'); await d.evaluate(e=>e.scrollIntoView({block:'center',behavior:'instant'})); await pg.waitForTimeout(400); const btn=await d.$('[data-dochk]'); await btn.click(); await pg.waitForTimeout(300);
+    const scene=await pg.evaluate(()=>window.MathBooksSceneState().name); await setP(bad); await btn.click(); const fbBad=await d.$eval('.fb',e=>e.className);
+    await setP(good); await btn.click(); const fbOk=await d.$eval('.fb',e=>e.className+' '+e.textContent.slice(0,40)); const id=await d.getAttribute('data-id');
+    const st=await pg.evaluate(()=>JSON.parse(localStorage.getItem('lb-v2-g12c3'))); r[key]={scene,bad:/bad/.test(fbBad),ok:/\bok\b/.test(fbOk),stored:st.ex[id]===1}; };
+  await task('rates','rLadder',4*Math.sqrt(5),8,'ladder'); await task('rates','rIce',0,1.5,'ice'); await task('optim','oCyl',24/7,4,'cyl');
+  const ok=Object.values(r).every(x=>x.bad&&x.ok&&x.stored&&x.scene)&&r.ladder.scene.startsWith('rLadder')&&r.cyl.scene==='oCyl';
+  rec('T35','أسئلة من الرسم: تُصحَّح آلياً من حالة الرسم (السلم، الجليد، الأسطوانة)',ok&&!errs.length,JSON.stringify(r)+errs.join('|')); await ctx.close(); }
+ /* T36 reset ↺ returns the scene to its start value and stops the motion */
+ if(want('T36')){ const {ctx,pg,errs}=await page(b); await pg.goto(BASE+'v2/g12c3.html#l=optim'); await pg.waitForSelector('.do[data-sc="oCyl"]'); const r={};
+  await pg.$eval('.do[data-sc="oCyl"]',e=>e.closest('.step').scrollIntoView({block:'center',behavior:'instant'})); await pg.waitForTimeout(600); await pg.click('.do[data-sc="oCyl"] [data-dochk]'); await pg.waitForTimeout(400);
+  r.scene=await pg.evaluate(()=>window.MathBooksSceneState().name); await pg.click('#slP'); await pg.waitForTimeout(700); r.moved=await pg.evaluate(()=>window.MathBooksSceneState().value);
+  await pg.click('#slR'); await pg.waitForTimeout(250); const a=await pg.evaluate(()=>window.MathBooksSceneState().value); await pg.waitForTimeout(400); const b2=await pg.evaluate(()=>window.MathBooksSceneState().value);
+  r.after=a; r.still=a===b2; r.btn=await pg.$eval('#slP',e=>e.textContent); r.size=await pg.$eval('#slR',e=>Math.round(e.getBoundingClientRect().width));
+  const ok=r.scene==='oCyl'&&Math.abs(r.moved-2)>.01&&Math.abs(a-2)<1e-9&&r.still&&r.btn==='▶';
+  rec('T36','زر إعادة الضبط ↺ يعيد المشهد إلى قيمته الأولى ويوقف الحركة',ok&&!errs.length,JSON.stringify(r)+errs.join('|')); await ctx.close(); }
+ /* T37 self-assessment is reported apart and never counts as an auto-checked solve or toward mastery */
+ if(want('T37')){ const {ctx,pg,errs}=await page(b); await pg.goto(BASE+'v2/g12c3.html'); await pg.evaluate(()=>localStorage.removeItem('lb-v2-g12c3')); await pg.reload(); const r={};
+  const les=await pg.$$eval('a.lcard',a=>a.map(x=>x.getAttribute('href').slice(3))); let id=null, L=null;
+  for(const l of les){ await pg.goto(BASE+'v2/g12c3.html#l='+l); await pg.waitForSelector('.step'); id=await pg.$eval('[data-self]',e=>e.dataset.self).catch(()=>null); if(id){ L=l; break; } }
+  r.les=L; await pg.$eval(`[data-self="${id}"]`,e=>e.scrollIntoView({block:'center'})); await pg.click(`[data-self="${id}"] [data-show]`); await pg.click(`[data-self="${id}"] [data-y]`);
+  r.tag=await pg.$eval(`[data-self="${id}"] .how`,e=>e.textContent); r.autoTag=await pg.$$eval('.prac .how.auto',x=>x.length);
+  await pg.evaluate(()=>location.hash=''); await pg.waitForSelector('.hero .meta'); r.meta=await pg.$eval('.hero .meta',e=>e.textContent);
+  const ok=!!L&&r.tag==='تقييم ذاتي'&&/صحّحت آلياً 0 /.test(r.meta)&&/قيّمت نفسك في 1 /.test(r.meta);
+  rec('T37','التقييم الذاتي منفصل عن التصحيح الآلي ولا يُحسب في الإتقان',ok&&!errs.length,JSON.stringify(r)+errs.join('|')); await ctx.close(); }
  /* T20 clear error message instead of a blank page */
  if(want('T20')){ const {ctx,pg}=await page(b); await pg.route('**/v2/g12c4.js',r=>r.abort()); await pg.goto(BASE+'v2/g12c4.html').catch(()=>{}); await pg.waitForTimeout(500);
   const t=await pg.evaluate(()=>document.body.innerText); rec('T20','رسالة واضحة عند فشل تحميل الفصل (بدل صفحة فارغة)',/تعذّر فتح هذا الفصل/.test(t)&&/أعد المحاولة/.test(t),t.slice(0,80)); await ctx.close(); }
