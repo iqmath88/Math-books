@@ -74,6 +74,24 @@ for(const m of [0,1,2]){ sweep('g12c3','rIce',(c,x)=>[['V',N(c.V),(8+2*x)**3-512
   has('oCylOk',4,/h = 8\(1 − 4\/6\) = 2\.667/,'h at r = 4'); has('oCylOk',4,/V′ = 8π\(2r − r²\/2\) = 0/,'V′ = 0 at r = 4');
   /* a live row appears only on its own step: step 2 must not repeat step 1's substituted y */
   ok(!/y = √\(100/.test(txt('rLadder2',8)),'rLadder2: step-1 live row not repeated on step 2'); }
+/* v1.79: figure tasks for Rolle, MVT, extrema, inflection, second-derivative test */
+{ const S=book('g12c3').S;
+  const T5=[['tRolle','neg',-Math.sqrt(3),[Math.sqrt(3),0,-2]],['tMvt','par',2/3,[1,1.5,.3]],['tExt','min',4,[2,3,5]],['tInf','inf',.5,[0,1,-1]],['tSec','max',-1,[3,0,1]]];
+  for(const [n,g,good,bad] of T5){ const sc=S[n];
+    ok(!!sc&&sc.cP===1&&!!sc.sl&&sc.goals&&sc.goals[g],`${n}: slider-bound point and goal «${g}»`);
+    /* the derivative the goal and the chips use is the true derivative of f */
+    let md=0; for(let x=sc.sl.min;x<=sc.sl.max;x+=.05){ const h=1e-5, nd=(sc.f(x+h)-sc.f(x-h))/(2*h); md=Math.max(md,Math.abs(nd-sc.d(x))); } ok(md<1e-4,`${n}: d(x) is f′(x) (max err ${md.toExponential(1)})`);
+    ok(sc.goals[g].ok(good),`${n}.${g}: accepts the right answer ${good.toFixed(4)}`);
+    for(const b of bad) ok(!sc.goals[g].ok(b),`${n}.${g}: rejects ${b}`);
+    ok(good>=sc.sl.min&&good<=sc.sl.max,`${n}: the answer is reachable on the slider`);
+    /* (engine-drawn plot scenes: their chips are checked in the browser, tests/e2e.cjs T38) */ }
+  /* the answers themselves, from the definitions */
+  const tM=S.tMvt; ok(Math.abs(tM.d(2/3)-(tM.f(2)-tM.f(0))/2)<1e-12,'tMvt: f′(2/3) = chord slope −4');
+  ok(Math.abs(S.tRolle.d(-Math.sqrt(3)))<1e-12&&Math.abs(S.tRolle.f(-3)-S.tRolle.f(3))<1e-12,'tRolle: f(−3) = f(3), f′(−√3) = 0');
+  ok(S.tExt.d(4)===0&&S.tExt.d(3.9)<0&&S.tExt.d(4.1)>0&&S.tExt.f(4)===16,'tExt: x = 4 is a local minimum, f(4) = 16');
+  ok(Math.abs(12*.5-6)<1e-12&&S.tInf.f(.5)===-5.5,'tInf: f″(1/2) = 0 , point (1/2 , −11/2)');
+  ok(S.tSec.d(-1)===0&&6*(-1)-6<0&&S.tSec.f(-1)===5,'tSec: f′(−1) = 0 , f″(−1) = −12 < 0 , f(−1) = 5');
+  }
 
 sweep('g12c3','rCone',(c,h)=>[['r = h/3',N(c['r = h/3']),h/3],['V = πh³/27',N(c.V),Math.PI*h**3/27,.06],['dh/dt = 4/(πh²/9)',N(c['dh/dt']),36/(Math.PI*h*h),.0002]]);
 at('g12c3','rCone',12,'dh/dt',1/(4*Math.PI),.0001);

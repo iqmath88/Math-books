@@ -813,9 +813,46 @@ function cylCone(o){ return {title:o.title,hint:'',anim:1,modes:{lab:'العرض
     if(show) A.chips.push(['f','V′',fr(dV,1)]);
     A.ok=show&&abs(r-4)<.04; A.hint=A.ok?'✓ عند r = 4 : h = 8/3 ، V = 128π/3 ≈ 134 cm³ وهو أكبر حجم':m===2?'المثلث الصغير فوق الأسطوانة يشابه مثلث المخروط كله':'اسحب أفقياً لتغيير r ، والارتفاع يتبع h = 8(1 − r/6)'; },
   goals:{ eq:{ ok:p=>abs(8*(1-p/6)-p)<.06,
-    yes:'عند $r=h=\\dfrac{24}{7}\\approx3.43$ : من التشابه $h=8-\\dfrac43r$ ، فإذا كان $h=r$ فإن $\\dfrac73r=8$ .',
+    yes:'عند $r=h=\\dfrac{24}{7}\\approx3.43$ ، لأن التشابه يعطي $h=8-\\dfrac43r$ ، فإذا كان $h=r$ فإن $\\dfrac73r=8$ .',
     no:p=>`الآن $r\\approx${fr(p,2)}$ و $h\\approx${fr(8*(1-p/6),2)}$ . حرّك حتى يتساويا.` } } }; }
 S.oCyl=cylCone({title:'أسطوانة داخل مخروط ارتفاعه 8 cm وقطر قاعدته 12 cm',v:2});
 S.oCylOk=cylCone({title:'أكبر أسطوانة: r = 4 ، h = 8/3',v:4,ans:1});
 staged('oCylOk',[[0,'rel','(8 − h)/8 = r/6 ⇒ h = 8(1 − r/6)','التشابه'],[0,'g',A=>`h = 8(1 − ${fr(A.p,2)}/6) = ${fr(8*(1-A.p/6),3)}`,'بالتعويض الآن'],
   [0,'d',A=>`V′ = 8π(2r − r²/2) = ${fr(8*PI*(2*A.p-A.p*A.p/2),2)}`,'بالتعويض الآن']],0);
+
+/* ======================= v1.79: figure tasks for Rolle · MVT · extrema · inflection · second-derivative test =======================
+   each is a book function with a draggable point c tied to the slider (cP): drag, slider, keyboard, ▶ and ↺ move the same c.
+   The engine exposes A.cv (c), A.mt (tangent slope f′(c)) and A.mc (chord slope). */
+const cSl=(lo,hi,v,lab='c')=>({min:lo,max:hi,v,step:.005,lab,fmt:x=>fr(x,3),speed:.35});
+const f2=x=>fr(x,2);
+/* Rolle — exercise 1 a: f(x) = x³ − 9x on [−3 , 3] has TWO numbers c */
+S.tRolle={v:[-3.8,3.8,-12,12],f:x=>x**3-9*x,d:x=>3*x*x-9,a:-3,b:3,chord:1,interval:1,tan:1,drag:1,cP:1,zero:1,sl:cSl(-2.97,2.97,1),
+  title:'f(x) = x³ − 9x على [−3 , 3]',hint:'اسحب c وراقب ميل المماس f′(c)',
+  goals:{ neg:{ ok:p=>abs(p+sq(3))<.04,
+    yes:'عند $c=-\\sqrt3\\approx-1.73$ يكون $f\'(c)=3c^2-9=0$ . ويوجد عدد آخر هو $c=\\sqrt3$ ، فالمبرهنة تضمن عدداً **واحداً على الأقل** وقد يكون أكثر.',
+    no:p=>abs(3*p*p-9)<.25&&p>0?'هذا العدد $c=\\sqrt3$ موجب، والمطلوب العدد **السالب** الذي يكون عنده المماس أفقياً.':`الآن $f'(c)\\approx${f2(3*p*p-9)}$ ، والمطلوب $f'(c)=0$ عند عدد سالب.` } } };
+/* MVT — example 4: f(x) = x³ − 4x² on [0 , 2]: the parallel tangent at c = 2/3 (c = 2 is rejected) */
+S.tMvt=MV(cubic,{a:0,b:2,v:V1,chord:1,tan:1,drag:1,cP:1,interval:1,sl:cSl(.02,1.98,1.6),title:'f(x) = x³ − 4x² على [0 , 2]',hint:'اسحب c حتى يوازي المماس الوتر',
+  goals:{ par:{ ok:p=>abs(p-2/3)<.025,
+    yes:'عند $c=\\dfrac23$ يكون $f\'(c)=3c^2-8c=-4$ وهو ميل الوتر $\\dfrac{f(2)-f(0)}{2-0}$ . أما الحل الآخر $c=2$ فمرفوض لأنه ليس داخل الفترة المفتوحة.',
+    no:p=>`ميل المماس الآن $${f2(3*p*p-8*p)}$ تقريباً، وميل الوتر $-4$ . حرّك $c$ حتى يتساويا.` } } });
+/* first-derivative test — example 3 c: f(x) = x³ − 9x² + 24x */
+S.tExt={v:[-.4,5.6,-2,26],f:x=>x**3-9*x*x+24*x,d:x=>3*x*x-18*x+24,mono:1,tan:1,drag:1,cP:1,a:.25,b:5.35,tl:'f′(x)',cl:'x',sl:cSl(.3,5.3,3,'x'),
+  title:'f(x) = x³ − 9x² + 24x',hint:'اسحب x : الأخضر متزايدة والأحمر متناقصة',
+  goals:{ min:{ ok:p=>abs(p-4)<.04,
+    yes:'عند $x=4$ يكون $f\'(4)=0$ ، وتتغير إشارة المشتقة من السالب إلى الموجب، إذن توجد نهاية صغرى محلية قيمتها $f(4)=16$ .',
+    no:p=>abs(p-2)<.06?'عند $x=2$ تنعدم المشتقة، لكن إشارتها تتغير من الموجب إلى السالب، فهذه نهاية **عظمى**.':`هنا $f'(x)\\approx${f2(3*p*p-18*p+24)}$ وليست صفراً، فالمماس ليس أفقياً.` } } };
+/* concavity — example 2: f(x) = 2x³ − 3x² − 12x + 1 , inflection at x = 1/2 */
+S.tInf={v:[-2.5,3.5,-22,12],f:x=>2*x**3-3*x*x-12*x+1,d:x=>6*x*x-6*x-12,conc:1,tan:1,drag:1,cP:1,a:-2.4,b:3.4,tl:'f′(x)',cl:'x',sl:cSl(-2.35,3.35,-1.2,'x'),
+  title:'f(x) = 2x³ − 3x² − 12x + 1',hint:'اسحب x : راقب جهة المنحني من المماس',
+  draw:A=>{ const x=A.cv; if(x!==undefined) A.chips.push(['int','f″(x)',f2(12*x-6)]); },
+  goals:{ inf:{ ok:p=>abs(p-.5)<.03,
+    yes:'النقطة $\\left(\\tfrac12\\,,\\,-\\tfrac{11}2\\right)$ ، لأن $f\'\'(x)=12x-6$ تتغير إشارتها عند $x=\\tfrac12$ ، والمماس هناك **يقطع** المنحني. ولاحظ أن ميل المماس هناك $-13.5$ وهو أصغر ميل على المنحني.',
+    no:p=>`الآن $f''(x)\\approx${f2(12*p-6)}$ ، فالمنحني ${12*p-6>0?'مقعر وفوق المماس':'محدب وتحت المماس'}. ابحث عن النقطة التي تتغير عندها الجهة.` } } };
+/* second-derivative test — example 1 c: f(x) = x³ − 3x² − 9x , critical numbers −1 and 3 */
+S.tSec={v:[-2.6,5,-32,12],f:x=>x**3-3*x*x-9*x,d:x=>3*x*x-6*x-9,conc:1,tan:1,drag:1,cP:1,a:-2.5,b:4.9,tl:'f′(x)',cl:'x',sl:cSl(-2.45,4.85,1,'x'),
+  title:'f(x) = x³ − 3x² − 9x',hint:'اسحب x إلى عدد حرج ثم انظر إشارة f″',
+  draw:A=>{ const x=A.cv; if(x!==undefined) A.chips.push(['int','f″(x)',f2(6*x-6)]); },
+  goals:{ max:{ ok:p=>abs(p+1)<.04,
+    yes:'عند $x=-1$ يكون $f\'(-1)=0$ و $f\'\'(-1)=-12$ سالبة، إذن توجد نهاية عظمى محلية قيمتها $f(-1)=5$ .',
+    no:p=>abs(p-3)<.06?'عند $x=3$ تنعدم المشتقة، لكن $f\'\'(3)=12$ موجبة، فهذه نهاية **صغرى**.':`هنا $f'(x)\\approx${f2(3*p*p-6*p-9)}$ ، فهذا ليس عدداً حرجاً.` } } };

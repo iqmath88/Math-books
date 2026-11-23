@@ -225,6 +225,23 @@ async function page(b,vp='board',o={}){ const ctx=o.ctx||await b.newContext({vie
   await pg.evaluate(()=>location.hash=''); await pg.waitForSelector('.hero .meta'); r.meta=await pg.$eval('.hero .meta',e=>e.textContent);
   const ok=!!L&&r.tag==='تقييم ذاتي'&&/صحّحت آلياً 0 /.test(r.meta)&&/قيّمت نفسك في 1 /.test(r.meta);
   rec('T37','التقييم الذاتي منفصل عن التصحيح الآلي ولا يُحسب في الإتقان',ok&&!errs.length,JSON.stringify(r)+errs.join('|')); await ctx.close(); }
+ /* T38 figure tasks for Rolle · MVT · extrema · inflection · second-derivative test: slider-bound point, live f′ / f″ chips, auto-check */
+ if(want('T38')){ const {ctx,pg,errs}=await page(b,'ipad'); await pg.goto(BASE+'v2/g12c3.html'); await pg.evaluate(()=>localStorage.removeItem('lb-v2-g12c3')); const r={};
+  const setP=v=>pg.evaluate(v=>{ const i=document.querySelector('#slI'); i.value=v; i.dispatchEvent(new Event('input')); },v);
+  const chip=lab=>pg.evaluate(lab=>{ const c=[...document.querySelectorAll('#chips .chip')].find(e=>e.textContent.includes(lab)); return c?parseFloat(c.querySelector('b').textContent.replace('−','-')):null; },lab);
+  const T=[['rolle','tRolle',-Math.sqrt(3),Math.sqrt(3),x=>3*x*x-9,'f′(c)',null],['mvt','tMvt',2/3,1.2,x=>3*x*x-8*x,'f′(c)',null],
+    ['extrema','tExt',4,2,x=>3*x*x-18*x+24,'f′(x)',null],['concav','tInf',.5,1,x=>6*x*x-6*x-12,'f′(x)',x=>12*x-6],['second','tSec',-1,3,x=>3*x*x-6*x-9,'f′(x)',x=>6*x-6]];
+  for(const [les,sc,good,bad,d,tl,d2] of T){ const o={};
+    await pg.goto(BASE+'v2/g12c3.html#l='+les); await pg.waitForSelector(`.do[data-sc="${sc}"]`); const dEl=await pg.$(`.do[data-sc="${sc}"]`);
+    await dEl.evaluate(e=>e.scrollIntoView({block:'center',behavior:'instant'})); await pg.waitForTimeout(400); const btn=await dEl.$('[data-dochk]'); await btn.click(); await pg.waitForTimeout(350);
+    o.scene=await pg.evaluate(()=>window.MathBooksSceneState().name);
+    await setP(bad); await pg.waitForTimeout(60); const xv=await pg.evaluate(()=>window.MathBooksSceneState().value); /* the slider snaps to its step */ o.chip=await chip(tl); o.chipOk=Math.abs(o.chip-d(xv))<.011; if(d2){ const v2=await chip('f″(x)'); o.f2=Math.abs(v2-d2(xv))<.011; }
+    await btn.click(); o.bad=/bad/.test(await dEl.$eval('.fb',e=>e.className));
+    await setP(good); await btn.click(); o.ok=/\bok\b/.test(await dEl.$eval('.fb',e=>e.className));
+    const id=await dEl.getAttribute('data-id'); o.stored=await pg.evaluate(id=>JSON.parse(localStorage.getItem('lb-v2-g12c3')).ex[id]===1,id);
+    r[sc]=o; }
+  const ok=Object.entries(r).every(([k,o])=>o.scene===k&&o.chipOk&&o.f2!==false&&o.bad&&o.ok&&o.stored);
+  rec('T38','أسئلة الرسم في رول والقيمة المتوسطة والنهايات والانقلاب والمشتقة الثانية: f′ و f″ مباشرة وتصحيح آلي',ok&&!errs.length,JSON.stringify(r)+errs.join('|')); await ctx.close(); }
  /* T20 clear error message instead of a blank page */
  if(want('T20')){ const {ctx,pg}=await page(b); await pg.route('**/v2/g12c4.js',r=>r.abort()); await pg.goto(BASE+'v2/g12c4.html').catch(()=>{}); await pg.waitForTimeout(500);
   const t=await pg.evaluate(()=>document.body.innerText); rec('T20','رسالة واضحة عند فشل تحميل الفصل (بدل صفحة فارغة)',/تعذّر فتح هذا الفصل/.test(t)&&/أعد المحاولة/.test(t),t.slice(0,80)); await ctx.close(); }

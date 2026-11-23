@@ -486,7 +486,8 @@ function draw(){
       chips.push(['chord','ميل الوتر',fmt(m)]); }
     if(f&&sc.tri){ el('path',{d:`M${X(a)} ${Y(fa)}H${X(b)}V${Y(fb)}`,stroke:COL.chord,'stroke-width':1.6,'stroke-dasharray':'4 4',fill:'none'},G);
       lab((X(a)+X(b))/2,Y(fa)+(fb>fa?14:-12),'Δx',{fill:COL.chord,w:700,size:13}); if(Math.abs(fb-fa)>1e-6) lab(X(b)+16,(Y(fa)+Y(fb))/2,'Δy',{fill:COL.chord,w:700,size:13}); }
-    const c=cDrag!==null&&sc.drag?cDrag:sc.c;
+    /* cP (v1.79): c is the slider value P — the point then moves by drag, slider, keyboard, ▶ and ↺ alike */
+    const c=sc.cP?P:(cDrag!==null&&sc.drag?cDrag:sc.c);
     if(f&&sc.tan&&c!==undefined){ const yc=f(c); mt=d1(c); if(isFinite(mt)) line(c,yc,mt,COL.tan,{w:2.6});
       el('path',{d:`M${X(c)} ${Y(yc)}V${Y(ya)}`,stroke:COL.c,'stroke-width':1.2,'stroke-dasharray':'3 4'},G);
       lab(X(c),Math.min(gb-8,Y(ya)+14),sc.cl||'c',{fill:COL.c,w:700,size:13,halo:1});
@@ -499,6 +500,7 @@ function draw(){
       el('circle',{cx:X(c),cy:Y(yc),r:7.5,fill:COL.c,stroke:COL.surf,'stroke-width':2.5,class:sc.drag?'handle':''},G);
       if(par&&chO){ el('circle',{cx:X(c),cy:Y(yc),r:13,fill:'none',stroke:COL.tan,'stroke-width':2},G); if(sc.drag){ hint='✓ المماس يوازي الوتر: ميلاهما متساويان'; hintOk=true; } }
       if(sc.zero&&Math.abs(mt)<.03&&sc.drag){ hint='✓ المماس أفقي: f′(c) = 0'; hintOk=true; } }
+    A.cv=c; A.mt=mt; A.mc=m;   /* exposed to overlays and to figure-task goals */
     /* segments, points, labels */
     (sc.segs||[]).forEach(([x1,y1,x2,y2,col,dash,w])=>el('path',{d:`M${X(x1)} ${Y(y1)}L${X(x2)} ${Y(y2)}`,stroke:C2(col||'muted'),'stroke-width':w||1.6,'stroke-dasharray':dash?'5 5':undefined},G));
     (typeof sc.pts==='function'?sc.pts(A):sc.pts||[]).forEach(([x,y,s,col,o={}])=>{ col=C2(col||'c'); if(o.open) el('circle',{cx:X(x),cy:Y(y),r:6,fill:COL.surf,stroke:col,'stroke-width':2.4},G); else el('circle',{cx:X(x),cy:Y(y),r:6,fill:col,stroke:COL.surf,'stroke-width':2.2},G);
@@ -631,7 +633,7 @@ function size(){ const r=box.getBoundingClientRect(); W=r.width; H=r.height; dra
 new ResizeObserver(size).observe(box);
 $('#slI').addEventListener('input',e=>{ playing=false; syncPlay(); P=+e.target.value; $('#slV').textContent=(cur.sl.fmt||fmt)(P); draw(); });
 let dragging=false;
-const setC=e=>{ if(!W2Xg) return; const r=svg.getBoundingClientRect(); const x=W2Xg(e.clientX-r.left); const lo=Math.min(curA,curB)+.01*(curB-curA), hi=Math.max(curA,curB)-.01*(curB-curA); cDrag=Math.max(lo,Math.min(hi,x)); draw(); };
+const setC=e=>{ if(!W2Xg) return; const r=svg.getBoundingClientRect(); const x=W2Xg(e.clientX-r.left); const lo=Math.min(curA,curB)+.01*(curB-curA), hi=Math.max(curA,curB)-.01*(curB-curA); cDrag=Math.max(lo,Math.min(hi,x)); if(cur.cP){ playing=false; syncPlay(); P=cDrag; cDrag=null; syncSlider(); } draw(); };
 let lastA=null;
 /* drag2: a scene point (e.g. the centre (h , k)) follows the pointer in 2D; snapped and kept inside drag2.box */
 const q2Drag=e=>{ const A=lastA, d=cur.drag2; if(!A||!A.X_inv) return; const r=svg.getBoundingClientRect(), sx=W/(r.width||W), sy=H/(r.height||H);
